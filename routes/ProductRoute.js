@@ -4,7 +4,7 @@ import { ProductController } from "../controllers/ProductController.js";
 
 const route = Router();
 
-route.post("/add", ProductController.addOne);
+route.post("/add", ProductController.postProduct);
 
 route.get("/", ProductController.getAllProducts);
 

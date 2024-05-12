@@ -1,19 +1,15 @@
-import { Op } from "sequelize";
-
-import { Product } from "../models/ProductModel.js";
-import { convertQueryToSequelizeCondition } from "../utils/utils.js";
+import { ProductService } from "../services/ProductService.js";
 
 class ProductController {
-    static addOne = async (req, res) => {
+    static postProduct = async (req, res) => {
         try {
-            const productInfo = {
+            const newProduct = await ProductService.createOne({
                 name: req.body.name,
                 description: req.body.description,
                 imageURL: req.body.imageURL,
                 price: req.body.price,
-            };
+            });
 
-            const newProduct = await Product.create(productInfo);
             res.status(201).json({
                 success: true,
                 product: newProduct,
@@ -29,7 +25,7 @@ class ProductController {
 
     static getProduct = async (req, res) => {
         try {
-            const product = await Product.findByPk(req.params.id);
+            const product = await ProductService.findOneByID(req.params.id);
 
             if (product === null) {
                 res.status(404).json({
@@ -46,25 +42,19 @@ class ProductController {
             console.log(err);
             res.status(500).json({
                 success: false,
-                error: "Error in retrieving product.",
+                error: `Error in retrieving product.`,
             });
         }
     };
 
     static getAllProducts = async (req, res) => {
         try {
-            const conditions = convertQueryToSequelizeCondition(
-                req.query,
-                Product
+            const { products, quantity } = await ProductService.findAllProducts(
+                req.query
             );
 
-            const products = await Product.findAll({
-                where: {
-                    [Op.and]: conditions,
-                },
-            });
-
             res.status(200).json({
+                quantity: quantity,
                 success: true,
                 products: products,
             });
@@ -79,18 +69,14 @@ class ProductController {
 
     static updateProduct = async (req, res) => {
         try {
-            const productInfo = {
+            const product = await ProductService.updateOneByID(req.params.id, {
                 name: req.body.name,
                 description: req.body.description,
                 imageURL: req.body.imageURL,
                 price: req.body.price,
-            };
+            });
 
-            const product = await Product.findByPk(req.params.id);
             if (product) {
-                product.set(productInfo);
-                await product.save();
-
                 res.status(200).json({ success: true });
             } else {
                 res.status(400).json({
@@ -109,11 +95,9 @@ class ProductController {
 
     static deleteProduct = async (req, res) => {
         try {
-            const product = await Product.findByPk(req.params.id);
+            const product = await ProductService.deleteOneByID(req.params.id);
 
             if (product) {
-                await product.destroy();
-
                 res.status(200).json({ success: true });
             } else {
                 res.status(400).json({
