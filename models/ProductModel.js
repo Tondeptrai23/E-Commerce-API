@@ -10,6 +10,7 @@ Product.init(
         id: {
             type: DataTypes.UUID,
             primaryKey: true,
+            defaultValue: DataTypes.UUIDV4,
         },
         name: {
             type: DataTypes.STRING,
@@ -20,6 +21,10 @@ Product.init(
         },
         imageURL: {
             type: DataTypes.STRING,
+        },
+        price: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
         },
     },
     { sequelize, modelName: "product" }

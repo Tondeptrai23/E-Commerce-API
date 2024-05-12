@@ -4,20 +4,20 @@ import bodyParser from "body-parser";
 
 import { db } from "./models/database/Database.js";
 
+import { productRoute } from "./routes/ProductRoute.js";
+
 const app = express();
 
 app.use(bodyParser.json());
 
-app.get("/api/testing", (req, res) => {
-    console.log(req);
-    const data = {
-        name: "test",
-    };
-    res.json(data);
-});
+app.use(bodyParser.urlencoded({ extended: true }));
 
-db.sync({ force: true })
-    .then((res) => console.log(res))
+app.use("/api/products", productRoute);
+
+db.sync()
+    .then((res) => {
+        //
+    })
     .catch((err) => console.log(err));
 
 app.listen(process.env.PORT || 3000);
