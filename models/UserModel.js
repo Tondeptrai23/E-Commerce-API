@@ -9,6 +9,7 @@ User.init(
     {
         id: {
             type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
         name: {
@@ -16,9 +17,9 @@ User.init(
         },
         email: {
             type: DataTypes.STRING,
+            allowNull: false,
             validate: {
                 isEmail: true,
-                allowNull: false,
             },
         },
         password: {

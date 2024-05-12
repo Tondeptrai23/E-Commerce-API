@@ -1,4 +1,4 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, UUIDV4 } from "sequelize";
 
 import { sequelize } from "./database/Config.js";
 
@@ -10,6 +10,7 @@ Order.init(
     {
         id: {
             type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
         isCheckedOut: {

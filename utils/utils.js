@@ -69,7 +69,6 @@ const convertQueryToSequelizeCondition = (requestQuery, modelClass) => {
     if (!isEmptyObject(comparisonConditions))
         conditions.push(comparisonConditions);
 
-    console.log(conditions);
     return conditions;
 };
 
