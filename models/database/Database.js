@@ -7,14 +7,40 @@ import { OrderItem } from "../OrderItemModel.js";
 
 // User - (1, n) - Order
 User.hasMany(Order);
-Order.belongsTo(User);
+Order.belongsTo(User, {
+    onDelete: "CASCADE",
+    as: "user",
+});
 
-// Order - (n, n) - Product
-Order.belongsToMany(Product, { through: OrderItem });
-Product.belongsToMany(Order, { through: OrderItem });
+// Order - (n, n) - Product;
+Order.belongsToMany(Product, {
+    through: OrderItem,
+    foreignKey: "orderID",
+    constraints: true,
+    onDelete: "CASCADE",
+});
+Product.belongsToMany(Order, {
+    through: OrderItem,
+    foreignKey: "productID",
+    constraints: true,
+    onDelete: "CASCADE",
+});
 
 // User - (1, 1) - Cart - (n, n) - Product
-User.belongsToMany(Product, { through: Cart });
-Product.belongsToMany(User, { through: Cart });
+User.belongsToMany(Product, {
+    through: Cart,
+    as: "product",
+    foreignKey: "userID",
+    otherKey: "productID",
+    constraints: true,
+    onDelete: "CASCADE",
+});
+Product.belongsToMany(User, {
+    through: Cart,
+    as: "user",
+    foreignKey: "productID",
+    constraints: true,
+    onDelete: "CASCADE",
+});
 
 export { sequelize as db };
