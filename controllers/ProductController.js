@@ -1,3 +1,4 @@
+import { CartService } from "../services/CartService.js";
 import { ProductService } from "../services/ProductService.js";
 
 class ProductController {
@@ -7,7 +8,7 @@ class ProductController {
                 name: req.body.name,
                 description: req.body.description,
                 imageURL: req.body.imageURL,
-                price: req.body.price,
+                price: Number(req.body.price),
             });
 
             res.status(201).json({
@@ -67,13 +68,34 @@ class ProductController {
         }
     };
 
+    static addProductToCart = async (req, res) => {
+        try {
+            const product = await CartService.addProduct(
+                req.user,
+                req.params.id
+            );
+
+            res.status(200).json({
+                success: true,
+                user: req.user,
+                product: product,
+            });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({
+                success: false,
+                error: "Error in adding product to cart",
+            });
+        }
+    };
+
     static updateProduct = async (req, res) => {
         try {
             const product = await ProductService.updateOneByID(req.params.id, {
                 name: req.body.name,
                 description: req.body.description,
                 imageURL: req.body.imageURL,
-                price: req.body.price,
+                price: Number(req.body.price),
             });
 
             if (product) {

@@ -10,6 +10,8 @@ route.get("/", ProductController.getAllProducts);
 
 route.get("/:id", ProductController.getProduct);
 
+route.post("/:id", ProductController.addProductToCart);
+
 route.put("/:id", ProductController.updateProduct);
 
 route.delete("/:id", ProductController.deleteProduct);

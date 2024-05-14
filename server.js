@@ -8,6 +8,7 @@ import { productRoute } from "./routes/ProductRoute.js";
 
 import { User } from "./models/UserModel.js";
 import { Product } from "./models/ProductModel.js";
+import { cartRoute } from "./routes/CartRoute.js";
 
 const app = express();
 
@@ -34,8 +35,9 @@ app.use("/", async (req, res, next) => {
 });
 
 app.use("/api/products", productRoute);
+app.use(cartRoute);
 
-db.sync({ force: true })
+db.sync()
     .then((res) => {
         //
     })
