@@ -10,7 +10,7 @@ OrderItem.init(
     {
         quantity: {
             type: DataTypes.INTEGER,
-            defaultValue: 1,
+            defaultValue: 0,
         },
     },
     { sequelize, modelName: "order-product" }

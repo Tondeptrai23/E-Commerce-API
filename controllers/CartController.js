@@ -18,8 +18,31 @@ class CartController {
         }
     };
 
-    static postCart = (req, res) => {
-        // flush cart to order
+    static postCart = async (req, res) => {
+        try {
+            const newOrder = await CartService.fetchCartToOrder(
+                req.user,
+                req.body.productIDs
+            );
+
+            if (newOrder === null) {
+                res.status(400).json({
+                    success: false,
+                    error: "Cart is empty.",
+                });
+            } else {
+                res.status(200).json({
+                    success: true,
+                    order: newOrder,
+                });
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({
+                success: false,
+                error: "Error in creating order.",
+            });
+        }
     };
 
     static updateProduct = async (req, res) => {

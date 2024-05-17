@@ -1,4 +1,4 @@
-import { DataTypes, Model, UUIDV4 } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 
 import { sequelize } from "./database/Config.js";
 
@@ -15,6 +15,7 @@ Order.init(
         },
         isCheckedOut: {
             type: DataTypes.BOOLEAN,
+            defaultValue: false,
         },
         payment: {
             type: DataTypes.ENUM,

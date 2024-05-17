@@ -1,4 +1,10 @@
+import { Op } from "sequelize";
+
+import { OrderItem } from "../models/OrderItemModel.js";
+import { Product } from "../models/ProductModel.js";
 import { ProductService } from "./ProductService.js";
+import { OrderSerivce } from "./OrderService.js";
+import { Order } from "../models/OrderModel.js";
 
 class CartService {
     static #getProductByID = async (user, productID) => {
@@ -8,21 +14,16 @@ class CartService {
         return result[0];
     };
 
-    static addProduct = async (user, productID) => {
-        let isNewProduct = false;
-
+    static addProduct = async (user, productID, quantity = 1) => {
         if (!(await user.hasProduct(productID))) {
             const product = await ProductService.findOneByID(productID);
             await user.addProduct(product);
-            isNewProduct = true;
         }
 
         const productWithCart = await this.#getProductByID(user, productID);
 
-        if (!isNewProduct) {
-            productWithCart.cart.quantity += 1;
-            await productWithCart.cart.save();
-        }
+        productWithCart.cart.quantity += quantity;
+        await productWithCart.cart.save();
 
         return productWithCart;
     };
@@ -32,8 +33,32 @@ class CartService {
         return products;
     };
 
-    static fetchCartToOrder = async (user) => {
-        //
+    static fetchCartToOrder = async (user, productIDs) => {
+        // Get products from cart
+        const products = await user.getProduct({
+            where: {
+                id: {
+                    [Op.in]: productIDs,
+                },
+            },
+        });
+
+        if (products.length === 0) return null;
+
+        // Create new order
+        const newOrder = await user.createOrder();
+        for (const product of products) {
+            await newOrder.addProduct(product, {
+                through: {
+                    quantity: product.cart.quantity,
+                },
+            });
+        }
+
+        // Flush cart
+        await this.deleteAllProducts(user);
+
+        return OrderSerivce.getOrder(newOrder.id);
     };
 
     static deleteProduct = async (user, productID) => {

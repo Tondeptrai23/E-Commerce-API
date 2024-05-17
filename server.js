@@ -7,8 +7,8 @@ import { db } from "./models/database/Database.js";
 import { productRoute } from "./routes/ProductRoute.js";
 
 import { User } from "./models/UserModel.js";
-import { Product } from "./models/ProductModel.js";
 import { cartRoute } from "./routes/CartRoute.js";
+import { orderRoute } from "./routes/OrderRoute.js";
 
 const app = express();
 
@@ -36,6 +36,7 @@ app.use("/", async (req, res, next) => {
 
 app.use("/api/products", productRoute);
 app.use(cartRoute);
+app.use(orderRoute);
 
 db.sync()
     .then((res) => {
