@@ -1,4 +1,5 @@
 import { CartService } from "../services/CartService.js";
+import { ProductAPIResponseSerializer } from "../services/APIResponseSerializer.js";
 import { ProductService } from "../services/ProductService.js";
 
 class ProductController {
@@ -13,7 +14,7 @@ class ProductController {
 
             res.status(201).json({
                 success: true,
-                product: newProduct,
+                product: ProductAPIResponseSerializer.serialize(newProduct),
             });
         } catch (err) {
             console.log(err);
@@ -36,7 +37,7 @@ class ProductController {
             } else {
                 res.status(200).json({
                     success: true,
-                    product: product,
+                    product: ProductAPIResponseSerializer.serialize(product),
                 });
             }
         } catch (err) {
@@ -57,7 +58,9 @@ class ProductController {
             res.status(200).json({
                 quantity: quantity,
                 success: true,
-                products: products,
+                products: products.map((product) => {
+                    return ProductAPIResponseSerializer.serialize(product);
+                }),
             });
         } catch (err) {
             console.log(err);
@@ -77,8 +80,7 @@ class ProductController {
 
             res.status(200).json({
                 success: true,
-                user: req.user,
-                product: product,
+                product: ProductAPIResponseSerializer.serialize(product),
             });
         } catch (err) {
             console.log(err);
@@ -99,7 +101,10 @@ class ProductController {
             });
 
             if (product) {
-                res.status(200).json({ success: true });
+                res.status(200).json({
+                    success: true,
+                    product: ProductAPIResponseSerializer.serialize(product),
+                });
             } else {
                 res.status(400).json({
                     success: false,

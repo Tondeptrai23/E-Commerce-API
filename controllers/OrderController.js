@@ -1,9 +1,18 @@
+import {
+    OrderAPIResponseSerializer,
+    ProductAPIResponseSerializer,
+} from "../services/APIResponseSerializer.js";
 import { OrderSerivce } from "../services/OrderService.js";
 
 class OrderController {
     static getOrders = async (req, res) => {
         try {
             const orders = await OrderSerivce.getOrders(req.user);
+
+            // Format Data
+            for (let order of orders) {
+                order = OrderAPIResponseSerializer.serialize(order);
+            }
 
             res.status(200).json({
                 success: true,
@@ -24,7 +33,7 @@ class OrderController {
 
             res.status(200).json({
                 success: true,
-                order: order,
+                order: OrderAPIResponseSerializer.serialize(order),
             });
         } catch (err) {
             console.log(err);
@@ -41,14 +50,16 @@ class OrderController {
 
     static moveToCart = async (req, res) => {
         try {
-            const cart = await OrderSerivce.moveToCart(
+            const products = await OrderSerivce.moveToCart(
                 req.user,
                 req.params.orderId
             );
 
             res.status(200).json({
                 success: true,
-                cart: cart,
+                products: products.map((product) => {
+                    return ProductAPIResponseSerializer.serialize(product);
+                }),
             });
         } catch (err) {
             console.log(err);
@@ -73,7 +84,7 @@ class OrderController {
 
             res.status(200).json({
                 success: true,
-                order: order,
+                order: OrderAPIResponseSerializer.serialize(order),
             });
         } catch (err) {
             console.log(err);
@@ -90,7 +101,6 @@ class OrderController {
 
             res.status(200).json({
                 success: true,
-                order: order,
             });
         } catch (err) {
             console.log(err);

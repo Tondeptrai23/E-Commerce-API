@@ -1,27 +1,34 @@
-import { Cart } from "../models/CartModel.js";
 import { Order } from "../models/OrderModel.js";
 import { Product } from "../models/ProductModel.js";
 import { CartService } from "./CartService.js";
 
 class OrderSerivce {
     static getOrders = async (user) => {
-        const orders = await user.getOrders();
+        const orders = await user.getOrders({
+            attributes: {
+                exclude: ["updatedAt", "createdAt"],
+            },
+        });
         return orders;
     };
 
     static getOrder = async (orderId) => {
         const order = await Order.findByPk(orderId, {
+            attributes: {
+                exclude: ["updatedAt", "createdAt", "userId"],
+            },
             include: [
                 {
                     model: Product,
-                    as: "product",
-                    attributes: ["id", "name", "price"],
+                    as: "products",
+                    attributes: {
+                        exclude: ["updatedAt", "createdAt"],
+                    },
                     through: {
                         attributes: ["quantity"],
                     },
                 },
             ],
-            attributes: ["id", "isCheckedOut", "payment", "message"],
         });
         return order;
     };
@@ -41,11 +48,13 @@ class OrderSerivce {
     static moveToCart = async (user, orderId) => {
         const order = await this.getOrder(orderId);
 
-        for (const product of order.product) {
+        let index = 0;
+        for (const product of order.products) {
+            console.log(index++, product, product.orderProduct);
             await CartService.addProduct(
                 user,
                 product.id,
-                product["order-product"].quantity
+                product.orderProduct.quantity
             );
         }
 

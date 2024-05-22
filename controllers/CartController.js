@@ -1,3 +1,7 @@
+import {
+    OrderAPIResponseSerializer,
+    ProductAPIResponseSerializer,
+} from "../services/APIResponseSerializer.js";
 import { CartService } from "../services/CartService.js";
 
 class CartController {
@@ -7,7 +11,9 @@ class CartController {
 
             res.status(200).json({
                 success: true,
-                products,
+                products: products.map((product) => {
+                    return ProductAPIResponseSerializer.serialize(product);
+                }),
             });
         } catch (err) {
             console.log(err);
@@ -33,7 +39,7 @@ class CartController {
             } else {
                 res.status(200).json({
                     success: true,
-                    order: newOrder,
+                    order: OrderAPIResponseSerializer.serialize(newOrder),
                 });
             }
         } catch (err) {
@@ -55,7 +61,7 @@ class CartController {
 
             res.status(200).json({
                 success: true,
-                product: product,
+                product: ProductAPIResponseSerializer.serialize(product),
             });
         } catch (err) {
             console.log(err);

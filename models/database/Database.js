@@ -15,14 +15,14 @@ Order.belongsTo(User, {
 // Order - (n, n) - Product;
 Order.belongsToMany(Product, {
     through: OrderItem,
-    as: "product",
+    as: "products",
     foreignKey: "orderID",
     constraints: true,
     onDelete: "CASCADE",
 });
 Product.belongsToMany(Order, {
     through: OrderItem,
-    as: "order",
+    as: "orders",
     foreignKey: "productID",
     constraints: true,
     onDelete: "CASCADE",
@@ -31,7 +31,7 @@ Product.belongsToMany(Order, {
 // User - (1, 1) - Cart - (n, n) - Product
 User.belongsToMany(Product, {
     through: Cart,
-    as: "product",
+    as: "products",
     foreignKey: "userID",
     otherKey: "productID",
     constraints: true,

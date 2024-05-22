@@ -38,7 +38,7 @@ app.use("/api/products", productRoute);
 app.use(cartRoute);
 app.use(orderRoute);
 
-db.sync()
+db.sync({ force: true })
     .then((res) => {
         //
     })

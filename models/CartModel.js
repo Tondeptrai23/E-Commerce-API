@@ -10,7 +10,7 @@ Cart.init(
     {
         quantity: {
             type: DataTypes.INTEGER,
-            defaultValue: 0,
+            defaultValue: 1,
         },
     },
     { sequelize, modelName: "cart" }

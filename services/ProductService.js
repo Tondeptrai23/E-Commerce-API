@@ -10,7 +10,11 @@ class ProductService {
     };
 
     static findOneByID = async (productID) => {
-        const product = await Product.findByPk(productID);
+        const product = await Product.findByPk(productID, {
+            attributes: {
+                exclude: ["updatedAt", "createdAt"],
+            },
+        });
         return product;
     };
 
@@ -21,6 +25,9 @@ class ProductService {
             where: {
                 [Op.and]: conditions,
             },
+            attributes: {
+                exclude: ["updatedAt", "createdAt"],
+            },
         });
 
         const products = rows;
@@ -29,7 +36,7 @@ class ProductService {
     };
 
     static updateOneByID = async (productID, newProductInfo) => {
-        const product = await Product.findByPk(productID);
+        const product = await this.findOneByID(productID);
 
         if (product) {
             product.set(newProductInfo);
@@ -39,7 +46,7 @@ class ProductService {
     };
 
     static deleteOneByID = async (productID) => {
-        const product = await Product.findByPk(productID);
+        const product = await this.findOneByID(productID);
 
         if (product) {
             await product.destroy();

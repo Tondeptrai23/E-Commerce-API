@@ -13,7 +13,7 @@ OrderItem.init(
             defaultValue: 0,
         },
     },
-    { sequelize, modelName: "order-product" }
+    { sequelize, modelName: "orderProduct" }
 );
 
 export { OrderItem };

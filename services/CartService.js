@@ -1,45 +1,68 @@
 import { Op } from "sequelize";
 
-import { OrderItem } from "../models/OrderItemModel.js";
-import { Product } from "../models/ProductModel.js";
 import { ProductService } from "./ProductService.js";
 import { OrderSerivce } from "./OrderService.js";
-import { Order } from "../models/OrderModel.js";
 
 class CartService {
-    static #getProductByID = async (user, productID) => {
-        const result = await user.getProduct({
+    static #getProductByID = async (user, productID, otherOptions = {}) => {
+        const baseOptions = {
             where: { id: productID },
+            attributes: {
+                exclude: ["updatedAt", "createdAt"],
+            },
+        };
+
+        const result = await user.getProducts({
+            ...baseOptions,
+            ...otherOptions,
         });
+
         return result[0];
     };
 
-    static addProduct = async (user, productID, quantity = 1) => {
-        if (!(await user.hasProduct(productID))) {
+    static addNewProduct = async (user, productID) => {
+        const product = await ProductService.findOneByID(productID);
+        return await user.addProduct(product);
+    };
+
+    static addProduct = async (user, productID, quantity) => {
+        if (await user.hasProduct(productID)) {
+            const product = await this.#getProductByID(user, productID);
+            product.cart.quantity += quantity;
+            await product.cart.save();
+        } else {
             const product = await ProductService.findOneByID(productID);
-            await user.addProduct(product);
+
+            await user.addProduct(product, {
+                through: {
+                    quantity: quantity === undefined ? 1 : quantity,
+                },
+            });
         }
 
         const productWithCart = await this.#getProductByID(user, productID);
-
-        productWithCart.cart.quantity += quantity;
-        await productWithCart.cart.save();
-
         return productWithCart;
     };
 
     static getProducts = async (user) => {
-        const products = await user.getProduct();
+        const products = await user.getProducts({
+            attributes: {
+                exclude: ["updatedAt", "createdAt"],
+            },
+        });
         return products;
     };
 
     static fetchCartToOrder = async (user, productIDs) => {
         // Get products from cart
-        const products = await user.getProduct({
+        const products = await user.getProducts({
             where: {
                 id: {
                     [Op.in]: productIDs,
                 },
+            },
+            attributes: {
+                exclude: ["updatedAt", "createdAt"],
             },
         });
 
@@ -75,7 +98,7 @@ class CartService {
     };
 
     static deleteAllProducts = async (user) => {
-        await user.setProduct([]);
+        await user.setProducts([]);
     };
 }
 
