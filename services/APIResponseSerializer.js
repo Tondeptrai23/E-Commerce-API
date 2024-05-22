@@ -24,22 +24,6 @@ class ProductAPIResponseSerializer {
     };
 }
 
-class CartAPIResponseSerializer {
-    static serialize = (cart) => {
-        const cartObj = JSON.parse(JSON.stringify(cart));
-
-        const { updatedAt, createdAt, userId, ...newCart } = cartObj;
-
-        if (newCart.products) {
-            newCart.products = newCart.products.map((product) => {
-                return formatQuantityInProduct(product);
-            });
-        }
-
-        return newCart;
-    };
-}
-
 class OrderAPIResponseSerializer {
     static serialize = (order) => {
         const orderObj = JSON.parse(JSON.stringify(order));
@@ -56,8 +40,4 @@ class OrderAPIResponseSerializer {
     };
 }
 
-export {
-    CartAPIResponseSerializer,
-    OrderAPIResponseSerializer,
-    ProductAPIResponseSerializer,
-};
+export { OrderAPIResponseSerializer, ProductAPIResponseSerializer };

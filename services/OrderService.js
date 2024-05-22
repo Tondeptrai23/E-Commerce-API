@@ -50,7 +50,6 @@ class OrderSerivce {
 
         let index = 0;
         for (const product of order.products) {
-            console.log(index++, product, product.orderProduct);
             await CartService.addProduct(
                 user,
                 product.id,

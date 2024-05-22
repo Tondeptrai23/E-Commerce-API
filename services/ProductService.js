@@ -42,6 +42,7 @@ class ProductService {
             product.set(newProductInfo);
             await product.save();
         }
+
         return product;
     };
 

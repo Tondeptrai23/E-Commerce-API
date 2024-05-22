@@ -35,10 +35,10 @@ app.use("/", async (req, res, next) => {
 });
 
 app.use("/api/products", productRoute);
-app.use(cartRoute);
-app.use(orderRoute);
+app.use("/api/cart", cartRoute);
+app.use("/api/orders", orderRoute);
 
-db.sync({ force: true })
+db.sync()
     .then((res) => {
         //
     })
