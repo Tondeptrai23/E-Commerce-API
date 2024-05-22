@@ -97,10 +97,10 @@ class OrderController {
 
     static deleteOrder = async (req, res) => {
         try {
-            const order = await OrderSerivce.deleteOrder(req.params.orderId);
+            const result = await OrderSerivce.deleteOrder(req.params.orderId);
 
             res.status(200).json({
-                success: true,
+                success: result,
             });
         } catch (err) {
             console.log(err);

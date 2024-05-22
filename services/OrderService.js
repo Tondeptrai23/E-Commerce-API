@@ -63,17 +63,18 @@ class OrderSerivce {
     };
 
     static deleteOrder = async (orderId) => {
-        const order = await this.getOrder(orderId);
+        const order = await Order.findByPk(orderId);
 
         if (order) {
             await order.destroy();
+            return true;
         }
 
-        return order;
+        return false;
     };
 
     static deleteAllOrders = async (user) => {
-        const orders = await this.getOrders(user);
+        const orders = await user.getOrders();
 
         for (const order of orders) {
             await order.destroy();
