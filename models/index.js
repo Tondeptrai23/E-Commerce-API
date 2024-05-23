@@ -1,9 +1,9 @@
-import { sequelize } from "./Config.js";
-import { User } from "../UserModel.js";
-import { Product } from "../ProductModel.js";
-import { Cart } from "../CartModel.js";
-import { Order } from "../OrderModel.js";
-import { OrderItem } from "../OrderItemModel.js";
+import { sequelize } from "../config/databaseConfig.js";
+import { User } from "./userModel.js";
+import { Product } from "./productModel.js";
+import { Cart } from "./cartModel.js";
+import { Order } from "./orderModel.js";
+import { OrderItem } from "./orderItemModel.js";
 
 // User - (1, n) - Order
 User.hasMany(Order);
@@ -39,7 +39,7 @@ User.belongsToMany(Product, {
 });
 Product.belongsToMany(User, {
     through: Cart,
-    as: "user",
+    as: "users",
     foreignKey: "productID",
     constraints: true,
     onDelete: "CASCADE",

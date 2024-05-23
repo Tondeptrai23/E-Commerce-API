@@ -1,6 +1,6 @@
-import { CartService } from "../services/CartService.js";
-import { ProductAPIResponseSerializer } from "../services/APIResponseSerializer.js";
-import { ProductService } from "../services/ProductService.js";
+import { CartService } from "../services/cartService.js";
+import { ProductAPIResponseSerializer } from "../utils/apiResponseSerializer.js";
+import { ProductService } from "../services/productService.js";
 
 class ProductController {
     static postProduct = async (req, res) => {

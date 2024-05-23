@@ -1,6 +1,6 @@
-import { Order } from "../models/OrderModel.js";
-import { Product } from "../models/ProductModel.js";
-import { CartService } from "./CartService.js";
+import { Order } from "../models/orderModel.js";
+import { Product } from "../models/productModel.js";
+import { CartService } from "./cartService.js";
 
 class OrderSerivce {
     static getOrders = async (user) => {

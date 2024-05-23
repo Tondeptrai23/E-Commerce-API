@@ -1,4 +1,4 @@
-import { sequelize } from "./database/Config.js";
+import { sequelize } from "../config/databaseConfig.js";
 import { DataTypes, Model } from "sequelize";
 
 class User extends Model {
@@ -25,6 +25,11 @@ User.init(
         password: {
             type: DataTypes.STRING,
             allowNull: false,
+        },
+        role: {
+            type: DataTypes.ENUM,
+            values: ["ROLE_USER", "ROLE_ADMIN"],
+            defaultValue: "ROLE_USER",
         },
     },
     { sequelize, modelName: "user" }

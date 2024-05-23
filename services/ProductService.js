@@ -1,6 +1,6 @@
 import { Op } from "sequelize";
 
-import { Product } from "../models/ProductModel.js";
+import { Product } from "../models/productModel.js";
 import { convertQueryToSequelizeCondition } from "../utils/utils.js";
 
 class ProductService {

@@ -1,7 +1,7 @@
 import { Op } from "sequelize";
 
-import { ProductService } from "./ProductService.js";
-import { OrderSerivce } from "./OrderService.js";
+import { ProductService } from "./productService.js";
+import { OrderSerivce } from "./orderService.js";
 
 class CartService {
     static #getProductByID = async (user, productID, otherOptions = {}) => {

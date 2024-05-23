@@ -1,8 +1,8 @@
 import {
     OrderAPIResponseSerializer,
     ProductAPIResponseSerializer,
-} from "../services/APIResponseSerializer.js";
-import { OrderSerivce } from "../services/OrderService.js";
+} from "../utils/apiResponseSerializer.js";
+import { OrderSerivce } from "../services/orderService.js";
 
 class OrderController {
     static getOrders = async (req, res) => {

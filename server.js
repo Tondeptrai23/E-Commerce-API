@@ -2,38 +2,19 @@ import express from "express";
 import "dotenv/config.js";
 import bodyParser from "body-parser";
 
-import { db } from "./models/database/Database.js";
+import { db } from "./models/index.js";
 
-import { productRoute } from "./routes/ProductRoute.js";
-
-import { User } from "./models/UserModel.js";
-import { cartRoute } from "./routes/CartRoute.js";
-import { orderRoute } from "./routes/OrderRoute.js";
+import { productRoute } from "./routes/productRoute.js";
+import { cartRoute } from "./routes/cartRoute.js";
+import { orderRoute } from "./routes/orderRoute.js";
+import { authRoute } from "./routes/authRoute.js";
 
 const app = express();
 
 app.use(bodyParser.json());
-
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Create dummy user/admin
-app.use("/", async (req, res, next) => {
-    const user = await User.findOrCreate({
-        where: {
-            name: "admin",
-        },
-        defaults: {
-            name: "admin",
-            email: "admin@example.com",
-            password: "example",
-        },
-    });
-
-    req.user = user[0];
-
-    next();
-});
-
+app.use("/api/auth", authRoute);
 app.use("/api/products", productRoute);
 app.use("/api/cart", cartRoute);
 app.use("/api/orders", orderRoute);
