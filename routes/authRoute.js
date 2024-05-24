@@ -1,11 +1,15 @@
 import { Router } from "express";
 
 import { AuthController } from "../controllers/authController.js";
+import {
+    checkEmailExistsForSignIn,
+    checkEmailNotExistsForSignUp,
+} from "../middlewares/verifySigning.js";
 
 const route = Router();
 
-route.get("/signup", AuthController.signUp);
+route.post("/signup", checkEmailNotExistsForSignUp, AuthController.signUp);
 
-route.get("/signin", AuthController.signIn);
+route.post("/signin", checkEmailExistsForSignIn, AuthController.signIn);
 
 export { route as authRoute };

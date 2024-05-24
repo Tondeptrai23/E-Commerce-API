@@ -40,4 +40,17 @@ class OrderAPIResponseSerializer {
     };
 }
 
-export { OrderAPIResponseSerializer, ProductAPIResponseSerializer };
+class UserAPIResponseSerializer {
+    static serialize = (user) => {
+        const userObj = JSON.parse(JSON.stringify(user));
+        const { id, name, ...restInfo } = userObj;
+
+        return { userId: id, name: name };
+    };
+}
+
+export {
+    UserAPIResponseSerializer,
+    OrderAPIResponseSerializer,
+    ProductAPIResponseSerializer,
+};
