@@ -5,10 +5,7 @@ import cors from "cors";
 
 import { db } from "./models/index.js";
 
-import { productRoute } from "./routes/productRoute.js";
-import { cartRoute } from "./routes/cartRoute.js";
-import { orderRoute } from "./routes/orderRoute.js";
-import { authRoute } from "./routes/authRoute.js";
+import { router } from "./routes/index.js";
 
 const app = express();
 
@@ -29,12 +26,9 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use("/api/auth", authRoute);
-app.use("/api/products", productRoute);
-app.use("/api/cart", cartRoute);
-app.use("/api/orders", orderRoute);
+app.use(router);
 
-db.sync({ force: true })
+db.sync()
     .then((res) => {
         //
     })

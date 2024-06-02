@@ -3,31 +3,11 @@ import { ProductAPIResponseSerializer } from "../utils/apiResponseSerializer.js"
 import { ProductService } from "../services/productService.js";
 
 class ProductController {
-    static postProduct = async (req, res) => {
-        try {
-            const newProduct = await ProductService.createOne({
-                name: req.body.name,
-                description: req.body.description,
-                imageURL: req.body.imageURL,
-                price: Number(req.body.price),
-            });
-
-            res.status(201).json({
-                success: true,
-                product: ProductAPIResponseSerializer.serialize(newProduct),
-            });
-        } catch (err) {
-            console.log(err);
-            res.status(500).json({
-                success: false,
-                error: "Error in creating product.",
-            });
-        }
-    };
-
     static getProduct = async (req, res) => {
         try {
-            const product = await ProductService.findOneByID(req.params.id);
+            const product = await ProductService.findOneByID(
+                req.params.productId
+            );
 
             if (product === null) {
                 res.status(404).json({
@@ -75,7 +55,7 @@ class ProductController {
         try {
             const product = await CartService.addProduct(
                 req.user,
-                req.params.id
+                req.params.productId
             );
 
             res.status(200).json({
@@ -91,14 +71,39 @@ class ProductController {
         }
     };
 
-    static updateProduct = async (req, res) => {
+    static createNewProduct = async (req, res) => {
         try {
-            const product = await ProductService.updateOneByID(req.params.id, {
+            const newProduct = await ProductService.createOne({
                 name: req.body.name,
                 description: req.body.description,
                 imageURL: req.body.imageURL,
                 price: Number(req.body.price),
             });
+
+            res.status(201).json({
+                success: true,
+                product: ProductAPIResponseSerializer.serialize(newProduct),
+            });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({
+                success: false,
+                error: "Error in creating product.",
+            });
+        }
+    };
+
+    static updateProduct = async (req, res) => {
+        try {
+            const product = await ProductService.updateOneByID(
+                req.params.productId,
+                {
+                    name: req.body.name,
+                    description: req.body.description,
+                    imageURL: req.body.imageURL,
+                    price: Number(req.body.price),
+                }
+            );
 
             if (product) {
                 res.status(200).json({
@@ -122,7 +127,9 @@ class ProductController {
 
     static deleteProduct = async (req, res) => {
         try {
-            const product = await ProductService.deleteOneByID(req.params.id);
+            const product = await ProductService.deleteOneByID(
+                req.params.productId
+            );
 
             if (product) {
                 res.status(200).json({ success: true });

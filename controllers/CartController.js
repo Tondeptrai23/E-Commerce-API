@@ -24,7 +24,7 @@ class CartController {
         }
     };
 
-    static postCart = async (req, res) => {
+    static fetchCartToOrder = async (req, res) => {
         try {
             const newOrder = await CartService.fetchCartToOrder(
                 req.user,
@@ -55,7 +55,7 @@ class CartController {
         try {
             const product = await CartService.setQuantity(
                 req.user,
-                req.params.productID,
+                req.params.productId,
                 Number(req.body.quantity)
             );
 
@@ -76,7 +76,7 @@ class CartController {
         try {
             const result = await CartService.deleteProduct(
                 req.user,
-                req.params.productID
+                req.params.productId
             );
 
             if (result === 1) {

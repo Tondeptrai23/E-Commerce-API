@@ -1,4 +1,7 @@
 import { User } from "../models/userModel.js";
+import { convertQueryToSequelizeCondition } from "../utils/utils.js";
+
+import { Op } from "sequelize";
 import bcrypt from "bcryptjs";
 
 class UserService {
@@ -15,7 +18,7 @@ class UserService {
         return user;
     };
 
-    static findUser = async (email) => {
+    static findUserByEmail = async (email) => {
         const user = await User.findOne({
             where: { email: email },
             attributes: {
@@ -26,7 +29,7 @@ class UserService {
     };
 
     static isUserExisted = async (email) => {
-        const user = await this.findUser(email);
+        const user = await this.findUserByEmail(email);
 
         return { user: user, isExisted: user === null ? false : true };
     };
@@ -37,6 +40,27 @@ class UserService {
             userPassword
         );
         return isCorrectPassword;
+    };
+
+    static findUserById = async (id) => {
+        const user = await User.findByPk(id);
+        return user;
+    };
+
+    static findAllUsers = async (query) => {
+        const conditions = convertQueryToSequelizeCondition(query, User);
+        const { rows, count } = await User.findAndCountAll({
+            where: {
+                [Op.and]: conditions,
+            },
+            attributes: {
+                exclude: ["updatedAt", "createdAt"],
+            },
+        });
+
+        const users = rows;
+        const quantity = count;
+        return { users, quantity };
     };
 }
 

@@ -41,9 +41,10 @@ class AuthController {
                     success: false,
                     error: "Wrong email/password.",
                 });
+                return;
             }
 
-            const EXPIRED_TIME = 120;
+            const EXPIRED_TIME = 120000;
             const token = await jwt.sign({ id: req.user.id }, jwt.secretKey, {
                 algorithm: jwt.algorithm,
                 allowInsecureKeySizes: true,

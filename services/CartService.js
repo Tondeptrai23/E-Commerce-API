@@ -4,17 +4,12 @@ import { ProductService } from "./productService.js";
 import { OrderSerivce } from "./orderService.js";
 
 class CartService {
-    static #getProductByID = async (user, productID, otherOptions = {}) => {
-        const baseOptions = {
+    static #getProductByID = async (user, productID) => {
+        const result = await user.getProducts({
             where: { id: productID },
             attributes: {
                 exclude: ["updatedAt", "createdAt"],
             },
-        };
-
-        const result = await user.getProducts({
-            ...baseOptions,
-            ...otherOptions,
         });
 
         return result[0];
@@ -28,7 +23,7 @@ class CartService {
     static addProduct = async (user, productID, quantity) => {
         if (await user.hasProduct(productID)) {
             const product = await this.#getProductByID(user, productID);
-            product.cart.quantity += quantity;
+            product.cart.quantity += quantity === undefined ? 1 : quantity;
             await product.cart.save();
         } else {
             const product = await ProductService.findOneByID(productID);
@@ -66,7 +61,7 @@ class CartService {
             },
         });
 
-        if (products.length === 0) return null;
+        // if (products.length === 0) return null;
 
         // Create new order
         const newOrder = await user.createOrder();

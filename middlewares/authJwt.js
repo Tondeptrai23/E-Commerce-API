@@ -3,7 +3,7 @@ import { User } from "../models/userModel.js";
 
 const verifyToken = async (req, res, next) => {
     try {
-        const token = req.headers["x-access-token"];
+        let token = req.header("Authorization").replace("Bearer ", "");
         if (!token) {
             res.status(401).json({
                 success: false,
@@ -30,6 +30,11 @@ const verifyToken = async (req, res, next) => {
 const isAdmin = async (req, res, next) => {
     try {
         if (req.user.role === "ROLE_ADMIN") {
+            req.admin = req.user;
+            if (req.params.userId !== undefined) {
+                req.user = await User.findByPk(req.params.userId);
+            }
+
             next();
             return;
         }

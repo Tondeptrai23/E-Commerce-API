@@ -48,7 +48,10 @@ class OrderSerivce {
     static moveToCart = async (user, orderId) => {
         const order = await this.getOrder(orderId);
 
-        let index = 0;
+        if (order === null) {
+            return null;
+        }
+
         for (const product of order.products) {
             await CartService.addProduct(
                 user,

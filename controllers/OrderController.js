@@ -9,6 +9,14 @@ class OrderController {
         try {
             const orders = await OrderSerivce.getOrders(req.user);
 
+            if (orders === null || orders.length === 0) {
+                res.status(400).json({
+                    success: false,
+                    error: "User doesn't have any orders!",
+                });
+                return;
+            }
+
             // Format Data
             for (let order of orders) {
                 order = OrderAPIResponseSerializer.serialize(order);
@@ -31,6 +39,14 @@ class OrderController {
         try {
             const order = await OrderSerivce.getOrder(req.params.orderId);
 
+            if (order === null) {
+                res.status(400).json({
+                    success: false,
+                    error: "Order not found!",
+                });
+                return;
+            }
+
             res.status(200).json({
                 success: true,
                 order: OrderAPIResponseSerializer.serialize(order),
@@ -50,16 +66,26 @@ class OrderController {
 
     static moveToCart = async (req, res) => {
         try {
-            const products = await OrderSerivce.moveToCart(
+            let products = await OrderSerivce.moveToCart(
                 req.user,
                 req.params.orderId
             );
 
+            if (products === null) {
+                res.status(400).json({
+                    success: false,
+                    error: "Order not found",
+                });
+                return;
+            }
+
+            products = products.map((product) => {
+                return ProductAPIResponseSerializer.serialize(product);
+            });
+
             res.status(200).json({
                 success: true,
-                products: products.map((product) => {
-                    return ProductAPIResponseSerializer.serialize(product);
-                }),
+                products: products,
             });
         } catch (err) {
             console.log(err);
