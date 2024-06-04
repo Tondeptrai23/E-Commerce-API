@@ -5,11 +5,27 @@ import {
     checkEmailExistsForSignIn,
     checkEmailNotExistsForSignUp,
 } from "../middlewares/verifySigning.js";
+import {
+    handleValidationErrors,
+    validateUser,
+} from "../middlewares/validator.js";
 
 const route = Router();
 
-route.post("/signup", checkEmailNotExistsForSignUp, AuthController.signUp);
+route.post(
+    "/signup",
+    validateUser,
+    handleValidationErrors,
+    checkEmailNotExistsForSignUp,
+    AuthController.signUp
+);
 
-route.post("/signin", checkEmailExistsForSignIn, AuthController.signIn);
+route.post(
+    "/signin",
+    validateUser,
+    handleValidationErrors,
+    checkEmailExistsForSignIn,
+    AuthController.signIn
+);
 
 export { route as authRoute };

@@ -5,7 +5,7 @@ const verifyToken = async (req, res, next) => {
     try {
         let token = req.header("Authorization").replace("Bearer ", "");
         if (!token) {
-            res.status(401).json({
+            res.status(403).json({
                 success: false,
                 error: "Not authenticated",
             });
@@ -20,10 +20,17 @@ const verifyToken = async (req, res, next) => {
         next();
     } catch (err) {
         console.log(err);
-        res.status(500).json({
-            success: false,
-            error: "Error in verifying token.",
-        });
+        if (err instanceof jwt.JsonWebTokenError) {
+            res.status(403).json({
+                success: false,
+                error: "Token invalid.",
+            });
+        } else {
+            res.status(500).json({
+                success: false,
+                error: "Error in verifying token.",
+            });
+        }
     }
 };
 
@@ -39,7 +46,7 @@ const isAdmin = async (req, res, next) => {
             return;
         }
 
-        res.status(400).json({
+        res.status(403).json({
             success: false,
             error: "Cannot retrieve administrative data.",
         });

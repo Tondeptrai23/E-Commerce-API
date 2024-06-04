@@ -16,6 +16,7 @@ const newJWT = {
     secretKey: secretKey,
     algorithm: algorithm,
     TokenExpiredError: jwt.TokenExpiredError,
+    JsonWebTokenError: jwt.JsonWebTokenError,
 };
 
 export { newJWT as jwt };

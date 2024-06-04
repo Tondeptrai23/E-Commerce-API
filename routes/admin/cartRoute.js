@@ -7,13 +7,6 @@ const router = Router();
 
 router.get("/:userId/cart/", verifyToken, isAdmin, CartController.getCart);
 
-router.post(
-    "/:userId/cart/",
-    verifyToken,
-    isAdmin,
-    CartController.fetchCartToOrder
-);
-
 router.delete(
     "/:userId/cart/:productId",
     verifyToken,
