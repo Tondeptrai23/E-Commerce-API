@@ -6,10 +6,17 @@ import { Order } from "./orderModel.js";
 import { OrderItem } from "./orderItemModel.js";
 
 // User - (1, n) - Order
-User.hasMany(Order);
+User.hasMany(Order, {
+    onDelete: "CASCADE",
+    as: "orders",
+    foreignKey: "userID",
+    constraints: true,
+});
 Order.belongsTo(User, {
     onDelete: "CASCADE",
     as: "user",
+    foreignKey: "userID",
+    constraints: true,
 });
 
 // Order - (n, n) - Product;

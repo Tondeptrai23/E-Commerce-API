@@ -1,8 +1,9 @@
+import { or } from "sequelize";
 import { Order } from "../models/orderModel.js";
 import { Product } from "../models/productModel.js";
 import { CartService } from "./cartService.js";
 
-class OrderSerivce {
+class OrderService {
     static getOrders = async (user) => {
         const orders = await user.getOrders({
             attributes: {
@@ -12,8 +13,8 @@ class OrderSerivce {
         return orders;
     };
 
-    static getOrder = async (orderId) => {
-        const order = await Order.findByPk(orderId, {
+    static getOrder = async (userId, orderId) => {
+        const order = await Order.findOne({
             attributes: {
                 exclude: ["updatedAt", "createdAt", "userId"],
             },
@@ -29,24 +30,30 @@ class OrderSerivce {
                     },
                 },
             ],
+            where: {
+                id: orderId,
+                userID: userId,
+            },
         });
         return order;
     };
 
-    static updatePaymentAndMessage = async (orderId, updateField) => {
-        const order = await this.getOrder(orderId);
+    static updatePaymentAndMessage = async (userId, orderId, updateField) => {
+        const order = await this.getOrder(userId, orderId);
+        if (order === null) return null;
 
-        if (order) {
-            order.message = updateField.message;
+        if (updateField.payment !== undefined) {
             order.payment = updateField.payment;
-            order.save();
+        }
+        if (updateField.message !== undefined) {
+            order.message = updateField.message;
         }
 
         return order;
     };
 
     static moveToCart = async (user, orderId) => {
-        const order = await this.getOrder(orderId);
+        const order = await this.getOrder(user.id, orderId);
 
         if (order === null) {
             return null;
@@ -60,13 +67,13 @@ class OrderSerivce {
             );
         }
 
-        await this.deleteOrder(orderId);
+        await this.deleteOrder(user.id, orderId);
 
         return CartService.getProducts(user);
     };
 
-    static deleteOrder = async (orderId) => {
-        const order = await Order.findByPk(orderId);
+    static deleteOrder = async (userId, orderId) => {
+        const order = await this.getOrder(userId, orderId);
 
         if (order) {
             await order.destroy();
@@ -78,13 +85,13 @@ class OrderSerivce {
 
     static deleteAllOrders = async (user) => {
         const orders = await user.getOrders();
+        if (orders.length === 0) return false;
 
         for (const order of orders) {
             await order.destroy();
         }
-
         return true;
     };
 }
 
-export { OrderSerivce };
+export { OrderService };

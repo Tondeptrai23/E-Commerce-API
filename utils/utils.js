@@ -32,12 +32,15 @@ const convertQueryToSequelizeCondition = (requestQuery, modelClass) => {
         { comparator: "[between]", operator: Op.between },
     ];
 
-    let count = 0;
     const fields = Object.keys(modelClass.getAttributes());
     fields.forEach((field) => {
         if (!requestQuery[field]) return;
 
-        const values = requestQuery[field].split(",");
+        let values;
+        if (Array.isArray(requestQuery[field])) {
+            values = [...requestQuery[field]];
+        } else values = [requestQuery[field]];
+
         const equalityValues = [];
         values.forEach((value) => {
             // Equal case
@@ -52,10 +55,13 @@ const convertQueryToSequelizeCondition = (requestQuery, modelClass) => {
                     return;
                 }
 
+                let compareValue = value.substring(comparator.length);
+                if (operator === Op.between)
+                    compareValue = compareValue.split(",");
                 comparisonConditions[field] = appendToObject(
                     comparisonConditions[field],
                     {
-                        [operator]: value.substring(comparator.length),
+                        [operator]: compareValue,
                     }
                 );
             });

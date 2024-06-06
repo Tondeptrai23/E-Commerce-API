@@ -6,16 +6,17 @@ import bcrypt from "bcryptjs";
 
 class UserService {
     static createNewAccount = async (userInfo) => {
-        if (this.isUserExisted(userInfo.email) === true) {
+        let { user, isExisted } = await this.isUserExisted(userInfo.email);
+        if (isExisted === true) {
             return null;
         }
 
         const salt = await bcrypt.genSalt(10);
+        // console.log(userInfo.password);
         const hashPassword = await bcrypt.hash(userInfo.password, salt);
 
         userInfo.password = hashPassword;
-        const user = await User.create(userInfo);
-        return user;
+        return await User.create(userInfo);
     };
 
     static findUserByEmail = async (email) => {

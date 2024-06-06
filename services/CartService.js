@@ -1,7 +1,7 @@
 import { Op } from "sequelize";
 
 import { ProductService } from "./productService.js";
-import { OrderSerivce } from "./orderService.js";
+import { OrderService } from "./orderService.js";
 
 class CartService {
     static #getProductByID = async (user, productID) => {
@@ -15,18 +15,16 @@ class CartService {
         return result[0];
     };
 
-    static addNewProduct = async (user, productID) => {
-        const product = await ProductService.findOneByID(productID);
-        return await user.addProduct(product);
-    };
-
     static addProduct = async (user, productID, quantity) => {
+        let product = await ProductService.findOneByID(productID);
+        if (product === null) return null;
+
         if (await user.hasProduct(productID)) {
-            const product = await this.#getProductByID(user, productID);
+            product = await this.#getProductByID(user, productID);
             product.cart.quantity += quantity === undefined ? 1 : quantity;
             await product.cart.save();
         } else {
-            const product = await ProductService.findOneByID(productID);
+            product = await ProductService.findOneByID(productID);
 
             await user.addProduct(product, {
                 through: {
@@ -50,6 +48,7 @@ class CartService {
 
     static fetchCartToOrder = async (user, productIDs) => {
         // Get products from cart
+
         const products = await user.getProducts({
             where: {
                 id: {
@@ -61,7 +60,7 @@ class CartService {
             },
         });
 
-        // if (products.length === 0) return null;
+        if (products.length === 0) return null;
 
         // Create new order
         const newOrder = await user.createOrder();
@@ -76,12 +75,12 @@ class CartService {
         // Flush cart
         await this.deleteAllProducts(user);
 
-        return OrderSerivce.getOrder(newOrder.id);
+        return OrderService.getOrder(user.id, newOrder.id);
     };
 
     static deleteProduct = async (user, productID) => {
         const result = await user.removeProduct(productID);
-        return result;
+        return result === 0 ? false : true;
     };
 
     static setQuantity = async (user, productID, newQuantity) => {

@@ -72,7 +72,7 @@ const validateUpdateProduct = [
     body("price").optional().custom(validatePrice),
 ];
 
-const validateUser = [
+const validateRegisterUser = [
     body("email")
         .notEmpty()
         .withMessage("Email is required")
@@ -98,6 +98,22 @@ const validateUser = [
         .withMessage("Role is required")
         .isIn(["ROLE_USER", "ROLE_ADMIN"])
         .withMessage("Role should be valid"),
+];
+
+const validateSignInUser = [
+    body("email")
+        .notEmpty()
+        .withMessage("Email is required")
+        .isEmail()
+        .withMessage("Email should be an valid email"),
+
+    body("password")
+        .notEmpty()
+        .withMessage("Password is required")
+        .isLength({
+            min: 6,
+        })
+        .withMessage("Password should be longer than 6 characters"),
 ];
 
 const validateQuantity = body("quantity")
@@ -152,7 +168,8 @@ const handleValidationErrors = (req, res, next) => {
 
 export {
     validateCreateProduct,
-    validateUser,
+    validateRegisterUser,
+    validateSignInUser,
     validateUpdateProduct,
     validateQuantity,
     validateOrder,

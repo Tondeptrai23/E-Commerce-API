@@ -8,7 +8,6 @@ import { db } from "./models/index.js";
 import { router } from "./routes/index.js";
 
 const app = express();
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

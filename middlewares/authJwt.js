@@ -21,7 +21,7 @@ const verifyToken = async (req, res, next) => {
     } catch (err) {
         console.log(err);
         if (err instanceof jwt.JsonWebTokenError) {
-            res.status(403).json({
+            res.status(401).json({
                 success: false,
                 error: "Token invalid.",
             });

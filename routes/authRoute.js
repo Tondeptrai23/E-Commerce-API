@@ -7,14 +7,15 @@ import {
 } from "../middlewares/verifySigning.js";
 import {
     handleValidationErrors,
-    validateUser,
+    validateRegisterUser,
+    validateSignInUser,
 } from "../middlewares/validator.js";
 
 const route = Router();
 
 route.post(
     "/signup",
-    validateUser,
+    validateRegisterUser,
     handleValidationErrors,
     checkEmailNotExistsForSignUp,
     AuthController.signUp
@@ -22,7 +23,7 @@ route.post(
 
 route.post(
     "/signin",
-    validateUser,
+    validateSignInUser,
     handleValidationErrors,
     checkEmailExistsForSignIn,
     AuthController.signIn

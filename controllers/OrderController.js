@@ -2,12 +2,12 @@ import {
     OrderAPIResponseSerializer,
     ProductAPIResponseSerializer,
 } from "../utils/apiResponseSerializer.js";
-import { OrderSerivce } from "../services/orderService.js";
+import { OrderService } from "../services/orderService.js";
 
 class OrderController {
     static getOrders = async (req, res) => {
         try {
-            const orders = await OrderSerivce.getOrders(req.user);
+            const orders = await OrderService.getOrders(req.user);
 
             if (orders === null || orders.length === 0) {
                 res.status(400).json({
@@ -37,7 +37,10 @@ class OrderController {
 
     static getOrder = async (req, res) => {
         try {
-            const order = await OrderSerivce.getOrder(req.params.orderId);
+            const order = await OrderService.getOrder(
+                req.user.id,
+                req.params.orderId
+            );
 
             if (order === null) {
                 res.status(400).json({
@@ -66,7 +69,7 @@ class OrderController {
 
     static moveToCart = async (req, res) => {
         try {
-            let products = await OrderSerivce.moveToCart(
+            let products = await OrderService.moveToCart(
                 req.user,
                 req.params.orderId
             );
@@ -103,7 +106,8 @@ class OrderController {
                 message: req.body.message,
             };
 
-            const order = await OrderSerivce.updatePaymentAndMessage(
+            const order = await OrderService.updatePaymentAndMessage(
+                req.user.id,
                 req.params.orderId,
                 orderInfo
             );
@@ -123,7 +127,10 @@ class OrderController {
 
     static deleteOrder = async (req, res) => {
         try {
-            const result = await OrderSerivce.deleteOrder(req.params.orderId);
+            const result = await OrderService.deleteOrder(
+                req.user.id,
+                req.params.orderId
+            );
 
             res.status(200).json({
                 success: result,
@@ -139,7 +146,7 @@ class OrderController {
 
     static deleteAllOrders = async (req, res) => {
         try {
-            const result = await OrderSerivce.deleteAllOrders(req.user);
+            const result = await OrderService.deleteAllOrders(req.user);
 
             res.status(200).json({
                 success: result,
