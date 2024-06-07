@@ -1,6 +1,5 @@
 import seedData from "../setup.js";
 import * as verifySigning from "../../../middlewares/verifySigning.js";
-import { User } from "../../../models/userModel.js";
 import { db } from "../../../models/index.js";
 import { jest } from "@jest/globals";
 
@@ -23,17 +22,17 @@ describe("verifySigning.checkEmailExistsForSignIn", () => {
         expect(next).toHaveBeenCalled();
     });
 
-    test("should return 400 if email does not exist", async () => {
+    test("should return 404 if email does not exist", async () => {
         const req = { body: { email: "nonexistent@example.com" } };
         const res = {
             status(responseStatus) {
-                expect(responseStatus).toEqual(400);
+                expect(responseStatus).toEqual(404);
                 return this;
             },
 
             json({ success, error }) {
                 expect(success).toEqual(false);
-                expect(error).toEqual("Email does not exist");
+                expect(error).toEqual("Email not found.");
             },
         };
         const next = jest.fn();
@@ -55,17 +54,19 @@ describe("verifySigning.checkEmailNotExistsForSignUp", () => {
         expect(next).toHaveBeenCalled();
     });
 
-    test("should return 400 if email already exists", async () => {
+    test("should return 409 if email already exists", async () => {
         const req = { body: { email: "example@gmail.com" } };
         const res = {
             status(responseStatus) {
-                expect(responseStatus).toEqual(400);
+                expect(responseStatus).toEqual(409);
                 return this;
             },
 
             json({ success, error }) {
                 expect(success).toEqual(false);
-                expect(error).toEqual("Email exists! Cannot create account.");
+                expect(error).toEqual(
+                    "Email already exists! Cannot create account."
+                );
             },
         };
         const next = jest.fn();

@@ -3,6 +3,8 @@ import {
     ProductAPIResponseSerializer,
 } from "../utils/apiResponseSerializer.js";
 import { OrderService } from "../services/orderService.js";
+import { StatusCodes } from "http-status-codes";
+import { ResourceNotFoundError } from "../utils/error.js";
 
 class OrderController {
     static getOrders = async (req, res) => {
@@ -10,10 +12,7 @@ class OrderController {
             const orders = await OrderService.getOrders(req.user);
 
             if (orders === null || orders.length === 0) {
-                res.status(400).json({
-                    success: false,
-                    error: "User doesn't have any orders!",
-                });
+                res.status(StatusCodes.NO_CONTENT).json({});
                 return;
             }
 
@@ -22,13 +21,13 @@ class OrderController {
                 order = OrderAPIResponseSerializer.serialize(order);
             }
 
-            res.status(200).json({
+            res.status(StatusCodes.OK).json({
                 success: true,
                 order: orders,
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 error: "Error in getting orders.",
             });
@@ -43,23 +42,26 @@ class OrderController {
             );
 
             if (order === null) {
-                res.status(400).json({
-                    success: false,
-                    error: "Order not found!",
-                });
-                return;
+                throw new ResourceNotFoundError("Order not found.");
             }
 
-            res.status(200).json({
+            res.status(StatusCodes.OK).json({
                 success: true,
                 order: OrderAPIResponseSerializer.serialize(order),
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
-                success: false,
-                error: "Error in getting orders.",
-            });
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: "Error in getting orders.",
+                });
+            }
         }
     };
 
@@ -75,27 +77,30 @@ class OrderController {
             );
 
             if (products === null) {
-                res.status(400).json({
-                    success: false,
-                    error: "Order not found",
-                });
-                return;
+                throw new ResourceNotFoundError("Order not found");
             }
 
             products = products.map((product) => {
                 return ProductAPIResponseSerializer.serialize(product);
             });
 
-            res.status(200).json({
+            res.status(StatusCodes.MOVED_PERMANENTLY).json({
                 success: true,
                 products: products,
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
-                success: false,
-                error: "Error in moving order to cart.",
-            });
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: "Order not found",
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: "Error in moving order to cart.",
+                });
+            }
         }
     };
 
@@ -112,13 +117,13 @@ class OrderController {
                 orderInfo
             );
 
-            res.status(200).json({
+            res.status(StatusCodes.OK).json({
                 success: true,
                 order: OrderAPIResponseSerializer.serialize(order),
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 error: "Error in updating order.",
             });
@@ -132,12 +137,12 @@ class OrderController {
                 req.params.orderId
             );
 
-            res.status(200).json({
+            res.status(StatusCodes.OK).json({
                 success: result,
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 error: "Error in deleting order.",
             });
@@ -148,12 +153,12 @@ class OrderController {
         try {
             const result = await OrderService.deleteAllOrders(req.user);
 
-            res.status(200).json({
+            res.status(StatusCodes.OK).json({
                 success: result,
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 error: "Error in deleting orders.",
             });

@@ -1,6 +1,8 @@
 import { CartService } from "../services/cartService.js";
 import { ProductAPIResponseSerializer } from "../utils/apiResponseSerializer.js";
 import { ProductService } from "../services/productService.js";
+import { ResourceNotFoundError } from "../utils/error.js";
+import { StatusCodes } from "http-status-codes";
 
 class ProductController {
     static getProduct = async (req, res) => {
@@ -10,22 +12,25 @@ class ProductController {
             );
 
             if (product === null) {
-                res.status(404).json({
-                    success: false,
-                    error: "Product not found.",
-                });
-            } else {
-                res.status(200).json({
-                    success: true,
-                    product: ProductAPIResponseSerializer.serialize(product),
-                });
+                throw new ResourceNotFoundError("Product not found.");
             }
+            res.status(StatusCodes.OK).json({
+                success: true,
+                product: ProductAPIResponseSerializer.serialize(product),
+            });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
-                success: false,
-                error: `Error in retrieving product.`,
-            });
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: `Error in retrieving product.`,
+                });
+            }
         }
     };
 
@@ -35,7 +40,7 @@ class ProductController {
                 req.query
             );
 
-            res.status(200).json({
+            res.status(StatusCodes.OK).json({
                 quantity: quantity,
                 success: true,
                 products: products.map((product) => {
@@ -44,7 +49,7 @@ class ProductController {
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 error: "Error in retrieving products.",
             });
@@ -58,13 +63,13 @@ class ProductController {
                 req.params.productId
             );
 
-            res.status(200).json({
+            res.status(StatusCodes.OK).json({
                 success: true,
                 product: ProductAPIResponseSerializer.serialize(product),
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 error: "Error in adding product to cart",
             });
@@ -80,13 +85,13 @@ class ProductController {
                 price: Number(req.body.price),
             });
 
-            res.status(201).json({
+            res.status(StatusCodes.CREATED).json({
                 success: true,
                 product: ProductAPIResponseSerializer.serialize(newProduct),
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 error: "Error in creating product.",
             });
@@ -105,23 +110,27 @@ class ProductController {
                 }
             );
 
-            if (product) {
-                res.status(200).json({
-                    success: true,
-                    product: ProductAPIResponseSerializer.serialize(product),
-                });
-            } else {
-                res.status(400).json({
-                    success: false,
-                    error: "Product not found",
-                });
+            if (product === null) {
+                throw new ResourceNotFoundError("Product not found.");
             }
+
+            res.status(StatusCodes.OK).json({
+                success: true,
+                product: ProductAPIResponseSerializer.serialize(product),
+            });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
-                success: false,
-                error: "Error in updating product.",
-            });
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(500).json({
+                    success: false,
+                    error: "Error in updating product.",
+                });
+            }
         }
     };
 
@@ -131,20 +140,24 @@ class ProductController {
                 req.params.productId
             );
 
-            if (product) {
-                res.status(200).json({ success: true });
-            } else {
-                res.status(400).json({
-                    success: false,
-                    error: "Product not found",
-                });
+            if (product === null) {
+                throw new ResourceNotFoundError("Product not found.");
             }
+
+            res.status(StatusCodes.OK).json({ success: true });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
-                success: false,
-                error: "Error in deleting product.",
-            });
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: "Error in deleting product.",
+                });
+            }
         }
     };
 }

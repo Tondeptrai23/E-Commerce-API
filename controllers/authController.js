@@ -1,6 +1,8 @@
 import { UserService } from "../services/userService.js";
 import { jwt } from "../config/authConfig.js";
 import { UserAPIResponseSerializer } from "../utils/apiResponseSerializer.js";
+import { BadRequestError } from "../utils/error.js";
+import { StatusCodes } from "http-status-codes";
 
 class AuthController {
     static signUp = async (req, res, next) => {
@@ -11,18 +13,13 @@ class AuthController {
                 role: req.body.role,
             };
 
-            // Validate
-            if (userInfo.role !== "ROLE_ADMIN") {
-                userInfo.role = "ROLE_USER";
-            }
-
             await UserService.createNewAccount(userInfo);
-            res.status(201).json({
+            res.status(StatusCodes.CREATED).json({
                 success: true,
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 error: "Error in signing up.",
             });
@@ -37,11 +34,7 @@ class AuthController {
             );
 
             if (!isCorrectPassword) {
-                res.status(400).json({
-                    success: false,
-                    error: "Wrong email/password.",
-                });
-                return;
+                throw new BadRequestError("Wrong email/password.");
             }
 
             const EXPIRED_TIME = 120000;
@@ -51,17 +44,24 @@ class AuthController {
                 expiresIn: EXPIRED_TIME,
             });
 
-            await res.status(200).json({
+            await res.status(StatusCodes.OK).json({
                 success: true,
                 accessToken: token,
                 user: UserAPIResponseSerializer.serialize(req.user),
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
-                success: false,
-                error: "Error in signing in.",
-            });
+            if (err instanceof BadRequestError) {
+                res.status(StatusCodes.BAD_REQUEST).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: "Error in signing in.",
+                });
+            }
         }
     };
 }

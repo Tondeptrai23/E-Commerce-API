@@ -1,3 +1,4 @@
+import { StatusCodes } from "http-status-codes";
 import { UserService } from "../services/userService.js";
 import { UserAPIResponseSerializer } from "../utils/apiResponseSerializer.js";
 
@@ -10,14 +11,14 @@ class UserController {
                 return UserAPIResponseSerializer.serialize(user);
             });
 
-            res.status(200).json({
+            res.status(StatusCodes.OK).json({
                 success: true,
                 quantity: quantity,
                 users: users,
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 error: "Error in getting all users.",
             });
@@ -31,13 +32,13 @@ class UserController {
 
             user = UserAPIResponseSerializer.serialize(user);
 
-            res.status(200).json({
+            res.status(StatusCodes.OK).json({
                 success: true,
                 user: user,
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 error: "Error in getting user.",
             });

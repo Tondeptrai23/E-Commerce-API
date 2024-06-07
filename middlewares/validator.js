@@ -1,5 +1,6 @@
 import { body, query } from "express-validator";
 import { validationResult } from "express-validator";
+import { StatusCodes } from "http-status-codes";
 
 const comparisonQueryRegex = /(\[(lte|gte)\]\d+)|(\[(between)\]\d+,\d+)|(\d+)/i;
 
@@ -25,10 +26,11 @@ const validateUnexpectedQueryParams = (type) => {
 };
 
 const validatePrice = (value) => {
+    if (typeof value !== "number") {
+        throw new Error("Price should be an integer");
+    }
     if (value < 1000 || value > 100000000) {
-        throw new Error(
-            "Price should be an integer between 1000 and 100000000"
-        );
+        throw new Error("Price should be between 1000 and 100000000");
     }
     if (value % 1000 != 0) {
         throw new Error("Price should be divisible by 1000");
@@ -42,8 +44,8 @@ const validateCreateProduct = [
     body("name")
         .notEmpty()
         .withMessage("Name is required")
-        .isAlphanumeric()
-        .withMessage("Name should be an alphanumeric"),
+        .isString()
+        .withMessage("Name should be a string"),
 
     body("imageURL")
         .notEmpty()
@@ -90,8 +92,8 @@ const validateRegisterUser = [
     body("name")
         .notEmpty()
         .withMessage("Name is required")
-        .isAlpha()
-        .withMessage("Name should be an alpha string"),
+        .isAlphanumeric()
+        .withMessage("Name should be an alphanumeric string"),
 
     body("role")
         .notEmpty()
@@ -158,7 +160,7 @@ const validateProductFilter = [
 const handleValidationErrors = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({
+        return res.status(StatusCodes.BAD_REQUEST).json({
             success: false,
             errors: errors.array(),
         });

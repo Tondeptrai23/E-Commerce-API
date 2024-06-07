@@ -48,7 +48,6 @@ class CartService {
 
     static fetchCartToOrder = async (user, productIDs) => {
         // Get products from cart
-
         const products = await user.getProducts({
             where: {
                 id: {

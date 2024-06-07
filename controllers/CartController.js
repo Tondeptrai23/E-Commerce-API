@@ -3,13 +3,15 @@ import {
     ProductAPIResponseSerializer,
 } from "../utils/apiResponseSerializer.js";
 import { CartService } from "../services/cartService.js";
+import { ResourceNotFoundError } from "../utils/error.js";
+import { StatusCodes } from "http-status-codes";
 
 class CartController {
     static getCart = async (req, res) => {
         try {
             const products = await CartService.getProducts(req.user);
 
-            res.status(200).json({
+            res.status(StatusCodes.OK).json({
                 success: true,
                 products: products.map((product) => {
                     return ProductAPIResponseSerializer.serialize(product);
@@ -17,7 +19,7 @@ class CartController {
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 error: "Error in getting cart products.",
             });
@@ -32,22 +34,26 @@ class CartController {
             );
 
             if (newOrder === null) {
-                res.status(400).json({
-                    success: false,
-                    error: "Cart is empty.",
-                });
-            } else {
-                res.status(200).json({
-                    success: true,
-                    order: OrderAPIResponseSerializer.serialize(newOrder),
-                });
+                throw new ResourceNotFoundError("Products not found in cart.");
             }
+
+            res.status(StatusCodes.CREATED).json({
+                success: true,
+                order: OrderAPIResponseSerializer.serialize(newOrder),
+            });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
-                success: false,
-                error: "Error in creating order.",
-            });
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: "Error in creating order.",
+                });
+            }
         }
     };
 
@@ -59,13 +65,13 @@ class CartController {
                 Number(req.body.quantity)
             );
 
-            res.status(200).json({
+            res.status(StatusCodes.OK).json({
                 success: true,
                 product: ProductAPIResponseSerializer.serialize(product),
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 error: "Error in updating product.",
             });
@@ -79,21 +85,25 @@ class CartController {
                 req.params.productId
             );
 
-            if (result === 1) {
-                res.status(200).json({
-                    success: true,
-                });
-            } else {
-                res.status(200).json({
-                    success: true,
-                });
+            if (result === false) {
+                throw new ResourceNotFoundError("Product not found.");
             }
+            res.status(StatusCodes.OK).json({
+                success: true,
+            });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
-                success: false,
-                error: "Error in removing products.",
-            });
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: "Error in removing product.",
+                });
+            }
         }
     };
 
@@ -101,12 +111,12 @@ class CartController {
         try {
             await CartService.deleteAllProducts(req.user);
 
-            res.status(200).json({
+            res.status(StatusCodes.OK).json({
                 success: true,
             });
         } catch (err) {
             console.log(err);
-            res.status(500).json({
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 error: "Error in deleting cart.",
             });

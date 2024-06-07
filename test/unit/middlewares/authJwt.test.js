@@ -35,19 +35,19 @@ describe("authJwt.verifyToken", () => {
         expect(next).toHaveBeenCalled();
     });
 
-    test("should return 403 if token is missing", async () => {
+    test("should return 401 if token is missing", async () => {
         const req = {
             header: jest.fn().mockReturnValue(""),
         };
         const res = {
             status(responseStatus) {
-                expect(responseStatus).toEqual(403);
+                expect(responseStatus).toEqual(401);
                 return this;
             },
 
             json({ success, error }) {
                 expect(success).toEqual(false);
-                expect(error).toEqual("Not authenticated");
+                expect(error).toEqual("Token not found.");
             },
         };
         const next = jest.fn();
