@@ -2,7 +2,7 @@ import {
     UserAPIResponseSerializer,
     ProductAPIResponseSerializer,
     OrderAPIResponseSerializer,
-} from "../../../utils/apiResponseSerializer.js";
+} from "../../utils/apiResponseSerializer.js";
 
 describe("API Response Serializer", () => {
     describe("UserAPIResponseSerializer", () => {

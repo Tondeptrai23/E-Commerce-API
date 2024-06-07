@@ -1,7 +1,7 @@
 import seedData from "../setup.js";
-import * as authJwt from "../../../middlewares/authJwt.js";
-import { jwt } from "../../../config/authConfig.js";
-import { db } from "../../../models/index.js";
+import * as authJwt from "../../middlewares/authJwt.js";
+import { jwt } from "../../config/authConfig.js";
+import { db } from "../../models/index.js";
 import { jest } from "@jest/globals";
 
 beforeAll(async () => {

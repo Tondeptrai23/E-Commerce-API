@@ -62,6 +62,8 @@ const validateCreateProduct = [
 ];
 
 const validateUpdateProduct = [
+    body("id").not().exists().withMessage("Id should not be provided"),
+
     body("name").optional().isString().withMessage("Name should be a string"),
 
     body("imageURL")
@@ -79,7 +81,7 @@ const validateRegisterUser = [
         .notEmpty()
         .withMessage("Email is required")
         .isEmail()
-        .withMessage("Email should be an valid email"),
+        .withMessage("Email should be a valid email"),
 
     body("password")
         .notEmpty()
@@ -107,7 +109,7 @@ const validateSignInUser = [
         .notEmpty()
         .withMessage("Email is required")
         .isEmail()
-        .withMessage("Email should be an valid email"),
+        .withMessage("Email should be a valid email"),
 
     body("password")
         .notEmpty()
@@ -138,19 +140,38 @@ const validateOrder = [
 ];
 
 const validateProductFilter = [
-    query("name")
-        .optional()
-        .isAlphanumeric()
-        .withMessage("Name should be an alpha numeric"),
+    query("name").optional().isString().withMessage("Name should be a string"),
 
     query("price")
         .optional()
         .custom((value) => {
-            const searched = comparisonQueryRegex.exec(value)[0];
-
-            if (searched !== value) {
-                throw new Error("Price has invalid format");
+            if (typeof value !== "string" && !Array.isArray(value)) {
+                throw new Error("Price should be a string or array of strings");
             }
+
+            if (typeof value === "string") {
+                const searched = comparisonQueryRegex.exec(value)[0];
+
+                if (searched !== value) {
+                    throw new Error("Price has invalid format");
+                }
+
+                return true;
+            }
+
+            for (const item of value) {
+                if (typeof item !== "string") {
+                    throw new Error("Price array should contain only strings");
+                }
+
+                const searched = comparisonQueryRegex.exec(item)[0];
+                if (searched !== item) {
+                    throw new Error(
+                        "Price array should contain only valid strings"
+                    );
+                }
+            }
+
             return true;
         }),
 

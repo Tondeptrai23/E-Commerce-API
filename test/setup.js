@@ -1,10 +1,9 @@
-import { db } from "../../models/index.js";
-import { Product } from "../../models/productModel.js";
-import { User } from "../../models/userModel.js";
-import { UserService } from "../../services/userService.js";
-import { Order } from "../../models/orderModel.js";
-import { Cart } from "../../models/cartModel.js";
-import { OrderItem } from "../../models/orderItemModel.js";
+import { db } from "../models/index.js";
+import { Product } from "../models/productModel.js";
+import { UserService } from "../services/userService.js";
+import { Order } from "../models/orderModel.js";
+import { Cart } from "../models/cartModel.js";
+import { OrderItem } from "../models/orderItemModel.js";
 
 export default seedData = async () => {
     try {

@@ -1,7 +1,6 @@
-import seedData, { cartData } from "../setup.js";
-import { UserService } from "../../../services/userService.js";
-import { db } from "../../../models/index.js";
-import { User } from "../../../models/userModel.js";
+import seedData from "../setup.js";
+import { UserService } from "../../services/userService.js";
+import { db } from "../../models/index.js";
 
 beforeEach(async () => {
     await seedData();

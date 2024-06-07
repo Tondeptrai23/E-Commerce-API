@@ -1,6 +1,6 @@
 import seedData from "../setup.js";
-import { ProductService } from "../../../services/productService.js";
-import { db } from "../../../models/index.js";
+import { ProductService } from "../../services/productService.js";
+import { db } from "../../models/index.js";
 
 beforeEach(async () => {
     await seedData();

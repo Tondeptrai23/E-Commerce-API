@@ -1,9 +1,9 @@
 import {
     isEmptyObject,
     convertQueryToSequelizeCondition,
-} from "../../../utils/utils.js";
+} from "../../utils/utils.js";
 
-import { Product } from "../../../models/productModel.js";
+import { Product } from "../../models/productModel.js";
 import { Op } from "sequelize";
 
 describe("isEmptyObject", () => {
