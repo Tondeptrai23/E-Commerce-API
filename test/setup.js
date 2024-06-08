@@ -55,18 +55,21 @@ const productData = [
     {
         id: "1",
         name: "Apple",
+        imageURL: "https://example.com/apple.jpg",
         price: 1000,
         description: "A fruit",
     },
     {
         id: "2",
         name: "Banana",
+        imageURL: "https://example.com/banana.jpg",
         price: 2000,
         description: "Another fruit",
     },
     {
         id: "3",
         name: "Orange",
+        imageURL: "https://example.com/orange.jpg",
         price: 1500,
         description: "Yet another fruit",
     },

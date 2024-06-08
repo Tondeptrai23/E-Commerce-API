@@ -12,7 +12,8 @@ class CartService {
             },
         });
 
-        return result[0];
+        if (result.length === 0) return null;
+        else return result[0];
     };
 
     static addProduct = async (user, productID, quantity) => {
@@ -60,7 +61,6 @@ class CartService {
         });
 
         if (products.length === 0) return null;
-
         // Create new order
         const newOrder = await user.createOrder();
         for (const product of products) {
@@ -84,6 +84,8 @@ class CartService {
 
     static setQuantity = async (user, productID, newQuantity) => {
         const product = await this.#getProductByID(user, productID);
+
+        if (product === null) return null;
 
         product.cart.quantity = newQuantity;
         await product.cart.save();

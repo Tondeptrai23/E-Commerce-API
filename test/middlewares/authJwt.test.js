@@ -47,7 +47,7 @@ describe("authJwt.verifyToken", () => {
 
             json({ success, error }) {
                 expect(success).toEqual(false);
-                expect(error).toEqual("Token not found.");
+                expect(error).toEqual("Token not found");
             },
         };
         const next = jest.fn();
@@ -63,7 +63,7 @@ describe("authJwt.verifyToken", () => {
         const res = {
             json({ success, error }) {
                 expect(success).toEqual(false);
-                expect(error).toEqual("Token invalid.");
+                expect(error).toEqual("Token invalid");
             },
             status(responseStatus) {
                 expect(responseStatus).toEqual(401);

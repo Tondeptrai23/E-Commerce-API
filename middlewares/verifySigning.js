@@ -9,7 +9,7 @@ const checkEmailExistsForSignIn = async (req, res, next) => {
         );
 
         if (!isExisted) {
-            throw new ResourceNotFoundError("Email not found.");
+            throw new ResourceNotFoundError("Email not found");
         }
 
         req.user = user;
@@ -24,7 +24,7 @@ const checkEmailExistsForSignIn = async (req, res, next) => {
         } else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in checking email.",
+                error: "Error in checking email",
             });
         }
     }
@@ -38,7 +38,7 @@ const checkEmailNotExistsForSignUp = async (req, res, next) => {
 
         if (isExisted) {
             throw new ConflictError(
-                "Email already exists! Cannot create account."
+                "Email already exists! Cannot create account"
             );
         }
         next();
@@ -52,7 +52,7 @@ const checkEmailNotExistsForSignUp = async (req, res, next) => {
         } else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in checking email.",
+                error: "Error in checking email",
             });
         }
     }

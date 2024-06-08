@@ -11,9 +11,8 @@ class OrderController {
         try {
             const orders = await OrderService.getOrders(req.user);
 
-            if (orders === null || orders.length === 0) {
-                res.status(StatusCodes.NO_CONTENT).json({});
-                return;
+            if (orders === null) {
+                orders = [];
             }
 
             // Format Data
@@ -29,7 +28,7 @@ class OrderController {
             console.log(err);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in getting orders.",
+                error: "Error in getting orders",
             });
         }
     };
@@ -42,7 +41,7 @@ class OrderController {
             );
 
             if (order === null) {
-                throw new ResourceNotFoundError("Order not found.");
+                throw new ResourceNotFoundError("Order not found");
             }
 
             res.status(StatusCodes.OK).json({
@@ -59,7 +58,7 @@ class OrderController {
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Error in getting orders.",
+                    error: "Error in getting orders",
                 });
             }
         }
@@ -84,7 +83,7 @@ class OrderController {
                 return ProductAPIResponseSerializer.serialize(product);
             });
 
-            res.status(StatusCodes.MOVED_PERMANENTLY).json({
+            res.status(StatusCodes.OK).json({
                 success: true,
                 products: products,
             });
@@ -93,12 +92,12 @@ class OrderController {
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: "Order not found",
+                    error: err.message,
                 });
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Error in moving order to cart.",
+                    error: "Error in moving order to cart",
                 });
             }
         }
@@ -117,16 +116,27 @@ class OrderController {
                 orderInfo
             );
 
+            if (order === null) {
+                throw new ResourceNotFoundError("Order not found");
+            }
+
             res.status(StatusCodes.OK).json({
                 success: true,
                 order: OrderAPIResponseSerializer.serialize(order),
             });
         } catch (err) {
             console.log(err);
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                error: "Error in updating order.",
-            });
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: "Error in updating order",
+                });
+            }
         }
     };
 
@@ -137,15 +147,26 @@ class OrderController {
                 req.params.orderId
             );
 
+            if (result === false) {
+                throw new ResourceNotFoundError("Order not found");
+            }
+
             res.status(StatusCodes.OK).json({
                 success: result,
             });
         } catch (err) {
             console.log(err);
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                error: "Error in deleting order.",
-            });
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: "Error in deleting order",
+                });
+            }
         }
     };
 
@@ -160,7 +181,7 @@ class OrderController {
             console.log(err);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in deleting orders.",
+                error: "Error in deleting orders",
             });
         }
     };

@@ -21,7 +21,7 @@ class CartController {
             console.log(err);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in getting cart products.",
+                error: "Error in getting cart products",
             });
         }
     };
@@ -34,7 +34,7 @@ class CartController {
             );
 
             if (newOrder === null) {
-                throw new ResourceNotFoundError("Products not found in cart.");
+                throw new ResourceNotFoundError("Products not found in cart");
             }
 
             res.status(StatusCodes.CREATED).json({
@@ -51,7 +51,7 @@ class CartController {
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Error in creating order.",
+                    error: "Error in creating order",
                 });
             }
         }
@@ -65,16 +65,27 @@ class CartController {
                 Number(req.body.quantity)
             );
 
+            if (product === null) {
+                throw new ResourceNotFoundError("Product not found in cart");
+            }
+
             res.status(StatusCodes.OK).json({
                 success: true,
                 product: ProductAPIResponseSerializer.serialize(product),
             });
         } catch (err) {
             console.log(err);
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                error: "Error in updating product.",
-            });
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: "Error in updating product",
+                });
+            }
         }
     };
 
@@ -86,8 +97,9 @@ class CartController {
             );
 
             if (result === false) {
-                throw new ResourceNotFoundError("Product not found.");
+                throw new ResourceNotFoundError("Product not found in cart");
             }
+
             res.status(StatusCodes.OK).json({
                 success: true,
             });
@@ -101,7 +113,7 @@ class CartController {
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Error in removing product.",
+                    error: "Error in removing product",
                 });
             }
         }
@@ -118,7 +130,7 @@ class CartController {
             console.log(err);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in deleting cart.",
+                error: "Error in deleting cart",
             });
         }
     };

@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { UserService } from "../services/userService.js";
 import { UserAPIResponseSerializer } from "../utils/apiResponseSerializer.js";
+import { ResourceNotFoundError } from "../utils/error.js";
 
 class UserController {
     static getAllUsers = async (req, res) => {
@@ -20,7 +21,7 @@ class UserController {
             console.log(err);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in getting all users.",
+                error: "Error in getting all users",
             });
         }
     };
@@ -30,6 +31,10 @@ class UserController {
             const userId = req.params.userId;
             let user = await UserService.findUserById(userId);
 
+            if (!user) {
+                throw new ResourceNotFoundError("User not found");
+            }
+
             user = UserAPIResponseSerializer.serialize(user);
 
             res.status(StatusCodes.OK).json({
@@ -38,10 +43,17 @@ class UserController {
             });
         } catch (err) {
             console.log(err);
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                error: "Error in getting user.",
-            });
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: "Error in getting user",
+                });
+            }
         }
     };
 }

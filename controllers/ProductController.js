@@ -12,7 +12,7 @@ class ProductController {
             );
 
             if (product === null) {
-                throw new ResourceNotFoundError("Product not found.");
+                throw new ResourceNotFoundError("Product not found");
             }
             res.status(StatusCodes.OK).json({
                 success: true,
@@ -28,7 +28,7 @@ class ProductController {
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: `Error in retrieving product.`,
+                    error: `Error in retrieving product`,
                 });
             }
         }
@@ -51,7 +51,7 @@ class ProductController {
             console.log(err);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in retrieving products.",
+                error: "Error in retrieving products",
             });
         }
     };
@@ -63,16 +63,27 @@ class ProductController {
                 req.params.productId
             );
 
+            if (product === null) {
+                throw new ResourceNotFoundError("Product not found");
+            }
+
             res.status(StatusCodes.OK).json({
                 success: true,
                 product: ProductAPIResponseSerializer.serialize(product),
             });
         } catch (err) {
             console.log(err);
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                error: "Error in adding product to cart",
-            });
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: "Error in adding product to cart",
+                });
+            }
         }
     };
 
@@ -93,7 +104,7 @@ class ProductController {
             console.log(err);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in creating product.",
+                error: "Error in creating product",
             });
         }
     };
@@ -111,7 +122,7 @@ class ProductController {
             );
 
             if (product === null) {
-                throw new ResourceNotFoundError("Product not found.");
+                throw new ResourceNotFoundError("Product not found");
             }
 
             res.status(StatusCodes.OK).json({
@@ -128,7 +139,7 @@ class ProductController {
             } else {
                 res.status(500).json({
                     success: false,
-                    error: "Error in updating product.",
+                    error: "Error in updating product",
                 });
             }
         }
@@ -141,7 +152,7 @@ class ProductController {
             );
 
             if (product === null) {
-                throw new ResourceNotFoundError("Product not found.");
+                throw new ResourceNotFoundError("Product not found");
             }
 
             res.status(StatusCodes.OK).json({ success: true });
@@ -155,7 +166,7 @@ class ProductController {
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Error in deleting product.",
+                    error: "Error in deleting product",
                 });
             }
         }

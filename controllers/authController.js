@@ -21,7 +21,7 @@ class AuthController {
             console.log(err);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in signing up.",
+                error: "Error in signing up",
             });
         }
     };
@@ -34,7 +34,7 @@ class AuthController {
             );
 
             if (!isCorrectPassword) {
-                throw new BadRequestError("Wrong email/password.");
+                throw new BadRequestError("Wrong email/password");
             }
 
             const EXPIRED_TIME = 120000;
@@ -59,7 +59,7 @@ class AuthController {
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Error in signing in.",
+                    error: "Error in signing in",
                 });
             }
         }

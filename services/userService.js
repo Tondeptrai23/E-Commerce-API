@@ -12,7 +12,6 @@ class UserService {
         }
 
         const salt = await bcrypt.genSalt(10);
-        // console.log(userInfo.password);
         const hashPassword = await bcrypt.hash(userInfo.password, salt);
 
         userInfo.password = hashPassword;

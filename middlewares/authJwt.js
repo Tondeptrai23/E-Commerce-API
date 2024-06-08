@@ -7,7 +7,7 @@ const verifyToken = async (req, res, next) => {
     try {
         let token = req.header("Authorization").replace("Bearer ", "");
         if (!token) {
-            throw new UnauthorizedError("Token not found.");
+            throw new UnauthorizedError("Token not found");
         }
         const decoded = await jwt.verify(token, jwt.secretKey, {
             algorithms: jwt.algorithm,
@@ -21,7 +21,7 @@ const verifyToken = async (req, res, next) => {
         if (err instanceof jwt.JsonWebTokenError) {
             res.status(StatusCodes.UNAUTHORIZED).json({
                 success: false,
-                error: "Token invalid.",
+                error: "Token invalid",
             });
         } else if (err instanceof UnauthorizedError) {
             res.status(StatusCodes.UNAUTHORIZED).json({
@@ -31,7 +31,7 @@ const verifyToken = async (req, res, next) => {
         } else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in verifying token.",
+                error: "Error in verifying token",
             });
         }
     }
@@ -41,7 +41,7 @@ const isAdmin = async (req, res, next) => {
     try {
         if (req.user.role !== "ROLE_ADMIN") {
             throw new ForbiddenError(
-                "Not an admin. Cannot retrieve administrative data."
+                "Not an admin. Cannot retrieve administrative data"
             );
         }
 
@@ -61,7 +61,7 @@ const isAdmin = async (req, res, next) => {
         } else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in verifying role.",
+                error: "Error in verifying role",
             });
         }
     }

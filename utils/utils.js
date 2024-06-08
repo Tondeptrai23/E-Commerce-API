@@ -24,6 +24,7 @@ const appendToObject = (obj, newObject) => {
  * Format: [{equalField: [value1, value2]}, {compareField: {operator1: value1, operator2: value2}}, ...]
  */
 const convertQueryToSequelizeCondition = (requestQuery, modelClass) => {
+    if (!requestQuery) return [];
     const conditions = [];
     const comparisonConditions = {};
     const map = [
