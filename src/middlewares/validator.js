@@ -4,9 +4,46 @@ import { StatusCodes } from "http-status-codes";
 
 const comparisonQueryRegex = /(\[(lte|gte)\]\d+)|(\[(between)\]\d+,\d+)|(\d+)/i;
 
+const validateSortQuery = (type) => {
+    const allowedFields = {
+        Product: ["name", "price", "createdAt"],
+        User: ["name", "createdAt"],
+    };
+
+    const allowedSortCondtions = ["ASC", "DESC"];
+
+    return (value) => {
+        let sortCondition;
+        if (Array.isArray(value)) {
+            sortCondition = [...value];
+        } else {
+            sortCondition = [value];
+        }
+
+        sortCondition.forEach((sortString) => {
+            if (typeof sortString !== "string") {
+                throw new Error("Sort should be a string or a string array");
+            }
+
+            if (!sortString.includes(",")) {
+                throw new Error("Sort has invalid format");
+            }
+
+            const [field, orderBy] = sortString.split(",");
+            if (!allowedFields[type].includes(field)) {
+                throw new Error("Sort has invalid sorting field");
+            } else if (!allowedSortCondtions.includes(orderBy)) {
+                throw new Error("Sort has invalid sorting direction");
+            }
+        });
+
+        return true;
+    };
+};
+
 const validateUnexpectedQueryParams = (type) => {
     const allowedParams = {
-        Product: ["name", "price"],
+        Product: ["name", "price", "sort"],
         User: ["name"],
     };
 
@@ -174,6 +211,8 @@ const validateProductFilter = [
 
             return true;
         }),
+
+    query("sort").optional().custom(validateSortQuery("Product")),
 
     query().custom(validateUnexpectedQueryParams("Product")),
 ];

@@ -3,7 +3,6 @@ import {
     convertQueryToSequelizeCondition,
 } from "../../utils/utils.js";
 
-import { Product } from "../../models/productModel.js";
 import { Op } from "sequelize";
 
 describe("isEmptyObject", () => {
@@ -24,21 +23,13 @@ describe("convertQueryToSequelizeCondition", () => {
     describe("convertQueryToSequelizeCondition", () => {
         test("returns an empty array if requestQuery is empty", () => {
             const requestQuery = {};
-            const modelClass = Product;
-            const result = convertQueryToSequelizeCondition(
-                requestQuery,
-                modelClass
-            );
+            const result = convertQueryToSequelizeCondition(requestQuery);
             expect(result).toEqual([]);
         });
 
         test("returns an array of conditions for a single field with a single value", () => {
             const requestQuery = { name: "Apple" };
-            const modelClass = Product;
-            const result = convertQueryToSequelizeCondition(
-                requestQuery,
-                modelClass
-            );
+            const result = convertQueryToSequelizeCondition(requestQuery);
             expect(result).toEqual([{ name: ["Apple"] }]);
         });
 
@@ -47,21 +38,13 @@ describe("convertQueryToSequelizeCondition", () => {
                 name: "Apple",
                 price: "1000",
             };
-            const modelClass = Product;
-            const result = convertQueryToSequelizeCondition(
-                requestQuery,
-                modelClass
-            );
+            const result = convertQueryToSequelizeCondition(requestQuery);
             expect(result).toEqual([{ name: ["Apple"] }, { price: ["1000"] }]);
         });
 
         test("returns an array of conditions with comparison operators", () => {
             const requestQuery = { price: ["[gte]1000", "[lte]2000"] };
-            const modelClass = Product;
-            const result = convertQueryToSequelizeCondition(
-                requestQuery,
-                modelClass
-            );
+            const result = convertQueryToSequelizeCondition(requestQuery);
             expect(result).toEqual([
                 { price: { [Op.gte]: "1000", [Op.lte]: "2000" } },
             ]);
@@ -72,11 +55,7 @@ describe("convertQueryToSequelizeCondition", () => {
                 price: ["[between]1000,2000"],
                 name: ["Apple", "Mango"],
             };
-            const modelClass = Product;
-            const result = convertQueryToSequelizeCondition(
-                requestQuery,
-                modelClass
-            );
+            const result = convertQueryToSequelizeCondition(requestQuery);
             expect(result).toEqual([
                 { name: ["Apple", "Mango"] },
                 { price: { [Op.between]: ["1000", "2000"] } },

@@ -172,4 +172,19 @@ describe("UserService.findAllUsers", () => {
         expect(quantity).toBe(1);
         expect(users[0].role).toBe("ROLE_ADMIN");
     });
+
+    test("should return all users in order", async () => {
+        const query = {
+            sort: "name,ASC",
+        };
+        const { users, quantity } = await UserService.findAllUsers(query);
+
+        expect(users).toBeDefined();
+        expect(users).toHaveLength(3);
+        expect(quantity).toBe(3);
+        console.log(users);
+        expect(users[0].name).toBe("James Doe");
+        expect(users[1].name).toBe("Jane Doe");
+        expect(users[2].name).toBe("John Doe");
+    });
 });

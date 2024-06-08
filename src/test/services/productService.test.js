@@ -144,6 +144,19 @@ describe("ProductService.findAllProducts", () => {
             expect(product.name).toBe("Mango");
         }
     });
+
+    test("should get all products in order", async () => {
+        const query = {
+            sort: "price,ASC",
+        };
+        const products = await ProductService.findAllProducts(query);
+
+        let previousPrice = 0;
+        for (const product of products.products) {
+            expect(product.price).toBeGreaterThanOrEqual(previousPrice);
+            previousPrice = product.price;
+        }
+    });
 });
 
 describe("ProductService.updateOneByID", () => {

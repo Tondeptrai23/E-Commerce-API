@@ -1,5 +1,8 @@
 import { User } from "../models/userModel.js";
-import { convertQueryToSequelizeCondition } from "../utils/utils.js";
+import {
+    convertQueryToSequelizeCondition,
+    getSortCondtionsFromQuery,
+} from "../utils/utils.js";
 
 import { Op } from "sequelize";
 import bcrypt from "bcryptjs";
@@ -48,7 +51,7 @@ class UserService {
     };
 
     static findAllUsers = async (query) => {
-        const conditions = convertQueryToSequelizeCondition(query, User);
+        const conditions = convertQueryToSequelizeCondition(query);
         const { rows, count } = await User.findAndCountAll({
             where: {
                 [Op.and]: conditions,
@@ -56,6 +59,7 @@ class UserService {
             attributes: {
                 exclude: ["updatedAt", "createdAt"],
             },
+            order: getSortCondtionsFromQuery(query),
         });
 
         const users = rows;

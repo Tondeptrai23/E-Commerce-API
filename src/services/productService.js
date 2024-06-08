@@ -1,7 +1,10 @@
 import { Op } from "sequelize";
 
 import { Product } from "../models/productModel.js";
-import { convertQueryToSequelizeCondition } from "../utils/utils.js";
+import {
+    convertQueryToSequelizeCondition,
+    getSortCondtionsFromQuery,
+} from "../utils/utils.js";
 
 class ProductService {
     static createOne = async (productInfo) => {
@@ -19,7 +22,7 @@ class ProductService {
     };
 
     static findAllProducts = async (query) => {
-        const conditions = convertQueryToSequelizeCondition(query, Product);
+        const conditions = convertQueryToSequelizeCondition(query);
 
         const { rows, count } = await Product.findAndCountAll({
             where: {
@@ -28,6 +31,7 @@ class ProductService {
             attributes: {
                 exclude: ["updatedAt", "createdAt"],
             },
+            order: getSortCondtionsFromQuery(query, Product),
         });
 
         const products = rows;

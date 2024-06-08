@@ -19,12 +19,13 @@ const appendToObject = (obj, newObject) => {
  * @summary Convert Request.query to Sequelize-compatible condition object for querying the database
  *
  * @param {String} requestQuery Request.query
- * @param {Model} modelClass Model class (e.g. Product)
  * @returns {Array} Array of conditions.
  * Format: [{equalField: [value1, value2]}, {compareField: {operator1: value1, operator2: value2}}, ...]
  */
-const convertQueryToSequelizeCondition = (requestQuery, modelClass) => {
+const convertQueryToSequelizeCondition = (requestQuery) => {
     if (!requestQuery) return [];
+    const excludedFields = ["sort", "limit", "offset"];
+
     const conditions = [];
     const comparisonConditions = {};
     const map = [
@@ -33,7 +34,9 @@ const convertQueryToSequelizeCondition = (requestQuery, modelClass) => {
         { comparator: "[between]", operator: Op.between },
     ];
 
-    const fields = Object.keys(modelClass.getAttributes());
+    const fields = Object.keys(requestQuery).filter((field) => {
+        return !excludedFields.includes(field);
+    });
     fields.forEach((field) => {
         if (!requestQuery[field]) return;
 
@@ -79,4 +82,36 @@ const convertQueryToSequelizeCondition = (requestQuery, modelClass) => {
     return conditions;
 };
 
-export { isEmptyObject, convertQueryToSequelizeCondition };
+/**
+ * @summary Get order condtions from a request query to retrieve a sorted data
+ * from a Sequelize magic method.
+ *
+ * @param {Array<String>} requestQuery The query from the request. Ex: ["price,DESC", "name,ASC"]
+ * @param {Class} modelClass The class need to sort data. Ex: Product, User
+ * @returns An array of order condtions which is compatible for Sequelize sorting.
+ * Ex: [["price", "DESC"], ["name", "ASC"]]
+ */
+const getSortCondtionsFromQuery = (requestQuery) => {
+    const sortConditions = [];
+    if (!requestQuery || !requestQuery.sort) return sortConditions;
+    let query;
+    if (!Array.isArray(requestQuery.sort)) {
+        query = [requestQuery.sort];
+    } else {
+        query = [...requestQuery.sort];
+    }
+
+    query.forEach((sortString) => {
+        const [field, orderBy] = sortString.split(",");
+
+        sortConditions.push([field, orderBy]);
+    });
+
+    return sortConditions;
+};
+
+export {
+    isEmptyObject,
+    convertQueryToSequelizeCondition,
+    getSortCondtionsFromQuery,
+};

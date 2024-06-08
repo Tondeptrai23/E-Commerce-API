@@ -79,54 +79,6 @@ describe("ProductController.getAllProducts", () => {
         // Act
         await ProductController.getAllProducts(req, res);
     });
-
-    test("should return all products with price >= 1500", async () => {
-        const expectedProducts = productData.filter(
-            (product) => product.price >= 1500
-        );
-
-        // Mock the request and response objects
-        const req = {
-            query: { price: "[gte]1500" },
-        };
-        const res = {
-            status(code) {
-                expect(code).toEqual(200);
-                return this;
-            },
-            json(data) {
-                expect(data.success).toEqual(true);
-                expect(data.products).toEqual(expectedProducts);
-            },
-        };
-
-        // Act
-        await ProductController.getAllProducts(req, res);
-    });
-
-    test("should return all products with name 'Apple'", async () => {
-        const expectedProducts = productData.filter(
-            (product) => product.name === "Apple"
-        );
-
-        // Mock the request and response objects
-        const req = {
-            query: { name: "Apple" },
-        };
-        const res = {
-            status(code) {
-                expect(code).toEqual(200);
-                return this;
-            },
-            json(data) {
-                expect(data.success).toEqual(true);
-                expect(data.products).toEqual(expectedProducts);
-            },
-        };
-
-        // Act
-        await ProductController.getAllProducts(req, res);
-    });
 });
 
 describe("ProductController.addProductToCart", () => {

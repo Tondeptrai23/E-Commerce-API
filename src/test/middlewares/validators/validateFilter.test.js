@@ -119,4 +119,82 @@ describe("validateProductFilter", () => {
             "Price array should contain only strings"
         );
     });
+
+    test("should return error if sort is not a string", async () => {
+        const req = {
+            query: {
+                sort: 123,
+            },
+        };
+        for (const validationChain of validateProductFilter) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()[0].msg).toEqual(
+            "Sort should be a string or a string array"
+        );
+    });
+
+    test("should return error if sort has invalid format", async () => {
+        const req = {
+            query: {
+                sort: "invalid",
+            },
+        };
+        for (const validationChain of validateProductFilter) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()[0].msg).toEqual("Sort has invalid format");
+    });
+
+    test("should return empty error array if sort is a valid string", async () => {
+        const req = {
+            query: {
+                sort: "name,ASC",
+            },
+        };
+        for (const validationChain of validateProductFilter) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(true);
+    });
+
+    test("should return error if sort has invalid direction", async () => {
+        const req = {
+            query: {
+                sort: "name,INVALID_DIRECTION",
+            },
+        };
+        for (const validationChain of validateProductFilter) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()[0].msg).toEqual(
+            "Sort has invalid sorting direction"
+        );
+    });
+
+    test("should return error if sort has invalid sorting field", async () => {
+        const req = {
+            query: {
+                sort: "invalidField,ASC",
+            },
+        };
+        for (const validationChain of validateProductFilter) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()[0].msg).toEqual("Sort has invalid sorting field");
+    });
 });
