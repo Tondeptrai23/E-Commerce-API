@@ -48,8 +48,12 @@ const validatePaginationQuery = (value) => {
         return true;
     }
 
-    if (isNaN(parseInt(page)) || isNaN(parseInt(size))) {
-        throw new Error("Page and size should be integers");
+    if (page !== undefined && isNaN(parseInt(page))) {
+        throw new Error("Page should be an integer");
+    }
+
+    if (size !== undefined && isNaN(parseInt(size))) {
+        throw new Error("Size should be an integer");
     }
 
     if (parseInt(page) < 1 || parseInt(size) < 1) {

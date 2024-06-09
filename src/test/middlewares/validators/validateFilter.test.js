@@ -2,6 +2,7 @@ import { validateProductFilter } from "../../../middlewares/validator.js";
 import { validationResult } from "express-validator";
 
 describe("validateProductFilter", () => {
+    // Test for valid filter
     test("should return empty error array if all fields are valid", async () => {
         const req = {
             query: {
@@ -18,6 +19,7 @@ describe("validateProductFilter", () => {
         expect(errors.isEmpty()).toBe(true);
     });
 
+    // Test for unexpected query parameter
     test("should return error if unexpected query parameter is present", async () => {
         const req = {
             query: {
@@ -71,6 +73,7 @@ describe("validateProductFilter", () => {
         );
     });
 
+    // Test for invalid price format
     test("should return error if price has invalid format", async () => {
         const req = {
             query: {
@@ -86,6 +89,7 @@ describe("validateProductFilter", () => {
         expect(errors.array()[0].msg).toEqual("Price has invalid format");
     });
 
+    // Test for invalid price array
     test("should return error if price array contains invalid strings", async () => {
         const req = {
             query: {
@@ -103,6 +107,7 @@ describe("validateProductFilter", () => {
         );
     });
 
+    // Test for non-string elements in price array
     test("should return error if price array contains non-strings", async () => {
         const req = {
             query: {
@@ -120,6 +125,7 @@ describe("validateProductFilter", () => {
         );
     });
 
+    // Test for sort
     test("should return error if sort is not a string", async () => {
         const req = {
             query: {
@@ -137,6 +143,7 @@ describe("validateProductFilter", () => {
         );
     });
 
+    // Test for invalid sort format
     test("should return error if sort has invalid format", async () => {
         const req = {
             query: {
@@ -152,6 +159,7 @@ describe("validateProductFilter", () => {
         expect(errors.array()[0].msg).toEqual("Sort has invalid format");
     });
 
+    // Test for valid sort string
     test("should return empty error array if sort is a valid string", async () => {
         const req = {
             query: {
@@ -166,6 +174,7 @@ describe("validateProductFilter", () => {
         expect(errors.isEmpty()).toBe(true);
     });
 
+    // Test for invalid sort direction
     test("should return error if sort has invalid direction", async () => {
         const req = {
             query: {
@@ -183,6 +192,7 @@ describe("validateProductFilter", () => {
         );
     });
 
+    // Test for invalid sorting field
     test("should return error if sort has invalid sorting field", async () => {
         const req = {
             query: {
@@ -198,11 +208,12 @@ describe("validateProductFilter", () => {
         expect(errors.array()[0].msg).toEqual("Sort has invalid sorting field");
     });
 
-    test("should return error if page, size is not a number", async () => {
+    // Test for page
+    test("should return error if page is not a number", async () => {
         const req = {
             query: {
                 page: "invalid",
-                size: "invalid2",
+                size: 123,
             },
         };
         for (const validationChain of validateProductFilter) {
@@ -211,11 +222,27 @@ describe("validateProductFilter", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()[0].msg).toEqual(
-            "Page and size should be integers"
-        );
+        expect(errors.array()[0].msg).toEqual("Page should be an integer");
     });
 
+    // Test for size
+    test("should return error if size is not a number", async () => {
+        const req = {
+            query: {
+                page: 1,
+                size: "invalid",
+            },
+        };
+        for (const validationChain of validateProductFilter) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()[0].msg).toEqual("Size should be an integer");
+    });
+
+    // Test for page and size less than 1
     test("should return error if page, size is smaller than 1", async () => {
         const req = {
             query: {
@@ -232,5 +259,35 @@ describe("validateProductFilter", () => {
         expect(errors.array()[0].msg).toEqual(
             "Page and size should be greater than 0"
         );
+    });
+
+    // Test for valid page and undefined size
+    test("should return empty error array if page is valid and size is undefined", async () => {
+        const req = {
+            query: {
+                page: 1,
+            },
+        };
+        for (const validationChain of validateProductFilter) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(true);
+    });
+
+    // Test for valid size and undefined page
+    test("should return empty error array if size is valid and page is undefined", async () => {
+        const req = {
+            query: {
+                size: 1,
+            },
+        };
+        for (const validationChain of validateProductFilter) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(true);
     });
 });
