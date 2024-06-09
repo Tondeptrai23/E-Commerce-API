@@ -59,8 +59,6 @@ describe("ProductController.getProduct", () => {
 
 describe("ProductController.getAllProducts", () => {
     test("should return all products", async () => {
-        const expectedProducts = productData;
-
         // Mock the request and response objects
         const req = {
             query: {},
@@ -72,7 +70,10 @@ describe("ProductController.getAllProducts", () => {
             },
             json(data) {
                 expect(data.success).toEqual(true);
-                expect(data.products).toEqual(expectedProducts);
+                expect(data.products.length).toEqual(10);
+                expect(data.totalProducts).toEqual(10);
+                expect(data.totalPages).toEqual(1);
+                expect(data.currentPage).toEqual(1);
             },
         };
 

@@ -9,11 +9,9 @@ export default seedData = async () => {
     try {
         await db.sync({ force: true });
 
-        await Product.create(productData[0]);
-
-        await Product.create(productData[1]);
-
-        await Product.create(productData[2]);
+        for (let i = 0; i < 10; i++) {
+            await Product.create(productData[i]);
+        }
 
         await UserService.createNewAccount(userData[0]);
 
@@ -72,6 +70,55 @@ const productData = [
         imageURL: "https://example.com/orange.jpg",
         price: 1500,
         description: "Yet another fruit",
+    },
+    {
+        id: "4",
+        name: "Grapes",
+        imageURL: "https://example.com/grapes.jpg",
+        price: 1200,
+        description: "A juicy fruit",
+    },
+    {
+        id: "5",
+        name: "Watermelon",
+        imageURL: "https://example.com/watermelon.jpg",
+        price: 2500,
+        description: "A refreshing fruit",
+    },
+    {
+        id: "6",
+        name: "Mango",
+        imageURL: "https://example.com/mango.jpg",
+        price: 1800,
+        description: "The king of fruits",
+    },
+    {
+        id: "7",
+        name: "Pineapple",
+        imageURL: "https://example.com/pineapple.jpg",
+        price: 2000,
+        description: "A tropical fruit",
+    },
+    {
+        id: "8",
+        name: "Strawberry",
+        imageURL: "https://example.com/strawberry.jpg",
+        price: 1500,
+        description: "A sweet and tangy fruit",
+    },
+    {
+        id: "9",
+        name: "Kiwi",
+        imageURL: "https://example.com/kiwi.jpg",
+        price: 1700,
+        description: "A small but powerful fruit",
+    },
+    {
+        id: "10",
+        name: "Peach",
+        imageURL: "https://example.com/peach.jpg",
+        price: 1900,
+        description: "A fuzzy fruit with a sweet taste",
     },
 ];
 

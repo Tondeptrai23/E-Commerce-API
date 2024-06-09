@@ -1,8 +1,4 @@
 import { User } from "../models/userModel.js";
-import {
-    convertQueryToSequelizeCondition,
-    getSortCondtionsFromQuery,
-} from "../utils/utils.js";
 
 import { Op } from "sequelize";
 import bcrypt from "bcryptjs";

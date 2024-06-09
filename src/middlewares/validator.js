@@ -41,9 +41,27 @@ const validateSortQuery = (type) => {
     };
 };
 
+const validatePaginationQuery = (value) => {
+    let { page, size, ...rest } = value;
+
+    if (page === undefined && size === undefined) {
+        return true;
+    }
+
+    if (isNaN(parseInt(page)) || isNaN(parseInt(size))) {
+        throw new Error("Page and size should be integers");
+    }
+
+    if (parseInt(page) < 1 || parseInt(size) < 1) {
+        throw new Error("Page and size should be greater than 0");
+    }
+
+    return true;
+};
+
 const validateUnexpectedQueryParams = (type) => {
     const allowedParams = {
-        Product: ["name", "price", "sort"],
+        Product: ["name", "price", "sort", "page", "size"],
         User: ["name"],
     };
 
@@ -214,7 +232,9 @@ const validateProductFilter = [
 
     query("sort").optional().custom(validateSortQuery("Product")),
 
-    query().custom(validateUnexpectedQueryParams("Product")),
+    query()
+        .custom(validateUnexpectedQueryParams("Product"))
+        .custom(validatePaginationQuery),
 ];
 
 const handleValidationErrors = (req, res, next) => {

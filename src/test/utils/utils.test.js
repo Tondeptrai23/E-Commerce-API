@@ -1,9 +1,4 @@
-import {
-    isEmptyObject,
-    convertQueryToSequelizeCondition,
-} from "../../utils/utils.js";
-
-import { Op } from "sequelize";
+import { isEmptyObject, appendToObject } from "../../utils/utils.js";
 
 describe("isEmptyObject", () => {
     test("returns true if object is empty", () => {
@@ -19,47 +14,25 @@ describe("isEmptyObject", () => {
     });
 });
 
-describe("convertQueryToSequelizeCondition", () => {
-    describe("convertQueryToSequelizeCondition", () => {
-        test("returns an empty array if requestQuery is empty", () => {
-            const requestQuery = {};
-            const result = convertQueryToSequelizeCondition(requestQuery);
-            expect(result).toEqual([]);
-        });
+describe("appendToObject", () => {
+    test("returns newObject if obj is null", () => {
+        const obj = null;
+        const newObject = { name: "Something" };
+        const result = appendToObject(obj, newObject);
+        expect(result).toEqual(newObject);
+    });
 
-        test("returns an array of conditions for a single field with a single value", () => {
-            const requestQuery = { name: "Apple" };
-            const result = convertQueryToSequelizeCondition(requestQuery);
-            expect(result).toEqual([{ name: ["Apple"] }]);
-        });
+    test("returns newObject if obj is null", () => {
+        const obj = null;
+        const newObject = { name: "Something", price: 1000 };
+        const result = appendToObject(obj, newObject);
+        expect(result).toEqual(newObject);
+    });
 
-        test("returns an array of conditions for multiple fields with multiple values", () => {
-            const requestQuery = {
-                name: "Apple",
-                price: "1000",
-            };
-            const result = convertQueryToSequelizeCondition(requestQuery);
-            expect(result).toEqual([{ name: ["Apple"] }, { price: ["1000"] }]);
-        });
-
-        test("returns an array of conditions with comparison operators", () => {
-            const requestQuery = { price: ["[gte]1000", "[lte]2000"] };
-            const result = convertQueryToSequelizeCondition(requestQuery);
-            expect(result).toEqual([
-                { price: { [Op.gte]: "1000", [Op.lte]: "2000" } },
-            ]);
-        });
-
-        test("returns an array of conditions with multiple comparison operators", () => {
-            const requestQuery = {
-                price: ["[between]1000,2000"],
-                name: ["Apple", "Mango"],
-            };
-            const result = convertQueryToSequelizeCondition(requestQuery);
-            expect(result).toEqual([
-                { name: ["Apple", "Mango"] },
-                { price: { [Op.between]: ["1000", "2000"] } },
-            ]);
-        });
+    test("returns obj with newObject appended", () => {
+        const obj = { name: "Something" };
+        const newObject = { price: 1000 };
+        const result = appendToObject(obj, newObject);
+        expect(result).toEqual({ name: "Something", price: 1000 });
     });
 });

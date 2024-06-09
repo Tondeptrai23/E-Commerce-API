@@ -1,10 +1,7 @@
 import { Op } from "sequelize";
 
 import { Product } from "../models/productModel.js";
-import {
-    convertQueryToSequelizeCondition,
-    getSortCondtionsFromQuery,
-} from "../utils/utils.js";
+import SequelizeQueryBuilder from "./sequelizeQueryBuilder.js";
 
 class ProductService {
     static createOne = async (productInfo) => {
@@ -22,21 +19,30 @@ class ProductService {
     };
 
     static findAllProducts = async (query) => {
-        const conditions = convertQueryToSequelizeCondition(query);
+        const queryBuilder = new SequelizeQueryBuilder();
 
-        const { rows, count } = await Product.findAndCountAll({
+        const filterConditions = queryBuilder.convertFilterCondition(query);
+        const sortConditions = queryBuilder.convertSortCondition(query);
+        const { limit, offset } =
+            queryBuilder.convertPaginationCondition(query);
+
+        const { rows, count, ...rest } = await Product.findAndCountAll({
             where: {
-                [Op.and]: conditions,
+                [Op.and]: filterConditions,
             },
             attributes: {
                 exclude: ["updatedAt", "createdAt"],
             },
-            order: getSortCondtionsFromQuery(query, Product),
+            order: sortConditions,
+            limit: limit,
+            offset: offset,
         });
 
         const products = rows;
         const quantity = count;
-        return { products, quantity };
+        const totalPages = Math.ceil(quantity / limit);
+        const currentPage = query.page === undefined ? 1 : query.page;
+        return { products, quantity, totalPages, currentPage };
     };
 
     static updateOneByID = async (productID, newProductInfo) => {

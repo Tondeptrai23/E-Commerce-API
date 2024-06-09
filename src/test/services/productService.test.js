@@ -1,6 +1,7 @@
 import seedData from "../setup.js";
 import { ProductService } from "../../services/productService.js";
 import { db } from "../../models/index.js";
+import e from "cors";
 
 beforeEach(async () => {
     await seedData();
@@ -90,33 +91,44 @@ describe("ProductService.findOneByID", () => {
 
 describe("ProductService.findAllProducts", () => {
     test("should get all products", async () => {
-        const products = await ProductService.findAllProducts({});
+        const { products, quantity, totalPages, currentPage } =
+            await ProductService.findAllProducts({});
 
-        expect(products.quantity).toBe(3);
-        expect(products.products.length).toBe(3);
+        expect(quantity).toBe(10);
+        expect(products.length).toBe(10);
+        expect(totalPages).toBe(1);
+        expect(currentPage).toBe(1);
     });
 
     test("should get all products with [gte]", async () => {
         const query = {
-            price: "[gte]1500",
+            price: "[gte]1700",
         };
-        const products = await ProductService.findAllProducts(query);
+        const { products, quantity, totalPages, currentPage } =
+            await ProductService.findAllProducts(query);
 
-        for (const product of products.products) {
-            expect(product.price).toBeGreaterThanOrEqual(1500);
+        for (const product of products) {
+            expect(product.price).toBeGreaterThanOrEqual(1700);
         }
+        expect(quantity).toBe(6);
+        expect(totalPages).toBe(1);
+        expect(currentPage).toBe(1);
     });
 
     test("should get all products with [between]", async () => {
         const query = {
-            price: "[between]1500,3000",
+            price: "[between]1700,2500",
         };
-        const products = await ProductService.findAllProducts(query);
+        const { products, quantity, totalPages, currentPage } =
+            await ProductService.findAllProducts(query);
 
-        for (const product of products.products) {
-            expect(product.price).toBeGreaterThanOrEqual(1500);
-            expect(product.price).toBeLessThanOrEqual(3000);
+        for (const product of products) {
+            expect(product.price).toBeGreaterThanOrEqual(1700);
+            expect(product.price).toBeLessThanOrEqual(2500);
         }
+        expect(quantity).toBe(6);
+        expect(totalPages).toBe(1);
+        expect(currentPage).toBe(1);
     });
 
     test("should get all products with multiple filters", async () => {
@@ -124,12 +136,16 @@ describe("ProductService.findAllProducts", () => {
             price: "[gte]1500",
             name: "Mango",
         };
-        const products = await ProductService.findAllProducts(query);
+        const { products, quantity, totalPages, currentPage } =
+            await ProductService.findAllProducts(query);
 
-        for (const product of products.products) {
+        for (const product of products) {
             expect(product.price).toBeGreaterThanOrEqual(1500);
             expect(product.name).toBe("Mango");
         }
+        expect(quantity).toBe(1);
+        expect(totalPages).toBe(1);
+        expect(currentPage).toBe(1);
     });
 
     test("should get all products with multiple filters 2", async () => {
@@ -137,25 +153,84 @@ describe("ProductService.findAllProducts", () => {
             price: ["[gte]1500", "[lte]3000"],
             name: "Mango",
         };
-        const products = await ProductService.findAllProducts(query);
+        const { products, quantity, totalPages, currentPage } =
+            await ProductService.findAllProducts(query);
 
-        for (const product of products.products) {
+        for (const product of products) {
             expect(product.price).toBeGreaterThanOrEqual(1500);
+            expect(product.price).toBeLessThanOrEqual(3000);
             expect(product.name).toBe("Mango");
         }
+        expect(quantity).toBe(1);
+        expect(totalPages).toBe(1);
+        expect(currentPage).toBe(1);
     });
 
     test("should get all products in order", async () => {
         const query = {
             sort: "price,ASC",
         };
-        const products = await ProductService.findAllProducts(query);
+        const { products, quantity, totalPages, currentPage } =
+            await ProductService.findAllProducts(query);
 
         let previousPrice = 0;
-        for (const product of products.products) {
+        for (const product of products) {
             expect(product.price).toBeGreaterThanOrEqual(previousPrice);
             previousPrice = product.price;
         }
+        expect(quantity).toBe(10);
+        expect(totalPages).toBe(1);
+        expect(currentPage).toBe(1);
+    });
+
+    test("should get paginated products", async () => {
+        const query = {
+            page: 2,
+            size: 2,
+        };
+        const { products, quantity, totalPages, currentPage } =
+            await ProductService.findAllProducts(query);
+
+        expect(products[0].name).toBe("Banana");
+        expect(products.length).toBe(2);
+        expect(quantity).toBe(10);
+        expect(totalPages).toBe(5);
+        expect(currentPage).toBe(2);
+    });
+
+    test("should get paginated products with sorting", async () => {
+        const query = {
+            page: 3,
+            size: 2,
+            sort: "price,DESC",
+        };
+        const { products, quantity, totalPages, currentPage } =
+            await ProductService.findAllProducts(query);
+
+        expect(products[0].name).toBe("Mango");
+        expect(products[1].name).toBe("Kiwi");
+        expect(products.length).toBe(2);
+        expect(quantity).toBe(10);
+        expect(totalPages).toBe(5);
+        expect(currentPage).toBe(3);
+    });
+
+    test("should get paginated products with filtering", async () => {
+        const query = {
+            page: 2,
+            size: 3,
+            price: "[gte]1600",
+        };
+        const { products, quantity, totalPages, currentPage } =
+            await ProductService.findAllProducts(query);
+
+        for (const product of products) {
+            expect(product.price).toBeGreaterThanOrEqual(1600);
+        }
+        expect(products.length).toBe(3);
+        expect(quantity).toBe(6);
+        expect(totalPages).toBe(2);
+        expect(currentPage).toBe(2);
     });
 });
 

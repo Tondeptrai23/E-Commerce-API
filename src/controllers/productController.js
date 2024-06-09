@@ -36,16 +36,17 @@ class ProductController {
 
     static getAllProducts = async (req, res) => {
         try {
-            const { products, quantity } = await ProductService.findAllProducts(
-                req.query
-            );
+            const { products, quantity, totalPages, currentPage } =
+                await ProductService.findAllProducts(req.query);
 
             res.status(StatusCodes.OK).json({
-                quantity: quantity,
                 success: true,
                 products: products.map((product) => {
                     return ProductAPIResponseSerializer.serialize(product);
                 }),
+                totalProducts: quantity,
+                totalPages: totalPages,
+                currentPage: currentPage,
             });
         } catch (err) {
             console.log(err);

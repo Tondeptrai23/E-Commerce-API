@@ -197,4 +197,40 @@ describe("validateProductFilter", () => {
         expect(errors.isEmpty()).toBe(false);
         expect(errors.array()[0].msg).toEqual("Sort has invalid sorting field");
     });
+
+    test("should return error if page, size is not a number", async () => {
+        const req = {
+            query: {
+                page: "invalid",
+                size: "invalid2",
+            },
+        };
+        for (const validationChain of validateProductFilter) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()[0].msg).toEqual(
+            "Page and size should be integers"
+        );
+    });
+
+    test("should return error if page, size is smaller than 1", async () => {
+        const req = {
+            query: {
+                page: 0,
+                size: -1,
+            },
+        };
+        for (const validationChain of validateProductFilter) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()[0].msg).toEqual(
+            "Page and size should be greater than 0"
+        );
+    });
 });
