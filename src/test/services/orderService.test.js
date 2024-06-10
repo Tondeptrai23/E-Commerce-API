@@ -1,15 +1,10 @@
 import seedData, { orderData, orderItemData, cartData } from "../setup.js";
 import { OrderService } from "../../services/orderService.js";
-import { db } from "../../models/index.js";
 import { Order } from "../../models/orderModel.js";
 import { User } from "../../models/userModel.js";
 
 beforeEach(async () => {
     await seedData();
-});
-
-afterAll(async () => {
-    await db.close();
 });
 
 describe("OrderService.getOrders", () => {

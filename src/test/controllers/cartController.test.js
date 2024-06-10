@@ -1,14 +1,9 @@
 import { CartController } from "../../controllers/cartController.js";
-import { db } from "../../models/index.js";
 import seedData from "../setup.js";
 import { User } from "../../models/userModel.js";
 
 beforeEach(async () => {
     await seedData();
-});
-
-afterAll(async () => {
-    await db.close();
 });
 
 describe("CartController.getCart", () => {

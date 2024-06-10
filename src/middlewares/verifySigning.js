@@ -24,7 +24,7 @@ const checkEmailExistsForSignIn = async (req, res, next) => {
         } else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in checking email",
+                error: "Error in verifying email",
             });
         }
     }
@@ -52,7 +52,7 @@ const checkEmailNotExistsForSignUp = async (req, res, next) => {
         } else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in checking email",
+                error: "Error in verifying email",
             });
         }
     }

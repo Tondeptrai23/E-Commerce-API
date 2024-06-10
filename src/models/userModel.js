@@ -31,6 +31,10 @@ User.init(
             values: ["ROLE_USER", "ROLE_ADMIN"],
             defaultValue: "ROLE_USER",
         },
+        refreshToken: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     },
     { sequelize, modelName: "user" }
 );

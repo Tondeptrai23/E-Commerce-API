@@ -10,6 +10,7 @@ import {
     validateRegisterUser,
     validateSignInUser,
 } from "../middlewares/validator.js";
+import { verifyRefreshToken } from "../middlewares/authJwt.js";
 
 const route = Router();
 
@@ -27,6 +28,14 @@ route.post(
     handleValidationErrors,
     checkEmailExistsForSignIn,
     AuthController.signIn
+);
+
+route.post("/refreshToken", verifyRefreshToken, AuthController.refresh);
+
+route.post(
+    "/refreshToken/reset",
+    verifyRefreshToken,
+    AuthController.resetToken
 );
 
 export { route as authRoute };

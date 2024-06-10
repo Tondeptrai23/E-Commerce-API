@@ -1,14 +1,8 @@
 import { UserController } from "../../controllers/userController.js";
 import seedData from "../setup.js";
-import { User } from "../../models/userModel.js";
-import { db } from "../../models/index.js";
 
 beforeEach(async () => {
     await seedData();
-});
-
-afterAll(async () => {
-    await db.close();
 });
 
 describe("UserController.getAllUsers", () => {

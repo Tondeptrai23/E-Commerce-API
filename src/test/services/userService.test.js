@@ -1,13 +1,8 @@
 import seedData from "../setup.js";
 import { UserService } from "../../services/userService.js";
-import { db } from "../../models/index.js";
 
 beforeEach(async () => {
     await seedData();
-});
-
-afterAll(async () => {
-    await db.close();
 });
 
 describe("UserService.createNewAccount", () => {
@@ -182,7 +177,7 @@ describe("UserService.findAllUsers", () => {
         expect(users).toBeDefined();
         expect(users).toHaveLength(3);
         expect(quantity).toBe(3);
-        console.log(users);
+
         expect(users[0].name).toBe("James Doe");
         expect(users[1].name).toBe("Jane Doe");
         expect(users[2].name).toBe("John Doe");

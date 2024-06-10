@@ -1,14 +1,8 @@
 import seedData from "../setup.js";
 import { ProductService } from "../../services/productService.js";
-import { db } from "../../models/index.js";
-import e from "cors";
 
 beforeEach(async () => {
     await seedData();
-});
-
-afterAll(async () => {
-    await db.close();
 });
 
 describe("ProductService.createOne", () => {

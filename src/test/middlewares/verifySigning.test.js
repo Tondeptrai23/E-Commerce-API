@@ -1,14 +1,9 @@
 import seedData from "../setup.js";
 import * as verifySigning from "../../middlewares/verifySigning.js";
-import { db } from "../../models/index.js";
 import { jest } from "@jest/globals";
 
 beforeAll(async () => {
     await seedData();
-});
-
-afterAll(async () => {
-    await db.close();
 });
 
 describe("verifySigning.checkEmailExistsForSignIn", () => {

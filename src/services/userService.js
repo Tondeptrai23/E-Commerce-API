@@ -2,6 +2,7 @@ import { User } from "../models/userModel.js";
 
 import { Op } from "sequelize";
 import bcrypt from "bcryptjs";
+import SequelizeQueryBuilder from "./sequelizeQueryBuilder.js";
 
 class UserService {
     static createNewAccount = async (userInfo) => {
@@ -47,15 +48,18 @@ class UserService {
     };
 
     static findAllUsers = async (query) => {
-        const conditions = convertQueryToSequelizeCondition(query);
+        const queryBuilder = new SequelizeQueryBuilder();
+        const filterConditions = queryBuilder.convertFilterCondition(query);
+        const orderConditions = queryBuilder.convertSortCondition(query);
+
         const { rows, count } = await User.findAndCountAll({
             where: {
-                [Op.and]: conditions,
+                [Op.and]: filterConditions,
             },
             attributes: {
                 exclude: ["updatedAt", "createdAt"],
             },
-            order: getSortCondtionsFromQuery(query),
+            order: orderConditions,
         });
 
         const users = rows;
