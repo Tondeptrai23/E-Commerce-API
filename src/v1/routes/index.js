@@ -11,15 +11,15 @@ import { authRoute } from "./authRoute.js";
 
 const router = Router();
 
-router.use("/api/auth", authRoute);
+router.use("/auth", authRoute);
 
-router.use("/api/cart", userCartRoute);
-router.use("/api/orders", userOrderRoute);
-router.use("/api/products", userProductRoute);
+router.use("/cart", userCartRoute);
+router.use("/orders", userOrderRoute);
+router.use("/products", userProductRoute);
 
-router.use("/api/admin", adminCartRoute);
-router.use("/api/admin", adminProductRoute);
-router.use("/api/admin", adminOrderRoute);
-router.use("/api/admin", adminUserRoute);
+router.use("/admin", adminCartRoute);
+router.use("/admin", adminProductRoute);
+router.use("/admin", adminOrderRoute);
+router.use("/admin", adminUserRoute);
 
 export { router as router };

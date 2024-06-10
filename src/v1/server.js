@@ -3,9 +3,9 @@ import "dotenv/config.js";
 import bodyParser from "body-parser";
 import cors from "cors";
 
-import { db } from "./src/models/index.js";
+import { db } from "./models/index.js";
 
-import { router } from "./src/routes/index.js";
+import { router } from "./routes/index.js";
 
 const app = express();
 app.use(bodyParser.json());
@@ -25,7 +25,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(router);
+app.use("/api/v1", router);
 
 db.sync()
     .then((res) => {
