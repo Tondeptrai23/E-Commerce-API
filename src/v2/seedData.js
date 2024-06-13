@@ -88,6 +88,7 @@ const seedUser = async () => {
             password: "password1",
             phone_number: "123456789",
             role: "user",
+            name: "User 1",
         },
         {
             userID: 2,
@@ -95,6 +96,7 @@ const seedUser = async () => {
             password: "password2",
             phone_number: "987654321",
             role: "user",
+            name: "User 2",
         },
         {
             userID: 3,
@@ -102,6 +104,7 @@ const seedUser = async () => {
             password: "password3",
             phone_number: "432156789",
             role: "user",
+            name: "User 3",
         },
         {
             userID: 4,
@@ -109,6 +112,7 @@ const seedUser = async () => {
             password: "adminpassword",
             phone_number: "987654321",
             role: "admin",
+            name: "Admin 4",
         },
     ]);
 };

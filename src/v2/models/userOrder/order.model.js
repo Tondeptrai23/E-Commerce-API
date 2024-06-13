@@ -1,4 +1,4 @@
-import { sequelize } from "../../config/databaseConfig.js";
+import { sequelize } from "../../config/database.config.js";
 import { DataTypes, Model } from "sequelize";
 
 class Order extends Model {}

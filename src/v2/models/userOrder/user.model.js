@@ -1,4 +1,4 @@
-import { sequelize } from "../../config/databaseConfig.js";
+import { sequelize } from "../../config/database.config.js";
 import { DataTypes, Model } from "sequelize";
 
 class User extends Model {}
@@ -18,6 +18,9 @@ User.init(
         password: {
             type: DataTypes.STRING,
             allowNull: false,
+        },
+        name: {
+            type: DataTypes.STRING,
         },
         phone_number: {
             type: DataTypes.STRING,
