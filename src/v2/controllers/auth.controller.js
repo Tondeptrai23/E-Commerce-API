@@ -1,18 +1,118 @@
+import { StatusCodes } from "http-status-codes";
+
+import userService from "../services/user.service.js";
+import tokenService from "../services/token.service.js";
+import { UserAPIResponseSerializer } from "../utils/apiResponseSerializer.js";
+import { BadRequestError } from "../utils/error.js";
+
 class AuthController {
     async signin(req, res) {
-        res.json({ message: "Signin" });
+        try {
+            const isCorrectPassword = await userService.verifyUser(
+                req.body.password,
+                req.user.password
+            );
+
+            if (!isCorrectPassword) {
+                throw new BadRequestError("Wrong email/password");
+            }
+
+            const accessToken = await tokenService.signToken({
+                id: req.user.userID,
+            });
+
+            const refreshToken = await tokenService.createRefreshToken(
+                req.user
+            );
+
+            await res.status(StatusCodes.OK).json({
+                success: true,
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+                user: UserAPIResponseSerializer.serialize(req.user),
+            });
+        } catch (err) {
+            console.log(err);
+
+            if (err instanceof BadRequestError) {
+                res.status(StatusCodes.BAD_REQUEST).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: "Error in signing in",
+                });
+            }
+        }
     }
 
     async signup(req, res) {
-        res.json({ message: "Signup" });
+        try {
+            const userInfo = {
+                email: req.body.email,
+                password: req.body.password,
+                role: req.body.role,
+            };
+
+            await userService.createNewAccount(userInfo);
+            res.status(StatusCodes.CREATED).json({
+                success: true,
+            });
+        } catch (err) {
+            console.log(err);
+
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                success: false,
+                error: "Error in signing up",
+            });
+        }
     }
 
     async refreshToken(req, res) {
-        res.json({ message: "Refressh token" });
+        try {
+            const accessToken = await tokenService.signToken({
+                id: req.user.userID,
+            });
+
+            res.status(StatusCodes.CREATED).json({
+                success: true,
+                accessToken: accessToken,
+            });
+        } catch (err) {
+            console.log(err);
+
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                success: false,
+                error: "Error in refreshing access token",
+            });
+        }
     }
 
     async resetRefreshToken(req, res) {
-        res.json({ message: "Reset refresh token" });
+        try {
+            const refreshToken = await tokenService.createRefreshToken(
+                req.user
+            );
+
+            const accessToken = await tokenService.signToken({
+                id: req.user.userID,
+            });
+
+            res.status(StatusCodes.OK).json({
+                success: true,
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+            });
+        } catch (err) {
+            console.log(err);
+
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                success: false,
+                error: "Error in reseting refresh token",
+            });
+        }
     }
 }
 

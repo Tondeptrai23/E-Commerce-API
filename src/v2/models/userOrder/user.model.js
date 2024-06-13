@@ -22,7 +22,7 @@ User.init(
         name: {
             type: DataTypes.STRING,
         },
-        phone_number: {
+        phoneNumber: {
             type: DataTypes.STRING,
         },
         avatar: {

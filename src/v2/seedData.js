@@ -15,6 +15,7 @@ import { Payment } from "./models/userOrder/payment.model.js";
 import { User } from "./models/userOrder/user.model.js";
 import { CartItem } from "./models/userOrder/cartItem.model.js";
 import { ProductCategory } from "./models/products/productCategory.model.js";
+import userService from "./services/user.service.js";
 
 // Seed data for a fresh database for a clothes store
 const seedData = async () => {
@@ -81,7 +82,7 @@ const seedCategory = async () => {
 };
 
 const seedUser = async () => {
-    await User.bulkCreate([
+    const users = [
         {
             userID: 1,
             email: "user1@gmail.com",
@@ -114,7 +115,11 @@ const seedUser = async () => {
             role: "admin",
             name: "Admin 4",
         },
-    ]);
+    ];
+
+    users.forEach(async (user) => {
+        await userService.createNewAccount(user);
+    });
 };
 
 const seedProduct = async () => {

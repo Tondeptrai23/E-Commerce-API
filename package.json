@@ -4,9 +4,7 @@
   "description": "E-Commerce API",
   "main": "index.js",
   "scripts": {
-    "test:v1": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles --testPathPattern=./src/v1/test",
-    "start:v1": "nodemon src/v1/server.js",
-    "test": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles --testPathPattern=./src/v2/test",
+    "test": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles",
     "start": "nodemon src/v2/server.js"
   },
   "keywords": [],
@@ -31,6 +29,10 @@
     "nodemon": "^3.1.0"
   },
   "jest": {
-    "transform": {}
+    "transform": {},
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/src/v1/"
+    ]
   }
 }
