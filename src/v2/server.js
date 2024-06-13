@@ -6,7 +6,7 @@ import cors from "cors";
 import { db } from "./models/index.js";
 import seedData from "./seedData.js";
 
-// import { router } from "./routes/index.js";
+import { router } from "./routes/index.js";
 
 const app = express();
 app.use(bodyParser.json());
@@ -26,7 +26,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// app.use("/api/v2", router);
+app.use("/api/v2", router);
 
 db.sync()
     .then((res) => {
