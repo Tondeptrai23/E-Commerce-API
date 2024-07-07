@@ -227,6 +227,16 @@ Variant.belongsTo(Product, {
     as: "product",
 });
 
+Product.belongsTo(Variant, {
+    foreignKey: {
+        name: "defaultVariantID",
+        allowNull: true,
+    },
+    onDelete: "SET NULL",
+    constraints: true,
+    as: "defaultVariant",
+});
+
 Variant.belongsToMany(AttributeValue, {
     foreignKey: {
         name: "variantID",

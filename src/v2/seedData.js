@@ -28,6 +28,7 @@ const seedData = async () => {
     await seedProduct();
     await seedProductCategory();
     await seedVariant();
+    await setDefaultVariant();
     await seedVariantAttributeValues();
     await seedProductImage();
     await seedCoupon();
@@ -558,6 +559,62 @@ const seedVariant = async () => {
             productID: 6,
         },
     ]);
+};
+
+const setDefaultVariant = async () => {
+    await Product.update(
+        { defaultVariantID: 101 },
+        {
+            where: {
+                productID: 1,
+            },
+        }
+    );
+
+    await Product.update(
+        { defaultVariantID: 201 },
+        {
+            where: {
+                productID: 2,
+            },
+        }
+    );
+
+    await Product.update(
+        { defaultVariantID: 301 },
+        {
+            where: {
+                productID: 3,
+            },
+        }
+    );
+
+    await Product.update(
+        { defaultVariantID: 401 },
+        {
+            where: {
+                productID: 4,
+            },
+        }
+    );
+
+    await Product.update(
+        { defaultVariantID: 501 },
+        {
+            where: {
+                productID: 5,
+            },
+        }
+    );
+
+    await Product.update(
+        { defaultVariantID: 601 },
+        {
+            where: {
+                productID: 6,
+            },
+        }
+    );
 };
 
 const seedVariantAttributeValues = async () => {
