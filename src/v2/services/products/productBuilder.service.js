@@ -1,6 +1,7 @@
 import { Product } from "../../models/products/product.model.js";
 import { Category } from "../../models/products/category.model.js";
 import { Op } from "sequelize";
+import { removeEmptyFields } from "../../utils/utils.js";
 
 class ProductBuilderService {
     /**
@@ -9,7 +10,7 @@ class ProductBuilderService {
      *
      * @param {String} productID the product ID to be retrieved
      * @returns {Promise<Object>} the product builder object
-     * @throws {ResourceNotFoundError} if tthe productID is provided but the product is not found
+     * @throws {ResourceNotFoundError} if the productID is provided but the product is not found
      */
     async productBuilder(productID = null) {
         let product = null;
@@ -34,6 +35,10 @@ class ProductBuilderService {
              * @returns {Promise<Object>} this product builder object
              */
             async setProductInfo(productInfo) {
+                if (!productInfo) {
+                    return this;
+                }
+
                 const productData = await Product.create(productInfo);
                 this.product = productData;
                 return this;
@@ -46,6 +51,10 @@ class ProductBuilderService {
              * @returns {Promise<Object>} this product builder object
              */
             async setVariants(variants) {
+                if (!variants) {
+                    return this;
+                }
+
                 for (let i = 0; i < variants.length; i++) {
                     variants[i] = await this.product.createVariant(variants[i]);
                 }
@@ -119,7 +128,7 @@ class ProductBuilderService {
              */
             async build() {
                 let result = {
-                    product: JSON.parse(JSON.stringify(this.product)),
+                    ...JSON.parse(JSON.stringify(this.product)),
                     variants: JSON.parse(JSON.stringify(this.variants)),
                     imageURLs: JSON.parse(JSON.stringify(this.imageURLs)),
                     categories: JSON.parse(JSON.stringify(this.categories)),
@@ -163,7 +172,7 @@ class ProductBuilderService {
      */
     async addImages(productID, imagesData) {
         let builder = await this.productBuilder(productID);
-        builder = await builder.addImages(imagesData);
+        builder = await builder.setImages(imagesData);
         const product = await builder.build();
 
         return product;

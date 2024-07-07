@@ -4,7 +4,10 @@ const isEmptyObject = (obj) => {
 
 const removeEmptyFields = (obj) => {
     return Object.fromEntries(
-        Object.entries(obj).filter(([field, value]) => value != null)
+        Object.entries(obj).filter(
+            ([field, value]) =>
+                value != null && value != [] && value != "" && value != {}
+        )
     );
 };
 
