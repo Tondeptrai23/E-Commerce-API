@@ -26,7 +26,7 @@ class ProductBuilderService {
             product: product,
             variants: null,
             categories: null,
-            imageURLs: null,
+            images: null,
 
             /**
              * Set the product info for the product builder
@@ -93,19 +93,17 @@ class ProductBuilderService {
             /**
              * Set the images for the product builder
              *
-             * @param {Array<Object>} imageURLs the image URLs to be set
+             * @param {Array<Object>} images the images to be set
              * @returns {Promise<Object>} this product builder object
              */
-            async setImages(imageURLs) {
-                if (!imageURLs) {
+            async setImages(images) {
+                if (!images) {
                     return this;
                 }
-                for (let i = 0; i < imageURLs.length; i++) {
-                    imageURLs[i] = await this.product.createProductImage(
-                        imageURLs[i]
-                    );
+                for (let i = 0; i < images.length; i++) {
+                    images[i] = await this.product.createImage(images[i]);
                 }
-                this.imageURLs = imageURLs;
+                this.images = images;
                 return this;
             },
 
@@ -133,7 +131,7 @@ class ProductBuilderService {
                 let result = {
                     ...JSON.parse(JSON.stringify(this.product)),
                     variants: this.variants,
-                    imageURLs: this.imageURLs,
+                    images: this.images,
                     categories: this.categories,
                 };
 
@@ -150,17 +148,17 @@ class ProductBuilderService {
      * @param {Object} productInfo the product info to be set
      * @param {Array<Object>} variants the variants info to be set
      * @param {Array<String>} categories the array of category names to be set
-     * @param {Array<Object>} imageURLs the image URLs to be set
+     * @param {Array<Object>} images the images info to be set
      * @returns {Promise<Product>} the product object
      * @throws {ResourceNotFoundError} if the product is not found
      *
      */
-    async addProduct(productInfo, variants, categories, imageURLs) {
+    async addProduct(productInfo, variants, categories, images) {
         let builder = await this.productBuilder();
         builder = await builder.setProductInfo(productInfo);
         builder = await builder.setVariants(variants);
         builder = await builder.setCategories(categories);
-        builder = await builder.setImages(imageURLs);
+        builder = await builder.setImages(images);
         builder = await builder.setDefaultVariant();
         return await builder.build();
     }

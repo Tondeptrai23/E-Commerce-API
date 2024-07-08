@@ -36,12 +36,12 @@ class ProductImageController {
     async addProductImages(req, res) {
         try {
             const { productID } = req.params;
-            const { imageURLs } = req.body;
+            const { images } = req.body;
             const { includeProduct } = req.query;
 
             const product = await productBuilderService.addImages(
                 productID,
-                imageURLs
+                images
             );
 
             let response;
@@ -53,7 +53,7 @@ class ProductImageController {
             } else {
                 response = {
                     success: true,
-                    imageURLs: product.imageURLs,
+                    images: product.images,
                 };
             }
             res.status(StatusCodes.CREATED).json(response);
@@ -77,14 +77,14 @@ class ProductImageController {
     async updateProductImage(req, res) {
         try {
             const { productID } = req.params;
-            const { imageURLID } = req.params;
-            const { imageURL, displayOrder } = req.body;
+            const { imageID } = req.params;
+            const { imagePath, displayOrder } = req.body;
 
             const product = await productImageService.updateImage(
                 productID,
-                imageURLID,
+                imageID,
                 {
-                    imageURL,
+                    imagePath,
                     displayOrder,
                 }
             );

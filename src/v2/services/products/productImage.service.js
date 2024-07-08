@@ -15,7 +15,7 @@ class ProductImageService {
         const product = await Product.findByPk(productID, {
             include: {
                 model: ProductImage,
-                as: "productImages",
+                as: "images",
                 where: {
                     imageID: imageID,
                 },
@@ -25,11 +25,11 @@ class ProductImageService {
             throw new ResourceNotFoundError("Product not found");
         }
 
-        if (product.productImages.length === 0) {
+        if (product.images.length === 0) {
             throw new ResourceNotFoundError("Image not found");
         }
 
-        return product.productImages[0];
+        return product.images[0];
     }
 
     /**
@@ -71,7 +71,7 @@ class ProductImageService {
             include: [
                 {
                     model: ProductImage,
-                    as: "productImages",
+                    as: "images",
                 },
             ],
         });
@@ -79,7 +79,7 @@ class ProductImageService {
             throw new ResourceNotFoundError("Product not found");
         }
 
-        const images = product.productImages;
+        const images = product.images;
         return images;
     }
 }

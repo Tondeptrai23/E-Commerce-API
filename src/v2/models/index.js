@@ -26,7 +26,7 @@ Product.hasMany(ProductImage, {
     },
     onDelete: "CASCADE",
     constraints: true,
-    as: "productImages",
+    as: "images",
 });
 ProductImage.belongsTo(Product, {
     foreignKey: {

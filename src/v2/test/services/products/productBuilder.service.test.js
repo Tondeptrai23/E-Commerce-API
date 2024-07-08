@@ -14,7 +14,7 @@ describe("productBuilderService.productBuilder", () => {
             product: null,
             variants: null,
             categories: null,
-            imageURLs: null,
+            images: null,
             setProductInfo: expect.any(Function),
             setVariants: expect.any(Function),
             setCategories: expect.any(Function),
@@ -30,7 +30,7 @@ describe("productBuilderService.productBuilder", () => {
             product: expect.any(Product),
             variants: null,
             categories: null,
-            imageURLs: null,
+            images: null,
             setProductInfo: expect.any(Function),
             setVariants: expect.any(Function),
             setCategories: expect.any(Function),
@@ -93,7 +93,7 @@ describe("ProductBuilderService.productBuilder.setCategories", () => {
 });
 
 describe("ProductBuilderService.productBuilder.setImages", () => {
-    test("should return the same product builder object if imageURLs is not provided", async () => {
+    test("should return the same product builder object if images is not provided", async () => {
         const productBuilder = await productBuilderService.productBuilder(1);
 
         let builder = await productBuilder.setImages();
@@ -191,7 +191,7 @@ describe("productBuilderService.addXXX", () => {
                 },
             ];
             const categories = ["Tops", "Male"];
-            const imageURLs = [
+            const images = [
                 {
                     imagePath: "image1",
                     displayOrder: 1,
@@ -206,15 +206,14 @@ describe("productBuilderService.addXXX", () => {
                 productInfo,
                 variants,
                 categories,
-                imageURLs
+                images
             );
-            console.log(result);
             expect(result.productID).toEqual(expect.any(String));
             expect(result.name).toBe("product1");
             expect(result.description).toBe("description1");
             expect(result.defaultVariantID).toEqual(expect.any(String));
             expect(Array.isArray(result.variants)).toBe(true);
-            expect(Array.isArray(result.imageURLs)).toBe(true);
+            expect(Array.isArray(result.images)).toBe(true);
             expect(Array.isArray(result.categories)).toBe(true);
 
             expect(result.variants).toEqual(
@@ -228,7 +227,7 @@ describe("productBuilderService.addXXX", () => {
                 ])
             );
 
-            expect(result.imageURLs).toEqual(
+            expect(result.images).toEqual(
                 expect.arrayContaining([
                     expect.objectContaining({
                         imagePath: "image1",
@@ -273,11 +272,11 @@ describe("productBuilderService.addXXX", () => {
                     description:
                         "A simple crew neck short sleeve t-shirt for everyday wear",
                     defaultVariantID: expect.any(String),
-                    imageURLs: expect.any(Array),
+                    images: expect.any(Array),
                 })
             );
 
-            expect(result.imageURLs).toEqual(
+            expect(result.images).toEqual(
                 expect.arrayContaining([
                     expect.objectContaining({
                         imagePath: "image3",

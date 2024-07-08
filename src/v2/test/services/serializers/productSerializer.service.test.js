@@ -8,7 +8,7 @@ const product = {
     createdAt: "2024-08-10T00:00:00.000Z",
     updatedAt: "2024-08-10T00:00:00.000Z",
     defaultVariantID: "1",
-    productImages: [
+    images: [
         {
             imageID: "1",
             imagePath: "http://example.com/image.jpg",

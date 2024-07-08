@@ -18,13 +18,7 @@ class ProductSerializer extends Serializer {
         }
 
         product = JSON.parse(JSON.stringify(product));
-        const {
-            createdAt,
-            updatedAt,
-            defaultVariantID,
-            productImages,
-            ...result
-        } = product;
+        const { createdAt, updatedAt, defaultVariantID, ...result } = product;
 
         // Options
         if (this.includeTimestamps) {
@@ -59,13 +53,13 @@ class ProductSerializer extends Serializer {
         }
 
         // Product images
-        if (productImages) {
+        if (product.images) {
             const imageSerializer = new ImageSerializer({
                 includeTimestamps: this.includeTimestamps,
                 includeForeignKeys: false,
             });
 
-            result.images = productImages.map((image) => {
+            result.images = product.images.map((image) => {
                 return imageSerializer.serialize(image);
             });
         }

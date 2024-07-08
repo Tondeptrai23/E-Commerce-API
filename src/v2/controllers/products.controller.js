@@ -84,15 +84,14 @@ class ProductController {
     async addProduct(req, res) {
         try {
             // Get request body
-            const { variants, categories, imageURLs, ...productInfo } =
-                req.body;
+            const { variants, categories, images, ...productInfo } = req.body;
 
             // Call services
             let product = await productBuilderService.addProduct(
                 productInfo,
                 variants,
                 categories,
-                imageURLs
+                images
             );
 
             // Serialize data
