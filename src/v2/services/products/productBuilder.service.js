@@ -3,7 +3,6 @@ import { Category } from "../../models/products/category.model.js";
 import { Op } from "sequelize";
 import { removeEmptyFields } from "../../utils/utils.js";
 import variantService from "./variant.service.js";
-import VariantSerializer from "../serializers/variantSerializer.service.js";
 
 class ProductBuilderService {
     /**

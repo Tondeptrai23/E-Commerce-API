@@ -1,20 +1,32 @@
 import { StatusCodes } from "http-status-codes";
 import productService from "../services/products/product.service.js";
 import { ResourceNotFoundError } from "../utils/error.js";
+import productBuilderService from "../services/products/productBuilder.service.js";
+import ProductSerializer from "../services/serializers/productSerializer.service.js";
 
 class ProductController {
     async getProducts(req, res) {
         try {
-            const { includeAssociated } = req.query;
-            const products = await productService.getProducts({
-                includeAssociated: includeAssociated,
+            // Get query parameters
+            const { includeAssociated, includeTimestamps } = req.query;
+
+            // Call services
+            let products = await productService.getProducts({
+                includeAssociated: includeAssociated === "true",
             });
 
+            // Serialize data
+            const serializer = new ProductSerializer({
+                includeTimestamps: includeTimestamps === "true",
+                includeForeignKeys: false,
+            });
+            products = products.map((product) => serializer.serialize(product));
+
+            // Response
             let response = {
                 success: true,
                 products: products,
             };
-
             res.status(StatusCodes.OK).json(response);
         } catch (err) {
             console.log(err);
@@ -27,21 +39,31 @@ class ProductController {
 
     async getProduct(req, res) {
         try {
-            const { includeAssociated } = req.query;
-            const { productID } = req.body;
-            const product = await productService.getProduct(productID, {
-                includeAssociated: includeAssociated,
+            // Get query parameters
+            const { includeAssociated, includeTimestamps } = req.query;
+            const { productID } = req.params;
+
+            // Call services
+            let product = await productService.getProduct(productID, {
+                includeAssociated: includeAssociated === "true",
             });
 
             if (product === null) {
                 throw new ResourceNotFoundError("Product not found");
             }
 
+            // Serialize data
+            const serializer = new ProductSerializer({
+                includeTimestamps: includeTimestamps === "true",
+                includeForeignKeys: false,
+            });
+            product = serializer.serialize(product);
+
+            // Response
             let response = {
                 success: true,
                 product: product,
             };
-
             res.status(StatusCodes.OK).json(response);
         } catch (err) {
             console.log(err);
@@ -61,16 +83,26 @@ class ProductController {
     }
     async addProduct(req, res) {
         try {
+            // Get request body
             const { variants, categories, imageURLs, ...productInfo } =
                 req.body;
 
-            const product = await productService.addProduct(
+            // Call services
+            let product = await productBuilderService.addProduct(
                 productInfo,
                 variants,
                 categories,
                 imageURLs
             );
 
+            // Serialize data
+            const serializer = new ProductSerializer({
+                includeTimestamps: false,
+                includeForeignKeys: true,
+            });
+            product = serializer.serialize(product);
+
+            // Response
             res.status(StatusCodes.CREATED).json({
                 success: true,
                 product: product,
@@ -87,10 +119,12 @@ class ProductController {
 
     async updateProduct(req, res) {
         try {
+            // Get request body
             const { productID } = req.params;
             const { name, description, defaultVariantID } = req.body;
 
-            const product = await productService.updateProduct(productID, {
+            // Call services
+            let product = await productService.updateProduct(productID, {
                 name,
                 description,
                 defaultVariantID,
@@ -100,6 +134,14 @@ class ProductController {
                 throw new ResourceNotFoundError("Product not found");
             }
 
+            // Serialize data
+            const serializer = new ProductSerializer({
+                includeTimestamps: false,
+                includeForeignKeys: false,
+            });
+            product = serializer.serialize(product);
+
+            // Response
             res.status(StatusCodes.OK).json({
                 success: true,
                 product: product,
@@ -123,10 +165,13 @@ class ProductController {
 
     async deleteProduct(req, res) {
         try {
+            // Get request body
             const { productID } = req.params;
 
+            // Call services
             await productService.deleteProduct(productID);
 
+            // Response
             res.status(StatusCodes.OK).json({
                 success: true,
             });

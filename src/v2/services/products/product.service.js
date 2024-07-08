@@ -4,6 +4,9 @@ import { ProductImage } from "../../models/products/productImage.model.js";
 import { ProductCategory } from "../../models/products/productCategory.model.js";
 import { Variant } from "../../models/products/variant.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
+import { VariantAttributeValue } from "../../models/products/variantAttributeValue.model.js";
+import { AttributeValue } from "../../models/products/attributeValue.model.js";
+import { Attribute } from "../../models/products/attribute.model.js";
 
 const includeOption = {
     nonAssociated: [
@@ -25,6 +28,15 @@ const includeOption = {
         {
             model: Variant,
             as: "variants",
+            include: {
+                model: AttributeValue,
+                as: "attributeValues",
+
+                include: {
+                    model: Attribute,
+                    as: "attribute",
+                },
+            },
         },
         {
             model: Variant,
@@ -84,7 +96,12 @@ class ProductService {
      * @throws {ResourceNotFoundError} if the product is not found
      */
     async updateProduct(productID, { name, description, defaultVariantID }) {
-        const product = await Product.findByPk(productID);
+        const product = await Product.findByPk(productID, {
+            include: {
+                model: Variant,
+                as: "defaultVariant",
+            },
+        });
         if (!product) {
             throw new ResourceNotFoundError("Product not found");
         }

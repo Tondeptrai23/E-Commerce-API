@@ -245,7 +245,7 @@ Variant.belongsToMany(AttributeValue, {
     through: VariantAttributeValue,
     constraints: true,
     onDelete: "CASCADE",
-    as: "attributesValue",
+    as: "attributeValues",
 });
 AttributeValue.belongsToMany(Variant, {
     foreignKey: {

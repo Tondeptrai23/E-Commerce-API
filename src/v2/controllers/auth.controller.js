@@ -2,8 +2,8 @@ import { StatusCodes } from "http-status-codes";
 
 import userService from "../services/user.service.js";
 import tokenService from "../services/token.service.js";
-import { UserAPIResponseSerializer } from "../utils/apiResponseSerializer.js";
 import { BadRequestError } from "../utils/error.js";
+import UserAPIResponseSerializer from "../services/serializers/userSerializer.service.js";
 
 class AuthController {
     async signin(req, res) {
@@ -29,7 +29,7 @@ class AuthController {
                 success: true,
                 accessToken: accessToken,
                 refreshToken: refreshToken,
-                user: UserAPIResponseSerializer.serialize(req.user),
+                user: new UserAPIResponseSerializer().serialize(req.user),
             });
         } catch (err) {
             console.log(err);

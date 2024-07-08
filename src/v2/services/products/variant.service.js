@@ -1,3 +1,5 @@
+import { Attribute } from "../../models/products/attribute.model.js";
+import { AttributeValue } from "../../models/products/attributeValue.model.js";
 import { Product } from "../../models/products/product.model.js";
 import { Variant } from "../../models/products/variant.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
@@ -84,6 +86,40 @@ class VariantService {
 
         const variants = product.variants;
         return variants;
+    }
+
+    /**
+     * Create a variant for a product with the given variant data
+     *
+     * @param {Product} product the product to be added a variant
+     * @param {Object} variantData the variant data to be added
+     * @returns {Promise<Variant>} the added variant in JSON format
+     */
+    async createVariant(product, variantData) {
+        const { attributes, ...restData } = variantData;
+
+        const variant = await product.createVariant(restData);
+
+        let attributeValues = [];
+        for (const [name, value] of Object.entries(attributes)) {
+            const attributeValue = await AttributeValue.findOne({
+                where: {
+                    value: value,
+                },
+                include: {
+                    model: Attribute,
+                    as: "attribute",
+                    where: {
+                        name: name,
+                    },
+                },
+            });
+            await variant.addAttributeValues(attributeValue);
+            attributeValues.push(attributeValue);
+        }
+
+        variant.dataValues.attributeValues = attributeValues;
+        return variant;
     }
 }
 
