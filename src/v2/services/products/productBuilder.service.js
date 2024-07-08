@@ -2,6 +2,8 @@ import { Product } from "../../models/products/product.model.js";
 import { Category } from "../../models/products/category.model.js";
 import { Op } from "sequelize";
 import { removeEmptyFields } from "../../utils/utils.js";
+import variantService from "./variant.service.js";
+import VariantSerializer from "../serializers/variantSerializer.service.js";
 
 class ProductBuilderService {
     /**
@@ -56,7 +58,10 @@ class ProductBuilderService {
                 }
 
                 for (let i = 0; i < variants.length; i++) {
-                    variants[i] = await this.product.createVariant(variants[i]);
+                    variants[i] = await variantService.createVariant(
+                        this.product,
+                        variants[i]
+                    );
                 }
 
                 this.variants = variants;
@@ -116,7 +121,6 @@ class ProductBuilderService {
                 await this.product.update({
                     defaultVariantID: this.variants[0].variantID,
                 });
-                await this.product.save();
                 return this;
             },
 
@@ -129,9 +133,9 @@ class ProductBuilderService {
             async build() {
                 let result = {
                     ...JSON.parse(JSON.stringify(this.product)),
-                    variants: JSON.parse(JSON.stringify(this.variants)),
-                    imageURLs: JSON.parse(JSON.stringify(this.imageURLs)),
-                    categories: JSON.parse(JSON.stringify(this.categories)),
+                    variants: this.variants,
+                    imageURLs: this.imageURLs,
+                    categories: this.categories,
                 };
 
                 result = removeEmptyFields(result);

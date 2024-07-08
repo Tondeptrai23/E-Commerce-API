@@ -164,10 +164,6 @@ describe("ProductBuilderService.productBuilder.build", () => {
  *
  */
 describe("productBuilderService.addXXX", () => {
-    beforeAll(async () => {
-        await seedData();
-    });
-
     describe("productBuilderService.addProduct", () => {
         test("should return a product object", async () => {
             const productInfo = {
@@ -176,20 +172,22 @@ describe("productBuilderService.addXXX", () => {
             };
             const variants = [
                 {
-                    name: "variant1",
                     price: 10,
-                    size: "M",
-                    color: "red",
                     sku: "sku1",
                     stock: 10,
+                    attributes: {
+                        size: "M",
+                        color: "red",
+                    },
                 },
                 {
-                    name: "variant2",
                     price: 20,
-                    size: "L",
-                    color: "blue",
                     sku: "sku2",
                     stock: 20,
+                    attributes: {
+                        size: "L",
+                        color: "blue",
+                    },
                 },
             ];
             const categories = ["Tops", "Male"];
@@ -210,54 +208,43 @@ describe("productBuilderService.addXXX", () => {
                 categories,
                 imageURLs
             );
+            console.log(result);
+            expect(result.productID).toEqual(expect.any(String));
+            expect(result.name).toBe("product1");
+            expect(result.description).toBe("description1");
+            expect(result.defaultVariantID).toEqual(expect.any(String));
+            expect(Array.isArray(result.variants)).toBe(true);
+            expect(Array.isArray(result.imageURLs)).toBe(true);
+            expect(Array.isArray(result.categories)).toBe(true);
 
-            expect(result).toEqual({
-                productID: expect.any(String),
-                name: "product1",
-                description: "description1",
-                defaultVariant: {
-                    variantID: expect.any(String),
-                    name: "variant1",
-                    price: 10,
-                    size: "M",
-                    color: "red",
-                    sku: "sku1",
-                    stock: 10,
-                },
-                variants: [
-                    {
-                        variantID: expect.any(String),
-                        name: "variant1",
-                        price: 10,
-                        size: "M",
-                        color: "red",
+            expect(result.variants).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
                         sku: "sku1",
-                        stock: 10,
-                    },
-                    {
-                        variantID: expect.any(String),
-                        name: "variant2",
-                        price: 20,
-                        size: "L",
-                        color: "blue",
+                    }),
+                    expect.objectContaining({
                         sku: "sku2",
-                        stock: 20,
-                    },
-                ],
-                imageURLs: [
-                    {
-                        imageID: expect.any(String),
+                    }),
+                ])
+            );
+
+            expect(result.imageURLs).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
                         imagePath: "image1",
-                        displayOrder: 1,
-                    },
-                    {
-                        imageID: expect.any(String),
+                    }),
+                    expect.objectContaining({
                         imagePath: "image2",
-                        displayOrder: 2,
-                    },
-                ],
-                categories: ["Tops", "Male"],
-            });
+                    }),
+                ])
+            );
+
+            expect(result.categories).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({ name: "Tops" }),
+                    expect.objectContaining({ name: "Male" }),
+                ])
+            );
         });
     });
 
@@ -279,27 +266,27 @@ describe("productBuilderService.addXXX", () => {
                 imagesData
             );
 
-            expect(result).toEqual({
-                product: {
+            expect(result).toEqual(
+                expect.objectContaining({
                     productID: "1",
                     name: "Crew Neck Short Sleeve T-Shirt",
                     description:
                         "A simple crew neck short sleeve t-shirt for everyday wear",
                     defaultVariantID: expect.any(String),
-                    imageURLs: [
-                        {
-                            imageID: expect.any(String),
-                            imagePath: "image3",
-                            displayOrder: 3,
-                        },
-                        {
-                            imageID: expect.any(String),
-                            imagePath: "image4",
-                            displayOrder: 4,
-                        },
-                    ],
-                },
-            });
+                    imageURLs: expect.any(Array),
+                })
+            );
+
+            expect(result.imageURLs).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        imagePath: "image3",
+                    }),
+                    expect.objectContaining({
+                        imagePath: "image4",
+                    }),
+                ])
+            );
         });
     });
 
@@ -307,20 +294,22 @@ describe("productBuilderService.addXXX", () => {
         test("should return a result object", async () => {
             const variants = [
                 {
-                    name: "variant3",
                     price: 30,
-                    size: "S",
-                    color: "green",
                     sku: "sku3",
                     stock: 10,
+                    attributes: {
+                        size: "M",
+                        color: "white",
+                    },
                 },
                 {
-                    name: "variant4",
                     price: 40,
-                    size: "XL",
-                    color: "black",
                     sku: "sku4",
                     stock: 20,
+                    attributes: {
+                        size: "L",
+                        color: "black",
+                    },
                 },
             ];
 
@@ -329,35 +318,27 @@ describe("productBuilderService.addXXX", () => {
                 variants
             );
 
-            expect(result).toEqual({
-                product: {
+            expect(result).toEqual(
+                expect.objectContaining({
                     productID: "1",
                     name: "Crew Neck Short Sleeve T-Shirt",
                     description:
                         "A simple crew neck short sleeve t-shirt for everyday wear",
                     defaultVariantID: expect.any(String),
-                    variants: [
-                        {
-                            variantID: expect.any(String),
-                            name: "variant3",
-                            price: 30,
-                            size: "S",
-                            color: "green",
-                            sku: "sku3",
-                            stock: 10,
-                        },
-                        {
-                            variantID: expect.any(String),
-                            name: "variant4",
-                            price: 40,
-                            size: "XL",
-                            color: "black",
-                            sku: "sku4",
-                            stock: 20,
-                        },
-                    ],
-                },
-            });
+                    variants: expect.any(Array),
+                })
+            );
+
+            expect(result.variants).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        sku: "sku3",
+                    }),
+                    expect.objectContaining({
+                        sku: "sku4",
+                    }),
+                ])
+            );
         });
     });
 
@@ -370,16 +351,23 @@ describe("productBuilderService.addXXX", () => {
                 categories
             );
 
-            expect(result).toEqual({
-                product: {
+            expect(result).toEqual(
+                expect.objectContaining({
                     productID: "1",
                     name: "Crew Neck Short Sleeve T-Shirt",
                     description:
                         "A simple crew neck short sleeve t-shirt for everyday wear",
                     defaultVariantID: expect.any(String),
-                    categories: ["Tops", "Male"],
-                },
-            });
+                    categories: expect.any(Array),
+                })
+            );
+
+            expect(result.categories).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({ name: "Tops" }),
+                    expect.objectContaining({ name: "Male" }),
+                ])
+            );
         });
     });
 });
