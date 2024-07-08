@@ -10,9 +10,12 @@ class ImageSerializer extends Serializer {
      * @returns {Object} the serialized product image object
      */
     serialize(image) {
+        if (!image) {
+            return {};
+        }
+
         image = JSON.parse(JSON.stringify(image));
         const { createdAt, updatedAt, productID, ...result } = image;
-
         if (this.includeTimestamps) {
             result.createdAt = createdAt;
             result.updatedAt = updatedAt;

@@ -1,6 +1,7 @@
 import Serializer from "./serializer.service.js";
 import { User } from "../../models/userOrder/user.model.js";
-class UserAPIResponseSerializer extends Serializer {
+
+class UserSerializer extends Serializer {
     /**
      * Serialize a user object to a JSON object
      *
@@ -8,6 +9,10 @@ class UserAPIResponseSerializer extends Serializer {
      * @returns {Object} the serialized user object
      */
     serialize(user) {
+        if (!user) {
+            return {};
+        }
+
         const userObj = JSON.parse(JSON.stringify(user));
         const {
             createdAt,
@@ -27,4 +32,4 @@ class UserAPIResponseSerializer extends Serializer {
     }
 }
 
-export default UserAPIResponseSerializer;
+export default UserSerializer;

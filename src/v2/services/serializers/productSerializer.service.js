@@ -2,6 +2,7 @@ import { Product } from "../../models/products/product.model.js";
 import Serializer from "./serializer.service.js";
 import VariantSerializer from "./variantSerializer.service.js";
 import ImageSerializer from "./imageSerializer.service.js";
+import couponsController from "../../controllers/coupons.controller.js";
 
 class ProductSerializer extends Serializer {
     /**
@@ -12,8 +13,18 @@ class ProductSerializer extends Serializer {
      * @returns {Object} the serialized product object
      */
     serialize(product) {
+        if (!product) {
+            return {};
+        }
+
         product = JSON.parse(JSON.stringify(product));
-        const { createdAt, updatedAt, defaultVariantID, ...result } = product;
+        const {
+            createdAt,
+            updatedAt,
+            defaultVariantID,
+            productImages,
+            ...result
+        } = product;
 
         // Options
         if (this.includeTimestamps) {
@@ -48,12 +59,13 @@ class ProductSerializer extends Serializer {
         }
 
         // Product images
-        if (product.productImages) {
-            result.productImages = product.productImages.map((image) => {
-                const imageSerializer = new ImageSerializer({
-                    includeTimestamps: this.includeTimestamps,
-                    includeForeignKeys: false,
-                });
+        if (productImages) {
+            const imageSerializer = new ImageSerializer({
+                includeTimestamps: this.includeTimestamps,
+                includeForeignKeys: false,
+            });
+
+            result.images = productImages.map((image) => {
                 return imageSerializer.serialize(image);
             });
         }

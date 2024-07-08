@@ -11,14 +11,12 @@ class CategorySerializer extends Serializer {
      * @returns {Object} the serialized category object
      */
     serialize(category) {
+        if (!category) {
+            return {};
+        }
         category = JSON.parse(JSON.stringify(category));
 
         const { createdAt, updatedAt, parentID, ...result } = category;
-
-        if (this.includeTimestamps) {
-            result.createdAt = createdAt;
-            result.updatedAt = updatedAt;
-        }
 
         if (this.includeForeignKeys) {
             result.parentID = parentID;

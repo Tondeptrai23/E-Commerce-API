@@ -10,6 +10,10 @@ class VariantSerializer extends Serializer {
      * @returns {Object} the serialized variant object
      */
     serialize(variant) {
+        if (!variant) {
+            return {};
+        }
+
         variant = JSON.parse(JSON.stringify(variant));
 
         const { createdAt, updatedAt, productID, attributeValues, ...result } =
