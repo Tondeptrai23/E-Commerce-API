@@ -9,11 +9,16 @@ class UserService {
             return null;
         }
 
-        const salt = await bcrypt.genSalt(10);
-        const hashPassword = await bcrypt.hash(userInfo.password, salt);
+        const newUser = User.build(userInfo);
 
-        userInfo.password = hashPassword;
-        return await User.create(userInfo);
+        bcrypt.genSalt(10).then((salt) => {
+            bcrypt.hash(newUser.password, salt).then((hash) => {
+                newUser.password = hash;
+                newUser.save();
+            });
+        });
+
+        return newUser;
     }
 
     async findUserByEmail(email) {
