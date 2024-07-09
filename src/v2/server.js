@@ -28,10 +28,10 @@ app.use((req, res, next) => {
 
 app.use("/api/v2", router);
 
-db.sync({ force: true })
+db.sync()
     .then(async (res) => {
         //
-        seedData();
+        await seedData();
     })
     .catch((err) => console.log(err));
 

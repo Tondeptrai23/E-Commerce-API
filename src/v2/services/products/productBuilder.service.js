@@ -3,6 +3,9 @@ import { Category } from "../../models/products/category.model.js";
 import { Op } from "sequelize";
 import { removeEmptyFields } from "../../utils/utils.js";
 import variantService from "./variant.service.js";
+import { ResourceNotFoundError } from "../../utils/error.js";
+import { Variant } from "../../models/products/variant.model.js";
+import { db } from "../../models/index.js";
 
 class ProductBuilderService {
     /**
@@ -57,7 +60,7 @@ class ProductBuilderService {
                 }
 
                 for (let i = 0; i < variants.length; i++) {
-                    variants[i] = await variantService.createVariant(
+                    variants[i] = await variantService.createVariantForProduct(
                         this.product,
                         variants[i]
                     );
@@ -115,9 +118,33 @@ class ProductBuilderService {
              * @returns {Promise<Object>} this product builder object
              */
             async setDefaultVariant() {
-                await this.product.update({
-                    defaultVariantID: this.variants[0].variantID,
-                });
+                const variant = await Variant.findByPk(
+                    this.variants[0].variantID,
+                    {
+                        include: [
+                            {
+                                model: Product,
+                                as: "product",
+                            },
+                        ],
+                    }
+                );
+
+                await db.query(
+                    "UPDATE `products` SET `defaultVariantID`=?,`updatedAt`=? WHERE `productID` = ?",
+                    {
+                        replacements: [
+                            variant.variantID,
+                            new Date(),
+                            this.product.productID,
+                        ],
+                    }
+                );
+                this.product.dataValues.defaultVariantID = variant.variantID;
+
+                // TODO: This code is not working as expected but the above code is working. Fix this code
+                //
+                // await this.product.setDefaultVariant(variant);
                 return this;
             },
 

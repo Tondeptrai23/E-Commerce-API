@@ -123,9 +123,7 @@ describe("authJwt.verifyRefreshToken", () => {
         // Mocking the TokenService.verifyRefreshToken function
         const decodeRefreshToken = jest
             .spyOn(tokenService, "decodeRefreshToken")
-            .mockReturnValueOnce({
-                id: "1",
-            });
+            .mockReturnValueOnce({ userID: "1" });
 
         await authJwt.verifyRefreshToken(req, res, next);
 

@@ -1,7 +1,11 @@
 import { StatusCodes } from "http-status-codes";
 import { jwt } from "../config/auth.config.js";
 import { User } from "../models/userOrder/user.model.js";
-import { UnauthorizedError, ForbiddenError } from "../utils/error.js";
+import {
+    UnauthorizedError,
+    ForbiddenError,
+    ResourceNotFoundError,
+} from "../utils/error.js";
 import tokenService from "../services/token.service.js";
 
 const verifyToken = async (req, res, next) => {
@@ -52,13 +56,7 @@ const verifyRefreshToken = async (req, res, next) => {
             throw new UnauthorizedError("Token not found");
         }
 
-        const decoded = await tokenService.decodeRefreshToken(token);
-
-        req.user = await User.findByPk(decoded.id);
-
-        if (req.user === null) {
-            throw new UnauthorizedError("User not found");
-        }
+        req.user = await tokenService.decodeRefreshToken(token);
 
         next();
     } catch (err) {
@@ -74,7 +72,10 @@ const verifyRefreshToken = async (req, res, next) => {
                 success: false,
                 error: "Token invalid",
             });
-        } else if (err instanceof UnauthorizedError) {
+        } else if (
+            err instanceof UnauthorizedError ||
+            err instanceof ResourceNotFoundError
+        ) {
             res.status(StatusCodes.UNAUTHORIZED).json({
                 success: false,
                 error: err.message,

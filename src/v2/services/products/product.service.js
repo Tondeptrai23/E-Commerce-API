@@ -4,46 +4,8 @@ import { ProductImage } from "../../models/products/productImage.model.js";
 import { ProductCategory } from "../../models/products/productCategory.model.js";
 import { Variant } from "../../models/products/variant.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
-import { VariantAttributeValue } from "../../models/products/variantAttributeValue.model.js";
 import { AttributeValue } from "../../models/products/attributeValue.model.js";
 import { Attribute } from "../../models/products/attribute.model.js";
-
-const includeOption = {
-    nonAssociated: [
-        {
-            model: Variant,
-            as: "defaultVariant",
-        },
-    ],
-    associated: [
-        {
-            model: Category,
-            through: ProductCategory,
-            as: "categories",
-        },
-        {
-            model: ProductImage,
-            as: "productImages",
-        },
-        {
-            model: Variant,
-            as: "variants",
-            include: {
-                model: AttributeValue,
-                as: "attributeValues",
-
-                include: {
-                    model: Attribute,
-                    as: "attribute",
-                },
-            },
-        },
-        {
-            model: Variant,
-            as: "defaultVariant",
-        },
-    ],
-};
 
 class ProductService {
     /**
@@ -56,9 +18,7 @@ class ProductService {
      */
     async getProducts({ includeAssociated = false }) {
         const products = await Product.findAll({
-            include: includeAssociated
-                ? includeOption.associated
-                : includeOption.nonAssociated,
+            include: getIncludeOption(includeAssociated),
         });
 
         return products;
@@ -77,9 +37,7 @@ class ProductService {
             where: {
                 productID: productID,
             },
-            include: includeAssociated
-                ? includeOption.associated
-                : includeOption.nonAssociated,
+            include: getIncludeOption(includeAssociated),
         });
 
         return product;
@@ -106,11 +64,16 @@ class ProductService {
             throw new ResourceNotFoundError("Product not found");
         }
 
+        if (defaultVariantID) {
+            const defaultVariant = await Variant.findByPk(defaultVariantID);
+            if (!defaultVariant) {
+                throw new ResourceNotFoundError("Default variant not found");
+            }
+
+            product.defaultVariantID = defaultVariantID;
+        }
         product.name = name ? name : product.name;
         product.description = description ? description : product.description;
-        product.defaultVariantID = defaultVariantID
-            ? defaultVariantID
-            : product.defaultVariantID;
 
         await product.save();
         return product;
@@ -132,3 +95,54 @@ class ProductService {
 }
 
 export default new ProductService();
+
+/**
+ * Get the include option for Sequelize query
+ * based on the includeAssociated flag
+ *
+ * @param {Boolean} includeAssociated whether to include associated data or not
+ * @returns {Array} the include option for Sequelize query
+ */
+function getIncludeOption(includeAssociated) {
+    if (includeAssociated) {
+        return [
+            {
+                model: Category,
+                through: ProductCategory,
+                as: "categories",
+            },
+            {
+                model: ProductImage,
+                as: "images",
+            },
+            {
+                model: Variant,
+                as: "variants",
+                include: {
+                    model: AttributeValue,
+                    as: "attributeValues",
+
+                    include: {
+                        model: Attribute,
+                        as: "attribute",
+                    },
+                },
+            },
+        ];
+    } else {
+        return [
+            {
+                model: Variant,
+                as: "defaultVariant",
+                include: {
+                    model: AttributeValue,
+                    as: "attributeValues",
+                    include: {
+                        model: Attribute,
+                        as: "attribute",
+                    },
+                },
+            },
+        ];
+    }
+}

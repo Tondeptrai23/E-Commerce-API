@@ -1,6 +1,7 @@
 import { ResourceNotFoundError } from "../../utils/error.js";
 import { Product } from "../../models/products/product.model.js";
 import { Category } from "../../models/products/category.model.js";
+import { ProductCategory } from "../../models/products/productCategory.model.js";
 import productBuilderService from "./productBuilder.service.js";
 
 class ProductCategoryService {
@@ -24,25 +25,18 @@ class ProductCategoryService {
      * @throws {ResourceNotFoundError} if the product or category is not found
      */
     async deleteCategory(productID, categoryID) {
-        const product = await Product.findByPk(productID, {
-            include: [
-                {
-                    model: Category,
-                    through: ProductCategory,
-                    as: "categories",
-                    where: {
-                        categoryID: categoryID,
-                    },
-                },
-            ],
+        const productCategory = await ProductCategory.findOne({
+            where: {
+                productID: productID,
+                categoryID: categoryID,
+            },
         });
 
-        if (!product) {
+        if (!productCategory) {
             throw new ResourceNotFoundError("Product not found");
         }
 
-        const category = product.categories[0];
-        await product.removeCategory(category);
+        await productCategory.destroy();
     }
 
     /**
@@ -53,7 +47,10 @@ class ProductCategoryService {
      * @throws {ResourceNotFoundError} if the product is not found
      */
     async getProductCategories(productID) {
-        const product = await Product.findByPk(productID, {
+        const product = await Product.findOne({
+            where: {
+                productID: productID,
+            },
             include: [
                 {
                     model: Category,

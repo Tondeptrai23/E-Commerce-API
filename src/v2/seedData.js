@@ -12,7 +12,6 @@ import { VariantAttributeValue } from "./models/products/variantAttributeValue.m
 import { Order } from "./models/userOrder/order.model.js";
 import { OrderItem } from "./models/userOrder/orderItem.model.js";
 import { Payment } from "./models/userOrder/payment.model.js";
-import { User } from "./models/userOrder/user.model.js";
 import { CartItem } from "./models/userOrder/cartItem.model.js";
 import { ProductCategory } from "./models/products/productCategory.model.js";
 import userService from "./services/user.service.js";
@@ -755,30 +754,105 @@ const seedVariantAttributeValues = async () => {
 
 const seedProductImage = async () => {
     await ProductImage.bulkCreate([
-        { productID: 1, imagePath: "tshirt1.jpg", displayOrder: 1 },
-        { productID: 1, imagePath: "tshirt1_black.jpg", displayOrder: 2 },
-        { productID: 1, imagePath: "tshirt1_white.jpg", displayOrder: 3 },
-        { productID: 1, imagePath: "tshirt1_blue.jpg", displayOrder: 4 },
+        { imageID: 1, productID: 1, imagePath: "tshirt1.jpg", displayOrder: 1 },
+        {
+            imageID: 2,
+            productID: 1,
+            imagePath: "tshirt1_black.jpg",
+            displayOrder: 2,
+        },
+        {
+            imageID: 3,
+            productID: 1,
+            imagePath: "tshirt1_white.jpg",
+            displayOrder: 3,
+        },
+        {
+            imageID: 4,
+            productID: 1,
+            imagePath: "tshirt1_blue.jpg",
+            displayOrder: 4,
+        },
 
-        { productID: 2, imagePath: "short2.jpg", displayOrder: 1 },
-        { productID: 2, imagePath: "short2_black.jpg", displayOrder: 2 },
+        { imageID: 5, productID: 2, imagePath: "short2.jpg", displayOrder: 1 },
+        {
+            imageID: 6,
+            productID: 2,
+            imagePath: "short2_black.jpg",
+            displayOrder: 2,
+        },
 
-        { productID: 3, imagePath: "skirt3.jpg", displayOrder: 1 },
-        { productID: 3, imagePath: "skirt3_black.jpg", displayOrder: 2 },
+        { imageID: 7, productID: 3, imagePath: "skirt3.jpg", displayOrder: 1 },
+        {
+            imageID: 8,
+            productID: 3,
+            imagePath: "skirt3_black.jpg",
+            displayOrder: 2,
+        },
 
-        { productID: 4, imagePath: "short4.jpg", displayOrder: 1 },
-        { productID: 4, imagePath: "short4_black.jpg", displayOrder: 2 },
+        { imageID: 9, productID: 4, imagePath: "short4.jpg", displayOrder: 1 },
+        {
+            imageID: 10,
+            productID: 4,
+            imagePath: "short4_black.jpg",
+            displayOrder: 2,
+        },
 
-        { productID: 5, imagePath: "blouse5.jpg", displayOrder: 1 },
-        { productID: 5, imagePath: "blouse5_black.jpg", displayOrder: 2 },
-        { productID: 5, imagePath: "blouse5_white.jpg", displayOrder: 3 },
-        { productID: 5, imagePath: "blouse5_red.jpg", displayOrder: 4 },
+        {
+            imageID: 11,
+            productID: 5,
+            imagePath: "blouse5.jpg",
+            displayOrder: 1,
+        },
+        {
+            imageID: 12,
+            productID: 5,
+            imagePath: "blouse5_black.jpg",
+            displayOrder: 2,
+        },
+        {
+            imageID: 13,
+            productID: 5,
+            imagePath: "blouse5_white.jpg",
+            displayOrder: 3,
+        },
+        {
+            imageID: 14,
+            productID: 5,
+            imagePath: "blouse5_red.jpg",
+            displayOrder: 4,
+        },
 
-        { productID: 6, imagePath: "tshirt6.jpg", displayOrder: 1 },
-        { productID: 6, imagePath: "tshirt6_black.jpg", displayOrder: 2 },
-        { productID: 6, imagePath: "tshirt6_white.jpg", displayOrder: 3 },
-        { productID: 6, imagePath: "tshirt6_blue.jpg", displayOrder: 4 },
-        { productID: 6, imagePath: "tshirt6_red.jpg", displayOrder: 4 },
+        {
+            imageID: 15,
+            productID: 6,
+            imagePath: "tshirt6.jpg",
+            displayOrder: 1,
+        },
+        {
+            imageID: 16,
+            productID: 6,
+            imagePath: "tshirt6_black.jpg",
+            displayOrder: 2,
+        },
+        {
+            imageID: 17,
+            productID: 6,
+            imagePath: "tshirt6_white.jpg",
+            displayOrder: 3,
+        },
+        {
+            imageID: 18,
+            productID: 6,
+            imagePath: "tshirt6_blue.jpg",
+            displayOrder: 4,
+        },
+        {
+            imageID: 19,
+            productID: 6,
+            imagePath: "tshirt6_red.jpg",
+            displayOrder: 4,
+        },
     ]);
 };
 

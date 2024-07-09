@@ -47,9 +47,10 @@ class VariantService {
      * @throws {ResourceNotFoundError} if the product or variant is not found
      */
     async updateVariant(productID, variantID, variantData) {
-        const variant = this.getVariant(productID, variantID);
+        let variant = await this.getVariant(productID, variantID);
         await variant.update(variantData);
-        return await variant.reload();
+        variant = await variant.reload();
+        return variant;
     }
 
     /**
@@ -60,7 +61,7 @@ class VariantService {
      * @throws {ResourceNotFoundError} if the product or variant is not found
      */
     async deleteVariant(productID, variantID) {
-        const variant = this.getVariant(productID, variantID);
+        const variant = await this.getVariant(productID, variantID);
         await variant.destroy();
     }
 
@@ -95,7 +96,7 @@ class VariantService {
      * @param {Object} variantData the variant data to be added
      * @returns {Promise<Variant>} the added variant in JSON format
      */
-    async createVariant(product, variantData) {
+    async createVariantForProduct(product, variantData) {
         const { attributes, ...restData } = variantData;
 
         const variant = await product.createVariant(restData);
