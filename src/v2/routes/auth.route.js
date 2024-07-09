@@ -5,7 +5,7 @@ import {
     checkEmailExistsForSignIn,
     checkEmailNotExistsForSignUp,
 } from "../middlewares/verifySigning.js";
-import { verifyToken, verifyRefreshToken } from "../middlewares/authJwt.js";
+import { verifyRefreshToken } from "../middlewares/authJwt.js";
 import {
     handleValidationErrors,
     validateRegisterUser,
@@ -30,7 +30,11 @@ authRoute.post(
     authController.signin
 );
 
-authRoute.post("/refreshToken", verifyToken, authController.refreshToken);
+authRoute.post(
+    "/refreshToken",
+    verifyRefreshToken,
+    authController.refreshToken
+);
 
 authRoute.post(
     "/refreshToken/reset",
