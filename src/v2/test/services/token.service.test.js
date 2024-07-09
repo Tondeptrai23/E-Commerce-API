@@ -1,7 +1,7 @@
 import tokenService from "../../services/token.service.js";
 import { jwt } from "../../config/auth.config.js";
-import bcrypt from "bcryptjs";
 import { User } from "../../models/userOrder/user.model.js";
+import { createHash } from "crypto";
 
 describe("tokenService.signToken + tokenService.decodeToken", () => {
     test("should return a valid token", async () => {
@@ -31,8 +31,9 @@ describe("tokenService.createRefreshToken", () => {
         const token = await tokenService.createRefreshToken(user);
 
         const refreshToken = user.refreshToken;
+        const hashedToken = createHash("sha256").update(token).digest("hex");
 
-        expect(await bcrypt.compare(token, refreshToken)).toBeTruthy();
+        expect(refreshToken).toEqual(hashedToken);
     });
 
     test("should update the refresh token if it already exists", async () => {

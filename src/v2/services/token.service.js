@@ -1,6 +1,6 @@
 import { jwt } from "../config/auth.config.js";
 import { User } from "../models/userOrder/user.model.js";
-import bcrypt from "bcryptjs";
+import { createHash } from "crypto";
 
 class TokenService {
     async #signRefreshToken(payload) {
@@ -15,8 +15,7 @@ class TokenService {
 
     async createRefreshToken(user) {
         const newToken = await this.#signRefreshToken({ id: user.userID });
-        const salt = await bcrypt.genSalt(8);
-        const hashedToken = await bcrypt.hash(newToken, salt);
+        const hashedToken = createHash("sha256").update(newToken).digest("hex");
 
         user.refreshToken = hashedToken;
         await user.save();
@@ -49,7 +48,9 @@ class TokenService {
 
         const userID = decoded.id;
         const refreshToken = (await User.findByPk(userID)).refreshToken;
-        const isCorrectToken = await bcrypt.compare(token, refreshToken);
+
+        const hashedToken = createHash("sha256").update(token).digest("hex");
+        const isCorrectToken = hashedToken === refreshToken;
 
         if (!isCorrectToken) {
             throw new jwt.JsonWebTokenError("Token invalid");
