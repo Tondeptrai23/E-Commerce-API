@@ -3,7 +3,7 @@ import { Router } from "express";
 import authRoute from "./auth.route.js";
 import adminCartRoute from "./admin/cart.route.js";
 import adminOrderRoute from "./admin/orders.route.js";
-import adminProductRoute from "./admin/products.route.js";
+import adminProductRoute from "./admin/products/products.route.js";
 import adminUserRoute from "./admin/users.route.js";
 import adminCategoryRoute from "./admin/categories.route.js";
 import adminCouponRoute from "./admin/coupons.route.js";

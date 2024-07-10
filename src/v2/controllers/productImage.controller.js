@@ -2,16 +2,33 @@ import { StatusCodes } from "http-status-codes";
 import { ResourceNotFoundError } from "../utils/error.js";
 import productImageService from "../services/products/productImage.service.js";
 import productBuilderService from "../services/products/productBuilder.service.js";
+import ImageSerializer from "../services/serializers/imageSerializer.service.js";
 
 class ProductImageController {
     async getProductImages(req, res) {
         try {
+            // Get request body
             const { productID } = req.params;
 
-            const images = await productImageService.getProductImages(
-                productID
-            );
+            // Call services
+            let images = await productImageService.getProductImages(productID);
 
+            // Serialize data
+            let serializer;
+            if (req.admin !== undefined) {
+                serializer = new ImageSerializer({
+                    includeTimestamps: true,
+                    includeForeignKeys: false,
+                });
+            } else {
+                serializer = new ImageSerializer({
+                    includeTimestamps: false,
+                    includeForeignKeys: false,
+                });
+            }
+            images = images.map((image) => serializer.serialize(image));
+
+            // Response
             res.status(StatusCodes.OK).json({
                 success: true,
                 images: images,
@@ -35,27 +52,30 @@ class ProductImageController {
 
     async addProductImages(req, res) {
         try {
+            // Get request body
             const { productID } = req.params;
             const { images } = req.body;
-            const { includeProduct } = req.query;
 
+            // Call services
             const product = await productBuilderService.addImages(
                 productID,
                 images
             );
 
-            let response;
-            if (includeProduct === "true") {
-                response = {
-                    success: true,
-                    product: product,
-                };
-            } else {
-                response = {
-                    success: true,
-                    images: product.images,
-                };
-            }
+            // Serialize data
+            const serializer = new ImageSerializer({
+                includeTimestamps: false,
+                includeForeignKeys: false,
+            });
+            const serializedImages = product.images.map((image) =>
+                serializer.serialize(image)
+            );
+
+            // Response
+            const response = {
+                success: true,
+                images: serializedImages,
+            };
             res.status(StatusCodes.CREATED).json(response);
         } catch (err) {
             console.log(err);
@@ -76,11 +96,13 @@ class ProductImageController {
 
     async updateProductImage(req, res) {
         try {
+            // Get request body
             const { productID } = req.params;
             const { imageID } = req.params;
             const { imagePath, displayOrder } = req.body;
 
-            const product = await productImageService.updateImage(
+            // Call services
+            let image = await productImageService.updateImage(
                 productID,
                 imageID,
                 {
@@ -89,9 +111,17 @@ class ProductImageController {
                 }
             );
 
+            // Serialize data
+            const serializer = new ImageSerializer({
+                includeTimestamps: false,
+                includeForeignKeys: false,
+            });
+            image = serializer.serialize(image);
+
+            // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                product: product,
+                image: image,
             });
         } catch (err) {
             console.log(err);
@@ -112,11 +142,14 @@ class ProductImageController {
 
     async deleteProductImage(req, res) {
         try {
+            // Get request body
             const { productID } = req.params;
-            const { imageURLID } = req.params;
+            const { imageID } = req.params;
 
-            await productImageService.deleteImage(productID, imageURLID);
+            // Call services
+            await productImageService.deleteImage(productID, imageID);
 
+            // Response
             res.status(StatusCodes.OK).json({
                 success: true,
             });

@@ -2,14 +2,35 @@ import { StatusCodes } from "http-status-codes";
 import { ResourceNotFoundError } from "../utils/error.js";
 import variantService from "../services/products/variant.service.js";
 import productBuilderService from "../services/products/productBuilder.service.js";
+import VariantSerializer from "../services/serializers/variantSerializer.service.js";
 
 class VariantController {
     async getProductVariants(req, res) {
         try {
+            // Get request body
             const { productID } = req.params;
 
-            const variants = await variantService.getProductVariants(productID);
+            // Call services
+            let variants = await variantService.getProductVariants(productID);
 
+            // Serialize data
+            let variantSerializer;
+            if (req.admin !== undefined) {
+                variantSerializer = new VariantSerializer({
+                    includeTimestamps: true,
+                    includeForeignKeys: false,
+                });
+            } else {
+                variantSerializer = new VariantSerializer({
+                    includeTimestamps: false,
+                    includeForeignKeys: false,
+                });
+            }
+            variants = variants.map((variant) =>
+                variantSerializer.serialize(variant)
+            );
+
+            // Response
             res.status(StatusCodes.OK).json({
                 success: true,
                 variants: variants,
@@ -33,12 +54,28 @@ class VariantController {
 
     async getVariant(req, res) {
         try {
+            // Get request body
             const { productID, variantID } = req.params;
-            const variant = await variantService.getVariant(
-                productID,
-                variantID
-            );
 
+            // Call services
+            let variant = await variantService.getVariant(productID, variantID);
+
+            // Serialize data
+            let variantSerializer;
+            if (req.admin !== undefined) {
+                variantSerializer = new VariantSerializer({
+                    includeTimestamps: true,
+                    includeForeignKeys: false,
+                });
+            } else {
+                variantSerializer = new VariantSerializer({
+                    includeTimestamps: false,
+                    includeForeignKeys: false,
+                });
+            }
+            variant = variantSerializer.serialize(variant);
+
+            // Response
             res.status(StatusCodes.OK).json({
                 success: true,
                 variant: variant,
@@ -62,27 +99,29 @@ class VariantController {
 
     async addProductVariant(req, res) {
         try {
+            // Get request body
             const { productID } = req.params;
             const { variants } = req.body;
-            const { includeProduct } = req.query;
 
+            // Call services
             const product = await productBuilderService.addVariants(
                 productID,
                 variants
             );
 
-            let response;
-            if (includeProduct === "true") {
-                response = {
-                    success: true,
-                    product: product,
-                };
-            } else {
-                response = {
-                    success: true,
-                    variants: product.variants,
-                };
-            }
+            // Serialize data
+            const variantSerializer = new VariantSerializer({
+                includeForeignKeys: false,
+            });
+            const serializedVariants = product.variants.map((variant) =>
+                variantSerializer.serialize(variant)
+            );
+
+            // Response
+            const response = {
+                success: true,
+                variants: serializedVariants,
+            };
             res.status(StatusCodes.CREATED).json(response);
         } catch (err) {
             console.log(err);
@@ -103,16 +142,16 @@ class VariantController {
 
     async updateProductVariant(req, res) {
         try {
+            // Get request body
             const { productID } = req.params;
             const { variantID } = req.params;
-            const { size, color, stock, price, sku, imageOrder } = req.body;
+            const { stock, price, sku, imageOrder } = req.body;
 
-            const variant = await variantService.updateVariant(
+            // Call services
+            let variant = await variantService.updateVariant(
                 productID,
                 variantID,
                 {
-                    size,
-                    color,
                     stock,
                     price,
                     sku,
@@ -120,6 +159,12 @@ class VariantController {
                 }
             );
 
+            // Serialize data
+            variant = new VariantSerializer({
+                includeForeignKeys: false,
+            }).serialize(variant);
+
+            // Response
             res.status(StatusCodes.OK).json({
                 success: true,
                 variant: variant,
@@ -143,11 +188,14 @@ class VariantController {
 
     async deleteProductVariant(req, res) {
         try {
+            // Get request body
             const { productID } = req.params;
             const { variantID } = req.params;
 
+            // Call services
             await variantService.deleteVariant(productID, variantID);
 
+            // Response
             res.status(StatusCodes.OK).json({
                 success: true,
             });

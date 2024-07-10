@@ -27,6 +27,38 @@ class AttributeService {
         const attribute = await Attribute.findByPk(attributeID);
         return attribute.name;
     }
+
+    /**
+     * Add attributes for variant
+     *
+     * @param {String} variant the variant ID to be added attributes
+     * @param {Object[]} attributes the attributes to be added
+     * @returns {Promise<Variant>} the variant with the added attributes
+     */
+    async addAttributesForVariant(variant, attributes) {
+        const variantAttributes = await Promise.all(
+            Object.entries(attributes).map(async ([name, value]) => {
+                const attributeValue = await AttributeValue.findOne({
+                    where: {
+                        value: value,
+                    },
+                    include: {
+                        model: Attribute,
+                        as: "attribute",
+                        where: {
+                            name: name,
+                        },
+                    },
+                });
+                await variant.addAttributeValue(attributeValue);
+
+                return attributeValue;
+            })
+        );
+
+        variant.dataValues.attributeValues = variantAttributes;
+        return variant;
+    }
 }
 
 export default new AttributeService();

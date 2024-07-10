@@ -1,8 +1,9 @@
-import { Attribute } from "../../models/products/attribute.model.js";
-import { AttributeValue } from "../../models/products/attributeValue.model.js";
 import { Product } from "../../models/products/product.model.js";
 import { Variant } from "../../models/products/variant.model.js";
+import attributeService from "./attribute.service.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
+import { AttributeValue } from "../../models/products/attributeValue.model.js";
+import { Attribute } from "../../models/products/attribute.model.js";
 
 class VariantService {
     /**
@@ -22,16 +23,21 @@ class VariantService {
                     where: {
                         variantID: variantID,
                     },
+                    include: {
+                        model: AttributeValue,
+                        as: "attributeValues",
+
+                        include: {
+                            model: Attribute,
+                            as: "attribute",
+                        },
+                    },
                 },
             ],
         });
 
         if (!product) {
-            throw new ResourceNotFoundError("Product not found");
-        }
-
-        if (product.variants.length === 0) {
-            throw new ResourceNotFoundError("Variant not found");
+            throw new ResourceNotFoundError("Product or Variant not found");
         }
 
         return product.variants[0];
@@ -50,6 +56,7 @@ class VariantService {
         let variant = await this.getVariant(productID, variantID);
         await variant.update(variantData);
         variant = await variant.reload();
+
         return variant;
     }
 
@@ -101,25 +108,10 @@ class VariantService {
 
         const variant = await product.createVariant(restData);
 
-        let attributeValues = [];
-        for (const [name, value] of Object.entries(attributes)) {
-            const attributeValue = await AttributeValue.findOne({
-                where: {
-                    value: value,
-                },
-                include: {
-                    model: Attribute,
-                    as: "attribute",
-                    where: {
-                        name: name,
-                    },
-                },
-            });
-            await variant.addAttributeValues(attributeValue);
-            attributeValues.push(attributeValue);
+        if (attributes) {
+            await attributeService.addAttributesForVariant(variant, attributes);
         }
 
-        variant.dataValues.attributeValues = attributeValues;
         return variant;
     }
 }

@@ -54,12 +54,7 @@ class ProductService {
      * @throws {ResourceNotFoundError} if the product is not found
      */
     async updateProduct(productID, { name, description, defaultVariantID }) {
-        const product = await Product.findByPk(productID, {
-            include: {
-                model: Variant,
-                as: "defaultVariant",
-            },
-        });
+        const product = await Product.findByPk(productID);
         if (!product) {
             throw new ResourceNotFoundError("Product not found");
         }
@@ -71,6 +66,7 @@ class ProductService {
             }
 
             product.defaultVariantID = defaultVariantID;
+            product.dataValues.defaultVariant = defaultVariant;
         }
         product.name = name ? name : product.name;
         product.description = description ? description : product.description;
@@ -121,7 +117,6 @@ function getIncludeOption(includeAssociated) {
                 include: {
                     model: AttributeValue,
                     as: "attributeValues",
-
                     include: {
                         model: Attribute,
                         as: "attribute",

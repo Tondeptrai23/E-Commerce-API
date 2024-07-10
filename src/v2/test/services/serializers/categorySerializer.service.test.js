@@ -51,3 +51,28 @@ describe("CategorySerializer without includeForeignKeys", () => {
         expect(serializedCategory.parentID).toEqual(undefined);
     });
 });
+
+describe("CategorySerializer with includeTimestamps", () => {
+    test("should serialize a category object to a JSON object with timestamps", () => {
+        const category = Category.build({
+            categoryID: "12345",
+            name: "Electronics",
+            description: "Electronics category",
+        });
+        category.setDataValue("parentID", "1");
+
+        let categorySerializer = new CategorySerializer({
+            includeTimestamps: true,
+        });
+        const serializedCategory = categorySerializer.serialize(category);
+
+        expect(serializedCategory).toEqual({
+            categoryID: "12345",
+            name: "Electronics",
+            description: "Electronics category",
+            parentID: "1",
+            createdAt: category.createdAt,
+            updatedAt: category.updatedAt,
+        });
+    });
+});

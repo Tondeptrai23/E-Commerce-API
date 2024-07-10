@@ -3,6 +3,7 @@ import { Router } from "express";
 import productController from "../../controllers/products.controller.js";
 import variantController from "../../controllers/variant.controller.js";
 import productImageController from "../../controllers/productImage.controller.js";
+import productCategoryController from "../../controllers/productCategory.controller.js";
 
 const userProductRoute = Router();
 
@@ -21,8 +22,8 @@ userProductRoute.get(
 );
 
 userProductRoute.get(
-    "/:productID/variants/:variantID",
-    variantController.getVariant
+    "/:productID/categories",
+    productCategoryController.getProductCategories
 );
 
 export default userProductRoute;

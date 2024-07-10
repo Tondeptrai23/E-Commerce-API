@@ -236,7 +236,7 @@ describe("productBuilderService", () => {
                         },
                     },
                 ];
-                const categories = ["Tops", "Male"];
+                const categories = ["tops", "male"];
                 const images = [
                     {
                         imagePath: "image1",
@@ -286,8 +286,8 @@ describe("productBuilderService", () => {
 
                 expect(result.categories).toEqual(
                     expect.arrayContaining([
-                        expect.objectContaining({ name: "Tops" }),
-                        expect.objectContaining({ name: "Male" }),
+                        expect.objectContaining({ name: "tops" }),
+                        expect.objectContaining({ name: "male" }),
                     ])
                 );
             });
@@ -389,7 +389,7 @@ describe("productBuilderService", () => {
 
         describe("productBuilderService.addCategories", () => {
             test("should return a result object", async () => {
-                const categories = ["Tops", "Male"];
+                const categories = ["tops", "male"];
 
                 const result = await productBuilderService.addCategories(
                     "1",
@@ -409,8 +409,8 @@ describe("productBuilderService", () => {
 
                 expect(result.categories).toEqual(
                     expect.arrayContaining([
-                        expect.objectContaining({ name: "Tops" }),
-                        expect.objectContaining({ name: "Male" }),
+                        expect.objectContaining({ name: "tops" }),
+                        expect.objectContaining({ name: "male" }),
                     ])
                 );
             });

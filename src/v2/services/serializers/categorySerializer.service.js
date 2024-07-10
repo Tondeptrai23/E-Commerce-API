@@ -22,6 +22,11 @@ class CategorySerializer extends Serializer {
             result.parentID = parentID;
         }
 
+        if (this.includeTimestamps) {
+            result.createdAt = createdAt;
+            result.updatedAt = updatedAt;
+        }
+
         return result;
     }
 }

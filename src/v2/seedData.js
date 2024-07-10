@@ -43,8 +43,8 @@ export default seedData;
 
 const seedAttribute = async () => {
     await Attribute.bulkCreate([
-        { attributeID: 1, name: "Size" },
-        { attributeID: 2, name: "Color" },
+        { attributeID: 1, name: "size" },
+        { attributeID: 2, name: "color" },
     ]);
 };
 
@@ -54,30 +54,30 @@ const seedAttributeValue = async () => {
         { valueID: 2, value: "M", attributeID: 1 },
         { valueID: 3, value: "L", attributeID: 1 },
 
-        { valueID: 4, value: "Black", attributeID: 2 },
-        { valueID: 5, value: "White", attributeID: 2 },
-        { valueID: 6, value: "Blue", attributeID: 2 },
-        { valueID: 7, value: "Red", attributeID: 2 },
+        { valueID: 4, value: "black", attributeID: 2 },
+        { valueID: 5, value: "white", attributeID: 2 },
+        { valueID: 6, value: "blue", attributeID: 2 },
+        { valueID: 7, value: "red", attributeID: 2 },
     ]);
 };
 
 const seedCategory = async () => {
     await Category.bulkCreate([
-        { categoryID: 1, name: "Gender", parentID: null },
-        { categoryID: 2, name: "Type", parentID: null },
+        { categoryID: 1, name: "gender", parentID: null },
+        { categoryID: 2, name: "type", parentID: null },
 
-        { categoryID: 3, name: "Female", parentID: 1 },
-        { categoryID: 4, name: "Male", parentID: 1 },
-        { categoryID: 5, name: "Unisex", parentID: 1 },
+        { categoryID: 3, name: "female", parentID: 1 },
+        { categoryID: 4, name: "male", parentID: 1 },
+        { categoryID: 5, name: "unisex", parentID: 1 },
 
-        { categoryID: 6, name: "Tops", parentID: 2 },
-        { categoryID: 7, name: "Bottoms", parentID: 2 },
+        { categoryID: 6, name: "tops", parentID: 2 },
+        { categoryID: 7, name: "bottoms", parentID: 2 },
 
-        { categoryID: 8, name: "Tshirt", parentID: 6 },
-        { categoryID: 9, name: "Blouse", parentID: 6 },
+        { categoryID: 8, name: "tshirt", parentID: 6 },
+        { categoryID: 9, name: "blouse", parentID: 6 },
 
-        { categoryID: 10, name: "Shorts", parentID: 7 },
-        { categoryID: 11, name: "Skirt", parentID: 7 },
+        { categoryID: 10, name: "shorts", parentID: 7 },
+        { categoryID: 11, name: "skirt", parentID: 7 },
     ]);
 };
 

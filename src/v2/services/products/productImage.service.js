@@ -22,11 +22,7 @@ class ProductImageService {
             },
         });
         if (!product) {
-            throw new ResourceNotFoundError("Product not found");
-        }
-
-        if (product.images.length === 0) {
-            throw new ResourceNotFoundError("Image not found");
+            throw new ResourceNotFoundError("Product or Image not found");
         }
 
         return product.images[0];

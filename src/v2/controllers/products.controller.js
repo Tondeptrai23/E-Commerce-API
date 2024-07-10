@@ -8,7 +8,7 @@ class ProductController {
     async getProducts(req, res) {
         try {
             // Get query parameters
-            const { includeAssociated, includeTimestamps } = req.query;
+            const { includeAssociated } = req.query;
 
             // Call services
             let products = await productService.getProducts({
@@ -16,10 +16,18 @@ class ProductController {
             });
 
             // Serialize data
-            const serializer = new ProductSerializer({
-                includeTimestamps: includeTimestamps === "true",
-                includeForeignKeys: false,
-            });
+            let serializer;
+            if (req.admin !== undefined) {
+                serializer = new ProductSerializer({
+                    includeTimestamps: true,
+                    includeForeignKeys: false,
+                });
+            } else {
+                serializer = new ProductSerializer({
+                    includeTimestamps: false,
+                    includeForeignKeys: false,
+                });
+            }
             products = products.map((product) => serializer.serialize(product));
 
             // Response
@@ -40,7 +48,7 @@ class ProductController {
     async getProduct(req, res) {
         try {
             // Get query parameters
-            const { includeAssociated, includeTimestamps } = req.query;
+            const { includeAssociated } = req.query;
             const { productID } = req.params;
 
             // Call services
@@ -53,10 +61,18 @@ class ProductController {
             }
 
             // Serialize data
-            const serializer = new ProductSerializer({
-                includeTimestamps: includeTimestamps === "true",
-                includeForeignKeys: false,
-            });
+            let serializer;
+            if (req.admin !== undefined) {
+                serializer = new ProductSerializer({
+                    includeTimestamps: true,
+                    includeForeignKeys: false,
+                });
+            } else {
+                serializer = new ProductSerializer({
+                    includeTimestamps: false,
+                    includeForeignKeys: false,
+                });
+            }
             product = serializer.serialize(product);
 
             // Response
@@ -136,7 +152,7 @@ class ProductController {
             // Serialize data
             const serializer = new ProductSerializer({
                 includeTimestamps: false,
-                includeForeignKeys: false,
+                includeForeignKeys: true,
             });
             product = serializer.serialize(product);
 

@@ -14,29 +14,38 @@ class ProductCategoryService {
      * @throws {ResourceNotFoundError} if the product is not found
      */
     async updateCategory(productID, categories) {
+        await ProductCategory.destroy({
+            where: {
+                productID: productID,
+            },
+        });
         return await productBuilderService.addCategories(productID, categories);
     }
 
     /**
-     * Delete a category with the given productID and categoryID
+     * Delete a category with the given productID and categoryName
      *
      * @param {String} productID the product ID to be updated
-     * @param {String} categoryID the category ID to be updated
+     * @param {String} categoryName the category's name to be updated
      * @throws {ResourceNotFoundError} if the product or category is not found
      */
-    async deleteCategory(productID, categoryID) {
-        const productCategory = await ProductCategory.findOne({
-            where: {
-                productID: productID,
-                categoryID: categoryID,
+    async deleteCategory(productID, categoryName) {
+        const product = await Product.findByPk(productID, {
+            include: {
+                model: Category,
+                through: ProductCategory,
+                as: "categories",
+                where: {
+                    name: categoryName,
+                },
             },
         });
 
-        if (!productCategory) {
-            throw new ResourceNotFoundError("Product not found");
+        if (!product) {
+            throw new ResourceNotFoundError("Product or Category not found");
         }
 
-        await productCategory.destroy();
+        await product.removeCategory(product.categories[0]);
     }
 
     /**

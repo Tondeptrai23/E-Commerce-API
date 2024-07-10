@@ -179,8 +179,10 @@ describe("ProductService.createProduct", () => {
                     productID: "1",
                     name: "Updated Product",
                     description: "Updated description",
-                    defaultVariantID: "102",
                 })
+            );
+            expect(updatedProduct.dataValues.defaultVariant.variantID).toEqual(
+                "102"
             );
         });
 

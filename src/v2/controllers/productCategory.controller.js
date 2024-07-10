@@ -3,14 +3,38 @@ import { ResourceNotFoundError } from "../utils/error.js";
 import productCategoryService from "../services/products/productCategory.service.js";
 import productService from "../services/products/product.service.js";
 import productBuilderService from "../services/products/productBuilder.service.js";
+import ProductSerializer from "../services/serializers/productSerializer.service.js";
+import CategorySerializer from "../services/serializers/categorySerializer.service.js";
 
 class ProductCategory {
     async getProductCategories(req, res) {
         try {
+            // Get request body
             const { productID } = req.params;
-            const categories =
-                await productCategoryService.getProductCategories(productID);
 
+            // Call services
+            let categories = await productCategoryService.getProductCategories(
+                productID
+            );
+
+            // Serialize data for admin/user
+            let categorySerializer;
+            if (req.admin !== undefined) {
+                categorySerializer = new CategorySerializer({
+                    includeTimestamps: true,
+                    includeForeignKeys: false,
+                });
+            } else {
+                categorySerializer = new CategorySerializer({
+                    includeForeignKeys: false,
+                });
+            }
+
+            categories = categories.map((category) =>
+                categorySerializer.serialize(category)
+            );
+
+            // Response
             res.status(StatusCodes.OK).json({
                 success: true,
                 categories: categories,
@@ -34,14 +58,22 @@ class ProductCategory {
 
     async addProductCategory(req, res) {
         try {
+            // Get request body
             const { productID } = req.params;
             const { categories } = req.body;
 
-            const product = await productBuilderService.addCategories(
+            // Call services
+            let product = await productBuilderService.addCategories(
                 productID,
                 categories
             );
 
+            // Serialize data
+            product = new ProductSerializer({
+                includeForeignKeys: false,
+            }).serialize(product);
+
+            // Response
             res.status(StatusCodes.CREATED).json({
                 success: true,
                 product: product,
@@ -65,14 +97,22 @@ class ProductCategory {
 
     async updateProductCategory(req, res) {
         try {
+            // Get request body
             const { productID } = req.params;
             const { categories } = req.body;
 
-            const product = await productCategoryService.updateCategory(
+            // Call services
+            let product = await productCategoryService.updateCategory(
                 productID,
                 categories
             );
 
+            // Serialize data
+            product = new ProductSerializer({
+                includeForeignKeys: false,
+            }).serialize(product);
+
+            // Response
             res.status(StatusCodes.OK).json({
                 success: true,
                 product: product,
@@ -96,11 +136,17 @@ class ProductCategory {
 
     async deleteProductCategory(req, res) {
         try {
+            // Get request body
             const { productID } = req.params;
-            const { categoryID } = req.params;
+            const { categoryName } = req.params;
 
-            await productCategoryService.deleteCategory(productID, categoryID);
+            // Call services
+            await productCategoryService.deleteCategory(
+                productID,
+                categoryName
+            );
 
+            // Response
             res.status(StatusCodes.OK).json({
                 success: true,
             });
