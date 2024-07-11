@@ -13,8 +13,9 @@ ProductCategory.init(
     },
     {
         sequelize,
-        modelName: "product_category",
+        modelName: "productCategory",
         timestamps: false,
+        tableName: "product_categories",
     }
 );
 

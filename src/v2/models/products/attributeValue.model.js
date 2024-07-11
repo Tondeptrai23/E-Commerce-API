@@ -17,7 +17,8 @@ AttributeValue.init(
     },
     {
         sequelize,
-        modelName: "attribute_value",
+        modelName: "attributeValue",
+        tableName: "attribute_values",
     }
 );
 

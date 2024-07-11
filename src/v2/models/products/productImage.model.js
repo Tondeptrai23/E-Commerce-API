@@ -21,7 +21,8 @@ ProductImage.init(
     },
     {
         sequelize,
-        modelName: "product_image",
+        modelName: "productImage",
+        tableName: "product_images",
     }
 );
 

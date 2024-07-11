@@ -13,8 +13,9 @@ CategoryCoupon.init(
     },
     {
         sequelize,
-        modelName: "category_coupon",
+        modelName: "categoryCoupon",
         timestamps: false,
+        tableName: "category_coupons",
     }
 );
 

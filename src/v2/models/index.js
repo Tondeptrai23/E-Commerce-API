@@ -43,7 +43,7 @@ User.belongsToMany(Variant, {
     foreignKey: { name: "userID", allowNull: false },
     constraints: true,
     onDelete: "CASCADE",
-    as: "products",
+    as: "cartItems",
 });
 Variant.belongsToMany(User, {
     through: CartItem,

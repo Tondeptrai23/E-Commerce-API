@@ -13,7 +13,9 @@ VariantAttributeValue.init(
     },
     {
         sequelize,
-        modelName: "variant_attribute_value",
+        modelName: "variantAttributeValue",
+        timestamps: false,
+        tableName: "variant_attribute_values",
     }
 );
 
