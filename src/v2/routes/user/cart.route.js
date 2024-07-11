@@ -1,17 +1,20 @@
 import { Router } from "express";
 
-import cartController from "../../controllers/cart.controller.js";
+import cartController from "../../controllers/shopping/cart.controller.js";
+import { verifyToken } from "../../middlewares/authJwt.js";
 
 const userCartRoute = Router();
 
-userCartRoute.get("/", cartController.getCart);
+userCartRoute.get("/", verifyToken, cartController.getCart);
 
-userCartRoute.post("/", cartController.fetchCartToOrder);
+userCartRoute.post("/", verifyToken, cartController.fetchCartToOrder);
 
-userCartRoute.patch("/:productId", cartController.updateCart);
+userCartRoute.post("/:variantID", verifyToken, cartController.addToCart);
 
-userCartRoute.delete("/:productId", cartController.deleteItem);
+userCartRoute.patch("/:variantID", verifyToken, cartController.updateCart);
 
-userCartRoute.delete("/", cartController.deleteCart);
+userCartRoute.delete("/:variantID", verifyToken, cartController.deleteItem);
+
+userCartRoute.delete("/", verifyToken, cartController.deleteCart);
 
 export default userCartRoute;

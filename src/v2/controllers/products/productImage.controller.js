@@ -1,8 +1,8 @@
 import { StatusCodes } from "http-status-codes";
-import { ResourceNotFoundError } from "../utils/error.js";
-import productImageService from "../services/products/productImage.service.js";
-import productBuilderService from "../services/products/productBuilder.service.js";
-import ImageSerializer from "../services/serializers/imageSerializer.service.js";
+import { ResourceNotFoundError } from "../../utils/error.js";
+import productImageService from "../../services/products/productImage.service.js";
+import productBuilderService from "../../services/products/productBuilder.service.js";
+import ImageSerializer from "../../services/serializers/imageSerializer.service.js";
 
 class ProductImageController {
     async getProductImages(req, res) {

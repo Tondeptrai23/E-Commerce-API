@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import categoryController from "../../controllers/categories.controller.js";
+import categoryController from "../../controllers/products/categories.controller.js";
 
 const adminCategoryRoute = Router();
 

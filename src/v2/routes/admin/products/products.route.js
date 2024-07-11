@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import productsController from "../../../controllers/products.controller.js";
+import productsController from "../../../controllers/products/products.controller.js";
 import { verifyToken, isAdmin } from "../../../middlewares/authJwt.js";
 
 import productCategoryRoute from "./productCategory.route.js";

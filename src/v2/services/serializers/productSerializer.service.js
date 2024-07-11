@@ -2,7 +2,6 @@ import { Product } from "../../models/products/product.model.js";
 import Serializer from "./serializer.service.js";
 import VariantSerializer from "./variantSerializer.service.js";
 import ImageSerializer from "./imageSerializer.service.js";
-import couponsController from "../../controllers/coupons.controller.js";
 
 class ProductSerializer extends Serializer {
     /**

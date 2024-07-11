@@ -1,8 +1,8 @@
 import { StatusCodes } from "http-status-codes";
-import { ResourceNotFoundError } from "../utils/error.js";
-import variantService from "../services/products/variant.service.js";
-import productBuilderService from "../services/products/productBuilder.service.js";
-import VariantSerializer from "../services/serializers/variantSerializer.service.js";
+import { ResourceNotFoundError } from "../../utils/error.js";
+import variantService from "../../services/products/variant.service.js";
+import productBuilderService from "../../services/products/productBuilder.service.js";
+import VariantSerializer from "../../services/serializers/variantSerializer.service.js";
 
 class VariantController {
     async getProductVariants(req, res) {

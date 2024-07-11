@@ -1,10 +1,10 @@
 import { StatusCodes } from "http-status-codes";
-import { ResourceNotFoundError } from "../utils/error.js";
-import productCategoryService from "../services/products/productCategory.service.js";
-import productService from "../services/products/product.service.js";
-import productBuilderService from "../services/products/productBuilder.service.js";
-import ProductSerializer from "../services/serializers/productSerializer.service.js";
-import CategorySerializer from "../services/serializers/categorySerializer.service.js";
+import { ResourceNotFoundError } from "../../utils/error.js";
+import productCategoryService from "../../services/products/productCategory.service.js";
+import productService from "../../services/products/product.service.js";
+import productBuilderService from "../../services/products/productBuilder.service.js";
+import ProductSerializer from "../../services/serializers/productSerializer.service.js";
+import CategorySerializer from "../../services/serializers/categorySerializer.service.js";
 
 class ProductCategory {
     async getProductCategories(req, res) {

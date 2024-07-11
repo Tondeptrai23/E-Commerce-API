@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import variantController from "../../../controllers/variant.controller.js";
+import variantController from "../../../controllers/products/variant.controller.js";
 import { verifyToken, isAdmin } from "../../../middlewares/authJwt.js";
 
 const variantRoute = Router();
