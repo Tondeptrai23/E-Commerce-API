@@ -75,10 +75,10 @@ class OrderController {
         try {
             // Get param
             const { orderID } = req.params;
-            const { status, orderDate, shippingAddress } = req.body;
+            const { status, orderDate = null, shippingAddress } = req.body;
 
             // Call service
-            let order = await orderService.updateOrder(user, orderID, {
+            let order = await orderService.updateOrder(req.user, orderID, {
                 status: status,
                 orderDate: orderDate,
                 shippingAddress: shippingAddress,

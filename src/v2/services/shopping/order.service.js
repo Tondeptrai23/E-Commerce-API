@@ -82,6 +82,7 @@ class OrderService {
             throw new ResourceNotFoundError("Order not found");
         }
 
+        await order;
         const updatedOrder = await order.update(orderData);
 
         return updatedOrder;

@@ -56,7 +56,11 @@ describe("OrderService", () => {
         test("should update the specified order for the user", async () => {
             const user = await User.findByPk(1);
             const orderID = "1";
-            const orderData = { status: "delivered" };
+            const orderData = {
+                status: "delivered",
+                shippingAddress: "123 Main St",
+                orderDate: null,
+            };
 
             const updatedOrder = await orderService.updateOrder(
                 user,
@@ -68,6 +72,10 @@ describe("OrderService", () => {
             expect(updatedOrder).toBeInstanceOf(Order);
             expect(updatedOrder.orderID).toBe(orderID);
             expect(updatedOrder.status).toBe(orderData.status);
+            expect(updatedOrder.shippingAddress).toBe(
+                orderData.shippingAddress
+            );
+            expect(updatedOrder.orderDate).toBeNull();
         });
 
         test("should throw ResourceNotFoundError if the order is not found", async () => {
