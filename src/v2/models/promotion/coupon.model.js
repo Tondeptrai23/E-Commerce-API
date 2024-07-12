@@ -29,7 +29,6 @@ Coupon.init(
         timesUsed: {
             type: DataTypes.INTEGER,
             defaultValue: 0,
-            allowNull: false,
         },
         maxUsage: {
             type: DataTypes.INTEGER,

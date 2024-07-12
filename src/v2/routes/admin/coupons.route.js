@@ -1,17 +1,43 @@
 import { Router } from "express";
 
 import couponController from "../../controllers/shopping/coupons.controller.js";
+import { verifyToken, isAdmin } from "../../middlewares/authJwt.js";
 
 const adminCouponRoute = Router();
 
-adminCouponRoute.get("/coupons", couponController.getCoupons);
+adminCouponRoute.get(
+    "/coupons",
+    verifyToken,
+    isAdmin,
+    couponController.getCoupons
+);
 
-adminCouponRoute.get("/coupons/:couponID", couponController.getCoupon);
+adminCouponRoute.get(
+    "/coupons/:couponID",
+    verifyToken,
+    isAdmin,
+    couponController.getCoupon
+);
 
-adminCouponRoute.post("/coupons/add", couponController.addCoupon);
+adminCouponRoute.post(
+    "/coupons",
+    verifyToken,
+    isAdmin,
+    couponController.addCoupon
+);
 
-adminCouponRoute.put("/coupons/:couponID", couponController.updateCoupon);
+adminCouponRoute.put(
+    "/coupons/:couponID",
+    verifyToken,
+    isAdmin,
+    couponController.updateCoupon
+);
 
-adminCouponRoute.delete("/coupons/:couponID", couponController.deleteCoupon);
+adminCouponRoute.delete(
+    "/coupons/:couponID",
+    verifyToken,
+    isAdmin,
+    couponController.deleteCoupon
+);
 
 export default adminCouponRoute;
