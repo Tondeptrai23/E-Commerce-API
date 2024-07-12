@@ -1,21 +1,26 @@
 import { Router } from "express";
 
 import ordersController from "../../controllers/shopping/orders.controller.js";
+import { verifyToken } from "../../middlewares/authJwt.js";
 
 const userOrderRoute = Router();
 
-userOrderRoute.get("/", ordersController.getOrders);
+userOrderRoute.get("/", verifyToken, ordersController.getOrders);
 
-userOrderRoute.get("/:orderID", ordersController.getOrder);
+userOrderRoute.get("/:orderID", verifyToken, ordersController.getOrder);
 
-userOrderRoute.post("/:orderID", ordersController.postOrder);
+userOrderRoute.post("/:orderID", verifyToken, ordersController.postOrder);
 
-userOrderRoute.put("/:orderID", ordersController.updateOrder);
+userOrderRoute.put("/:orderID", verifyToken, ordersController.updateOrder);
 
-userOrderRoute.post("/:orderID/move-to-cart", ordersController.moveToCart);
+userOrderRoute.post(
+    "/:orderID/move-to-cart",
+    verifyToken,
+    ordersController.moveToCart
+);
 
-userOrderRoute.delete("/:orderID", ordersController.deleteOrder);
+userOrderRoute.delete("/:orderID", verifyToken, ordersController.deleteOrder);
 
-userOrderRoute.delete("/", ordersController.deleteAllOrders);
+userOrderRoute.delete("/", verifyToken, ordersController.deleteAllOrders);
 
 export default userOrderRoute;

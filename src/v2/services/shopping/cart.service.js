@@ -14,7 +14,7 @@ class CartService {
      * @param {String} variantID - The variant ID.
      * @returns {Promise<CartItem | null>} The cart item.
      */
-    async #findCartItem(user, variantID) {
+    async findCartItem(user, variantID) {
         const cartItem = await CartItem.findOne({
             where: {
                 userID: user.userID,
@@ -52,7 +52,7 @@ class CartService {
      * @returns {Promise<CartItem>} The updated cart item.
      */
     async addToCart(user, variantID) {
-        let cartItem = await this.#findCartItem(user, variantID);
+        let cartItem = await this.findCartItem(user, variantID);
 
         if (cartItem) {
             cartItem.quantity += 1;
@@ -77,7 +77,7 @@ class CartService {
      * @throws {ResourceNotFoundError} If the cart item is not found.
      */
     async updateCart(user, variantID, quantity) {
-        let cartItem = await this.#findCartItem(user, variantID);
+        let cartItem = await this.findCartItem(user, variantID);
 
         if (!cartItem) {
             throw new ResourceNotFoundError("Cart item not found");
@@ -96,7 +96,7 @@ class CartService {
      * @throws {ResourceNotFoundError} If the cart item is not found.
      */
     async deleteItem(user, variantID) {
-        let cartItem = await this.#findCartItem(user, variantID);
+        let cartItem = await this.findCartItem(user, variantID);
 
         if (!cartItem) {
             throw new ResourceNotFoundError("Cart item not found");

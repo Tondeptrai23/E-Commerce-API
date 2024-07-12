@@ -933,7 +933,6 @@ const seedOrder = async () => {
             orderDate: new Date("2024-06-01"),
             status: "pending",
             shippingAddress: "123 Main St",
-            totalAmount: 20.0,
         },
         {
             orderID: 2,
@@ -941,7 +940,6 @@ const seedOrder = async () => {
             orderDate: new Date("2024-06-02"),
             status: "processing",
             shippingAddress: "456 Elm St",
-            totalAmount: 30.0,
         },
         {
             orderID: 3,
@@ -949,7 +947,6 @@ const seedOrder = async () => {
             orderDate: new Date("2024-06-03"),
             status: "shipped",
             shippingAddress: "789 Oak St",
-            totalAmount: 40.0,
         },
         {
             orderID: 4,
@@ -957,7 +954,6 @@ const seedOrder = async () => {
             orderDate: new Date("2024-06-04"),
             status: "delivered",
             shippingAddress: "1012 Pine St",
-            totalAmount: 50.0,
         },
         {
             orderID: 5,
@@ -965,7 +961,6 @@ const seedOrder = async () => {
             orderDate: new Date("2024-06-05"),
             status: "delivered",
             shippingAddress: "1314 Cedar St",
-            totalAmount: 60.0,
         },
     ]);
 };

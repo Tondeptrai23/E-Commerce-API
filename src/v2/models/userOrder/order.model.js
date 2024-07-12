@@ -14,7 +14,7 @@ Order.init(
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW,
         },
-        orderStatus: {
+        status: {
             type: DataTypes.ENUM(
                 "pending",
                 "processing",
@@ -30,6 +30,7 @@ Order.init(
         totalAmount: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            defaultValue: 0,
         },
     },
     {
