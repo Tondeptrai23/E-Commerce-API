@@ -19,4 +19,4 @@ ProductCoupon.init(
     }
 );
 
-export { ProductCoupon };
+export default ProductCoupon;

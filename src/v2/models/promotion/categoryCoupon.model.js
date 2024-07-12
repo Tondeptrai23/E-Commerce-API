@@ -19,4 +19,4 @@ CategoryCoupon.init(
     }
 );
 
-export { CategoryCoupon };
+export default CategoryCoupon;

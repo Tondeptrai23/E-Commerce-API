@@ -22,4 +22,4 @@ AttributeValue.init(
     }
 );
 
-export { AttributeValue };
+export default AttributeValue;

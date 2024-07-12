@@ -1,42 +1,45 @@
 import { sequelize } from "../../config/database.config.js";
 import { DataTypes, Model } from "sequelize";
 
-class User extends Model {}
+class ShippingAddress extends Model {}
 
-User.init(
+ShippingAddress.init(
     {
-        userID: {
+        addressID: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        password: {
+        phoneNumber: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        name: {
+        recipientName: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
-        avatar: {
+        address: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
-        refreshToken: {
+        city: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
-        role: {
-            type: DataTypes.ENUM("user", "admin"),
-            defaultValue: "user",
+        district: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        phoneNumber: {
+            type: DataTypes.STRING,
+            allowNull: false,
         },
     },
     {
         sequelize,
-        modelName: "user",
+        modelName: "shippingAddress",
+        tableName: "shipping_address",
     }
 );
 
-export default User;
+export default ShippingAddress;

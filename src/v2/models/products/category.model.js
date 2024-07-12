@@ -24,4 +24,4 @@ Category.init(
     }
 );
 
-export { Category };
+export default Category;

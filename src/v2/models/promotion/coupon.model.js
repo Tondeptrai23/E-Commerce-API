@@ -34,10 +34,10 @@ Coupon.init(
             type: DataTypes.INTEGER,
         },
         startDate: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
         },
         endDate: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
         },
     },
     {
@@ -46,4 +46,4 @@ Coupon.init(
     }
 );
 
-export { Coupon };
+export default Coupon;

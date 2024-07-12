@@ -1,6 +1,5 @@
 import { sequelize } from "../../config/database.config.js";
 import { DataTypes, Model } from "sequelize";
-import { Variant } from "./variant.model.js";
 
 class Product extends Model {}
 
@@ -26,4 +25,4 @@ Product.init(
     }
 );
 
-export { Product };
+export default Product;

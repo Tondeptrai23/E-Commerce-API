@@ -21,4 +21,4 @@ Attribute.init(
     }
 );
 
-export { Attribute };
+export default Attribute;

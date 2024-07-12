@@ -1,23 +1,23 @@
 import { sequelize } from "../config/database.config.js";
 
-import { Product } from "./products/product.model.js";
-import { ProductImage } from "./products/productImage.model.js";
-import { Category } from "./products/category.model.js";
-import { ProductCategory } from "./products/productCategory.model.js";
-import { Variant } from "./products/variant.model.js";
-import { Attribute } from "./products/attribute.model.js";
-import { VariantAttributeValue } from "./products/variantAttributeValue.model.js";
-import { AttributeValue } from "./products/attributeValue.model.js";
+import Product from "./products/product.model.js";
+import ProductImage from "./products/productImage.model.js";
+import Category from "./products/category.model.js";
+import ProductCategory from "./products/productCategory.model.js";
+import Variant from "./products/variant.model.js";
+import Attribute from "./products/attribute.model.js";
+import VariantAttributeValue from "./products/variantAttributeValue.model.js";
+import AttributeValue from "./products/attributeValue.model.js";
 
-import { Order } from "./userOrder/order.model.js";
-import { Payment } from "./userOrder/payment.model.js";
-import { OrderItem } from "./userOrder/orderItem.model.js";
-import { User } from "./userOrder/user.model.js";
-import { CartItem } from "./userOrder/cartItem.model.js";
+import Order from "./userOrder/order.model.js";
+import OrderItem from "./userOrder/orderItem.model.js";
+import User from "./userOrder/user.model.js";
+import CartItem from "./userOrder/cartItem.model.js";
 
-import { Coupon } from "./promotion/coupon.model.js";
-import { ProductCoupon } from "./promotion/productCoupon.model.js";
-import { CategoryCoupon } from "./promotion/categoryCoupon.model.js";
+import Coupon from "./promotion/coupon.model.js";
+import ProductCoupon from "./promotion/productCoupon.model.js";
+import CategoryCoupon from "./promotion/categoryCoupon.model.js";
+import ShippingAddress from "./userOrder/address.model.js";
 
 Product.hasMany(ProductImage, {
     foreignKey: {
@@ -149,6 +149,25 @@ Order.belongsTo(User, {
     as: "user",
 });
 
+Order.belongsTo(ShippingAddress, {
+    foreignKey: {
+        name: "shippingAddressID",
+        allowNull: true,
+    },
+    onDelete: "SET NULL",
+    constraints: true,
+    as: "shippingAddress",
+});
+ShippingAddress.hasMany(Order, {
+    foreignKey: {
+        name: "shippingAddressID",
+        allowNull: true,
+    },
+    onDelete: "SET NULL",
+    constraints: true,
+    as: "orders",
+});
+
 Order.belongsToMany(Variant, {
     foreignKey: {
         name: "orderID",
@@ -183,25 +202,6 @@ Coupon.belongsTo(Order, {
     foreignKey: {
         name: "orderID",
         allowNull: true,
-    },
-    onDelete: "CASCADE",
-    constraints: true,
-    as: "order",
-});
-
-Order.hasOne(Payment, {
-    foreignKey: {
-        name: "orderID",
-        allowNull: false,
-    },
-    onDelete: "CASCADE",
-    constraints: true,
-    as: "payment",
-});
-Payment.belongsTo(Order, {
-    foreignKey: {
-        name: "orderID",
-        allowNull: false,
     },
     onDelete: "CASCADE",
     constraints: true,
@@ -275,6 +275,25 @@ AttributeValue.belongsTo(Attribute, {
     onDelete: "CASCADE",
     constraints: true,
     as: "attribute",
+});
+
+User.hasMany(ShippingAddress, {
+    foreignKey: {
+        name: "userID",
+        allowNull: false,
+    },
+    onDelete: "CASCADE",
+    constraints: true,
+    as: "addresses",
+});
+ShippingAddress.belongsTo(User, {
+    foreignKey: {
+        name: "userID",
+        allowNull: false,
+    },
+    onDelete: "CASCADE",
+    constraints: true,
+    as: "user",
 });
 
 export { sequelize as db };

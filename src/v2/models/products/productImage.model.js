@@ -26,4 +26,4 @@ ProductImage.init(
     }
 );
 
-export { ProductImage };
+export default ProductImage;

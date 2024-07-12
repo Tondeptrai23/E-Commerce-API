@@ -11,7 +11,7 @@ Order.init(
             primaryKey: true,
         },
         orderDate: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
             defaultValue: DataTypes.NOW,
         },
         status: {
@@ -23,14 +23,15 @@ Order.init(
             ),
             defaultValue: "pending",
         },
-        shippingAddress: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
         totalAmount: {
             type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0,
+        },
+        paymentMethod: {
+            type: DataTypes.ENUM("COD", "Momo", "Credit Card"),
+            defaultValue: "COD",
+            allowNull: false,
         },
     },
     {
@@ -39,4 +40,4 @@ Order.init(
     }
 );
 
-export { Order };
+export default Order;

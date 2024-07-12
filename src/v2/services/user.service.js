@@ -1,4 +1,4 @@
-import { User } from "../models/userOrder/user.model.js";
+import User from "../models/userOrder/user.model.js";
 
 import bcrypt from "bcryptjs";
 
@@ -9,7 +9,7 @@ class UserService {
             return null;
         }
 
-        const newUser = User.build(userInfo);
+        const newUser = await User.create(userInfo);
 
         bcrypt.genSalt(10).then((salt) => {
             bcrypt.hash(newUser.password, salt).then((hash) => {

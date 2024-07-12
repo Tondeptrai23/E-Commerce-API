@@ -19,4 +19,4 @@ ProductCategory.init(
     }
 );
 
-export { ProductCategory };
+export default ProductCategory;

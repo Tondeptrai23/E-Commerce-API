@@ -23,4 +23,4 @@ OrderItem.init(
     }
 );
 
-export { OrderItem };
+export default OrderItem;

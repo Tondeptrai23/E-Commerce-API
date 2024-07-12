@@ -23,4 +23,4 @@ CartItem.init(
     }
 );
 
-export { CartItem };
+export default CartItem;

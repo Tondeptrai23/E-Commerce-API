@@ -1,20 +1,20 @@
 import { db } from "./models/index.js";
-import { Attribute } from "./models/products/attribute.model.js";
-import { AttributeValue } from "./models/products/attributeValue.model.js";
-import { Category } from "./models/products/category.model.js";
-import { Coupon } from "./models/promotion/coupon.model.js";
-import { CategoryCoupon } from "./models/promotion/categoryCoupon.model.js";
-import { Product } from "./models/products/product.model.js";
-import { ProductCoupon } from "./models/promotion/productCoupon.model.js";
-import { ProductImage } from "./models/products/productImage.model.js";
-import { Variant } from "./models/products/variant.model.js";
-import { VariantAttributeValue } from "./models/products/variantAttributeValue.model.js";
-import { Order } from "./models/userOrder/order.model.js";
-import { OrderItem } from "./models/userOrder/orderItem.model.js";
-import { Payment } from "./models/userOrder/payment.model.js";
-import { CartItem } from "./models/userOrder/cartItem.model.js";
-import { ProductCategory } from "./models/products/productCategory.model.js";
+import Attribute from "./models/products/attribute.model.js";
+import AttributeValue from "./models/products/attributeValue.model.js";
+import Category from "./models/products/category.model.js";
+import Coupon from "./models/promotion/coupon.model.js";
+import CategoryCoupon from "./models/promotion/categoryCoupon.model.js";
+import Product from "./models/products/product.model.js";
+import ProductCoupon from "./models/promotion/productCoupon.model.js";
+import ProductImage from "./models/products/productImage.model.js";
+import Variant from "./models/products/variant.model.js";
+import VariantAttributeValue from "./models/products/variantAttributeValue.model.js";
+import Order from "./models/userOrder/order.model.js";
+import OrderItem from "./models/userOrder/orderItem.model.js";
+import CartItem from "./models/userOrder/cartItem.model.js";
+import ProductCategory from "./models/products/productCategory.model.js";
 import userService from "./services/user.service.js";
+import ShippingAddress from "./models/userOrder/address.model.js";
 
 // Seed data for a fresh database for a clothes store
 const seedData = async () => {
@@ -24,6 +24,7 @@ const seedData = async () => {
     await seedAttributeValue();
     await seedCategory();
     await seedUser();
+    await seedAddress();
     await seedProduct();
     await seedProductCategory();
     await seedVariant();
@@ -34,7 +35,6 @@ const seedData = async () => {
     await seedCategoryCoupon();
     await seedProductCoupon();
     await seedOrder();
-    await seedPayment();
     await seedOrderItem();
     await seedCartItem();
 };
@@ -87,39 +87,76 @@ const seedUser = async () => {
             userID: 1,
             email: "user1@gmail.com",
             password: "password1",
-            phone_number: "123456789",
             role: "user",
-            name: "User 1",
         },
         {
             userID: 2,
             email: "user2@gmail.com",
             password: "password2",
-            phone_number: "987654321",
             role: "user",
-            name: "User 2",
         },
         {
             userID: 3,
             email: "user3@gmail.com",
             password: "password3",
-            phone_number: "432156789",
             role: "user",
-            name: "User 3",
         },
         {
             userID: 4,
             email: "admin@gmail.com",
             password: "adminpassword",
-            phone_number: "987654321",
             role: "admin",
-            name: "Admin 4",
         },
     ];
 
-    users.forEach(async (user) => {
+    for (const user of users) {
         await userService.createNewAccount(user);
-    });
+    }
+};
+
+const seedAddress = async () => {
+    await ShippingAddress.bulkCreate([
+        {
+            addressID: 101,
+            userID: 1,
+            address: "123 Duong Ching",
+            city: "Ha Noi",
+            district: "Hoan Kiem",
+            phoneNumber: "123456789",
+            recipientName: "User 1/1",
+            paymentMethod: "COD",
+        },
+        {
+            addressID: 102,
+            userID: 1,
+            address: "456 Duong Pho",
+            city: "Ho Chi Minh City",
+            district: "Quan 1",
+            phoneNumber: "087654321",
+            recipientName: "User 1/2",
+            paymentMethod: "Momo",
+        },
+        {
+            addressID: 201,
+            userID: 2,
+            address: "456 Duong Pho",
+            city: "Ho Chi Minh City",
+            district: "Quan 1",
+            phoneNumber: "087654321",
+            recipientName: "User 2/1",
+            paymentMethod: "COD",
+        },
+        {
+            addressID: 301,
+            userID: 3,
+            address: "789 Duong Cay",
+            city: "Da Nang",
+            district: "Hai Chau",
+            phoneNumber: "087654321",
+            recipientName: "User 3/1",
+            paymentMethod: "Credit Card",
+        },
+    ]);
 };
 
 const seedProduct = async () => {
@@ -932,70 +969,35 @@ const seedOrder = async () => {
             userID: 1,
             orderDate: new Date("2024-06-01"),
             status: "pending",
-            shippingAddress: "123 Main St",
+            shippingAddressID: 101,
         },
         {
             orderID: 2,
             userID: 2,
             orderDate: new Date("2024-06-02"),
             status: "processing",
-            shippingAddress: "456 Elm St",
+            shippingAddressID: 201,
         },
         {
             orderID: 3,
             userID: 3,
             orderDate: new Date("2024-06-03"),
             status: "shipped",
-            shippingAddress: "789 Oak St",
+            shippingAddressID: 301,
         },
         {
             orderID: 4,
             userID: 1,
             orderDate: new Date("2024-06-04"),
             status: "delivered",
-            shippingAddress: "1012 Pine St",
+            shippingAddressID: 102,
         },
         {
             orderID: 5,
             userID: 2,
             orderDate: new Date("2024-06-05"),
             status: "delivered",
-            shippingAddress: "1314 Cedar St",
-        },
-    ]);
-};
-
-const seedPayment = async () => {
-    await Payment.bulkCreate([
-        {
-            paymentID: 1,
-            orderID: 1,
-            paymentDate: new Date("2024-06-01"),
-            paymentMethod: "PayPal",
-        },
-        {
-            paymentID: 2,
-            orderID: 2,
-            paymentDate: new Date("2024-06-02"),
-            paymentMethod: "COD",
-        },
-        {
-            paymentID: 3,
-            orderID: 3,
-            paymentDate: new Date("2024-06-03"),
-            paymentMethod: "CreditCard",
-        },
-        {
-            paymentID: 4,
-            orderID: 4,
-            paymentDate: new Date("2024-06-04"),
-            paymentMethod: "COD",
-        },
-        {
-            paymentID: 5,
-            orderID: 5,
-            paymentDate: new Date("2024-06-05"),
-            paymentMethod: "CreditCard",
+            shippingAddressID: 201,
         },
     ]);
 };

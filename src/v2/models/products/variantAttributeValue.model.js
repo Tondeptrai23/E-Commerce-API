@@ -19,4 +19,4 @@ VariantAttributeValue.init(
     }
 );
 
-export { VariantAttributeValue };
+export default VariantAttributeValue;

@@ -33,4 +33,4 @@ Variant.init(
     }
 );
 
-export { Variant };
+export default Variant;
