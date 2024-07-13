@@ -23,7 +23,12 @@ Order.init(
             ),
             defaultValue: "pending",
         },
-        totalAmount: {
+        subTotal: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+        },
+        finalTotal: {
             type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0,

@@ -46,7 +46,7 @@ class CartService {
      * @param {User} user - The user object
      * @param {String} addressID - The shipping address ID
      * @returns {Promise<Order[]>} The order.
-     * @throws {ResourceNotFoundError} If the cart is empty.
+     * @throws {ResourceNotFoundError} If the cart is empty or the address is not found.
      */
     async fetchCartToOrder(user, addressID) {
         const cart = await this.getCart(user);
@@ -84,7 +84,7 @@ class CartService {
             })
         );
 
-        newOrder.totalAmount = totalAmount;
+        newOrder.subTotal = totalAmount;
         newOrder = await newOrder.save();
         newOrder.dataValues.orderItems = orderItems;
 
@@ -97,8 +97,14 @@ class CartService {
      * @param {User} user - The user object.
      * @param {String} variantID - The variant ID.
      * @returns {Promise<CartItem>} The updated cart item.
+     * @throws {ResourceNotFoundError} If the variant is not found.
      */
     async addToCart(user, variantID) {
+        const variant = await Variant.findByPk(variantID);
+        if (!variant) {
+            throw new ResourceNotFoundError("Variant not found");
+        }
+
         let cartItem = await this.findCartItem(user, variantID);
 
         if (cartItem) {
