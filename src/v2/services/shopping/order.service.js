@@ -1,8 +1,8 @@
-import { Variant } from "../../models/products/variant.model.js";
-import { Order } from "../../models/userOrder/order.model.js";
-import { OrderItem } from "../../models/userOrder/orderItem.model.js";
-import { CartItem } from "../../models/userOrder/cartItem.model.js";
-import { User } from "../../models/userOrder/user.model.js";
+import Variant from "../../models/products/variant.model.js";
+import Order from "../../models/userOrder/order.model.js";
+import OrderItem from "../../models/userOrder/orderItem.model.js";
+import CartItem from "../../models/userOrder/cartItem.model.js";
+import User from "../../models/userOrder/user.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import cartService from "./cart.service.js";
 

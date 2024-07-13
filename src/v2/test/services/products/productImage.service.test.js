@@ -1,6 +1,6 @@
 import productImageService from "../../../services/products/productImage.service.js";
 import seedData from "../../../seedData.js";
-import { ProductImage } from "../../../models/products/productImage.model.js";
+import ProductImage from "../../../models/products/productImage.model.js";
 import { ResourceNotFoundError } from "../../../utils/error.js";
 
 beforeAll(async () => {

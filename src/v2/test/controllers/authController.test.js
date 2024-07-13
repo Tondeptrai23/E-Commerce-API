@@ -1,11 +1,11 @@
 import { jest } from "@jest/globals";
 import authController from "../../controllers/auth.controller.js";
 import seedData from "../../seedData.js";
-import { User } from "../../models/userOrder/user.model.js";
+import User from "../../models/userOrder/user.model.js";
 import userService from "../../services/user.service.js";
 import tokenService from "../../services/token.service.js";
-1;
-beforeEach(async () => {
+
+beforeAll(async () => {
     await seedData();
 });
 

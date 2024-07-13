@@ -1,7 +1,7 @@
 import seedData from "../../../seedData.js";
 import cartService from "../../../services/shopping/cart.service.js";
-import { User } from "../../../models/userOrder/user.model.js";
-import { CartItem } from "../../../models/userOrder/cartItem.model.js";
+import User from "../../../models/userOrder/user.model.js";
+import Order from "../../../models/userOrder/order.model.js";
 
 beforeAll(async () => {
     await seedData();
@@ -32,11 +32,33 @@ describe("CartService", () => {
 
     describe("CartService.fetchCartToOrder", () => {
         test("should fetch the user's cart items and prepare them for ordering", async () => {
+            const user = await User.findByPk(3);
+            const addressID = "301";
+
+            const order = await cartService.fetchCartToOrder(user, addressID);
+
+            const cartItems = await cartService.getCart(user);
+            expect(cartItems.length).toBe(0);
+            expect(order).toBeDefined();
+            expect(order).toBeInstanceOf(Order);
+        });
+
+        test("should throw an error if the cart is empty", async () => {
+            const user = await User.findByPk(4);
+            const addressID = "101";
+
+            await expect(
+                cartService.fetchCartToOrder(user, addressID)
+            ).rejects.toThrow();
+        });
+
+        test("should throw an error if the address is not found", async () => {
             const user = await User.findByPk(1);
+            const addressID = "999";
 
-            await cartService.fetchCartToOrder(user);
-
-            // Add your assertions here
+            await expect(
+                cartService.fetchCartToOrder(user, addressID)
+            ).rejects.toThrow();
         });
     });
 

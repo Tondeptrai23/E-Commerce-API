@@ -1,7 +1,6 @@
-import { AttributeValue } from "../../models/products/attributeValue.model.js";
-import { Variant } from "../../models/products/variant.model.js";
-import { VariantAttributeValue } from "../../models/products/variantAttributeValue.model.js";
-import { Attribute } from "../../models/products/attribute.model.js";
+import AttributeValue from "../../models/products/attributeValue.model.js";
+import Variant from "../../models/products/variant.model.js";
+import Attribute from "../../models/products/attribute.model.js";
 
 class AttributeService {
     /**

@@ -1,5 +1,5 @@
 import { jwt } from "../config/auth.config.js";
-import { User } from "../models/userOrder/user.model.js";
+import User from "../models/userOrder/user.model.js";
 import { createHash } from "crypto";
 
 /**

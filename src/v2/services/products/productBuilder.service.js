@@ -1,10 +1,10 @@
-import { Product } from "../../models/products/product.model.js";
-import { Category } from "../../models/products/category.model.js";
+import Product from "../../models/products/product.model.js";
+import Category from "../../models/products/category.model.js";
 import { Op } from "sequelize";
 import { removeEmptyFields } from "../../utils/utils.js";
 import variantService from "./variant.service.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
-import { Variant } from "../../models/products/variant.model.js";
+import Variant from "../../models/products/variant.model.js";
 import { db } from "../../models/index.js";
 
 class ProductBuilderService {

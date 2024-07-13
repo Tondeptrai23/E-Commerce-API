@@ -1,4 +1,4 @@
-import { Variant } from "../../models/products/variant.model.js";
+import Variant from "../../models/products/variant.model.js";
 import Serializer from "./serializer.service.js";
 
 class VariantSerializer extends Serializer {

@@ -1,6 +1,6 @@
 import productCategoryService from "../../../services/products/productCategory.service.js";
 import seedData from "../../../seedData.js";
-import { Category } from "../../../models/products/category.model.js";
+import Category from "../../../models/products/category.model.js";
 import { ResourceNotFoundError } from "../../../utils/error.js";
 
 beforeAll(async () => {

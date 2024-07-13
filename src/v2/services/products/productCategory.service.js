@@ -1,7 +1,7 @@
 import { ResourceNotFoundError } from "../../utils/error.js";
-import { Product } from "../../models/products/product.model.js";
-import { Category } from "../../models/products/category.model.js";
-import { ProductCategory } from "../../models/products/productCategory.model.js";
+import Product from "../../models/products/product.model.js";
+import Category from "../../models/products/category.model.js";
+import ProductCategory from "../../models/products/productCategory.model.js";
 import productBuilderService from "./productBuilder.service.js";
 
 class ProductCategoryService {

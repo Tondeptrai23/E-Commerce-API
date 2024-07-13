@@ -1,7 +1,12 @@
 import tokenService from "../../services/token.service.js";
 import { jwt } from "../../config/auth.config.js";
-import { User } from "../../models/userOrder/user.model.js";
+import User from "../../models/userOrder/user.model.js";
 import { createHash } from "crypto";
+import seedData from "../../seedData.js";
+
+beforeAll(async () => {
+    await seedData();
+});
 
 describe("Token Service", () => {
     describe("tokenService.signToken + tokenService.decodeToken", () => {

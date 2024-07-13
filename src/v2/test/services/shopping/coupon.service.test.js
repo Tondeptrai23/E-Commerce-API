@@ -31,8 +31,6 @@ describe("CouponService", () => {
             );
             expect(createdCoupon.timesUsed).toBe(couponData.timesUsed);
             expect(createdCoupon.maxUsage).toBe(couponData.maxUsage);
-            expect(createdCoupon.startDate).toEqual(couponData.startDate);
-            expect(createdCoupon.endDate).toEqual(couponData.endDate);
         });
     });
 

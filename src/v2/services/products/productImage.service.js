@@ -1,5 +1,5 @@
-import { Product } from "../../models/products/product.model.js";
-import { ProductImage } from "../../models/products/productImage.model.js";
+import Product from "../../models/products/product.model.js";
+import ProductImage from "../../models/products/productImage.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
 
 class ProductImageService {

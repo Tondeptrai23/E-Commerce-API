@@ -1,5 +1,5 @@
 import CategorySerializer from "../../../services/serializers/categorySerializer.service.js";
-import { Category } from "../../../models/products/category.model.js";
+import Category from "../../../models/products/category.model.js";
 
 describe("CategorySerializer default", () => {
     test("should serialize a category object to a JSON object", async () => {

@@ -1,7 +1,10 @@
-import { CartItem } from "../../models/userOrder/cartItem.model.js";
-import { User } from "../../models/userOrder/user.model.js";
-import { Variant } from "../../models/products/variant.model.js";
+import CartItem from "../../models/userOrder/cartItem.model.js";
+import User from "../../models/userOrder/user.model.js";
+import Variant from "../../models/products/variant.model.js";
+import Order from "../../models/userOrder/order.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
+import ShippingAddress from "../../models/userOrder/address.model.js";
+import OrderItem from "../../models/userOrder/orderItem.model.js";
 
 /**
  * Service class for managing the user's shopping cart.
@@ -38,10 +41,54 @@ class CartService {
 
     /**
      * Fetches the user's cart items and prepares them for ordering.
-     * @param {User} user - The user object.
+     * The cart items are removed from the cart and added to a new order.
+     *
+     * @param {User} user - The user object
+     * @param {String} addressID - The shipping address ID
+     * @returns {Promise<Order[]>} The order.
+     * @throws {ResourceNotFoundError} If the cart is empty.
      */
-    async fetchCartToOrder(user) {
-        // Implementation goes here
+    async fetchCartToOrder(user, addressID) {
+        const cart = await this.getCart(user);
+
+        if (cart.length === 0) {
+            throw new ResourceNotFoundError("Cart is empty");
+        }
+
+        const address = await ShippingAddress.findByPk(addressID);
+        if (!address) {
+            throw new ResourceNotFoundError("Address not found");
+        }
+
+        let newOrder = await Order.create({
+            userID: user.userID,
+            orderDate: new Date(),
+            status: "pending",
+            shippingAddressID: addressID,
+            totalAmount: 0,
+        });
+
+        let totalAmount = 0;
+        const orderItems = await Promise.all(
+            cart.map(async (variant) => {
+                totalAmount += variant.price * variant.cartItem.quantity;
+
+                const data = {
+                    orderID: newOrder.orderID,
+                    variantID: variant.variantID,
+                    quantity: variant.cartItem.quantity,
+                };
+                variant.cartItem.destroy();
+
+                return await OrderItem.create(data);
+            })
+        );
+
+        newOrder.totalAmount = totalAmount;
+        newOrder = await newOrder.save();
+        newOrder.dataValues.orderItems = orderItems;
+
+        return newOrder;
     }
 
     /**
@@ -56,7 +103,7 @@ class CartService {
 
         if (cartItem) {
             cartItem.quantity += 1;
-            await cartItem.save();
+            cartItem = await cartItem.save();
         } else {
             cartItem = await CartItem.create({
                 userID: user.userID,
@@ -84,9 +131,7 @@ class CartService {
         }
 
         cartItem.quantity = quantity;
-        await cartItem.save();
-
-        return await cartItem.reload();
+        return await cartItem.save();
     }
 
     /**

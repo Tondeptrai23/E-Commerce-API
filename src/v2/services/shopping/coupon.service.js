@@ -1,6 +1,6 @@
-import { Category } from "../../models/products/category.model.js";
-import { Product } from "../../models/products/product.model.js";
-import { Coupon } from "../../models/promotion/coupon.model.js";
+import Category from "../../models/products/category.model.js";
+import Product from "../../models/products/product.model.js";
+import Coupon from "../../models/promotion/coupon.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
 
 class CouponService {

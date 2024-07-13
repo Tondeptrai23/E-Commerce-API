@@ -1,4 +1,4 @@
-import { Product } from "../../../models/products/product.model.js";
+import Product from "../../../models/products/product.model.js";
 import productBuilderService from "../../../services/products/productBuilder.service.js";
 import seedData from "../../../seedData.js";
 

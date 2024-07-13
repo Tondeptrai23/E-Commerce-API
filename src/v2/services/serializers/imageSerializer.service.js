@@ -1,4 +1,4 @@
-import { ProductImage } from "../../models/products/productImage.model.js";
+import ProductImage from "../../models/products/productImage.model.js";
 import Serializer from "./serializer.service.js";
 
 class ImageSerializer extends Serializer {

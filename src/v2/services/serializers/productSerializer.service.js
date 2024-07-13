@@ -1,4 +1,4 @@
-import { Product } from "../../models/products/product.model.js";
+import Product from "../../models/products/product.model.js";
 import Serializer from "./serializer.service.js";
 import VariantSerializer from "./variantSerializer.service.js";
 import ImageSerializer from "./imageSerializer.service.js";

@@ -1,9 +1,9 @@
 import variantService from "../../../services/products/variant.service.js";
 import seedData from "../../../seedData.js";
-import { Variant } from "../../../models/products/variant.model.js";
+import Variant from "../../../models/products/variant.model.js";
 import { ResourceNotFoundError } from "../../../utils/error.js";
-import { Product } from "../../../models/products/product.model.js";
-import { AttributeValue } from "../../../models/products/attributeValue.model.js";
+import Product from "../../../models/products/product.model.js";
+import AttributeValue from "../../../models/products/attributeValue.model.js";
 
 beforeAll(async () => {
     await seedData();

@@ -1,11 +1,11 @@
-import { Product } from "../../models/products/product.model.js";
-import { Category } from "../../models/products/category.model.js";
-import { ProductImage } from "../../models/products/productImage.model.js";
-import { ProductCategory } from "../../models/products/productCategory.model.js";
-import { Variant } from "../../models/products/variant.model.js";
+import Product from "../../models/products/product.model.js";
+import Category from "../../models/products/category.model.js";
+import ProductImage from "../../models/products/productImage.model.js";
+import ProductCategory from "../../models/products/productCategory.model.js";
+import Variant from "../../models/products/variant.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
-import { AttributeValue } from "../../models/products/attributeValue.model.js";
-import { Attribute } from "../../models/products/attribute.model.js";
+import AttributeValue from "../../models/products/attributeValue.model.js";
+import Attribute from "../../models/products/attribute.model.js";
 
 class ProductService {
     /**

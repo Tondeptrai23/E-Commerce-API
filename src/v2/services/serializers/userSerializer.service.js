@@ -1,5 +1,5 @@
 import Serializer from "./serializer.service.js";
-import { User } from "../../models/userOrder/user.model.js";
+import User from "../../models/userOrder/user.model.js";
 
 class UserSerializer extends Serializer {
     /**

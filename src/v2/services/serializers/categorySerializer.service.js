@@ -1,4 +1,4 @@
-import { Category } from "../../models/products/category.model.js";
+import Category from "../../models/products/category.model.js";
 import Serializer from "./serializer.service.js";
 
 class CategorySerializer extends Serializer {

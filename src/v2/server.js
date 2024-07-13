@@ -7,8 +7,6 @@ import { db } from "./models/index.js";
 import seedData from "./seedData.js";
 
 import { router } from "./routes/index.js";
-import { User } from "./models/userOrder/user.model.js";
-import orderService from "./services/shopping/order.service.js";
 
 const app = express();
 app.use(bodyParser.json());
@@ -30,7 +28,7 @@ app.use((req, res, next) => {
 
 app.use("/api/v2", router);
 
-db.sync()
+db.sync({ force: true })
     .then(async (res) => {
         //
         await seedData();

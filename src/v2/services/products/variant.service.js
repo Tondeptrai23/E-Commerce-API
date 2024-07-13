@@ -1,9 +1,9 @@
-import { Product } from "../../models/products/product.model.js";
-import { Variant } from "../../models/products/variant.model.js";
+import Product from "../../models/products/product.model.js";
+import Variant from "../../models/products/variant.model.js";
 import attributeService from "./attribute.service.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
-import { AttributeValue } from "../../models/products/attributeValue.model.js";
-import { Attribute } from "../../models/products/attribute.model.js";
+import AttributeValue from "../../models/products/attributeValue.model.js";
+import Attribute from "../../models/products/attribute.model.js";
 
 class VariantService {
     /**

@@ -1,9 +1,9 @@
 import orderService from "../../../services/shopping/order.service.js";
-import { User } from "../../../models/userOrder/user.model.js";
+import User from "../../../models/userOrder/user.model.js";
 import seedData from "../../../seedData.js";
-import { Order } from "../../../models/userOrder/order.model.js";
+import Order from "../../../models/userOrder/order.model.js";
 import { ResourceNotFoundError } from "../../../utils/error.js";
-import { CartItem } from "../../../models/userOrder/cartItem.model.js";
+import CartItem from "../../../models/userOrder/cartItem.model.js";
 
 beforeAll(async () => {
     await seedData();
@@ -58,7 +58,7 @@ describe("OrderService", () => {
             const orderID = "1";
             const orderData = {
                 status: "delivered",
-                shippingAddress: "123 Main St",
+                paymentMethod: "Credit Card",
                 orderDate: null,
             };
 
@@ -72,9 +72,7 @@ describe("OrderService", () => {
             expect(updatedOrder).toBeInstanceOf(Order);
             expect(updatedOrder.orderID).toBe(orderID);
             expect(updatedOrder.status).toBe(orderData.status);
-            expect(updatedOrder.shippingAddress).toBe(
-                orderData.shippingAddress
-            );
+            expect(updatedOrder.paymentMethod).toBe(orderData.paymentMethod);
             expect(updatedOrder.orderDate).toBeNull();
         });
 
