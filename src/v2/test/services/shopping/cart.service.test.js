@@ -94,6 +94,15 @@ describe("CartService", () => {
             expect(updatedCartItem.variantID).toEqual(variantID);
             expect(updatedCartItem.quantity).toBeGreaterThan(quantity);
         });
+
+        test("should throw an error if the variant is not found", async () => {
+            const user = await User.findByPk("1");
+            const variantID = "999";
+
+            await expect(
+                cartService.addToCart(user, variantID)
+            ).rejects.toThrow();
+        });
     });
 
     describe("CartService.updateCart", () => {

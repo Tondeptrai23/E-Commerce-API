@@ -900,6 +900,7 @@ const seedCoupon = async () => {
             code: "10OFF",
             discountType: "percentage",
             discountValue: 10,
+            target: "all",
             minimumOrderAmount: 20,
             timesUsed: 0,
             maxUsage: 10,
@@ -911,7 +912,8 @@ const seedCoupon = async () => {
             code: "20OFF_SHORTS",
             discountType: "percentage",
             discountValue: 20,
-            timesUsed: 4,
+            target: "single",
+            timesUsed: 3,
             maxUsage: 5,
             startDate: new Date("2024-06-01"),
             endDate: new Date("2024-07-31"),
@@ -921,16 +923,18 @@ const seedCoupon = async () => {
             code: "SUMMER5",
             discountType: "fixed",
             discountValue: 5,
+            target: "single",
             timesUsed: 0,
             maxUsage: 20,
             startDate: new Date("2024-06-01"),
-            endDate: new Date("2024-07-31"),
+            endDate: new Date("2024-07-1"),
         },
         {
             couponID: 4,
             code: "5OFF_TOPS",
             discountType: "fixed",
             discountValue: 10,
+            target: "all",
             minimumOrderAmount: 50,
             startDate: new Date("2024-06-01"),
             endDate: new Date("2024-07-31"),
@@ -940,6 +944,18 @@ const seedCoupon = async () => {
             code: "FREE_DELIVERY",
             discountType: "fixed",
             discountValue: 0,
+            target: "single",
+            startDate: new Date("2024-06-01"),
+            endDate: new Date("2024-07-31"),
+        },
+        {
+            couponID: 6,
+            code: "WINTER5",
+            discountType: "fixed",
+            discountValue: 5,
+            target: "all",
+            timesUsed: 0,
+            maxUsage: 20,
             startDate: new Date("2024-06-01"),
             endDate: new Date("2024-07-31"),
         },
@@ -950,6 +966,7 @@ const seedCategoryCoupon = async () => {
     await CategoryCoupon.bulkCreate([
         { couponID: 2, categoryID: 10 },
         { couponID: 4, categoryID: 6 },
+        { couponID: 6, categoryID: 1 },
     ]);
 };
 
@@ -958,7 +975,6 @@ const seedProductCoupon = async () => {
         { couponID: 1, productID: 1 },
         { couponID: 1, productID: 2 },
         { couponID: 3, productID: 3 },
-        { couponID: 5, productID: 5 },
     ]);
 };
 
@@ -1065,6 +1081,22 @@ const seedOrderItem = async () => {
             quantity: 5,
         },
     ]);
+
+    const orders = await Order.findAll();
+    for (const order of orders) {
+        const orderItems = await OrderItem.findAll({
+            where: { orderID: order.orderID },
+        });
+        let subTotal = 0;
+        for (const orderItem of orderItems) {
+            const variant = await Variant.findByPk(orderItem.variantID);
+            subTotal += variant.price * orderItem.quantity;
+        }
+        await Order.update(
+            { subTotal: subTotal },
+            { where: { orderID: order.orderID } }
+        );
+    }
 };
 
 const seedCartItem = async () => {

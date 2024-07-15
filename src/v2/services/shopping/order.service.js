@@ -97,12 +97,13 @@ class OrderService {
      * @throws {ResourceNotFoundError} - If the order is not found.
      */
     async moveToCart(user, orderID) {
-        const order = await Order.findOne({
-            where: {
-                orderID: orderID,
-                userID: user.userID,
-            },
-        });
+        const order = (
+            await user.getOrders({
+                where: {
+                    orderID: orderID,
+                },
+            })
+        )[0];
 
         if (!order) {
             throw new ResourceNotFoundError("Order not found");

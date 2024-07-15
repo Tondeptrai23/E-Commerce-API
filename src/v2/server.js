@@ -8,6 +8,10 @@ import seedData from "./seedData.js";
 
 import { router } from "./routes/index.js";
 
+import couponService from "./services/shopping/coupon.service.js";
+import productService from "./services/products/product.service.js";
+import productCategoryService from "./services/products/productCategory.service.js";
+
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

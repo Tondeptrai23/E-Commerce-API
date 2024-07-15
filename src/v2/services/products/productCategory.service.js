@@ -3,6 +3,7 @@ import Product from "../../models/products/product.model.js";
 import Category from "../../models/products/category.model.js";
 import ProductCategory from "../../models/products/productCategory.model.js";
 import productBuilderService from "./productBuilder.service.js";
+import categoryService from "./category.service.js";
 
 class ProductCategoryService {
     /**
@@ -75,6 +76,64 @@ class ProductCategoryService {
 
         const categories = product.categories;
         return categories;
+    }
+
+    /**
+     * Get all products belong to an ancestor category
+     *
+     * @param {String} categoryName the name of the ancestor category
+     * @returns {Promise<Product>} the products that belong to the ancestor category
+     * @throws {ResourceNotFoundError} if the category is not found
+     */
+    async getProductsByAncestorCategory(categoryName) {
+        let category = await Category.findOne({
+            where: {
+                name: categoryName.toLowerCase(),
+            },
+        });
+
+        if (!category) {
+            throw new ResourceNotFoundError("Category not found");
+        }
+
+        const categories = await categoryService.getDescendantCategories(
+            category.categoryID
+        );
+        categories.push(category);
+
+        const products = [
+            ...new Set(
+                (
+                    await Promise.all(
+                        categories.map(
+                            async (category) => await category.getProducts()
+                        )
+                    )
+                ).flat()
+            ),
+        ];
+
+        return products;
+    }
+
+    /**
+     * Get all categories that a product belongs to
+     *
+     * @param {String} productID the product ID to be retrieved
+     * @returns {Promise<String[]>} the categories name of the product
+     */
+    async getProductCategoryTree(productID) {
+        let categories = await this.getProductCategories(productID);
+
+        const result = [categories];
+        for (const category of categories) {
+            const parent = await categoryService.getAscendantCategories(
+                category.categoryID
+            );
+            result.push(...parent);
+        }
+
+        return result.map((category) => category.name);
     }
 }
 

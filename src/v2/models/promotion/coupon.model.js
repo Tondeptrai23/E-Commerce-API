@@ -23,8 +23,13 @@ Coupon.init(
             type: DataTypes.ENUM("percentage", "fixed"),
             allowNull: false,
         },
+        target: {
+            type: DataTypes.ENUM("all", "single"),
+            allowNull: false,
+        },
         minimumOrderAmount: {
             type: DataTypes.INTEGER,
+            defaultValue: 0,
         },
         timesUsed: {
             type: DataTypes.INTEGER,

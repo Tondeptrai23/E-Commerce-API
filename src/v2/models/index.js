@@ -189,18 +189,18 @@ Variant.belongsToMany(Order, {
     as: "orders",
 });
 
-Order.hasOne(Coupon, {
+Order.belongsTo(Coupon, {
     foreignKey: {
-        name: "orderID",
+        name: "couponID",
         allowNull: true,
     },
     onDelete: "CASCADE",
     constraints: true,
     as: "coupon",
 });
-Coupon.belongsTo(Order, {
+Coupon.hasMany(Order, {
     foreignKey: {
-        name: "orderID",
+        name: "couponID",
         allowNull: true,
     },
     onDelete: "CASCADE",

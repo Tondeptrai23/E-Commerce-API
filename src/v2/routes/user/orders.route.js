@@ -18,6 +18,17 @@ userOrderRoute.post(
     verifyToken,
     ordersController.moveToCart
 );
+userOrderRoute.post(
+    "/:orderID/coupons",
+    verifyToken,
+    ordersController.applyCoupon
+);
+
+userOrderRoute.get(
+    "/:orderID/coupons/recommended",
+    verifyToken,
+    ordersController.getRecommendedCoupons
+);
 
 userOrderRoute.delete("/:orderID", verifyToken, ordersController.deleteOrder);
 

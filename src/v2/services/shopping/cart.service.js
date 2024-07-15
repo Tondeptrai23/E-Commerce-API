@@ -5,6 +5,8 @@ import Order from "../../models/userOrder/order.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import ShippingAddress from "../../models/userOrder/address.model.js";
 import OrderItem from "../../models/userOrder/orderItem.model.js";
+import { Op } from "sequelize";
+import couponService from "./coupon.service.js";
 
 /**
  * Service class for managing the user's shopping cart.
@@ -45,12 +47,19 @@ class CartService {
      *
      * @param {User} user - The user object
      * @param {String} addressID - The shipping address ID
+     * @param {String[]} variantIDs - The variant IDs
+     * @param {String} couponCode - The coupon code
      * @returns {Promise<Order[]>} The order.
      * @throws {ResourceNotFoundError} If the cart is empty or the address is not found.
      */
-    async fetchCartToOrder(user, addressID) {
-        const cart = await this.getCart(user);
-
+    async fetchCartToOrder(user, variantIDs, addressID, couponCode) {
+        const cart = await user.getCartItems({
+            where: {
+                variantID: {
+                    [Op.in]: variantIDs,
+                },
+            },
+        });
         if (cart.length === 0) {
             throw new ResourceNotFoundError("Cart is empty");
         }
@@ -68,6 +77,7 @@ class CartService {
             totalAmount: 0,
         });
 
+        // Calculate total amount
         let totalAmount = 0;
         const orderItems = await Promise.all(
             cart.map(async (variant) => {
@@ -85,7 +95,7 @@ class CartService {
         );
 
         newOrder.subTotal = totalAmount;
-        newOrder = await newOrder.save();
+        newOrder = await couponService.applyCoupon(newOrder, couponCode);
         newOrder.dataValues.orderItems = orderItems;
 
         return newOrder;
