@@ -43,16 +43,16 @@ class CartService {
 
     /**
      * Fetches the user's cart items and prepares them for ordering.
-     * The cart items are removed from the cart and added to a new order.
+     * Create an pending order
+     * CartItem will be removed after order is checked out
      *
      * @param {User} user - The user object
-     * @param {String} addressID - The shipping address ID
      * @param {String[]} variantIDs - The variant IDs
-     * @param {String} couponCode - The coupon code
      * @returns {Promise<Order[]>} The order.
      * @throws {ResourceNotFoundError} If the cart is empty or the address is not found.
      */
-    async fetchCartToOrder(user, variantIDs, addressID, couponCode) {
+    async fetchCartToOrder(user, variantIDs) {
+        // Check for valid data
         const cart = await user.getCartItems({
             where: {
                 variantID: {
@@ -64,16 +64,29 @@ class CartService {
             throw new ResourceNotFoundError("Cart is empty");
         }
 
-        const address = await ShippingAddress.findByPk(addressID);
-        if (!address) {
-            throw new ResourceNotFoundError("Address not found");
+        // Remove existing pending order
+        const pendingOrder = await Order.findOne({
+            where: {
+                userID: user.userID,
+                status: "pending",
+            },
+        });
+        if (pendingOrder) {
+            await pendingOrder.destroy();
         }
+
+        // Find default shipping address
+        const shippingAddress = await ShippingAddress.findOne({
+            where: {
+                userID: user.userID,
+            },
+        });
 
         let newOrder = await Order.create({
             userID: user.userID,
             orderDate: new Date(),
             status: "pending",
-            shippingAddressID: addressID,
+            shippingAddressID: shippingAddress.addressID,
             totalAmount: 0,
         });
 
@@ -88,15 +101,18 @@ class CartService {
                     variantID: variant.variantID,
                     quantity: variant.cartItem.quantity,
                 };
-                variant.cartItem.destroy();
 
                 return await OrderItem.create(data);
             })
         );
 
-        newOrder.subTotal = totalAmount;
-        newOrder = await couponService.applyCoupon(newOrder, couponCode);
+        newOrder.update({
+            subTotal: totalAmount,
+            finalTotal: totalAmount,
+        });
         newOrder.dataValues.orderItems = orderItems;
+        newOrder.dataValues.subTotal = totalAmount;
+        newOrder.dataValues.finalTotal = totalAmount;
 
         return newOrder;
     }

@@ -984,7 +984,7 @@ const seedOrder = async () => {
             orderID: 1,
             userID: 1,
             orderDate: new Date("2024-06-01"),
-            status: "pending",
+            status: "processing",
             shippingAddressID: 101,
         },
         {

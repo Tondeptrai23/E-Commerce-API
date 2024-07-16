@@ -8,10 +8,6 @@ import seedData from "./seedData.js";
 
 import { router } from "./routes/index.js";
 
-import couponService from "./services/shopping/coupon.service.js";
-import productService from "./services/products/product.service.js";
-import productCategoryService from "./services/products/productCategory.service.js";
-
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -32,10 +28,10 @@ app.use((req, res, next) => {
 
 app.use("/api/v2", router);
 
-db.sync({ force: true })
+db.sync()
     .then(async (res) => {
         //
-        await seedData();
+        // await seedData();
     })
     .catch((err) => console.log(err));
 

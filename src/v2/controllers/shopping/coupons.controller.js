@@ -192,38 +192,6 @@ class CouponController {
             }
         }
     }
-
-    async getRecommendedCoupons(req, res) {
-        try {
-            // Get params
-            const { variantIDs } = req.params;
-
-            // Call service
-            let coupons = await couponService.getRecommendedCoupons(variantIDs);
-
-            // Serialize data
-
-            // Response
-            res.status(StatusCodes.OK).json({
-                success: true,
-                coupons: coupons,
-            });
-        } catch (err) {
-            console.log(err);
-
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    error: err.message,
-                });
-            } else {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    error: "Server error in applying coupon",
-                });
-            }
-        }
-    }
 }
 
 export default new CouponController();

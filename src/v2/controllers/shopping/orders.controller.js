@@ -1,7 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 
 import orderService from "../../services/shopping/order.service.js";
-import cartService from "../../services/shopping/cart.service.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import couponService from "../../services/shopping/coupon.service.js";
 
@@ -109,47 +108,13 @@ class OrderController {
         }
     }
 
-    async moveToCart(req, res) {
-        try {
-            // Get params
-            const { orderID } = req.params;
-
-            // Call service
-            await orderService.moveToCart(req.user, orderID);
-            const cart = await cartService.getCart(req.user);
-
-            // Serialize data
-
-            // Response
-            res.status(StatusCodes.OK).json({
-                success: true,
-                cart: cart,
-            });
-        } catch (err) {
-            console.log(err);
-
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    error: err.message,
-                });
-            } else {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    error: "Server error in moving order to cart",
-                });
-            }
-        }
-    }
-
     async applyCoupon(req, res) {
         try {
             // Get params
             const { couponCode } = req.body;
-            const { orderID } = req.params;
 
             // Call service
-            let order = await orderService.getOrder(req.user, orderID);
+            let order = await orderService.getPendingOrder(req.user);
             order = await couponService.applyCoupon(order, couponCode);
 
             // Serailize data
@@ -178,11 +143,8 @@ class OrderController {
 
     async getRecommendedCoupons(req, res) {
         try {
-            // Get params
-            const { orderID } = req.params;
-
             // Call service
-            const order = await orderService.getOrder(req.user, orderID);
+            const order = await orderService.getPendingOrder(req.user);
             let coupons = await couponService.getRecommendedCoupons(order);
 
             // Serialize data
@@ -204,6 +166,38 @@ class OrderController {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
                     error: "Server error in applying coupon",
+                });
+            }
+        }
+    }
+
+    async updateAddress(req, res) {
+        try {
+            // Get param
+            const { addressID } = req.body;
+
+            // Call service
+            let order = await orderService.updateAddress(req.user, addressID);
+
+            // Serialize data
+
+            // Response
+            res.status(StatusCodes.OK).json({
+                success: true,
+                order: order,
+            });
+        } catch (err) {
+            console.log(err);
+
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: "Server error in updating address",
                 });
             }
         }

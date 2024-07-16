@@ -142,7 +142,7 @@ class CouponService {
                             await Promise.all(
                                 supportCategories.map(async (category) => {
                                     return await productCategoryService.getProductsByAncestorCategory(
-                                        category
+                                        category.name
                                     );
                                 })
                             )

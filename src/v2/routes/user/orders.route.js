@@ -9,25 +9,26 @@ userOrderRoute.get("/", verifyToken, ordersController.getOrders);
 
 userOrderRoute.get("/:orderID", verifyToken, ordersController.getOrder);
 
-userOrderRoute.post("/:orderID", verifyToken, ordersController.postOrder);
-
 userOrderRoute.put("/:orderID", verifyToken, ordersController.updateOrder);
 
+userOrderRoute.post("/pending", verifyToken, ordersController.postOrder);
+
 userOrderRoute.post(
-    "/:orderID/move-to-cart",
-    verifyToken,
-    ordersController.moveToCart
-);
-userOrderRoute.post(
-    "/:orderID/coupons",
+    "/pending/coupons",
     verifyToken,
     ordersController.applyCoupon
 );
 
 userOrderRoute.get(
-    "/:orderID/coupons/recommended",
+    "/pending/coupons/recommended",
     verifyToken,
     ordersController.getRecommendedCoupons
+);
+
+userOrderRoute.patch(
+    "/pending/address",
+    verifyToken,
+    ordersController.updateAddress
 );
 
 userOrderRoute.delete("/:orderID", verifyToken, ordersController.deleteOrder);
