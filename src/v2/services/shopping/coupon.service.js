@@ -196,9 +196,22 @@ class CouponService {
             );
         }
 
-        // Calculate the new total amount
+        // Calculate final total
         order.finalTotal = await this.calcFinalTotal(order, coupon);
-        await order.setCoupon(coupon);
+
+        // Update order
+        if (order.couponID) {
+            Coupon.update(
+                { timesUsed: Sequelize.literal("timesUsed - 1") },
+                {
+                    where: {
+                        couponID: order.couponID,
+                    },
+                }
+            );
+        }
+        order.couponID = coupon.couponID;
+        coupon.increment("timesUsed");
 
         return await order.save();
     }
