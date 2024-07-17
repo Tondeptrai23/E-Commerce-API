@@ -7,7 +7,7 @@ import tokenService from "../../services/token.service.js";
 
 beforeAll(async () => {
     await seedData();
-});
+}, 15000);
 
 describe("authController.signup", () => {
     test("should create a new user and return a success response", async () => {

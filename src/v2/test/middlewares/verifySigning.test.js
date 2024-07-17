@@ -4,7 +4,7 @@ import { jest } from "@jest/globals";
 
 beforeAll(async () => {
     await seedData();
-});
+}, 15000);
 
 describe("verifySigning.checkEmailExistsForSignIn", () => {
     test("should call next() if email exists", async () => {

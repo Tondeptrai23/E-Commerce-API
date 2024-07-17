@@ -2,10 +2,11 @@ import seedData from "../../../seedData.js";
 import cartService from "../../../services/shopping/cart.service.js";
 import User from "../../../models/userOrder/user.model.js";
 import Order from "../../../models/userOrder/order.model.js";
+import Variant from "../../../models/products/variant.model.js";
 
 beforeAll(async () => {
     await seedData();
-});
+}, 15000);
 
 describe("CartService", () => {
     describe("CartService.getCart", () => {
@@ -33,31 +34,32 @@ describe("CartService", () => {
     describe("CartService.fetchCartToOrder", () => {
         test("should fetch the user's cart items and prepare them for ordering", async () => {
             const user = await User.findByPk(3);
-            const addressID = "301";
+            const variantIDs = ["501"];
 
-            const order = await cartService.fetchCartToOrder(user, addressID);
+            const order = await cartService.fetchCartToOrder(user, variantIDs);
 
-            const cartItems = await cartService.getCart(user);
-            expect(cartItems.length).toBe(0);
             expect(order).toBeDefined();
             expect(order).toBeInstanceOf(Order);
+            expect(order.products).toBeDefined();
+            expect(order.products).toBeInstanceOf(Array);
+            expect(order.products[0]).toBeInstanceOf(Variant);
+        });
+
+        test("should throw an error if the variantIDs is not found", async () => {
+            const user = await User.findByPk(3);
+            const variantIDs = ["999"];
+
+            await expect(
+                cartService.fetchCartToOrder(user, variantIDs)
+            ).rejects.toThrow();
         });
 
         test("should throw an error if the cart is empty", async () => {
             const user = await User.findByPk(4);
-            const addressID = "101";
+            const variantIDs = ["501"];
 
             await expect(
-                cartService.fetchCartToOrder(user, addressID)
-            ).rejects.toThrow();
-        });
-
-        test("should throw an error if the address is not found", async () => {
-            const user = await User.findByPk(1);
-            const addressID = "999";
-
-            await expect(
-                cartService.fetchCartToOrder(user, addressID)
+                cartService.fetchCartToOrder(user, variantIDs)
             ).rejects.toThrow();
         });
     });

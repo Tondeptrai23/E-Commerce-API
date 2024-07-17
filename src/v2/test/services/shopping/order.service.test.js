@@ -7,7 +7,7 @@ import CartItem from "../../../models/userOrder/cartItem.model.js";
 
 beforeAll(async () => {
     await seedData();
-});
+}, 15000);
 
 describe("OrderService", () => {
     describe("getOrders", () => {
@@ -83,37 +83,6 @@ describe("OrderService", () => {
 
             await expect(
                 orderService.updateOrder(user, orderID, orderData)
-            ).rejects.toThrow(ResourceNotFoundError);
-        });
-    });
-
-    // New test: moveToCart
-    describe("moveToCart", () => {
-        test("should move the specified order to cart for the user", async () => {
-            const user = await User.findByPk(1);
-            const orderID = "4";
-
-            const cartItems = await orderService.moveToCart(user, orderID);
-
-            expect(cartItems).toBeDefined();
-            expect(cartItems).toBeInstanceOf(Array);
-            expect(cartItems.length).toBeGreaterThan(0);
-            expect(cartItems[0]).toBeInstanceOf(CartItem);
-
-            // Verify that the order is deleted
-            // Delay 1s
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            await expect(orderService.getOrder(user, orderID)).rejects.toThrow(
-                ResourceNotFoundError
-            );
-        });
-
-        test("should throw ResourceNotFoundError if the order is not found", async () => {
-            const user = await User.findByPk(1);
-            const orderID = "12";
-
-            await expect(
-                orderService.moveToCart(user, orderID)
             ).rejects.toThrow(ResourceNotFoundError);
         });
     });

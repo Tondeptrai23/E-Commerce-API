@@ -6,6 +6,7 @@ import Order from "../../models/userOrder/order.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import Variant from "../../models/products/variant.model.js";
 import productCategoryService from "../products/productCategory.service.js";
+import { flattenArray } from "../../utils/utils.js";
 
 class CouponService {
     /**
@@ -16,6 +17,30 @@ class CouponService {
      */
     async createCoupon(couponData) {
         const coupon = await Coupon.create(couponData);
+
+        if (couponData.categories) {
+            const categories = await Category.findAll({
+                where: {
+                    name: {
+                        [Op.in]: couponData.categories,
+                    },
+                },
+            });
+            await coupon.setCategories(categories);
+            coupon.dataValues.categories = categories;
+        }
+
+        if (couponData.products) {
+            const products = await Product.findAll({
+                where: {
+                    productID: {
+                        [Op.in]: couponData.products,
+                    },
+                },
+            });
+            await coupon.setProducts(products);
+            coupon.dataValues.products = products;
+        }
 
         return coupon;
     }
@@ -113,7 +138,7 @@ class CouponService {
             return 0;
         }
         if (!coupon) {
-            return order.total;
+            return order.subTotal;
         }
 
         let totalAmount = order.subTotal;
@@ -135,17 +160,23 @@ class CouponService {
             // Get all products that are supported by the coupon
             // This includes products that are directly supported by the coupon
             // and products that are in categories supported by the coupon
+            if (!coupon.products || !coupon.products.length) {
+                coupon.products = [];
+            }
+
             const supportProducts = [
                 ...new Set(
                     coupon.products
                         .concat(
-                            await Promise.all(
-                                supportCategories.map(async (category) => {
-                                    return await productCategoryService.getProductsByAncestorCategory(
-                                        category.name
-                                    );
-                                })
-                            )
+                            (
+                                await Promise.all(
+                                    supportCategories.map(async (category) => {
+                                        return await productCategoryService.getProductsByAncestorCategory(
+                                            category.name
+                                        );
+                                    })
+                                )
+                            ).flat()
                         )
                         .map((product) => product.productID)
                 ),
@@ -157,10 +188,14 @@ class CouponService {
                     switch (coupon.discountType) {
                         case "percentage":
                             totalAmount -=
-                                (coupon.discountValue / 100) * product.price;
+                                (coupon.discountValue / 100) *
+                                product.price *
+                                product.orderItem.quantity;
                             break;
                         case "fixed":
-                            totalAmount -= coupon.discountValue;
+                            totalAmount -=
+                                coupon.discountValue *
+                                product.orderItem.quantity;
                             break;
                     }
                 }
@@ -176,13 +211,9 @@ class CouponService {
      * @param {String} couponCode The code of the coupon to be applied
      * @param {Order} order The order to apply the coupon to
      * @returns {Promise<Order>} The updated order
-     * @throws {ResourceNotFoundError} If the coupon or order is not found
+     * @throws {ResourceNotFoundError} If the coupon is not found or not available
      */
     async applyCoupon(order, couponCode) {
-        if (!order) {
-            throw new ResourceNotFoundError("Order not found");
-        }
-
         const coupon = await Coupon.findOne({
             where: {
                 code: couponCode,
@@ -221,23 +252,24 @@ class CouponService {
      *
      * @param {Order} order The order to get recommended coupons for
      * @returns {Promise<Coupon[]>} The list of recommended coupons
-     * @throws {ResourceNotFoundError} If the order is not found
      */
     async getRecommendedCoupons(order) {
-        if (!order) {
-            throw new ResourceNotFoundError("Order not found");
-        }
-
         // Products in order
-        const products = [
-            ...new Set(order.products.map((product) => product.productID)),
-        ];
+        const products = order.products
+            ? [...new Set(order.products.map((product) => product.productID))]
+            : [];
 
         // Categories that contain products in the order
-        const categories = await productCategoryService.getProductCategoryTree(
-            products
-        );
 
+        const categories = flattenArray(
+            await Promise.all(
+                products.map(async (productID) => {
+                    return productCategoryService.getProductCategoryTree(
+                        productID
+                    );
+                })
+            )
+        );
         const coupons = await Coupon.findAll({
             where: {
                 ...getAvailableOptions(),
@@ -267,8 +299,7 @@ class CouponService {
         return await Promise.all(
             coupons.map(async (coupon) => {
                 return {
-                    couponCode: coupon.code,
-                    couponID: coupon.couponID,
+                    coupon: coupon,
                     subTotal: order.subTotal,
                     finalTotal: await this.calcFinalTotal(order, coupon),
                 };

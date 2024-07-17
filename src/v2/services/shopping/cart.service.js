@@ -7,6 +7,7 @@ import ShippingAddress from "../../models/userOrder/address.model.js";
 import OrderItem from "../../models/userOrder/orderItem.model.js";
 import { Op } from "sequelize";
 import couponService from "./coupon.service.js";
+import orderService from "./order.service.js";
 
 /**
  * Service class for managing the user's shopping cart.
@@ -49,7 +50,7 @@ class CartService {
      * @param {User} user - The user object
      * @param {String[]} variantIDs - The variant IDs
      * @returns {Promise<Order[]>} The order.
-     * @throws {ResourceNotFoundError} If the cart is empty or the address is not found.
+     * @throws {ResourceNotFoundError} If the cart items are not found.
      */
     async fetchCartToOrder(user, variantIDs) {
         // Check for valid data
@@ -61,7 +62,7 @@ class CartService {
             },
         });
         if (cart.length === 0) {
-            throw new ResourceNotFoundError("Cart is empty");
+            throw new ResourceNotFoundError("No cart items found");
         }
 
         // Remove existing pending order
@@ -92,7 +93,7 @@ class CartService {
 
         // Calculate total amount
         let totalAmount = 0;
-        const orderItems = await Promise.all(
+        await Promise.all(
             cart.map(async (variant) => {
                 totalAmount += variant.price * variant.cartItem.quantity;
 
@@ -106,15 +107,12 @@ class CartService {
             })
         );
 
-        newOrder.update({
+        await newOrder.update({
             subTotal: totalAmount,
             finalTotal: totalAmount,
         });
-        newOrder.dataValues.orderItems = orderItems;
-        newOrder.dataValues.subTotal = totalAmount;
-        newOrder.dataValues.finalTotal = totalAmount;
 
-        return newOrder;
+        return await orderService.getOrder(user, newOrder.orderID);
     }
 
     /**

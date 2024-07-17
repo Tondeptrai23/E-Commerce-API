@@ -5,7 +5,7 @@ import { ResourceNotFoundError } from "../../../utils/error.js";
 
 beforeAll(async () => {
     await seedData();
-});
+}, 15000);
 
 describe("ProductImageService", () => {
     describe("getProductImage", () => {

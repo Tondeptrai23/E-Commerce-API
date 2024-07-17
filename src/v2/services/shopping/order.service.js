@@ -55,8 +55,9 @@ class OrderService {
      * @throws {ResourceNotFoundError} - If the order is not found.
      */
     async getOrder(user, orderID) {
-        const order = await user.getOrders({
+        const order = await Order.findOne({
             where: {
+                userID: user.userID,
                 orderID: orderID,
             },
             include: {
@@ -68,7 +69,7 @@ class OrderService {
             throw new ResourceNotFoundError("Order not found");
         }
 
-        return order[0];
+        return order;
     }
 
     /**
@@ -89,8 +90,9 @@ class OrderService {
      * @throws {ResourceNotFoundError} - If the order is not found.
      */
     async updateOrder(user, orderID, orderData) {
-        const order = await user.getOrders({
+        const order = await Order.findOne({
             where: {
+                userID: user.userID,
                 orderID: orderID,
             },
         });
@@ -98,7 +100,7 @@ class OrderService {
             throw new ResourceNotFoundError("Order not found");
         }
 
-        const updatedOrder = await order[0].update(orderData);
+        const updatedOrder = await order.update(orderData);
 
         return updatedOrder;
     }
@@ -111,14 +113,12 @@ class OrderService {
      * @throws {ResourceNotFoundError} - If the order is not found.
      */
     async deleteOrder(user, orderID) {
-        const order = (
-            await user.getOrders({
-                where: {
-                    orderID: orderID,
-                },
-            })
-        )[0];
-
+        const order = await Order.findOne({
+            where: {
+                userID: user.userID,
+                orderID: orderID,
+            },
+        });
         if (!order) {
             throw new ResourceNotFoundError("Order not found");
         }

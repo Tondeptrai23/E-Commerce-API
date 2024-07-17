@@ -20,4 +20,13 @@ const appendToObject = (obj, newObject) => {
     return obj;
 };
 
-export { isEmptyObject, appendToObject, removeEmptyFields };
+/**
+ * Flatten 2D array to 1D array and remove duplicates
+ *
+ * @param {Array} array the 2D array to be flattened
+ */
+const flattenArray = (array) => {
+    return [...new Set(array.flat())];
+};
+
+export { isEmptyObject, appendToObject, removeEmptyFields, flattenArray };

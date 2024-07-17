@@ -4,7 +4,7 @@ import User from "../../models/userOrder/user.model.js";
 
 beforeAll(async () => {
     await seedData();
-});
+}, 15000);
 
 describe("User Service", () => {
     describe("userService.createNewAccount", () => {

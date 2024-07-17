@@ -207,7 +207,7 @@ const seedProductCategory = async () => {
         { productID: 2, categoryID: 5 },
 
         { productID: 3, categoryID: 11 },
-        { productID: 3, categoryID: 4 },
+        { productID: 3, categoryID: 3 },
 
         { productID: 4, categoryID: 10 },
         { productID: 4, categoryID: 5 },
@@ -1093,7 +1093,7 @@ const seedOrderItem = async () => {
             subTotal += variant.price * orderItem.quantity;
         }
         await Order.update(
-            { subTotal: subTotal },
+            { subTotal: subTotal, finalTotal: subTotal },
             { where: { orderID: order.orderID } }
         );
     }

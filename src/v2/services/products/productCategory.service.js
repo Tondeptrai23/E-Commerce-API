@@ -4,6 +4,7 @@ import Category from "../../models/products/category.model.js";
 import ProductCategory from "../../models/products/productCategory.model.js";
 import productBuilderService from "./productBuilder.service.js";
 import categoryService from "./category.service.js";
+import { flattenArray } from "../../utils/utils.js";
 
 class ProductCategoryService {
     /**
@@ -101,18 +102,11 @@ class ProductCategoryService {
         );
         categories.push(category);
 
-        const products = [
-            ...new Set(
-                (
-                    await Promise.all(
-                        categories.map(
-                            async (category) => await category.getProducts()
-                        )
-                    )
-                ).flat()
-            ),
-        ];
-
+        const products = flattenArray(
+            await Promise.all(
+                categories.map(async (category) => await category.getProducts())
+            )
+        );
         return products;
     }
 

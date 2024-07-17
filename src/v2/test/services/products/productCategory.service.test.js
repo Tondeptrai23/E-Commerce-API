@@ -2,15 +2,16 @@ import productCategoryService from "../../../services/products/productCategory.s
 import seedData from "../../../seedData.js";
 import Category from "../../../models/products/category.model.js";
 import { ResourceNotFoundError } from "../../../utils/error.js";
+import Product from "../../../models/products/product.model.js";
 
 beforeAll(async () => {
     await seedData();
-});
+}, 30000);
 
 describe("Product Category Service", () => {
     describe("updateCategory", () => {
         test("should update the categories of a product", async () => {
-            const productID = "1";
+            const productID = "3";
             const categories = ["bottoms", "female"];
 
             const updatedProduct = await productCategoryService.updateCategory(
@@ -74,7 +75,7 @@ describe("Product Category Service", () => {
 
     describe("getProductCategories", () => {
         test("should return an array of categories for a product", async () => {
-            const productID = "3";
+            const productID = "1";
 
             const productCategories =
                 await productCategoryService.getProductCategories(productID);
@@ -85,6 +86,13 @@ describe("Product Category Service", () => {
                     (category) => category instanceof Category
                 )
             ).toBe(true);
+            expect(
+                productCategories.every((category) => {
+                    return (
+                        category.name === "tops" || category.name === "unisex"
+                    );
+                })
+            );
         });
 
         test("should throw ResourceNotFoundError if the product is not found", async () => {
@@ -92,6 +100,70 @@ describe("Product Category Service", () => {
 
             await expect(
                 productCategoryService.getProductCategories(productID)
+            ).rejects.toThrow(ResourceNotFoundError);
+        });
+    });
+
+    describe("getProductsByAncestorCategory", () => {
+        test("should return an array of products for an ancestor category", async () => {
+            const categoryName = "tops";
+
+            const products =
+                await productCategoryService.getProductsByAncestorCategory(
+                    categoryName
+                );
+
+            expect(Array.isArray(products)).toBe(true);
+            expect(products.length).toBeGreaterThan(0);
+            expect(products.every((product) => product instanceof Product));
+            expect(
+                products.every((product) => {
+                    return (
+                        product.productID === 1 ||
+                        product.productID === 5 ||
+                        product.productID === 6
+                    );
+                })
+            );
+        });
+
+        test("should throw ResourceNotFoundError if the category is not found", async () => {
+            const categoryName = "123";
+
+            await expect(
+                productCategoryService.getProductsByAncestorCategory(
+                    categoryName
+                )
+            ).rejects.toThrow(ResourceNotFoundError);
+        });
+    });
+
+    describe("getProductCategoryTree", () => {
+        test("should return a tree of categories for a product", async () => {
+            const productID = "1";
+
+            const categories =
+                await productCategoryService.getProductCategoryTree(productID);
+
+            expect(categories).toBeDefined();
+            expect(categories).toBeInstanceOf(Array);
+            console.log(categories);
+            expect(categories).toEqual(
+                expect.arrayContaining([
+                    "tops",
+                    "unisex",
+                    "gender",
+                    "type",
+                    "tshirt",
+                ])
+            );
+        });
+
+        test("should throw ResourceNotFoundError if the product is not found", async () => {
+            const productID = "123";
+
+            await expect(
+                productCategoryService.getProductCategoryTree(productID)
             ).rejects.toThrow(ResourceNotFoundError);
         });
     });

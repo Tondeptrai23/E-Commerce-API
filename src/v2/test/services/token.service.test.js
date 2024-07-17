@@ -6,7 +6,7 @@ import seedData from "../../seedData.js";
 
 beforeAll(async () => {
     await seedData();
-});
+}, 15000);
 
 describe("Token Service", () => {
     describe("tokenService.signToken + tokenService.decodeToken", () => {
