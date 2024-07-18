@@ -39,23 +39,24 @@ class CategoryService {
      * @returns {Promise<Category[]>} the categories that match the given options
      */
     async getAscendantCategories(categoryID) {
-        const categories = await Category.findAll({
+        const category = await Category.findOne({
             where: {
                 categoryID: categoryID,
             },
         });
 
-        if (!categories) {
+        if (!category) {
             return [];
         }
 
-        if (categories[0].parentID) {
-            return categories.concat(
-                await this.getAscendantCategories(categories[0].parentID)
-            );
+        if (category.parentID) {
+            return [
+                category,
+                ...(await this.getAscendantCategories(category.parentID)),
+            ];
         }
 
-        return categories;
+        return [category];
     }
 }
 

@@ -6,7 +6,7 @@ import Product from "../../../models/products/product.model.js";
 
 beforeAll(async () => {
     await seedData();
-}, 30000);
+}, 15000);
 
 describe("Product Category Service", () => {
     describe("updateCategory", () => {
