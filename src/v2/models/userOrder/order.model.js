@@ -23,6 +23,10 @@ Order.init(
             ),
             defaultValue: "pending",
         },
+        message: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         subTotal: {
             type: DataTypes.INTEGER,
             allowNull: false,

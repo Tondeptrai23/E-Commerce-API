@@ -1,4 +1,5 @@
 import Variant from "../../models/products/variant.model.js";
+import ShippingAddress from "../../models/userOrder/address.model.js";
 import Order from "../../models/userOrder/order.model.js";
 import User from "../../models/userOrder/user.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
@@ -83,26 +84,41 @@ class OrderService {
     /**
      * Update an order.
      *
-     * @param {User} user - The user.
-     * @param {String} orderID - The ID of the order.
+     * @param {Order} order - The ID of the order.
      * @param {Object} orderData - The updated order data.
      * @returns {Promise<Order>} - The updated order.
      * @throws {ResourceNotFoundError} - If the order is not found.
      */
-    async updateOrder(user, orderID, orderData) {
-        const order = await Order.findOne({
-            where: {
-                userID: user.userID,
-                orderID: orderID,
-            },
-        });
-        if (!order) {
-            throw new ResourceNotFoundError("Order not found");
+    async updateOrder(
+        order,
+        orderData = {
+            message: null,
+            addressID: null,
+        }
+    ) {
+        let shippingAddress = null;
+        if (orderData.addressID) {
+            shippingAddress = await ShippingAddress.findOne({
+                where: {
+                    userID: order.userID,
+                    addressID: orderData.addressID,
+                },
+            });
+            if (!shippingAddress) {
+                throw new ResourceNotFoundError("Address not found");
+            }
+            order.shippingAddressID = shippingAddress.addressID;
+            order.dataValues.shippingAddress = shippingAddress;
         }
 
-        const updatedOrder = await order.update(orderData);
+        if (orderData.message) {
+            const message = orderData.message
+                ? orderData.message
+                : order.message;
+            order.message = message;
+        }
 
-        return updatedOrder;
+        return await order.save();
     }
 
     /**
@@ -137,32 +153,6 @@ class OrderService {
                 userID: user.userID,
             },
         });
-    }
-
-    /**
-     * Update shipping address for pending order
-     *
-     * @param {User} user the user
-     * @param {String} addressID the id of the address to be updated
-     * @returns {Promise<Order>} the order after updating
-     */
-    async updateAddress(user, addressID) {
-        const address = await user.getAddresses({
-            where: {
-                addressID: addressID,
-            },
-        });
-        if (!address) {
-            throw new ResourceNotFoundError("Address not found");
-        }
-
-        const order = await this.getPendingOrder(user);
-        order.dataValues.shippingAddress = address[0].dataValues;
-
-        order.update({
-            shippingAddressID: address[0].addressID,
-        });
-        return order;
     }
 }
 

@@ -4,12 +4,33 @@ import seedData from "../../../seedData.js";
 import Order from "../../../models/userOrder/order.model.js";
 import { ResourceNotFoundError } from "../../../utils/error.js";
 import CartItem from "../../../models/userOrder/cartItem.model.js";
+import ShippingAddress from "../../../models/userOrder/address.model.js";
 
 beforeAll(async () => {
     await seedData();
 }, 15000);
 
 describe("OrderService", () => {
+    describe("getPendingOrder", () => {
+        test("should return the pending order of the user", async () => {
+            const user = await User.findByPk(1);
+
+            const order = await orderService.getPendingOrder(user);
+
+            expect(order).toBeDefined();
+            expect(order).toBeInstanceOf(Order);
+            expect(order.status).toBe("pending");
+        });
+
+        test("should throw ResourceNotFoundError if the order is not found", async () => {
+            const user = await User.findByPk(2);
+
+            await expect(orderService.getPendingOrder(user)).rejects.toThrow(
+                ResourceNotFoundError
+            );
+        });
+    });
+
     describe("getOrders", () => {
         test("should return the orders of the user", async () => {
             const user = await User.findByPk(1);
@@ -23,7 +44,6 @@ describe("OrderService", () => {
         });
     });
 
-    // New test: getOrder
     describe("getOrder", () => {
         test("should return the specific order for the user", async () => {
             const user = await User.findByPk(1);
@@ -46,52 +66,14 @@ describe("OrderService", () => {
         });
     });
 
-    // New test: postOrder
     describe("postOrder", () => {
         //
     });
 
-    // New test: updateOrder
-    describe("updateOrder", () => {
-        test("should update the specified order for the user", async () => {
-            const user = await User.findByPk(1);
-            const orderID = "1";
-            const orderData = {
-                status: "delivered",
-                paymentMethod: "Credit Card",
-                orderDate: null,
-            };
-
-            const updatedOrder = await orderService.updateOrder(
-                user,
-                orderID,
-                orderData
-            );
-
-            expect(updatedOrder).toBeDefined();
-            expect(updatedOrder).toBeInstanceOf(Order);
-            expect(updatedOrder.orderID).toBe(orderID);
-            expect(updatedOrder.status).toBe(orderData.status);
-            expect(updatedOrder.paymentMethod).toBe(orderData.paymentMethod);
-            expect(updatedOrder.orderDate).toBeNull();
-        });
-
-        test("should throw ResourceNotFoundError if the order is not found", async () => {
-            const user = await User.findByPk(1);
-            const orderID = "12";
-            const orderData = { status: "delivered" };
-
-            await expect(
-                orderService.updateOrder(user, orderID, orderData)
-            ).rejects.toThrow(ResourceNotFoundError);
-        });
-    });
-
-    // New test: deleteOrder
     describe("deleteOrder", () => {
         test("should delete the specified order for the user", async () => {
-            const user = await User.findByPk(1);
-            const orderID = "1";
+            const user = await User.findByPk(2);
+            const orderID = "2";
 
             await orderService.deleteOrder(user, orderID);
 
@@ -111,16 +93,51 @@ describe("OrderService", () => {
         });
     });
 
-    // New test: deleteAllOrders
     describe("deleteAllOrders", () => {
         test("should delete all orders for the user", async () => {
-            const user = await User.findByPk(1);
+            const user = await User.findByPk(3);
 
             await orderService.deleteAllOrders(user);
 
             // Verify that all orders are deleted
             const orders = await orderService.getOrders(user);
             expect(orders.length).toBe(0);
+        });
+    });
+
+    describe("updateOrder", () => {
+        test("should update the address of the user", async () => {
+            const user = await User.findByPk(1);
+            const addressID = "102";
+
+            const order = await orderService.updateOrder(
+                await orderService.getPendingOrder(user),
+                {
+                    addressID,
+                    message: "New message",
+                }
+            );
+
+            expect(order).toBeDefined();
+            expect(order).toBeInstanceOf(Order);
+            expect(order.dataValues.shippingAddress).toBeInstanceOf(
+                ShippingAddress
+            );
+            expect(order.message).toBe("New message");
+        });
+
+        test("should throw ResourceNotFoundError if the address is not found", async () => {
+            const user = await User.findByPk(1);
+            const addressID = "123";
+
+            await expect(
+                orderService.updateOrder(
+                    await orderService.getPendingOrder(user),
+                    {
+                        addressID,
+                    }
+                )
+            ).rejects.toThrow(ResourceNotFoundError);
         });
     });
 });

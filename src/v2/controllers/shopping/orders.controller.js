@@ -74,14 +74,13 @@ class OrderController {
     async updateOrder(req, res) {
         try {
             // Get param
-            const { orderID } = req.params;
-            const { status, orderDate = null, shippingAddress } = req.body;
+            const { message, addressID } = req.body;
 
             // Call service
-            let order = await orderService.updateOrder(req.user, orderID, {
-                status: status,
-                orderDate: orderDate,
-                shippingAddress: shippingAddress,
+            let order = await orderService.getPendingOrder(req.user);
+            order = await orderService.updateOrder(order, {
+                message: message,
+                addressID: addressID,
             });
 
             // Serialize data
@@ -166,38 +165,6 @@ class OrderController {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
                     error: "Server error in applying coupon",
-                });
-            }
-        }
-    }
-
-    async updateAddress(req, res) {
-        try {
-            // Get param
-            const { addressID } = req.body;
-
-            // Call service
-            let order = await orderService.updateAddress(req.user, addressID);
-
-            // Serialize data
-
-            // Response
-            res.status(StatusCodes.OK).json({
-                success: true,
-                order: order,
-            });
-        } catch (err) {
-            console.log(err);
-
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    error: err.message,
-                });
-            } else {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    error: "Server error in updating address",
                 });
             }
         }

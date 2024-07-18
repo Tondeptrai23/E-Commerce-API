@@ -9,8 +9,6 @@ userOrderRoute.get("/", verifyToken, ordersController.getOrders);
 
 userOrderRoute.get("/:orderID", verifyToken, ordersController.getOrder);
 
-userOrderRoute.put("/:orderID", verifyToken, ordersController.updateOrder);
-
 userOrderRoute.post("/pending", verifyToken, ordersController.postOrder);
 
 userOrderRoute.post(
@@ -28,7 +26,7 @@ userOrderRoute.get(
 userOrderRoute.patch(
     "/pending/address",
     verifyToken,
-    ordersController.updateAddress
+    ordersController.updateOrder
 );
 
 userOrderRoute.delete("/:orderID", verifyToken, ordersController.deleteOrder);
