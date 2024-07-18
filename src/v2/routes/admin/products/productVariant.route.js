@@ -23,7 +23,14 @@ variantRoute.put(
     "/products/:productID/variants/:variantID",
     verifyToken,
     isAdmin,
-    variantController.updateProductVariant
+    variantController.putProductVariant
+);
+
+variantRoute.patch(
+    "/products/:productID/variants/:variantID",
+    verifyToken,
+    isAdmin,
+    variantController.patchProductVariant
 );
 
 variantRoute.delete(

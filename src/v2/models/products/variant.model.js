@@ -14,6 +14,10 @@ Variant.init(
             type: DataTypes.FLOAT,
             allowNull: false,
         },
+        discountPrice: {
+            type: DataTypes.FLOAT,
+            allowNull: true,
+        },
         stock: {
             type: DataTypes.INTEGER,
             allowNull: false,

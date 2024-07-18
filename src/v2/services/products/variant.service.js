@@ -1,7 +1,7 @@
 import Product from "../../models/products/product.model.js";
 import Variant from "../../models/products/variant.model.js";
 import attributeService from "./attribute.service.js";
-import { ResourceNotFoundError } from "../../utils/error.js";
+import { BadRequestError, ResourceNotFoundError } from "../../utils/error.js";
 import AttributeValue from "../../models/products/attributeValue.model.js";
 import Attribute from "../../models/products/attribute.model.js";
 
@@ -51,9 +51,18 @@ class VariantService {
      * @param {Object} variantData the variant data to be updated
      * @returns {Promise<Variant>} the updated variant
      * @throws {ResourceNotFoundError} if the product or variant is not found
+     * @throws {BadRequestError} if the discount price is greater than price
      */
     async updateVariant(productID, variantID, variantData) {
         let variant = await this.getVariant(productID, variantID);
+
+        if (variantData.discountPrice && !variantData.price) {
+            if (variantData.discountPrice > variant.price) {
+                throw new BadRequestError(
+                    "Discount price must be less than original price"
+                );
+            }
+        }
         await variant.update(variantData);
         variant = await variant.reload();
 

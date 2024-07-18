@@ -1,7 +1,10 @@
 import variantService from "../../../services/products/variant.service.js";
 import seedData from "../../../seedData.js";
 import Variant from "../../../models/products/variant.model.js";
-import { ResourceNotFoundError } from "../../../utils/error.js";
+import {
+    ResourceNotFoundError,
+    BadRequestError,
+} from "../../../utils/error.js";
 import Product from "../../../models/products/product.model.js";
 import AttributeValue from "../../../models/products/attributeValue.model.js";
 
@@ -39,7 +42,7 @@ describe("Variant Service", () => {
         test("should update a variant and return the updated variant", async () => {
             const productID = "1";
             const variantID = "102";
-            const variantData = { price: 20000 };
+            const variantData = { price: 2000, discountPrice: 1800 };
 
             const updatedVariant = await variantService.updateVariant(
                 productID,
@@ -56,11 +59,21 @@ describe("Variant Service", () => {
         test("should throw ResourceNotFoundError if the product or variant is not found", async () => {
             const productID = "1";
             const variantID = "201";
-            const variantData = { price: 20000 };
+            const variantData = { price: 2000 };
 
             await expect(
                 variantService.updateVariant(productID, variantID, variantData)
             ).rejects.toThrow(ResourceNotFoundError);
+        });
+
+        test("should throw BadRequestError if the discountPrice is smaller than original price", async () => {
+            const productID = "1";
+            const variantID = "102";
+            const variantData = { discountPrice: 10000 };
+
+            await expect(
+                variantService.updateVariant(productID, variantID, variantData)
+            ).rejects.toThrow(BadRequestError);
         });
     });
 

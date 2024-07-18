@@ -229,6 +229,7 @@ const seedVariant = async () => {
             sku: "TSHIRT1-S-BLACK",
             imageOrder: 2,
             productID: 1,
+            discountPrice: 8.0,
         },
         {
             variantID: 102,
@@ -237,6 +238,7 @@ const seedVariant = async () => {
             sku: "TSHIRT1-S-WHITE",
             imageOrder: 3,
             productID: 1,
+            discountPrice: 8.0,
         },
         {
             variantID: 103,
@@ -245,6 +247,7 @@ const seedVariant = async () => {
             sku: "TSHIRT1-S-BLUE",
             imageOrder: 4,
             productID: 1,
+            discountPrice: 12.0,
         },
         {
             variantID: 104,
@@ -334,6 +337,7 @@ const seedVariant = async () => {
             sku: "SKIRT3-S-BLACK",
             imageOrder: 2,
             productID: 3,
+            discountPrice: 25.0,
         },
         {
             variantID: 302,
@@ -342,6 +346,7 @@ const seedVariant = async () => {
             sku: "SKIRT3-M-BLACK",
             imageOrder: 2,
             productID: 3,
+            discountPrice: 25.0,
         },
         {
             variantID: 303,
@@ -350,6 +355,7 @@ const seedVariant = async () => {
             sku: "SKIRT3-L-BLACK",
             imageOrder: 2,
             productID: 3,
+            discountPrice: 25.0,
         },
     ]);
 

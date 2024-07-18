@@ -140,12 +140,18 @@ class VariantController {
         }
     }
 
-    async updateProductVariant(req, res) {
+    async putProductVariant(req, res) {
         try {
             // Get request body
             const { productID } = req.params;
             const { variantID } = req.params;
-            const { stock, price, sku, imageOrder } = req.body;
+            const {
+                stock,
+                price,
+                sku,
+                imageOrder = null,
+                discountPrice = null,
+            } = req.body;
 
             // Call services
             let variant = await variantService.updateVariant(
@@ -156,6 +162,7 @@ class VariantController {
                     price,
                     sku,
                     imageOrder,
+                    discountPrice,
                 }
             );
 
@@ -174,6 +181,58 @@ class VariantController {
 
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: "Server error when update a product variant",
+                });
+            }
+        }
+    }
+
+    async patchProductVariant(req, res) {
+        try {
+            // Get request body
+            const { productID } = req.params;
+            const { variantID } = req.params;
+            const { stock, price, sku, imageOrder, discountPrice } = req.body;
+
+            // Call services
+            let variant = await variantService.updateVariant(
+                productID,
+                variantID,
+                {
+                    stock,
+                    price,
+                    sku,
+                    imageOrder,
+                    discountPrice,
+                }
+            );
+
+            // Serialize data
+            variant = new VariantSerializer({
+                includeForeignKeys: false,
+            }).serialize(variant);
+
+            // Response
+            res.status(StatusCodes.OK).json({
+                success: true,
+                variant: variant,
+            });
+        } catch (err) {
+            console.log(err);
+
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else if (err instanceof BadRequestError) {
+                res.status(StatusCodes.BAD_REQUEST).json({
                     success: false,
                     error: err.message,
                 });
