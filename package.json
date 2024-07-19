@@ -4,7 +4,7 @@
   "description": "E-Commerce API",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles",
+    "test": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --verbose",
     "start": "nodemon src/v2/server.js"
   },
   "keywords": [],

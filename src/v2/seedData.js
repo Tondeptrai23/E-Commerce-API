@@ -20,11 +20,10 @@ import ShippingAddress from "./models/userOrder/address.model.js";
 const seedData = async () => {
     await db.sync({ force: true });
 
+    await seedUser();
     await seedAttribute();
     await seedAttributeValue();
     await seedCategory();
-    await seedUser();
-    await seedAddress();
     await seedProduct();
     await seedProductCategory();
     await seedVariant();
@@ -34,6 +33,7 @@ const seedData = async () => {
     await seedCoupon();
     await seedCategoryCoupon();
     await seedProductCoupon();
+    await seedAddress();
     await seedOrder();
     await seedOrderItem();
     await seedCartItem();

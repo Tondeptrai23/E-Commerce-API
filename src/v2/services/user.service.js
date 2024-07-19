@@ -9,12 +9,12 @@ class UserService {
             return null;
         }
 
-        const newUser = await User.create(userInfo);
+        const newUser = User.build(userInfo);
 
         bcrypt.genSalt(10).then((salt) => {
-            bcrypt.hash(newUser.password, salt).then((hash) => {
+            bcrypt.hash(newUser.password, salt).then(async (hash) => {
                 newUser.password = hash;
-                newUser.save();
+                await newUser.save();
             });
         });
 
