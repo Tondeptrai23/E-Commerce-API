@@ -1,7 +1,10 @@
 import { Router } from "express";
 
-import userController from "../../controllers/user.controller.js";
-import { verifyToken, isAdmin } from "../../middlewares/authJwt.js";
+import userController from "../../controllers/auth/user.controller.js";
+import {
+    verifyToken,
+    isAdmin,
+} from "../../middlewares/auth/authJwt.middlewares.js";
 
 const adminUserRoute = Router();
 

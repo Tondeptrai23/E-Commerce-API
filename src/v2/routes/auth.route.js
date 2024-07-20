@@ -1,16 +1,16 @@
 import { Router } from "express";
 
-import authController from "../controllers/auth.controller.js";
+import authController from "../controllers/auth/auth.controller.js";
 import {
     checkEmailExistsForSignIn,
     checkEmailNotExistsForSignUp,
-} from "../middlewares/verifySigning.js";
-import { verifyRefreshToken } from "../middlewares/authJwt.js";
+} from "../middlewares/auth/verifySigning.middlewares.js";
+import { verifyRefreshToken } from "../middlewares/auth/authJwt.middlewares.js";
 import {
     handleValidationErrors,
     validateRegisterUser,
     validateSignInUser,
-} from "../middlewares/validator.js";
+} from "../middlewares/validators/validator.js";
 
 const authRoute = Router();
 

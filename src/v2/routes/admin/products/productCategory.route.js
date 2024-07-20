@@ -1,6 +1,9 @@
 import { Router } from "express";
 import productCategoryController from "../../../controllers/products/productCategory.controller.js";
-import { verifyToken, isAdmin } from "../../../middlewares/authJwt.js";
+import {
+    verifyToken,
+    isAdmin,
+} from "../../../middlewares/auth/authJwt.middlewares.js";
 
 const productCategoryRoute = Router();
 

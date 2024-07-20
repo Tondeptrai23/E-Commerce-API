@@ -1,5 +1,5 @@
-import seedData from "../../seedData.js";
-import * as verifySigning from "../../middlewares/verifySigning.js";
+import seedData from "../../../seedData.js";
+import * as verifySigning from "../../../middlewares/auth/verifySigning.middlewares.js";
 import { jest } from "@jest/globals";
 
 beforeAll(async () => {

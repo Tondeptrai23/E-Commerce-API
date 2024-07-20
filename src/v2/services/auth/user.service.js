@@ -1,4 +1,4 @@
-import User from "../models/userOrder/user.model.js";
+import User from "../../models/user/user.model.js";
 
 import bcrypt from "bcryptjs";
 

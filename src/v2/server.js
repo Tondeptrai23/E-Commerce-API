@@ -3,10 +3,10 @@ import "dotenv/config.js";
 import bodyParser from "body-parser";
 import cors from "cors";
 
-import { db } from "./models/index.js";
+import { db } from "./models/index.model.js";
 import seedData from "./seedData.js";
 
-import { router } from "./routes/index.js";
+import { router } from "./routes/index.route.js";
 
 const app = express();
 app.use(bodyParser.json());

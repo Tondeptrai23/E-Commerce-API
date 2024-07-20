@@ -2,7 +2,7 @@ import { validationResult } from "express-validator";
 import {
     validateRegisterUser,
     validateSignInUser,
-} from "../../../middlewares/validator.js";
+} from "../../../middlewares/validators/validator.js";
 
 describe("validateRegisterUser", () => {
     test("should return empty error array if all fields are valid", async () => {

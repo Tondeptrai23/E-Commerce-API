@@ -1,7 +1,7 @@
 import seedData from "../../../seedData.js";
 import cartService from "../../../services/shopping/cart.service.js";
-import User from "../../../models/userOrder/user.model.js";
-import Order from "../../../models/userOrder/order.model.js";
+import User from "../../../models/user/user.model.js";
+import Order from "../../../models/shopping/order.model.js";
 import Variant from "../../../models/products/variant.model.js";
 
 beforeAll(async () => {

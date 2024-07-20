@@ -1,8 +1,8 @@
-import seedData from "../../seedData.js";
-import * as authJwt from "../../middlewares/authJwt.js";
-import { jwt } from "../../config/auth.config.js";
+import seedData from "../../../seedData.js";
+import * as authJwt from "../../../middlewares/auth/authJwt.middlewares.js";
+import { jwt } from "../../../config/auth.config.js";
 import { jest } from "@jest/globals";
-import tokenService from "../../services/token.service.js";
+import tokenService from "../../../services/auth/token.service.js";
 
 beforeAll(async () => {
     await seedData();

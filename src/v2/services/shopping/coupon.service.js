@@ -1,8 +1,8 @@
 import { Op, Sequelize } from "sequelize";
 import Category from "../../models/products/category.model.js";
 import Product from "../../models/products/product.model.js";
-import Coupon from "../../models/promotion/coupon.model.js";
-import Order from "../../models/userOrder/order.model.js";
+import Coupon from "../../models/shopping/coupon.model.js";
+import Order from "../../models/shopping/order.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import Variant from "../../models/products/variant.model.js";
 import productCategoryService from "../products/productCategory.service.js";

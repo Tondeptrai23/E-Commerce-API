@@ -1,20 +1,20 @@
-import { db } from "./models/index.js";
+import { db } from "./models/index.model.js";
 import Attribute from "./models/products/attribute.model.js";
 import AttributeValue from "./models/products/attributeValue.model.js";
 import Category from "./models/products/category.model.js";
-import Coupon from "./models/promotion/coupon.model.js";
-import CategoryCoupon from "./models/promotion/categoryCoupon.model.js";
+import Coupon from "./models/shopping/coupon.model.js";
+import CategoryCoupon from "./models/shopping/categoryCoupon.model.js";
 import Product from "./models/products/product.model.js";
-import ProductCoupon from "./models/promotion/productCoupon.model.js";
+import ProductCoupon from "./models/shopping/productCoupon.model.js";
 import ProductImage from "./models/products/productImage.model.js";
 import Variant from "./models/products/variant.model.js";
 import VariantAttributeValue from "./models/products/variantAttributeValue.model.js";
-import Order from "./models/userOrder/order.model.js";
-import OrderItem from "./models/userOrder/orderItem.model.js";
-import CartItem from "./models/userOrder/cartItem.model.js";
+import Order from "./models/shopping/order.model.js";
+import OrderItem from "./models/shopping/orderItem.model.js";
+import CartItem from "./models/shopping/cartItem.model.js";
 import ProductCategory from "./models/products/productCategory.model.js";
-import userService from "./services/user.service.js";
-import ShippingAddress from "./models/userOrder/address.model.js";
+import userService from "./services/auth/user.service.js";
+import ShippingAddress from "./models/user/address.model.js";
 
 // Seed data for a fresh database for a clothes store
 const seedData = async () => {

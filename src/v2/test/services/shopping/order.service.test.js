@@ -1,10 +1,9 @@
 import orderService from "../../../services/shopping/order.service.js";
-import User from "../../../models/userOrder/user.model.js";
+import User from "../../../models/user/user.model.js";
 import seedData from "../../../seedData.js";
-import Order from "../../../models/userOrder/order.model.js";
+import Order from "../../../models/shopping/order.model.js";
 import { ResourceNotFoundError } from "../../../utils/error.js";
-import CartItem from "../../../models/userOrder/cartItem.model.js";
-import ShippingAddress from "../../../models/userOrder/address.model.js";
+import ShippingAddress from "../../../models/user/address.model.js";
 
 beforeAll(async () => {
     await seedData();

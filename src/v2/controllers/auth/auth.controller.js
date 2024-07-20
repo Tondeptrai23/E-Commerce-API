@@ -1,9 +1,9 @@
 import { StatusCodes } from "http-status-codes";
 
-import userService from "../services/user.service.js";
-import tokenService from "../services/token.service.js";
-import { BadRequestError } from "../utils/error.js";
-import UserSerializer from "../services/serializers/userSerializer.service.js";
+import userService from "../../services/auth/user.service.js";
+import tokenService from "../../services/auth/token.service.js";
+import { BadRequestError } from "../../utils/error.js";
+import UserSerializer from "../../services/serializers/userSerializer.service.js";
 
 class AuthController {
     async signin(req, res) {

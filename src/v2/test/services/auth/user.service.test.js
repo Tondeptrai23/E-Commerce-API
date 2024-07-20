@@ -1,6 +1,6 @@
-import userService from "../../services/user.service.js";
-import seedData from "../../seedData.js";
-import User from "../../models/userOrder/user.model.js";
+import userService from "../../../services/auth/user.service.js";
+import seedData from "../../../seedData.js";
+import User from "../../../models/user/user.model.js";
 
 beforeAll(async () => {
     await seedData();

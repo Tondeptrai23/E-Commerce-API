@@ -1,7 +1,10 @@
 import { Router } from "express";
 
 import variantController from "../../../controllers/products/variant.controller.js";
-import { verifyToken, isAdmin } from "../../../middlewares/authJwt.js";
+import {
+    verifyToken,
+    isAdmin,
+} from "../../../middlewares/auth/authJwt.middlewares.js";
 
 const variantRoute = Router();
 

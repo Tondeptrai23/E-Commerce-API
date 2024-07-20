@@ -1,12 +1,12 @@
 import { StatusCodes } from "http-status-codes";
-import { jwt } from "../config/auth.config.js";
-import User from "../models/userOrder/user.model.js";
+import { jwt } from "../../config/auth.config.js";
+import User from "../../models/user/user.model.js";
 import {
     UnauthorizedError,
     ForbiddenError,
     ResourceNotFoundError,
-} from "../utils/error.js";
-import tokenService from "../services/token.service.js";
+} from "../../utils/error.js";
+import tokenService from "../../services/auth/token.service.js";
 
 const verifyToken = async (req, res, next) => {
     try {

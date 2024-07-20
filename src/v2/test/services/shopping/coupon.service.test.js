@@ -1,11 +1,9 @@
 import couponService from "../../../services/shopping/coupon.service.js";
 import seedData from "../../../seedData.js";
 import { ResourceNotFoundError } from "../../../utils/error.js";
-import Order from "../../../models/userOrder/order.model.js";
-import OrderItem from "../../../models/userOrder/orderItem.model.js";
+import Order from "../../../models/shopping/order.model.js";
 import orderService from "../../../services/shopping/order.service.js";
-import Variant from "../../../models/products/variant.model.js";
-import Coupon from "../../../models/promotion/coupon.model.js";
+import Coupon from "../../../models/shopping/coupon.model.js";
 
 beforeAll(async () => {
     await seedData();

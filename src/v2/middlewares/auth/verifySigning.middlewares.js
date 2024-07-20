@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
-import userService from "../services/user.service.js";
-import { ResourceNotFoundError, ConflictError } from "../utils/error.js";
+import userService from "../../services/auth/user.service.js";
+import { ResourceNotFoundError, ConflictError } from "../../utils/error.js";
 
 const checkEmailExistsForSignIn = async (req, res, next) => {
     try {

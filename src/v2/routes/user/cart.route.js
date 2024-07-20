@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import cartController from "../../controllers/shopping/cart.controller.js";
-import { verifyToken } from "../../middlewares/authJwt.js";
+import { verifyToken } from "../../middlewares/auth/authJwt.middlewares.js";
 
 const userCartRoute = Router();
 

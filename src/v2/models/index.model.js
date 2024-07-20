@@ -9,15 +9,15 @@ import Attribute from "./products/attribute.model.js";
 import VariantAttributeValue from "./products/variantAttributeValue.model.js";
 import AttributeValue from "./products/attributeValue.model.js";
 
-import Order from "./userOrder/order.model.js";
-import OrderItem from "./userOrder/orderItem.model.js";
-import User from "./userOrder/user.model.js";
-import CartItem from "./userOrder/cartItem.model.js";
+import Order from "./shopping/order.model.js";
+import OrderItem from "./shopping/orderItem.model.js";
+import User from "./user/user.model.js";
+import CartItem from "./shopping/cartItem.model.js";
 
-import Coupon from "./promotion/coupon.model.js";
-import ProductCoupon from "./promotion/productCoupon.model.js";
-import CategoryCoupon from "./promotion/categoryCoupon.model.js";
-import ShippingAddress from "./userOrder/address.model.js";
+import Coupon from "./shopping/coupon.model.js";
+import ProductCoupon from "./shopping/productCoupon.model.js";
+import CategoryCoupon from "./shopping/categoryCoupon.model.js";
+import ShippingAddress from "./user/address.model.js";
 
 Product.hasMany(ProductImage, {
     foreignKey: {

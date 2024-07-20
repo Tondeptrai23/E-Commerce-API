@@ -1,6 +1,9 @@
 import { Router } from "express";
 import productImageController from "../../../controllers/products/productImage.controller.js";
-import { verifyToken, isAdmin } from "../../../middlewares/authJwt.js";
+import {
+    verifyToken,
+    isAdmin,
+} from "../../../middlewares/auth/authJwt.middlewares.js";
 
 const productImageRoute = Router();
 
