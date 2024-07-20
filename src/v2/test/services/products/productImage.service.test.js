@@ -46,7 +46,7 @@ describe("ProductImageService", () => {
         test("should throw ResourceNotFoundError if the product is not found", async () => {
             const productID = "7";
             const imageID = "1";
-            const imageData = { imagePath: "https://example.com/image.jpg" };
+            const imageData = { url: "https://example.com/image.jpg" };
 
             await expect(
                 productImageService.updateImage(productID, imageID, imageData)
@@ -56,7 +56,7 @@ describe("ProductImageService", () => {
         test("should throw ResourceNotFoundError if the image is not found", async () => {
             const productID = "2";
             const imageID = "1";
-            const imageData = { imagePath: "https://example.com/image.jpg" };
+            const imageData = { url: "https://example.com/image.jpg" };
 
             await expect(
                 productImageService.updateImage(productID, imageID, imageData)
@@ -67,7 +67,7 @@ describe("ProductImageService", () => {
             const productID = "1";
             const imageID = "1";
             const imageData = {
-                imagePath: "https://example.com/new-image.jpg",
+                url: "https://example.com/new-image.jpg",
             };
 
             const updatedImage = await productImageService.updateImage(
@@ -79,14 +79,14 @@ describe("ProductImageService", () => {
             expect(updatedImage).toBeInstanceOf(ProductImage);
             expect(updatedImage.productID).toBe(productID);
             expect(updatedImage.imageID).toBe(imageID);
-            expect(updatedImage.imagePath).toBe(imageData.imagePath);
+            expect(updatedImage.url).toBe(imageData.url);
         });
     });
 
     describe("deleteImage", () => {
         test("should throw ResourceNotFoundError if the product is not found", async () => {
             const productID = "7";
-            const imageID = "1";
+            const imageID = "2";
 
             await expect(
                 productImageService.deleteImage(productID, imageID)
@@ -103,8 +103,8 @@ describe("ProductImageService", () => {
         });
 
         test("should delete the image with the given productID and imageID", async () => {
-            const productID = "1";
-            const imageID = "1";
+            const productID = "2";
+            const imageID = "5";
 
             await productImageService.deleteImage(productID, imageID);
 
@@ -134,6 +134,66 @@ describe("ProductImageService", () => {
             expect(productImages.length).toBeGreaterThan(0);
             expect(productImages[0]).toBeInstanceOf(ProductImage);
             expect(productImages[0].productID).toBe(productID);
+        });
+    });
+
+    describe("setImagesOrder", () => {
+        test("should throw ResourceNotFoundError if the product is not found", async () => {
+            const productID = "7";
+            const imagesData = [
+                { imageID: "1", displayOrder: 1 },
+                { imageID: "2", displayOrder: 2 },
+                { imageID: "3", displayOrder: 3 },
+                { imageID: "4", displayOrder: 4 },
+            ];
+
+            await expect(
+                productImageService.setImagesOrder(productID, imagesData)
+            ).rejects.toThrow(ResourceNotFoundError);
+        });
+
+        test("should throw ResourceNotFoundError if any of the images is not found", async () => {
+            const productID = "1";
+            const imagesData = [
+                { imageID: "1", displayOrder: 1 },
+                { imageID: "10", displayOrder: 2 },
+                { imageID: "3", displayOrder: 3 },
+                { imageID: "4", displayOrder: 4 },
+            ];
+
+            await expect(
+                productImageService.setImagesOrder(productID, imagesData)
+            ).rejects.toThrow(ResourceNotFoundError);
+        });
+
+        test("should update the display order of the images and return the updated images", async () => {
+            const productID = "1";
+            const imagesData = [
+                { imageID: "1", displayOrder: 3 },
+                { imageID: "2", displayOrder: 4 },
+                { imageID: "3", displayOrder: 2 },
+                { imageID: "4", displayOrder: 1 },
+            ];
+
+            const updatedImages = await productImageService.setImagesOrder(
+                productID,
+                imagesData
+            );
+
+            expect(updatedImages).toBeInstanceOf(Array);
+            expect(updatedImages.length).toBe(imagesData.length);
+
+            for (let i = 0; i < updatedImages.length; i++) {
+                const { imageID, displayOrder } = imagesData[i];
+                const updatedImage = updatedImages.find(
+                    (image) => image.imageID === imageID
+                );
+
+                expect(updatedImage).toBeInstanceOf(ProductImage);
+                expect(updatedImage.productID).toBe(productID);
+                expect(updatedImage.imageID).toBe(imageID);
+                expect(updatedImage.displayOrder).toBe(displayOrder);
+            }
         });
     });
 });

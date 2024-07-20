@@ -797,104 +797,89 @@ const seedVariantAttributeValues = async () => {
 
 const seedProductImage = async () => {
     await ProductImage.bulkCreate([
-        { imageID: 1, productID: 1, imagePath: "tshirt1.jpg", displayOrder: 1 },
+        { imageID: 1, productID: 1, url: "tshirt1.jpg" },
         {
             imageID: 2,
             productID: 1,
-            imagePath: "tshirt1_black.jpg",
-            displayOrder: 2,
+            url: "tshirt1_black.jpg",
         },
         {
             imageID: 3,
             productID: 1,
-            imagePath: "tshirt1_white.jpg",
-            displayOrder: 3,
+            url: "tshirt1_white.jpg",
         },
         {
             imageID: 4,
             productID: 1,
-            imagePath: "tshirt1_blue.jpg",
-            displayOrder: 4,
+            url: "tshirt1_blue.jpg",
         },
 
-        { imageID: 5, productID: 2, imagePath: "short2.jpg", displayOrder: 1 },
+        { imageID: 5, productID: 2, url: "short2.jpg" },
         {
             imageID: 6,
             productID: 2,
-            imagePath: "short2_black.jpg",
-            displayOrder: 2,
+            url: "short2_black.jpg",
         },
 
-        { imageID: 7, productID: 3, imagePath: "skirt3.jpg", displayOrder: 1 },
+        { imageID: 7, productID: 3, url: "skirt3.jpg" },
         {
             imageID: 8,
             productID: 3,
-            imagePath: "skirt3_black.jpg",
-            displayOrder: 2,
+            url: "skirt3_black.jpg",
         },
 
-        { imageID: 9, productID: 4, imagePath: "short4.jpg", displayOrder: 1 },
+        { imageID: 9, productID: 4, url: "short4.jpg" },
         {
             imageID: 10,
             productID: 4,
-            imagePath: "short4_black.jpg",
-            displayOrder: 2,
+            url: "short4_black.jpg",
         },
 
         {
             imageID: 11,
             productID: 5,
-            imagePath: "blouse5.jpg",
-            displayOrder: 1,
+            url: "blouse5.jpg",
         },
         {
             imageID: 12,
             productID: 5,
-            imagePath: "blouse5_black.jpg",
-            displayOrder: 2,
+            url: "blouse5_black.jpg",
         },
         {
             imageID: 13,
             productID: 5,
-            imagePath: "blouse5_white.jpg",
-            displayOrder: 3,
+            url: "blouse5_white.jpg",
         },
         {
             imageID: 14,
             productID: 5,
-            imagePath: "blouse5_red.jpg",
-            displayOrder: 4,
+            url: "blouse5_red.jpg",
         },
 
         {
             imageID: 15,
             productID: 6,
-            imagePath: "tshirt6.jpg",
-            displayOrder: 1,
+            url: "tshirt6.jpg",
         },
         {
             imageID: 16,
             productID: 6,
-            imagePath: "tshirt6_black.jpg",
-            displayOrder: 2,
+            url: "tshirt6_black.jpg",
         },
         {
             imageID: 17,
             productID: 6,
-            imagePath: "tshirt6_white.jpg",
-            displayOrder: 3,
+            url: "tshirt6_white.jpg",
         },
         {
             imageID: 18,
             productID: 6,
-            imagePath: "tshirt6_blue.jpg",
-            displayOrder: 4,
+            url: "tshirt6_blue.jpg",
         },
         {
             imageID: 19,
             productID: 6,
-            imagePath: "tshirt6_red.jpg",
-            displayOrder: 4,
+            url: "tshirt6_red.jpg",
         },
     ]);
 };

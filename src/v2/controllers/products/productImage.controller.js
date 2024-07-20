@@ -99,15 +99,15 @@ class ProductImageController {
             // Get request body
             const { productID } = req.params;
             const { imageID } = req.params;
-            const { imagePath, displayOrder } = req.body;
+            const { url, thumbnail } = req.body;
 
             // Call services
             let image = await productImageService.updateImage(
                 productID,
                 imageID,
                 {
-                    imagePath,
-                    displayOrder,
+                    url,
+                    thumbnail,
                 }
             );
 
@@ -137,6 +137,28 @@ class ProductImageController {
                     error: "Server error when update a product image",
                 });
             }
+        }
+    }
+
+    async setImagesOrder(req, res) {
+        try {
+            // Get request body
+            const { productID } = req.params;
+            const { images } = req.body;
+
+            // Call services
+            const updatedImages = await productImageService.setImagesOrder(
+                productID,
+                images
+            );
+
+            // Response
+            res.status(StatusCodes.OK).json({
+                success: true,
+                images: updatedImages,
+            });
+        } catch (err) {
+            console.log(err);
         }
     }
 

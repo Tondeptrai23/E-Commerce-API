@@ -18,11 +18,18 @@ productImageRoute.post(
     productImageController.addProductImages
 );
 
-productImageRoute.put(
+productImageRoute.patch(
     "/products/:productID/images/:imageID",
     verifyToken,
     isAdmin,
     productImageController.updateProductImage
+);
+
+productImageRoute.post(
+    "/products/:productID/images/order",
+    verifyToken,
+    isAdmin,
+    productImageController.setImagesOrder
 );
 
 productImageRoute.delete(

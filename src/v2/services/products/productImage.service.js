@@ -78,6 +78,37 @@ class ProductImageService {
         const images = product.images;
         return images;
     }
+
+    /**
+     * Set the display order of the images of a product
+     *
+     * @param {String} productID the product ID to be updated
+     * @param {Array<Object>} imagesData the images data to be updated\
+     * @returns {Promise<ProductImage[]>} the updated images
+     * @throws {ResourceNotFoundError} if the product or image is not found
+     *
+     */
+    async setImagesOrder(productID, imagesData) {
+        const images = await Promise.all(
+            imagesData.map(async (imageData) => {
+                const image = await ProductImage.findOne({
+                    where: {
+                        productID: productID,
+                        imageID: imageData.imageID,
+                    },
+                });
+                if (!image) {
+                    throw new ResourceNotFoundError("Image not found");
+                }
+
+                return await image.update({
+                    displayOrder: imageData.displayOrder,
+                });
+            })
+        );
+
+        return images;
+    }
 }
 
 export default new ProductImageService();

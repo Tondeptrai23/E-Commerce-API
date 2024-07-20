@@ -1,5 +1,6 @@
 import { sequelize } from "../../config/database.config.js";
 import { DataTypes, Model } from "sequelize";
+import Product from "./product.model.js";
 
 class ProductImage extends Model {}
 
@@ -10,9 +11,13 @@ ProductImage.init(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        imagePath: {
+        url: {
             type: DataTypes.STRING,
             allowNull: false,
+        },
+        thumbnail: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
         displayOrder: {
             type: DataTypes.INTEGER,
@@ -25,5 +30,18 @@ ProductImage.init(
         tableName: "product_images",
     }
 );
+
+// Assume that every images belongs to a product
+ProductImage.beforeBulkCreate(async (productImages) => {
+    let currentMaxOrder = await ProductImage.max("displayOrder", {
+        where: {
+            productID: productImages[0].productID,
+        },
+    });
+    for (const image of productImages) {
+        image.displayOrder = 1 + currentMaxOrder ?? 0;
+        currentMaxOrder++;
+    }
+});
 
 export default ProductImage;

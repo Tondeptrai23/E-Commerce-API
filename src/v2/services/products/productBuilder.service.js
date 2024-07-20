@@ -109,6 +109,7 @@ class ProductBuilderService {
                 images = images.map((image) => {
                     return { ...image, productID: this.product.productID };
                 });
+
                 images = await ProductImage.bulkCreate(images);
 
                 this.images = images;

@@ -115,12 +115,12 @@ describe("productBuilderService", () => {
             const productBuilder = await productBuilderService.productBuilder();
             const images = [
                 {
-                    imagePath: "image1",
-                    displayOrder: 1,
+                    url: "image1",
+                    thumbnail: "thumbnail1",
                 },
                 {
-                    imagePath: "image2",
-                    displayOrder: 2,
+                    url: "image2",
+                    thumbnail: "thumbnail2",
                 },
             ];
 
@@ -239,12 +239,12 @@ describe("productBuilderService", () => {
                 const categories = ["tops", "male"];
                 const images = [
                     {
-                        imagePath: "image1",
-                        displayOrder: 1,
+                        url: "image1",
+                        thumbnail: "thumbnail1",
                     },
                     {
-                        imagePath: "image2",
-                        displayOrder: 2,
+                        url: "image2",
+                        thumbnail: "thumbnail2",
                     },
                 ];
 
@@ -276,10 +276,10 @@ describe("productBuilderService", () => {
                 expect(result.images).toEqual(
                     expect.arrayContaining([
                         expect.objectContaining({
-                            imagePath: "image1",
+                            url: "image1",
                         }),
                         expect.objectContaining({
-                            imagePath: "image2",
+                            url: "image2",
                         }),
                     ])
                 );
@@ -297,12 +297,10 @@ describe("productBuilderService", () => {
             test("should return a result object", async () => {
                 const imagesData = [
                     {
-                        imagePath: "image3",
-                        displayOrder: 3,
+                        url: "image3",
                     },
                     {
-                        imagePath: "image4",
-                        displayOrder: 4,
+                        url: "image4",
                     },
                 ];
 
@@ -325,10 +323,10 @@ describe("productBuilderService", () => {
                 expect(result.images).toEqual(
                     expect.arrayContaining([
                         expect.objectContaining({
-                            imagePath: "image3",
+                            url: "image3",
                         }),
                         expect.objectContaining({
-                            imagePath: "image4",
+                            url: "image4",
                         }),
                     ])
                 );

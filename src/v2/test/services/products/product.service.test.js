@@ -55,7 +55,7 @@ describe("ProductService.createProduct", () => {
                 expect.arrayContaining([
                     expect.objectContaining({
                         imageID: expect.any(String),
-                        imagePath: expect.any(String),
+                        url: expect.any(String),
                     }),
                 ])
             );
@@ -128,7 +128,7 @@ describe("ProductService.createProduct", () => {
                 expect.arrayContaining([
                     expect.objectContaining({
                         imageID: expect.any(String),
-                        imagePath: expect.any(String),
+                        url: expect.any(String),
                     }),
                 ])
             );
