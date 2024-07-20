@@ -445,6 +445,8 @@ describe("CouponService", () => {
             const updatedCoupon = await Coupon.findOne({
                 where: { code: couponCode },
             });
+
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // Add a delay of 1 second
             expect(updatedCoupon.timesUsed).toBe(coupon.timesUsed + 1);
         });
 
