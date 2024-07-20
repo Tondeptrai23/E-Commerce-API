@@ -63,7 +63,6 @@ const validateCreateVariants = [
     // Validate variant discount price
     body("variants.*.discountPrice")
         .optional()
-        .withMessage("Discount price is required")
         .isNumeric()
         .withMessage("Discount price should be a number")
         .custom(validatePositiveNumber("Discount price")),

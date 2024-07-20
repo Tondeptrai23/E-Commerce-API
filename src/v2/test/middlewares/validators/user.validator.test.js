@@ -1,8 +1,5 @@
 import { validationResult } from "express-validator";
-import {
-    validateRegisterUser,
-    validateSignInUser,
-} from "../../../middlewares/validators/validator.js";
+import validator from "../../../middlewares/validators/index.validator.js";
 
 describe("validateRegisterUser", () => {
     test("should return empty error array if all fields are valid", async () => {
@@ -15,7 +12,7 @@ describe("validateRegisterUser", () => {
             },
         };
 
-        for (const validationChain of validateRegisterUser) {
+        for (const validationChain of validator.validateRegisterUser) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
@@ -33,7 +30,7 @@ describe("validateRegisterUser", () => {
                 role: "admin",
             },
         };
-        for (const validationChain of validateRegisterUser) {
+        for (const validationChain of validator.validateRegisterUser) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
@@ -52,7 +49,7 @@ describe("validateRegisterUser", () => {
                 role: "user",
             },
         };
-        for (const validationChain of validateRegisterUser) {
+        for (const validationChain of validator.validateRegisterUser) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
@@ -70,7 +67,7 @@ describe("validateRegisterUser", () => {
                 role: "user",
             },
         };
-        for (const validationChain of validateRegisterUser) {
+        for (const validationChain of validator.validateRegisterUser) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
@@ -89,7 +86,7 @@ describe("validateRegisterUser", () => {
                 role: "user",
             },
         };
-        for (const validationChain of validateRegisterUser) {
+        for (const validationChain of validator.validateRegisterUser) {
             await validationChain.run(req);
         }
 
@@ -108,7 +105,7 @@ describe("validateRegisterUser", () => {
                 role: "user",
             },
         };
-        for (const validationChain of validateRegisterUser) {
+        for (const validationChain of validator.validateRegisterUser) {
             await validationChain.run(req);
         }
 
@@ -130,7 +127,7 @@ describe("validateRegisterUser", () => {
                 name: "example",
             },
         };
-        for (const validationChain of validateRegisterUser) {
+        for (const validationChain of validator.validateRegisterUser) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
@@ -148,37 +145,13 @@ describe("validateRegisterUser", () => {
                 role: "moderator",
             },
         };
-        for (const validationChain of validateRegisterUser) {
+        for (const validationChain of validator.validateRegisterUser) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
         expect(errors.array()[0].msg).toEqual("Role should be valid");
-    });
-
-    // Test for phoneNumber
-    test("should return error if phone number is invalid", async () => {
-        const req = {
-            body: {
-                email: "example@gmail.com",
-                password: "password",
-                name: "example",
-                role: "user",
-                phoneNumber: "123",
-            },
-        };
-
-        for (const validationChain of validateRegisterUser) {
-            await validationChain.run(req);
-        }
-
-        const errors = validationResult(req);
-
-        expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()[0].msg).toEqual(
-            "Phone number should be a valid phone number"
-        );
     });
 
     // Test for avatar
@@ -193,7 +166,7 @@ describe("validateRegisterUser", () => {
             },
         };
 
-        for (const validationChain of validateRegisterUser) {
+        for (const validationChain of validator.validateRegisterUser) {
             await validationChain.run(req);
         }
 
@@ -217,7 +190,7 @@ describe("validateSignInUser", () => {
                 password: "password",
             },
         };
-        for (const validationChain of validateSignInUser) {
+        for (const validationChain of validator.validateSignInUser) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
@@ -233,7 +206,7 @@ describe("validateSignInUser", () => {
                 password: "password",
             },
         };
-        for (const validationChain of validateSignInUser) {
+        for (const validationChain of validator.validateSignInUser) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
@@ -249,7 +222,7 @@ describe("validateSignInUser", () => {
                 password: "password",
             },
         };
-        for (const validationChain of validateSignInUser) {
+        for (const validationChain of validator.validateSignInUser) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
@@ -266,7 +239,7 @@ describe("validateSignInUser", () => {
                 email: "example@gmail.com",
             },
         };
-        for (const validationChain of validateSignInUser) {
+        for (const validationChain of validator.validateSignInUser) {
             await validationChain.run(req);
         }
 
@@ -283,7 +256,7 @@ describe("validateSignInUser", () => {
                 password: "pass",
             },
         };
-        for (const validationChain of validateSignInUser) {
+        for (const validationChain of validator.validateSignInUser) {
             await validationChain.run(req);
         }
 

@@ -8,8 +8,8 @@ import {
 import validator from "../../../middlewares/validators/index.validator.js";
 
 import productCategoryRoute from "./productCategory.route.js";
-import productImageRoute from "./productImage.route.js";
-import variantRoute from "./productVariant.route.js";
+import productImageRoute from "./image.route.js";
+import variantRoute from "./variant.route.js";
 
 const adminProductRoute = Router();
 

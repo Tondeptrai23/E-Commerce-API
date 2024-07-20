@@ -26,6 +26,11 @@ const validateRegisterUser = [
         .withMessage("Role is required")
         .isIn(["user", "admin"])
         .withMessage("Role should be valid"),
+
+    body("avatar")
+        .optional()
+        .isURL()
+        .withMessage("Avatar should be a valid URL"),
 ];
 
 const validateSignInUser = [

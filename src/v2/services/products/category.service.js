@@ -7,9 +7,11 @@ class CategoryService {
      * @returns {Promise<String>} the categories' names
      */
     async getCategoryNames() {
-        return await Category.findAll({
-            attributes: ["name"],
-        });
+        return (
+            await Category.findAll({
+                attributes: ["name"],
+            })
+        ).map((category) => category.name);
     }
 
     /**

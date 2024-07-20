@@ -1,7 +1,7 @@
 import { body } from "express-validator";
-import { validateCreateVariants } from "./productVariant.validator.js";
-import { validateCreateImages } from "./productImage.validator.js";
-import { validateAddCategoriesForProduct } from "./productCategory.validator.js";
+import { validateCreateVariants } from "./variant.validator.js";
+import { validateCreateImages } from "./image.validator.js";
+import { validateAddCategoriesForProduct } from "./category.validator.js";
 
 const validateCreateProduct = [
     body("productID")
