@@ -4,6 +4,7 @@ import {
     verifyToken,
     isAdmin,
 } from "../../../middlewares/auth/authJwt.middlewares.js";
+import validator from "../../../middlewares/validators/index.validator.js";
 
 const productImageRoute = Router();
 
@@ -16,6 +17,8 @@ productImageRoute.get(
 
 productImageRoute.post(
     "/products/:productID/images",
+    validator.validateCreateImages,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     productImageController.addProductImages
@@ -23,13 +26,17 @@ productImageRoute.post(
 
 productImageRoute.patch(
     "/products/:productID/images/:imageID",
+    validator.validatePatchImage,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     productImageController.updateProductImage
 );
 
 productImageRoute.post(
-    "/products/:productID/images/order",
+    "/products/:productID/images/reorder",
+    validator.validateSetImagesOrder,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     productImageController.setImagesOrder

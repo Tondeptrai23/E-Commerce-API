@@ -7,6 +7,28 @@ beforeAll(async () => {
 }, 15000);
 
 describe("CategoryService", () => {
+    describe("CategoryService.getCategoryNames", () => {
+        test("should return an array of category names", async () => {
+            const categories = await categoryService.getCategoryNames();
+            expect(categories).toBeInstanceOf(Array);
+            expect(categories).toEqual(
+                expect.arrayContaining([
+                    "tops",
+                    "bottoms",
+                    "skirt",
+                    "shorts",
+                    "type",
+                    "gender",
+                    "female",
+                    "male",
+                    "unisex",
+                    "blouse",
+                    "tshirt",
+                ])
+            );
+        });
+    });
+
     describe("CategoryService.getAscendantCategories", () => {
         test("should return an array of categories if the category exists", async () => {
             const categories = await categoryService.getAscendantCategories(

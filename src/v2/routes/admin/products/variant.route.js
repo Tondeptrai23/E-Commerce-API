@@ -5,6 +5,7 @@ import {
     verifyToken,
     isAdmin,
 } from "../../../middlewares/auth/authJwt.middlewares.js";
+import validator from "../../../middlewares/validators/index.validator.js";
 
 const variantRoute = Router();
 
@@ -17,6 +18,8 @@ variantRoute.get(
 
 variantRoute.post(
     "/products/:productID/variants",
+    validator.validateCreateVariants,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     variantController.addProductVariant
@@ -24,6 +27,8 @@ variantRoute.post(
 
 variantRoute.put(
     "/products/:productID/variants/:variantID",
+    validator.validatePutVariant,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     variantController.putProductVariant
@@ -31,6 +36,8 @@ variantRoute.put(
 
 variantRoute.patch(
     "/products/:productID/variants/:variantID",
+    validator.validatePatchVariant,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     variantController.patchProductVariant

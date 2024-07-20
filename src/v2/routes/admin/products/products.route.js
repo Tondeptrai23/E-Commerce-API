@@ -5,6 +5,7 @@ import {
     verifyToken,
     isAdmin,
 } from "../../../middlewares/auth/authJwt.middlewares.js";
+import validator from "../../../middlewares/validators/index.validator.js";
 
 import productCategoryRoute from "./productCategory.route.js";
 import productImageRoute from "./productImage.route.js";
@@ -32,13 +33,17 @@ adminProductRoute.get(
 
 adminProductRoute.post(
     "/products/add",
+    validator.validateCreateProduct,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     productsController.addProduct
 );
 
-adminProductRoute.put(
+adminProductRoute.patch(
     "/products/:productID",
+    validator.validatePatchProduct,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     productsController.updateProduct

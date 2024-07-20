@@ -4,6 +4,7 @@ import {
     verifyToken,
     isAdmin,
 } from "../../../middlewares/auth/authJwt.middlewares.js";
+import validator from "../../../middlewares/validators/index.validator.js";
 
 const productCategoryRoute = Router();
 
@@ -16,6 +17,8 @@ productCategoryRoute.get(
 
 productCategoryRoute.post(
     "/products/:productID/categories",
+    validator.validateAddCategoriesForProduct,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     productCategoryController.addProductCategory
@@ -23,6 +26,8 @@ productCategoryRoute.post(
 
 productCategoryRoute.put(
     "/products/:productID/categories",
+    validator.validateAddCategoriesForProduct,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     productCategoryController.updateProductCategory

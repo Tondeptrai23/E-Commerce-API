@@ -2,6 +2,17 @@ import Category from "../../models/products/category.model.js";
 
 class CategoryService {
     /**
+     * Get all categories' names
+     *
+     * @returns {Promise<String>} the categories' names
+     */
+    async getCategoryNames() {
+        return await Category.findAll({
+            attributes: ["name"],
+        });
+    }
+
+    /**
      * Get all descendant categories of a category
      *
      * @param {String} categoryID the category ID to get all categories from
