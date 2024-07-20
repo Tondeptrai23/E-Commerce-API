@@ -115,10 +115,13 @@ class VariantService {
     async createVariantForProduct(product, variantData) {
         const { attributes, ...restData } = variantData;
 
-        const variant = await product.createVariant(restData);
+        let variant = await product.createVariant(restData);
 
         if (attributes) {
-            await attributeService.addAttributesForVariant(variant, attributes);
+            variant = await attributeService.addAttributesForVariant(
+                variant,
+                attributes
+            );
         }
 
         return variant;

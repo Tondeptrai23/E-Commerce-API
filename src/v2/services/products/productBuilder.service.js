@@ -1,7 +1,9 @@
 import Product from "../../models/products/product.model.js";
 import Category from "../../models/products/category.model.js";
+import ProductImage from "../../models/products/productImage.model.js";
 import { Op } from "sequelize";
 import { removeEmptyFields } from "../../utils/utils.js";
+import attributeService from "./attribute.service.js";
 import variantService from "./variant.service.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import Variant from "../../models/products/variant.model.js";
@@ -59,14 +61,14 @@ class ProductBuilderService {
                     return this;
                 }
 
-                for (let i = 0; i < variants.length; i++) {
-                    variants[i] = await variantService.createVariantForProduct(
-                        this.product,
-                        variants[i]
-                    );
-                }
-
-                this.variants = variants;
+                this.variants = await Promise.all(
+                    variants.map(async (variant) => {
+                        return await variantService.createVariantForProduct(
+                            this.product,
+                            variant
+                        );
+                    })
+                );
                 return this;
             },
 
@@ -103,9 +105,12 @@ class ProductBuilderService {
                 if (!images) {
                     return this;
                 }
-                for (let i = 0; i < images.length; i++) {
-                    images[i] = await this.product.createImage(images[i]);
-                }
+
+                images = images.map((image) => {
+                    return { ...image, productID: this.product.productID };
+                });
+                images = await ProductImage.bulkCreate(images);
+
                 this.images = images;
                 return this;
             },
