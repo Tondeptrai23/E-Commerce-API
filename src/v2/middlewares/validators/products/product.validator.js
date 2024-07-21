@@ -15,12 +15,10 @@ const validateCreateProduct = [
         .isString()
         .withMessage("Name should be a string"),
 
-    body("description").optional().isString("Description should be a string"),
-
-    body("defaultVariantID")
+    body("description")
         .optional()
         .isString()
-        .withMessage("Id should be a string"),
+        .withMessage("Description should be a string"),
 
     ...validateCreateVariants,
 

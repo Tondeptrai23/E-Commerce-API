@@ -6,21 +6,26 @@ const validateAddCategoriesForProduct = [
         .notEmpty()
         .isArray()
         .withMessage("Categories should be an array")
-        .isLength({
-            min: 1,
-        })
-        .withMessage("Categories should have at least one item"),
+        .custom((value) => {
+            if (value.length === 0) {
+                throw new Error("Categories should have at least one item");
+            }
+            return true;
+        }),
 
     body("categories.*").isString().withMessage("Category should be a string"),
 
     body("categories").custom(async (value) => {
+        if (!value) {
+            return;
+        }
         const categories = await categoryService.getCategoryNames();
 
-        value.map((category) => {
+        for (const category of value) {
             if (!categories.includes(category)) {
                 throw new Error("Category does not exist");
             }
-        });
+        }
     }),
 ];
 

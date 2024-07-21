@@ -3,7 +3,7 @@ import { validatePositiveNumber } from "../utils.validator";
 
 const validateDiscountPrice = (value) => {
     if (value.price && value.discountPrice > value.price) {
-        throw new Error("Discount price should be less than price");
+        throw new Error("Discount price should be less than or equal to price");
     }
     return true;
 };
@@ -14,17 +14,12 @@ const validateCreateVariants = [
         .withMessage("Variants is required")
         .isArray()
         .withMessage("Variants should be an array")
-        .isLength({
-            min: 1,
-        })
-        .withMessage("Variants should have at least one item"),
-
-    // Validate variant name
-    body("variants.*.name")
-        .notEmpty()
-        .withMessage("Name is required")
-        .isString()
-        .withMessage("Name should be a string"),
+        .custom((value) => {
+            if (value.length === 0) {
+                throw new Error("Variants should have at least one item");
+            }
+            return true;
+        }),
 
     // Validate variant price
     body("variants.*.price")
@@ -72,43 +67,34 @@ const validateCreateVariants = [
 ];
 
 const validatePatchVariant = [
-    body("variants")
-        .optional()
-        .isArray()
-        .withMessage("Variants should be an array"),
+    body("name").optional().isString().withMessage("Name should be a string"),
 
-    body("variants.*.name")
-        .optional()
-        .isString()
-        .withMessage("Name should be a string"),
-
-    body("variants.*.price")
+    body("price")
         .optional()
         .isNumeric()
         .withMessage("Price should be a number"),
 
-    body("variants.*.stock")
+    body("stock")
         .optional()
         .isInt()
-        .withMessage("Stock should be an integer"),
+        .withMessage("Stock should be an integer greater than or equal to 0"),
 
-    body("variants.*.sku")
-        .optional()
-        .isString()
-        .withMessage("SKU should be a string"),
+    body("sku").optional().isString().withMessage("SKU should be a string"),
 
-    body("variants.*.imageOrder")
+    body("imageOrder")
         .optional()
         .isInt()
-        .withMessage("Image order should be an integer"),
+        .withMessage(
+            "Image order should be an integer greater than or equal to 1"
+        ),
 
-    body("variants.*.discountPrice")
+    body("discountPrice")
         .optional()
         .isNumeric()
         .withMessage("Discount price should be a number")
         .custom(validatePositiveNumber("Discount price")),
 
-    body("variants.*").custom(validateDiscountPrice),
+    body("").custom(validateDiscountPrice),
 ];
 
 const validatePutVariant = [
@@ -127,7 +113,11 @@ const validatePutVariant = [
         .withMessage("Price should be a number")
         .custom(validatePositiveNumber("Price")),
 
-    body("sku").notEmpty().isString().withMessage("SKU should be a string"),
+    body("sku")
+        .notEmpty()
+        .withMessage("SKU is required")
+        .isString()
+        .withMessage("SKU should be a string"),
 
     body("imageOrder")
         .optional()
@@ -143,6 +133,8 @@ const validatePutVariant = [
         .isNumeric()
         .withMessage("Discount price should be a number")
         .custom(validatePositiveNumber("Discount price")),
+
+    body().custom(validateDiscountPrice),
 ];
 
 export { validateCreateVariants, validatePutVariant, validatePatchVariant };

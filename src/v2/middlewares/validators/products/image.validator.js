@@ -6,10 +6,12 @@ const validateCreateImages = [
         .withMessage("Images is required")
         .isArray()
         .withMessage("Images should be an array")
-        .isLength({
-            min: 1,
-        })
-        .withMessage("Images should have at least one item"),
+        .custom((value) => {
+            if (value.length === 0) {
+                throw new Error("Images should have at least one item");
+            }
+            return true;
+        }),
 
     // Validate image url
     body("images.*.url")
