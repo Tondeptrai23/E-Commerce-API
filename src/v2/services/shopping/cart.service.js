@@ -92,26 +92,29 @@ class CartService {
 
         // Calculate total amount
         let totalAmount = 0;
-        await Promise.all(
-            cart.map(async (variant) => {
-                totalAmount += variant.price * variant.cartItem.quantity;
+        const orderItems = cart.map((variant) => {
+            totalAmount += variant.price * variant.cartItem.quantity;
 
-                const data = {
-                    orderID: newOrder.orderID,
-                    variantID: variant.variantID,
-                    quantity: variant.cartItem.quantity,
-                };
+            return {
+                orderID: newOrder.orderID,
+                variantID: variant.variantID,
+                quantity: variant.cartItem.quantity,
+            };
+        });
 
-                return await OrderItem.create(data);
-            })
-        );
+        await OrderItem.bulkCreate(orderItems);
 
         await newOrder.update({
             subTotal: totalAmount,
             finalTotal: totalAmount,
         });
 
-        return await orderService.getOrder(user, newOrder.orderID);
+        return await Order.findByPk(newOrder.orderID, {
+            include: {
+                model: Variant,
+                as: "products",
+            },
+        });
     }
 
     /**

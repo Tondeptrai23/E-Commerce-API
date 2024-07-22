@@ -39,15 +39,10 @@ class CartController {
         try {
             // Get user
             const user = req.user;
-            const { variantIDs, shippingAddressID, couponCode } = req.body;
+            const { variantIDs } = req.body;
 
             // Call services
-            let newOrder = await cartService.fetchCartToOrder(
-                user,
-                variantIDs,
-                shippingAddressID,
-                couponCode
-            );
+            let newOrder = await cartService.fetchCartToOrder(user, variantIDs);
 
             // Serialize data
 
