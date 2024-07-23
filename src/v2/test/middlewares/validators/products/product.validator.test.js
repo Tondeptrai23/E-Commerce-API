@@ -1,5 +1,10 @@
 import { validationResult } from "express-validator";
 import validator from "../../../../middlewares/validators/index.validator.js";
+import seedData from "../../../../seedData.js";
+
+beforeAll(async () => {
+    await seedData();
+});
 
 describe("validateCreateProduct", () => {
     test("should return empty error array if all fields are valid", async () => {
@@ -55,6 +60,7 @@ describe("validateCreateProduct", () => {
         }
         const errors = validationResult(req);
 
+        console.log(errors.array());
         expect(errors.isEmpty()).toBe(true);
     });
 
@@ -81,10 +87,12 @@ describe("validateCreateProduct", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Name is required",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Name is required",
+                }),
+            ])
         );
     });
 
@@ -103,10 +111,12 @@ describe("validateCreateProduct", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Variants should be an array",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Variants should be an array",
+                }),
+            ])
         );
     });
 
@@ -134,10 +144,12 @@ describe("validateCreateProduct", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Images should be an array",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Images should be an array",
+                }),
+            ])
         );
     });
 
@@ -165,10 +177,12 @@ describe("validateCreateProduct", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Categories should be an array",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Categories should be an array",
+                }),
+            ])
         );
     });
 
@@ -195,10 +209,12 @@ describe("validateCreateProduct", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Name should be a string",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Name should be a string",
+                }),
+            ])
         );
     });
 
@@ -225,10 +241,12 @@ describe("validateCreateProduct", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Description should be a string",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Description should be a string",
+                }),
+            ])
         );
     });
 
@@ -240,8 +258,8 @@ describe("validateCreateProduct", () => {
                 variants: [
                     {
                         price: "invalid",
-                        stock: "invalid",
-                        imageOrder: "invalid",
+                        stock: [],
+                        imageOrder: -1,
                         discountPrice: "invalid",
                     },
                 ],
@@ -267,13 +285,13 @@ describe("validateCreateProduct", () => {
                     msg: "Price should be a number",
                 }),
                 expect.objectContaining({
-                    msg: "Stock should be an integer greater than or equal to 0",
+                    msg: "Stock should be an integer",
                 }),
                 expect.objectContaining({
                     msg: "SKU is required",
                 }),
                 expect.objectContaining({
-                    msg: "Image order should be an integer greater than or equal to 1",
+                    msg: "Image order should be greater than or equal to 1",
                 }),
                 expect.objectContaining({
                     msg: "Discount price should be a number",

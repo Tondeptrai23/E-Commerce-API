@@ -99,13 +99,13 @@ describe("validateCreateVariants", () => {
         );
     });
 
-    test("should return errors if fields are invalid", async () => {
+    test("should return errors if fields are invalid types", async () => {
         const req = {
             body: {
                 variants: [
                     {
                         price: "invalid",
-                        stock: -10,
+                        stock: -1.5,
                         sku: 12345,
                         imageOrder: "invalid",
                         discountPrice: "invalid",
@@ -126,16 +126,55 @@ describe("validateCreateVariants", () => {
                     msg: "Price should be a number",
                 }),
                 expect.objectContaining({
-                    msg: "Stock should be an integer greater than or equal to 0",
+                    msg: "Stock should be an integer",
                 }),
                 expect.objectContaining({
                     msg: "SKU should be a string",
                 }),
                 expect.objectContaining({
-                    msg: "Image order should be an integer greater than or equal to 1",
+                    msg: "Image order should be an integer",
                 }),
                 expect.objectContaining({
                     msg: "Discount price should be a number",
+                }),
+            ])
+        );
+    });
+
+    test("should return errors if fields are invalid values", async () => {
+        const req = {
+            body: {
+                variants: [
+                    {
+                        price: -100,
+                        stock: -100,
+                        sku: "",
+                        imageOrder: 0,
+                        discountPrice: -90,
+                    },
+                ],
+            },
+        };
+
+        for (const validationChain of validator.validateCreateVariants) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Price should be greater than or equal to 0",
+                }),
+                expect.objectContaining({
+                    msg: "Stock should be greater than or equal to 0",
+                }),
+                expect.objectContaining({
+                    msg: "Image order should be greater than or equal to 1",
+                }),
+                expect.objectContaining({
+                    msg: "Discount price should be greater than or equal to 0",
                 }),
             ])
         );
@@ -241,7 +280,7 @@ describe("validatePutVariant", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Stock should be an integer greater than or equal to 0",
+                    msg: "Stock should be greater than or equal to 0",
                 }),
                 expect.objectContaining({
                     msg: "Price should be a number",
@@ -250,7 +289,7 @@ describe("validatePutVariant", () => {
                     msg: "SKU should be a string",
                 }),
                 expect.objectContaining({
-                    msg: "Image order should be an integer greater than or equal to 1",
+                    msg: "Image order should be an integer",
                 }),
                 expect.objectContaining({
                     msg: "Discount price should be a number",
@@ -286,9 +325,9 @@ describe("validatePatchVariant", () => {
             body: {
                 name: 12345,
                 price: "invalid",
-                stock: -10,
+                stock: [],
                 sku: 12345,
-                imageOrder: "invalid",
+                imageOrder: -5,
                 discountPrice: "invalid",
             },
         };
@@ -308,13 +347,13 @@ describe("validatePatchVariant", () => {
                     msg: "Price should be a number",
                 }),
                 expect.objectContaining({
-                    msg: "Stock should be an integer greater than or equal to 0",
+                    msg: "Stock should be an integer",
                 }),
                 expect.objectContaining({
                     msg: "SKU should be a string",
                 }),
                 expect.objectContaining({
-                    msg: "Image order should be an integer greater than or equal to 1",
+                    msg: "Image order should be greater than or equal to 1",
                 }),
                 expect.objectContaining({
                     msg: "Discount price should be a number",

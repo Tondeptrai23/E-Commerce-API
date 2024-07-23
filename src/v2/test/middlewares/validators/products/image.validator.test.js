@@ -37,10 +37,12 @@ describe("validateCreateImages", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Images is required",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Images is required",
+                }),
+            ])
         );
     });
 
@@ -57,10 +59,12 @@ describe("validateCreateImages", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Images should be an array",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Images should be an array",
+                }),
+            ])
         );
     });
 
@@ -77,10 +81,12 @@ describe("validateCreateImages", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Images should have at least one item",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Images should have at least one item",
+                }),
+            ])
         );
     });
 
@@ -104,10 +110,12 @@ describe("validateCreateImages", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "URL is required",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "URL is required",
+                }),
+            ])
         );
     });
 
@@ -156,10 +164,12 @@ describe("validatePatchImage", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Id should not be provided",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Id should not be provided",
+                }),
+            ])
         );
     });
 
@@ -176,10 +186,12 @@ describe("validatePatchImage", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Display order should not be provided. Use POST /images/reorder instead",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Display order should not be provided. Use POST /images/reorder instead",
+                }),
+            ])
         );
     });
 });
@@ -188,11 +200,7 @@ describe("validateReorderImages", () => {
     test("should return errors if imageID field is missing in validateReorderImages", async () => {
         const req = {
             body: {
-                images: [
-                    {
-                        displayOrder: 1,
-                    },
-                ],
+                images: [{}],
             },
         };
 
@@ -202,10 +210,12 @@ describe("validateReorderImages", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Image ID is required",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Image ID is required",
+                }),
+            ])
         );
     });
 
@@ -226,10 +236,66 @@ describe("validateReorderImages", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Display order should be an integer greater than 0",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Display order is required",
+                }),
+            ])
+        );
+    });
+
+    test("should return errors if displayOrder field is invalid in validateReorderImages", async () => {
+        const req = {
+            body: {
+                images: [
+                    {
+                        imageID: "12345",
+                        displayOrder: "invalid",
+                    },
+                ],
+            },
+        };
+
+        for (const validationChain of validator.validateReorderImages) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Display order should be an integer",
+                }),
+            ])
+        );
+    });
+
+    test("should return errors if displayOrder field is less than 1 in validateReorderImages", async () => {
+        const req = {
+            body: {
+                images: [
+                    {
+                        imageID: "12345",
+                        displayOrder: 0,
+                    },
+                ],
+            },
+        };
+
+        for (const validationChain of validator.validateReorderImages) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Display order should be greater than or equal to 1",
+                }),
+            ])
         );
     });
 });

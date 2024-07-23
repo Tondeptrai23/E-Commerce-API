@@ -28,10 +28,12 @@ describe("validateAddCategoriesForProduct", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Categories should be an array",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Categories should be an array",
+                }),
+            ])
         );
     });
 
@@ -48,10 +50,12 @@ describe("validateAddCategoriesForProduct", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Categories should be an array",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Categories should be an array",
+                }),
+            ])
         );
     });
 
@@ -68,10 +72,12 @@ describe("validateAddCategoriesForProduct", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Categories should have at least one item",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Categories should have at least one item",
+                }),
+            ])
         );
     });
 
@@ -88,10 +94,12 @@ describe("validateAddCategoriesForProduct", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Category should be a string",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Category should be a string",
+                }),
+            ])
         );
     });
 
@@ -109,10 +117,12 @@ describe("validateAddCategoriesForProduct", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Category does not exist",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Category does not exist",
+                }),
+            ])
         );
     });
 });

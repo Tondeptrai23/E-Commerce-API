@@ -1,5 +1,9 @@
 import { body } from "express-validator";
-import { validatePositiveNumber } from "../utils.validator.js";
+import {
+    validateInteger,
+    validateMinValue,
+    validateNumber,
+} from "../utils.validator.js";
 
 const validateDiscountPrice = (value) => {
     if (value.price && value.discountPrice > value.price) {
@@ -25,18 +29,15 @@ const validateCreateVariants = [
     body("variants.*.price")
         .notEmpty()
         .withMessage("Price is required")
-        .isNumeric()
-        .withMessage("Price should be a number")
-        .custom(validatePositiveNumber("Price")),
+        .custom(validateNumber("Price"))
+        .custom(validateMinValue("Price", 0)),
 
     // Validate variant stock
     body("variants.*.stock")
         .notEmpty()
         .withMessage("Stock is required")
-        .isInt({
-            min: 0,
-        })
-        .withMessage("Stock should be an integer greater than or equal to 0"),
+        .custom(validateInteger("Stock"))
+        .custom(validateMinValue("Stock", 0)),
 
     // Validate variant sku
     body("variants.*.sku")
@@ -48,19 +49,14 @@ const validateCreateVariants = [
     // Validate variant image order
     body("variants.*.imageOrder")
         .optional()
-        .isInt({
-            min: 1,
-        })
-        .withMessage(
-            "Image order should be an integer greater than or equal to 1"
-        ),
+        .custom(validateInteger("Image order"))
+        .custom(validateMinValue("Image order", 1)),
 
     // Validate variant discount price
     body("variants.*.discountPrice")
         .optional()
-        .isNumeric()
-        .withMessage("Discount price should be a number")
-        .custom(validatePositiveNumber("Discount price")),
+        .custom(validateNumber("Discount price"))
+        .custom(validateMinValue("Discount price", 0)),
 
     // Validate variant discount price compare to price
     body("variants.*").custom(validateDiscountPrice),
@@ -69,34 +65,24 @@ const validateCreateVariants = [
 const validatePatchVariant = [
     body("name").optional().isString().withMessage("Name should be a string"),
 
-    body("price")
-        .optional()
-        .isNumeric()
-        .withMessage("Price should be a number"),
+    body("price").optional().custom(validateNumber("Price")),
 
     body("stock")
         .optional()
-        .isInt({
-            min: 0,
-        })
-        .withMessage("Stock should be an integer greater than or equal to 0"),
+        .custom(validateInteger("Stock"))
+        .custom(validateMinValue("Stock", 0)),
 
     body("sku").optional().isString().withMessage("SKU should be a string"),
 
     body("imageOrder")
         .optional()
-        .isInt({
-            min: 1,
-        })
-        .withMessage(
-            "Image order should be an integer greater than or equal to 1"
-        ),
+        .custom(validateInteger("Image order"))
+        .custom(validateMinValue("Image order", 1)),
 
     body("discountPrice")
         .optional()
-        .isNumeric()
-        .withMessage("Discount price should be a number")
-        .custom(validatePositiveNumber("Discount price")),
+        .custom(validateNumber("Discount price"))
+        .custom(validateMinValue("Discount price", 0)),
 
     body("").custom(validateDiscountPrice),
 ];
@@ -105,17 +91,14 @@ const validatePutVariant = [
     body("stock")
         .notEmpty()
         .withMessage("Stock is required")
-        .isInt({
-            min: 0,
-        })
-        .withMessage("Stock should be an integer greater than or equal to 0"),
+        .custom(validateInteger("Stock"))
+        .custom(validateMinValue("Stock", 0)),
 
     body("price")
         .notEmpty()
         .withMessage("Price is required")
-        .isNumeric()
-        .withMessage("Price should be a number")
-        .custom(validatePositiveNumber("Price")),
+        .custom(validateNumber("Price"))
+        .custom(validateMinValue("Price", 0)),
 
     body("sku")
         .notEmpty()
@@ -125,18 +108,13 @@ const validatePutVariant = [
 
     body("imageOrder")
         .optional()
-        .isInt({
-            min: 1,
-        })
-        .withMessage(
-            "Image order should be an integer greater than or equal to 1"
-        ),
+        .custom(validateInteger("Image order"))
+        .custom(validateMinValue("Image order", 1)),
 
     body("discountPrice")
         .optional()
-        .isNumeric()
-        .withMessage("Discount price should be a number")
-        .custom(validatePositiveNumber("Discount price")),
+        .custom(validateNumber("Discount price"))
+        .custom(validateMinValue("Discount price", 0)),
 
     body().custom(validateDiscountPrice),
 ];

@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import { validateInteger, validateMinValue } from "../utils.validator.js";
 
 const validateCreateImages = [
     body("images")
@@ -63,10 +64,10 @@ const validateReorderImages = [
         .withMessage("Image ID should be a string"),
 
     body("images.*.displayOrder")
-        .isInt({
-            min: 1,
-        })
-        .withMessage("Display order should be an integer greater than 0"),
+        .notEmpty()
+        .withMessage("Display order is required")
+        .custom(validateInteger("Display order"))
+        .custom(validateMinValue("Display order", 1)),
 ];
 
 export { validateCreateImages, validatePatchImage, validateReorderImages };
