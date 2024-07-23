@@ -5,6 +5,9 @@ import * as productValidator from "./products/product.validator.js";
 import * as categoryValidator from "./products/category.validator.js";
 import * as variantValidator from "./products/variant.validator.js";
 import * as imageValidator from "./products/image.validator.js";
+import * as orderValidator from "./shopping/order.validator.js";
+import * as cartValidator from "./shopping/cart.validator.js";
+import * as couponValidator from "./shopping/coupon.validator.js";
 
 const handleValidationErrors = (req, res, next) => {
     const errors = validationResult(req);
@@ -36,6 +39,18 @@ const validator = {
     validateCreateImages: imageValidator.validateCreateImages,
     validatePatchImage: imageValidator.validatePatchImage,
     validateReorderImages: imageValidator.validateReorderImages,
+
+    validatePostOrder: orderValidator.validatePostOrder,
+    validatePatchOrder: orderValidator.validatePatchOrder,
+    validateApplyCoupon: orderValidator.validateApplyCoupon,
+
+    validateAddToCart: cartValidator.validateAddToCart,
+    validateUpdateCart: cartValidator.validateUpdateCart,
+    validateFetchCart: cartValidator.validateFetchCart,
+
+    validateCreateCoupon: couponValidator.validateCreateCoupon,
+    validatePutCoupon: couponValidator.validatePutCoupon,
+    validatePatchCoupon: couponValidator.validatePatchCoupon,
 };
 
 export default validator;

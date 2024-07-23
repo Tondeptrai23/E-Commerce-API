@@ -6,27 +6,23 @@ import {
     checkEmailNotExistsForSignUp,
 } from "../middlewares/auth/verifySigning.middlewares.js";
 import { verifyRefreshToken } from "../middlewares/auth/authJwt.middlewares.js";
-import {
-    handleValidationErrors,
-    validateRegisterUser,
-    validateSignInUser,
-} from "../middlewares/validators/validator.js";
+import validator from "../middlewares/validators/index.validator.js";
 
 const authRoute = Router();
 
 authRoute.post(
     "/signup",
     checkEmailNotExistsForSignUp,
-    validateRegisterUser,
-    handleValidationErrors,
+    validator.validateRegisterUser,
+    validator.handleValidationErrors,
     authController.signup
 );
 
 authRoute.post(
     "/signin",
     checkEmailExistsForSignIn,
-    validateSignInUser,
-    handleValidationErrors,
+    validator.validateSignInUser,
+    validator.handleValidationErrors,
     authController.signin
 );
 

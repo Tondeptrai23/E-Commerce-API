@@ -35,7 +35,7 @@ productImageRoute.patch(
 
 productImageRoute.post(
     "/products/:productID/images/reorder",
-    validator.validateSetImagesOrder,
+    validator.validateReorderImages,
     validator.handleValidationErrors,
     verifyToken,
     isAdmin,

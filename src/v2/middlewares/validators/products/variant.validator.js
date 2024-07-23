@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import { validatePositiveNumber } from "../utils.validator";
+import { validatePositiveNumber } from "../utils.validator.js";
 
 const validateDiscountPrice = (value) => {
     if (value.price && value.discountPrice > value.price) {
@@ -76,14 +76,18 @@ const validatePatchVariant = [
 
     body("stock")
         .optional()
-        .isInt()
+        .isInt({
+            min: 0,
+        })
         .withMessage("Stock should be an integer greater than or equal to 0"),
 
     body("sku").optional().isString().withMessage("SKU should be a string"),
 
     body("imageOrder")
         .optional()
-        .isInt()
+        .isInt({
+            min: 1,
+        })
         .withMessage(
             "Image order should be an integer greater than or equal to 1"
         ),

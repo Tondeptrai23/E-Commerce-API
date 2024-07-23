@@ -113,11 +113,10 @@ class CouponController {
         }
     }
 
-    async updateCoupon(req, res) {
+    async putCoupon(req, res) {
         try {
             // Get data
             const {
-                code,
                 discountType,
                 discountValue,
                 minimumOrderAmount,
@@ -131,12 +130,53 @@ class CouponController {
 
             // Call service
             const coupon = await couponService.updateCoupon(couponID, {
-                code,
                 discountType,
                 discountValue,
                 minimumOrderAmount,
                 maxUsage,
                 startDate,
+                endDate,
+                timesUsed: 0,
+            });
+
+            // Serialize data
+
+            // Response
+            res.status(StatusCodes.OK).json({
+                success: true,
+                coupon: coupon,
+            });
+        } catch (err) {
+            console.log(err);
+
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    error: err.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    error: "Server error in updating coupon",
+                });
+            }
+        }
+    }
+
+    async patchCoupon(req, res) {
+        try {
+            // Get data
+            const { discountType, discountValue, minimumOrderAmount, endDate } =
+                req.body;
+
+            // Get param
+            const { couponID } = req.params;
+
+            // Call service
+            const coupon = await couponService.updateCoupon(couponID, {
+                discountType,
+                discountValue,
+                minimumOrderAmount,
                 endDate,
             });
 

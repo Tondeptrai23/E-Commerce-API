@@ -33,7 +33,14 @@ adminCouponRoute.put(
     "/coupons/:couponID",
     verifyToken,
     isAdmin,
-    couponController.updateCoupon
+    couponController.putCoupon
+);
+
+adminCouponRoute.patch(
+    "/coupons/:couponID",
+    verifyToken,
+    isAdmin,
+    couponController.patchCoupon
 );
 
 adminCouponRoute.delete(
