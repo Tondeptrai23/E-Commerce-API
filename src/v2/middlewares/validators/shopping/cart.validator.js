@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import { validateInteger, validateMinValue } from "../utils.validator";
 
 const validateAddToCart = [
     body("variantID")
@@ -18,12 +19,8 @@ const validateUpdateCart = [
     body("quantity")
         .notEmpty()
         .withMessage("Quantity is required")
-        .isInt({
-            min: 1,
-        })
-        .withMessage(
-            "Quantity should be an integer greater than or equal to 1"
-        ),
+        .custom(validateInteger("Quantity"))
+        .custom(validateMinValue("Quantity", 1)),
 ];
 
 const validateFetchCart = [
