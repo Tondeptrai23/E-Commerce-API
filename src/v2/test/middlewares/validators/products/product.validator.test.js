@@ -260,28 +260,31 @@ describe("validateCreateProduct", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "Price should be a number",
-            }),
-            expect.objectContaining({
-                msg: "Stock should be an integer",
-            }),
-            expect.objectContaining({
-                msg: "SKU is required",
-            }),
-            expect.objectContaining({
-                msg: "Image order should be an integer",
-            }),
-            expect.objectContaining({
-                msg: "Discount price should be a number",
-            }),
-            expect.objectContaining({
-                msg: "URL should be a string",
-            }),
-            expect.objectContaining({
-                msg: "Category does not exist",
-            })
+
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Price should be a number",
+                }),
+                expect.objectContaining({
+                    msg: "Stock should be an integer greater than or equal to 0",
+                }),
+                expect.objectContaining({
+                    msg: "SKU is required",
+                }),
+                expect.objectContaining({
+                    msg: "Image order should be an integer greater than or equal to 1",
+                }),
+                expect.objectContaining({
+                    msg: "Discount price should be a number",
+                }),
+                expect.objectContaining({
+                    msg: "URL should be a string",
+                }),
+                expect.objectContaining({
+                    msg: "Category does not exist",
+                }),
+            ])
         );
     });
 });

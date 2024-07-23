@@ -129,13 +129,15 @@ describe("validateCreateImages", () => {
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toContainEqual(
-            expect.objectContaining({
-                msg: "URL should be a string",
-            }),
-            expect.objectContaining({
-                msg: "Thumbnail should be a string",
-            })
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "URL should be a string",
+                }),
+                expect.objectContaining({
+                    msg: "Thumbnail should be a string",
+                }),
+            ])
         );
     });
 });
