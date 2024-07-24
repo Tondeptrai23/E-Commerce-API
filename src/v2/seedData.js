@@ -26,10 +26,9 @@ const seedData = async () => {
     await seedCategory();
     await seedProduct();
     await seedProductCategory();
-    await seedVariant();
-    await setDefaultVariant();
-    await seedVariantAttributeValues();
     await seedProductImage();
+    await seedVariant();
+    await seedVariantAttributeValues();
     await seedCoupon();
     await seedCategoryCoupon();
     await seedProductCoupon();
@@ -220,6 +219,100 @@ const seedProductCategory = async () => {
     ]);
 };
 
+const seedProductImage = async () => {
+    await ProductImage.bulkCreate([
+        { imageID: 101, productID: 1, url: "tshirt1.jpg" },
+        {
+            imageID: 102,
+            productID: 1,
+            url: "tshirt1_black.jpg",
+        },
+        {
+            imageID: 103,
+            productID: 1,
+            url: "tshirt1_white.jpg",
+        },
+        {
+            imageID: 104,
+            productID: 1,
+            url: "tshirt1_blue.jpg",
+        },
+
+        { imageID: 201, productID: 2, url: "short2.jpg" },
+        {
+            imageID: 202,
+            productID: 2,
+            url: "short2_black.jpg",
+        },
+
+        { imageID: 301, productID: 3, url: "skirt3.jpg" },
+        {
+            imageID: 302,
+            productID: 3,
+            url: "skirt3_black.jpg",
+        },
+        {
+            imageID: 303,
+            productID: 3,
+            url: "skirt3_white.jpg",
+        },
+
+        { imageID: 401, productID: 4, url: "short4.jpg" },
+        {
+            imageID: 402,
+            productID: 4,
+            url: "short4_black.jpg",
+        },
+
+        {
+            imageID: 501,
+            productID: 5,
+            url: "blouse5.jpg",
+        },
+        {
+            imageID: 502,
+            productID: 5,
+            url: "blouse5_black.jpg",
+        },
+        {
+            imageID: 503,
+            productID: 5,
+            url: "blouse5_white.jpg",
+        },
+        {
+            imageID: 504,
+            productID: 5,
+            url: "blouse5_red.jpg",
+        },
+
+        {
+            imageID: 601,
+            productID: 6,
+            url: "tshirt6.jpg",
+        },
+        {
+            imageID: 602,
+            productID: 6,
+            url: "tshirt6_black.jpg",
+        },
+        {
+            imageID: 603,
+            productID: 6,
+            url: "tshirt6_white.jpg",
+        },
+        {
+            imageID: 604,
+            productID: 6,
+            url: "tshirt6_blue.jpg",
+        },
+        {
+            imageID: 605,
+            productID: 6,
+            url: "tshirt6_red.jpg",
+        },
+    ]);
+};
+
 const seedVariant = async () => {
     await Variant.bulkCreate([
         {
@@ -227,7 +320,7 @@ const seedVariant = async () => {
             price: 10.0,
             stock: 15,
             sku: "TSHIRT1-S-BLACK",
-            imageOrder: 2,
+            imageID: 102,
             productID: 1,
             discountPrice: 8.0,
         },
@@ -236,7 +329,7 @@ const seedVariant = async () => {
             price: 10.0,
             stock: 5,
             sku: "TSHIRT1-S-WHITE",
-            imageOrder: 3,
+            imageID: 103,
             productID: 1,
             discountPrice: 8.0,
         },
@@ -245,7 +338,7 @@ const seedVariant = async () => {
             price: 15.0,
             stock: 25,
             sku: "TSHIRT1-S-BLUE",
-            imageOrder: 4,
+            imageID: 104,
             productID: 1,
             discountPrice: 12.0,
         },
@@ -254,7 +347,7 @@ const seedVariant = async () => {
             price: 10.0,
             stock: 10,
             sku: "TSHIRT1-M-BLACK",
-            imageOrder: 2,
+            imageID: 102,
             productID: 1,
         },
         {
@@ -262,7 +355,7 @@ const seedVariant = async () => {
             price: 10.0,
             stock: 20,
             sku: "TSHIRT1-M-WHITE",
-            imageOrder: 3,
+            imageID: 103,
             productID: 1,
         },
         {
@@ -270,7 +363,7 @@ const seedVariant = async () => {
             price: 15.0,
             stock: 30,
             sku: "TSHIRT1-M-BLUE",
-            imageOrder: 4,
+            imageID: 104,
             productID: 1,
         },
     ]);
@@ -281,7 +374,7 @@ const seedVariant = async () => {
             price: 10.0,
             stock: 1,
             sku: "TSHIRT1-L-BLACK",
-            imageOrder: 2,
+            imageID: 102,
             productID: 1,
         },
         {
@@ -289,7 +382,7 @@ const seedVariant = async () => {
             price: 10.0,
             stock: 12,
             sku: "TSHIRT1-L-WHITE",
-            imageOrder: 3,
+            imageID: 103,
             productID: 1,
         },
         {
@@ -297,7 +390,7 @@ const seedVariant = async () => {
             price: 15.0,
             stock: 8,
             sku: "TSHIRT1-L-BLUE",
-            imageOrder: 4,
+            imageID: 104,
             productID: 1,
         },
     ]);
@@ -308,7 +401,7 @@ const seedVariant = async () => {
             price: 20.0,
             stock: 18,
             sku: "SHORT2-S-BLACK",
-            imageOrder: 2,
+            imageID: 202,
             productID: 2,
         },
         {
@@ -316,7 +409,7 @@ const seedVariant = async () => {
             price: 20.0,
             stock: 9,
             sku: "SHORT2-M-BLACK",
-            imageOrder: 2,
+            imageID: 202,
             productID: 2,
         },
         {
@@ -324,7 +417,7 @@ const seedVariant = async () => {
             price: 20.0,
             stock: 3,
             sku: "SHORT2-L-BLACK",
-            imageOrder: 2,
+            imageID: 202,
             productID: 2,
         },
     ]);
@@ -335,7 +428,7 @@ const seedVariant = async () => {
             price: 30.0,
             stock: 27,
             sku: "SKIRT3-S-BLACK",
-            imageOrder: 2,
+            imageID: 302,
             productID: 3,
             discountPrice: 25.0,
         },
@@ -344,7 +437,7 @@ const seedVariant = async () => {
             price: 30.0,
             stock: 14,
             sku: "SKIRT3-M-BLACK",
-            imageOrder: 2,
+            imageID: 302,
             productID: 3,
             discountPrice: 25.0,
         },
@@ -353,7 +446,7 @@ const seedVariant = async () => {
             price: 30.0,
             stock: 2,
             sku: "SKIRT3-L-BLACK",
-            imageOrder: 2,
+            imageID: 302,
             productID: 3,
             discountPrice: 25.0,
         },
@@ -365,7 +458,7 @@ const seedVariant = async () => {
             price: 40.0,
             stock: 11,
             sku: "SKIRT3-S-WHITE",
-            imageOrder: 3,
+            imageID: 303,
             productID: 3,
         },
         {
@@ -373,7 +466,7 @@ const seedVariant = async () => {
             price: 40.0,
             stock: 19,
             sku: "SKIRT3-M-WHITE",
-            imageOrder: 3,
+            imageID: 303,
             productID: 3,
         },
         {
@@ -381,7 +474,7 @@ const seedVariant = async () => {
             price: 40.0,
             stock: 28,
             sku: "SKIRT3-L-WHITE",
-            imageOrder: 3,
+            imageID: 303,
             productID: 3,
         },
     ]);
@@ -392,7 +485,7 @@ const seedVariant = async () => {
             price: 50.0,
             stock: 13,
             sku: "SHORT4-S-BLACK",
-            imageOrder: 2,
+            imageID: 402,
             productID: 4,
         },
         {
@@ -400,7 +493,7 @@ const seedVariant = async () => {
             price: 50.0,
             stock: 7,
             sku: "SHORT4-M-BLACK",
-            imageOrder: 2,
+            imageID: 402,
             productID: 4,
         },
         {
@@ -408,7 +501,7 @@ const seedVariant = async () => {
             price: 50.0,
             stock: 21,
             sku: "SHORT4-L-BLACK",
-            imageOrder: 2,
+            imageID: 402,
             productID: 4,
         },
     ]);
@@ -419,7 +512,7 @@ const seedVariant = async () => {
             price: 60.0,
             stock: 16,
             sku: "BLOUSE5-S-BLACK",
-            imageOrder: 2,
+            imageID: 502,
             productID: 5,
         },
         {
@@ -427,7 +520,7 @@ const seedVariant = async () => {
             price: 60.0,
             stock: 23,
             sku: "BLOUSE5-S-WHITE",
-            imageOrder: 3,
+            imageID: 503,
             productID: 5,
         },
         {
@@ -435,7 +528,7 @@ const seedVariant = async () => {
             price: 70.0,
             stock: 29,
             sku: "BLOUSE5-S-RED",
-            imageOrder: 4,
+            imageID: 504,
             productID: 5,
         },
     ]);
@@ -446,7 +539,7 @@ const seedVariant = async () => {
             price: 60.0,
             stock: 4,
             sku: "BLOUSE5-M-BLACK",
-            imageOrder: 2,
+            imageID: 502,
             productID: 5,
         },
         {
@@ -454,7 +547,7 @@ const seedVariant = async () => {
             price: 60.0,
             stock: 17,
             sku: "BLOUSE5-M-WHITE",
-            imageOrder: 3,
+            imageID: 503,
             productID: 5,
         },
         {
@@ -462,7 +555,7 @@ const seedVariant = async () => {
             price: 70.0,
             stock: 26,
             sku: "BLOUSE5-M-RED",
-            imageOrder: 4,
+            imageID: 504,
             productID: 5,
         },
     ]);
@@ -473,7 +566,7 @@ const seedVariant = async () => {
             price: 60.0,
             stock: 6,
             sku: "BLOUSE5-L-BLACK",
-            imageOrder: 2,
+            imageID: 502,
             productID: 5,
         },
         {
@@ -481,7 +574,7 @@ const seedVariant = async () => {
             price: 60.0,
             stock: 22,
             sku: "BLOUSE5-L-WHITE",
-            imageOrder: 3,
+            imageID: 503,
             productID: 5,
         },
         {
@@ -489,7 +582,7 @@ const seedVariant = async () => {
             price: 70.0,
             stock: 30,
             sku: "BLOUSE5-L-RED",
-            imageOrder: 4,
+            imageID: 504,
             productID: 5,
         },
     ]);
@@ -500,7 +593,7 @@ const seedVariant = async () => {
             price: 20.0,
             stock: 25,
             sku: "TSHIRT6-S-BLACK",
-            imageOrder: 2,
+            imageID: 602,
             productID: 6,
         },
         {
@@ -508,7 +601,7 @@ const seedVariant = async () => {
             price: 20.0,
             stock: 8,
             sku: "TSHIRT6-M-BLACK",
-            imageOrder: 2,
+            imageID: 602,
             productID: 6,
         },
         {
@@ -516,7 +609,7 @@ const seedVariant = async () => {
             price: 20.0,
             stock: 3,
             sku: "TSHIRT6-L-BLACK",
-            imageOrder: 2,
+            imageID: 602,
             productID: 6,
         },
     ]);
@@ -527,7 +620,7 @@ const seedVariant = async () => {
             price: 20.0,
             stock: 20,
             sku: "TSHIRT6-S-WHITE",
-            imageOrder: 3,
+            imageID: 603,
             productID: 6,
         },
         {
@@ -535,7 +628,7 @@ const seedVariant = async () => {
             price: 20.0,
             stock: 15,
             sku: "TSHIRT6-M-WHITE",
-            imageOrder: 3,
+            imageID: 603,
             productID: 6,
         },
         {
@@ -543,7 +636,7 @@ const seedVariant = async () => {
             price: 20.0,
             stock: 10,
             sku: "TSHIRT6-L-WHITE",
-            imageOrder: 3,
+            imageID: 603,
             productID: 6,
         },
     ]);
@@ -554,7 +647,7 @@ const seedVariant = async () => {
             price: 20.0,
             stock: 30,
             sku: "TSHIRT6-S-BLUE",
-            imageOrder: 4,
+            imageID: 604,
             productID: 6,
         },
         {
@@ -562,7 +655,7 @@ const seedVariant = async () => {
             price: 20.0,
             stock: 25,
             sku: "TSHIRT6-M-BLUE",
-            imageOrder: 4,
+            imageID: 604,
             productID: 6,
         },
         {
@@ -570,7 +663,7 @@ const seedVariant = async () => {
             price: 20.0,
             stock: 20,
             sku: "TSHIRT6-L-BLUE",
-            imageOrder: 4,
+            imageID: 604,
             productID: 6,
         },
     ]);
@@ -581,7 +674,7 @@ const seedVariant = async () => {
             price: 20.0,
             stock: 10,
             sku: "TSHIRT6-S-RED",
-            imageOrder: 4,
+            imageID: 605,
             productID: 6,
         },
         {
@@ -589,7 +682,7 @@ const seedVariant = async () => {
             price: 20.0,
             stock: 5,
             sku: "TSHIRT6-M-RED",
-            imageOrder: 4,
+            imageID: 605,
             productID: 6,
         },
         {
@@ -597,66 +690,10 @@ const seedVariant = async () => {
             price: 20.0,
             stock: 2,
             sku: "TSHIRT6-L-RED",
-            imageOrder: 4,
+            imageID: 605,
             productID: 6,
         },
     ]);
-};
-
-const setDefaultVariant = async () => {
-    await Product.update(
-        { defaultVariantID: 101 },
-        {
-            where: {
-                productID: 1,
-            },
-        }
-    );
-
-    await Product.update(
-        { defaultVariantID: 201 },
-        {
-            where: {
-                productID: 2,
-            },
-        }
-    );
-
-    await Product.update(
-        { defaultVariantID: 301 },
-        {
-            where: {
-                productID: 3,
-            },
-        }
-    );
-
-    await Product.update(
-        { defaultVariantID: 401 },
-        {
-            where: {
-                productID: 4,
-            },
-        }
-    );
-
-    await Product.update(
-        { defaultVariantID: 501 },
-        {
-            where: {
-                productID: 5,
-            },
-        }
-    );
-
-    await Product.update(
-        { defaultVariantID: 601 },
-        {
-            where: {
-                productID: 6,
-            },
-        }
-    );
 };
 
 const seedVariantAttributeValues = async () => {
@@ -792,95 +829,6 @@ const seedVariantAttributeValues = async () => {
 
         { variantID: 612, valueID: 3 },
         { variantID: 612, valueID: 7 },
-    ]);
-};
-
-const seedProductImage = async () => {
-    await ProductImage.bulkCreate([
-        { imageID: 1, productID: 1, url: "tshirt1.jpg" },
-        {
-            imageID: 2,
-            productID: 1,
-            url: "tshirt1_black.jpg",
-        },
-        {
-            imageID: 3,
-            productID: 1,
-            url: "tshirt1_white.jpg",
-        },
-        {
-            imageID: 4,
-            productID: 1,
-            url: "tshirt1_blue.jpg",
-        },
-
-        { imageID: 5, productID: 2, url: "short2.jpg" },
-        {
-            imageID: 6,
-            productID: 2,
-            url: "short2_black.jpg",
-        },
-
-        { imageID: 7, productID: 3, url: "skirt3.jpg" },
-        {
-            imageID: 8,
-            productID: 3,
-            url: "skirt3_black.jpg",
-        },
-
-        { imageID: 9, productID: 4, url: "short4.jpg" },
-        {
-            imageID: 10,
-            productID: 4,
-            url: "short4_black.jpg",
-        },
-
-        {
-            imageID: 11,
-            productID: 5,
-            url: "blouse5.jpg",
-        },
-        {
-            imageID: 12,
-            productID: 5,
-            url: "blouse5_black.jpg",
-        },
-        {
-            imageID: 13,
-            productID: 5,
-            url: "blouse5_white.jpg",
-        },
-        {
-            imageID: 14,
-            productID: 5,
-            url: "blouse5_red.jpg",
-        },
-
-        {
-            imageID: 15,
-            productID: 6,
-            url: "tshirt6.jpg",
-        },
-        {
-            imageID: 16,
-            productID: 6,
-            url: "tshirt6_black.jpg",
-        },
-        {
-            imageID: 17,
-            productID: 6,
-            url: "tshirt6_white.jpg",
-        },
-        {
-            imageID: 18,
-            productID: 6,
-            url: "tshirt6_blue.jpg",
-        },
-        {
-            imageID: 19,
-            productID: 6,
-            url: "tshirt6_red.jpg",
-        },
     ]);
 };
 

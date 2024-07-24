@@ -19,6 +19,7 @@ import ProductCoupon from "./shopping/productCoupon.model.js";
 import CategoryCoupon from "./shopping/categoryCoupon.model.js";
 import ShippingAddress from "./user/address.model.js";
 
+// Product - <1, n> - ProductImage
 Product.hasMany(ProductImage, {
     foreignKey: {
         name: "productID",
@@ -38,6 +39,18 @@ ProductImage.belongsTo(Product, {
     as: "product",
 });
 
+// Variant - <1, 1> - ProductImage
+Variant.belongsTo(ProductImage, {
+    foreignKey: {
+        name: "imageID",
+        allowNull: true,
+    },
+    onDelete: "SET NULL",
+    constraints: true,
+    as: "image",
+});
+
+// User - <n, n> - Variant - through CartItem
 User.belongsToMany(Variant, {
     through: CartItem,
     foreignKey: { name: "userID", allowNull: false },
@@ -56,6 +69,7 @@ Variant.belongsToMany(User, {
     as: "users",
 });
 
+// Product - <n, n> - Category - through ProductCategory
 Category.belongsToMany(Product, {
     foreignKey: {
         name: "categoryID",
@@ -77,6 +91,7 @@ Product.belongsToMany(Category, {
     through: ProductCategory,
 });
 
+// Category - <1, 1> - Category
 Category.hasOne(Category, {
     foreignKey: {
         name: "parentID",
@@ -88,6 +103,7 @@ Category.hasOne(Category, {
     sourceKey: "categoryID",
 });
 
+// Product - <n, n> - Coupon - through ProductCoupon
 Product.belongsToMany(Coupon, {
     foreignKey: {
         name: "productID",
@@ -109,6 +125,7 @@ Coupon.belongsToMany(Product, {
     as: "products",
 });
 
+// Category - <n, n> - Coupon - through CategoryCoupon
 Category.belongsToMany(Coupon, {
     foreignKey: {
         name: "categoryID",
@@ -130,6 +147,7 @@ Coupon.belongsToMany(Category, {
     as: "categories",
 });
 
+// User - <1, n> - Order
 User.hasMany(Order, {
     foreignKey: {
         name: "userID",
@@ -149,6 +167,7 @@ Order.belongsTo(User, {
     as: "user",
 });
 
+// ShippingAddress - <1, n> - Order
 Order.belongsTo(ShippingAddress, {
     foreignKey: {
         name: "shippingAddressID",
@@ -168,6 +187,7 @@ ShippingAddress.hasMany(Order, {
     as: "orders",
 });
 
+// Order - <n, n> - Variant - through OrderItem
 Order.belongsToMany(Variant, {
     foreignKey: {
         name: "orderID",
@@ -189,6 +209,7 @@ Variant.belongsToMany(Order, {
     as: "orders",
 });
 
+// Coupon - <1, n> - Order
 Order.belongsTo(Coupon, {
     foreignKey: {
         name: "couponID",
@@ -208,6 +229,7 @@ Coupon.hasMany(Order, {
     as: "order",
 });
 
+// Product - <1, n> - Variant
 Product.hasMany(Variant, {
     foreignKey: {
         name: "productID",
@@ -227,16 +249,7 @@ Variant.belongsTo(Product, {
     as: "product",
 });
 
-Product.belongsTo(Variant, {
-    foreignKey: {
-        name: "defaultVariantID",
-        allowNull: true,
-    },
-    onDelete: "SET NULL",
-    constraints: true,
-    as: "defaultVariant",
-});
-
+// Variant - <n, n> - AttributeValue - through VariantAttributeValue
 Variant.belongsToMany(AttributeValue, {
     foreignKey: {
         name: "variantID",
@@ -258,6 +271,7 @@ AttributeValue.belongsToMany(Variant, {
     as: "variants",
 });
 
+// Attribute - <1, n> - AttributeValue
 Attribute.hasMany(AttributeValue, {
     foreignKey: {
         name: "attributeID",
@@ -277,6 +291,7 @@ AttributeValue.belongsTo(Attribute, {
     as: "attribute",
 });
 
+// User - <1, n> - ShippingAddress
 User.hasMany(ShippingAddress, {
     foreignKey: {
         name: "userID",
