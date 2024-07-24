@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import { validateInteger, validateMinValue } from "../utils.validator";
+import { validateInteger, validateMinValue } from "../utils.validator.js";
 
 const validateAddToCart = [
     body("variantID")

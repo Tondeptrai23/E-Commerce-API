@@ -6,6 +6,8 @@ import Variant from "../../models/products/variant.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import AttributeValue from "../../models/products/attributeValue.model.js";
 import Attribute from "../../models/products/attribute.model.js";
+import QueryToFilterConditionConverter from "../conditionConverter/filterConverter.service.js";
+import { Op } from "sequelize";
 
 class ProductService {
     /**
@@ -16,11 +18,64 @@ class ProductService {
      * @returns {Promise<Product[]>} the products that match the given options
      *
      */
-    async getProducts({ includeAssociated = false }) {
-        const products = await Product.findAll({
-            include: getIncludeOption(includeAssociated),
+    async getProducts(query = { includeAssociated: false }) {
+        const filterConverter = await QueryToFilterConditionConverter.create(
+            query,
+            "product"
+        );
+
+        let variantConverter = await QueryToFilterConditionConverter.create(
+            query.variant,
+            "variant"
+        );
+
+        let categoryConverter = await QueryToFilterConditionConverter.create(
+            query.category,
+            "category"
+        );
+
+        let attributeConverter = await QueryToFilterConditionConverter.create(
+            query.variant,
+            "variantAttribute"
+        );
+
+        const variants = await Variant.findAll({
+            attributes: ["variantID"],
+            include: [
+                {
+                    model: AttributeValue,
+                    as: "attributeValues",
+                    attributes: [],
+                    include: {
+                        model: Attribute,
+                        as: "attribute",
+                        attributes: [],
+                    },
+                },
+            ],
+            where: variantConverter.convert(),
         });
 
+        const variantIDs = variants.map((variant) => variant.variantID);
+
+        const products = await Product.findAll({
+            include: [
+                {
+                    model: Category,
+                    through: ProductCategory,
+                    as: "categories",
+                    where: categoryConverter.convert(),
+                },
+                {
+                    model: Variant,
+                    as: "variants",
+                    where: {
+                        variantID: { [Op.in]: variantIDs },
+                    },
+                },
+            ],
+            where: [...filterConverter.convert()],
+        });
         return products;
     }
 

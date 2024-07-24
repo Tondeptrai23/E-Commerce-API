@@ -12,7 +12,7 @@ userOrderRoute.get("/:orderID", verifyToken, ordersController.getOrder);
 
 userOrderRoute.post(
     "/pending",
-    validator.postOrder,
+    validator.validatePostOrder,
     validator.handleValidationErrors,
     verifyToken,
     ordersController.postOrder
@@ -20,7 +20,7 @@ userOrderRoute.post(
 
 userOrderRoute.post(
     "/pending/coupons",
-    validator.applyCoupon,
+    validator.validateApplyCoupon,
     validator.handleValidationErrors,
     verifyToken,
     ordersController.applyCoupon
@@ -34,7 +34,7 @@ userOrderRoute.get(
 
 userOrderRoute.patch(
     "/pending/address",
-    validator.patchOrder,
+    validator.validatePatchOrder,
     validator.handleValidationErrors,
     verifyToken,
     ordersController.updateOrder

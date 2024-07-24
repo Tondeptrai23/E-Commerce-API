@@ -26,7 +26,7 @@ userCartRoute.post(
 
 userCartRoute.patch(
     "/:variantID",
-    validator.updateCart,
+    validator.validateUpdateCart,
     validator.handleValidationErrors,
     verifyToken,
     cartController.updateCart

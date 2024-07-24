@@ -11,9 +11,7 @@ class ProductController {
             const { includeAssociated } = req.query;
 
             // Call services
-            let products = await productService.getProducts({
-                includeAssociated: includeAssociated === "true",
-            });
+            let products = await productService.getProducts(req.query);
 
             // Serialize data
             let serializer;

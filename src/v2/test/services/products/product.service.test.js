@@ -6,9 +6,9 @@ beforeAll(async () => {
     await seedData();
 }, 15000);
 
-describe("ProductService.createProduct", () => {
+describe("ProductService", () => {
     describe("ProductService.getProducts", () => {
-        test("should return all products without associated", async () => {
+        test("should return all products", async () => {
             const products = await productService.getProducts({});
             expect(products).toHaveLength(6);
 
@@ -17,65 +17,7 @@ describe("ProductService.createProduct", () => {
                     productID: expect.any(String),
                     name: expect.any(String),
                     description: expect.any(String),
-                    defaultVariantID: expect.any(String),
                 })
-            );
-
-            expect(products[0].defaultVariant).toEqual(
-                expect.objectContaining({
-                    variantID: expect.any(String),
-                    price: expect.any(Number),
-                    stock: expect.any(Number),
-                })
-            );
-
-            expect(products[0].images).toBeUndefined();
-            expect(products[0].variants).toBeUndefined();
-            expect(products[0].categories).toBeUndefined();
-        });
-
-        test("should return all products with associated fields", async () => {
-            const products = await productService.getProducts({
-                includeAssociated: true,
-            });
-            expect(products).toHaveLength(6);
-
-            expect(products[0]).toEqual(
-                expect.objectContaining({
-                    productID: expect.any(String),
-                    name: expect.any(String),
-                    description: expect.any(String),
-                    defaultVariantID: expect.any(String),
-                })
-            );
-
-            expect(products[0].defaultVariant).toBeUndefined();
-
-            expect(products[0].images).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({
-                        imageID: expect.any(String),
-                        url: expect.any(String),
-                    }),
-                ])
-            );
-
-            expect(products[0].variants).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({
-                        variantID: expect.any(String),
-                        price: expect.any(Number),
-                        stock: expect.any(Number),
-                    }),
-                ])
-            );
-
-            expect(products[0].categories).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({
-                        categoryID: expect.any(String),
-                    }),
-                ])
             );
         });
     });

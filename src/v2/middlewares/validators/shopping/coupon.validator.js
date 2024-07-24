@@ -3,7 +3,7 @@ import {
     validateInteger,
     validateMinValue,
     validateNumber,
-} from "../utils.validator";
+} from "../utils.validator.js";
 
 const validateCreateCoupon = [
     body("code")
