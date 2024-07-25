@@ -154,7 +154,6 @@ class ProductBuilderService {
         builder = await builder.setVariants(variants);
         builder = await builder.setCategories(categories);
         builder = await builder.setImages(images);
-        builder = await builder.setDefaultVariant();
         return await builder.build();
     }
 
