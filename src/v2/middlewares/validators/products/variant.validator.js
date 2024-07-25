@@ -47,10 +47,10 @@ const validateCreateVariants = [
         .withMessage("SKU should be a string"),
 
     // Validate variant image order
-    body("variants.*.imageOrder")
+    body("variants.*.imageID")
         .optional()
-        .custom(validateInteger("Image order"))
-        .custom(validateMinValue("Image order", 1)),
+        .isString()
+        .withMessage("ImageID should be a string"),
 
     // Validate variant discount price
     body("variants.*.discountPrice")
@@ -74,10 +74,10 @@ const validatePatchVariant = [
 
     body("sku").optional().isString().withMessage("SKU should be a string"),
 
-    body("imageOrder")
+    body("imageID")
         .optional()
-        .custom(validateInteger("Image order"))
-        .custom(validateMinValue("Image order", 1)),
+        .isString()
+        .withMessage("ImageID should be a string"),
 
     body("discountPrice")
         .optional()
@@ -106,10 +106,10 @@ const validatePutVariant = [
         .isString()
         .withMessage("SKU should be a string"),
 
-    body("imageOrder")
+    body("imageID")
         .optional()
-        .custom(validateInteger("Image order"))
-        .custom(validateMinValue("Image order", 1)),
+        .isString()
+        .withMessage("ImageID should be a string"),
 
     body("discountPrice")
         .optional()

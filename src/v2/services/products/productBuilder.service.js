@@ -117,44 +117,6 @@ class ProductBuilderService {
             },
 
             /**
-             * Set the default variant for the product builder
-             * The default variant is the first variant in the variants array
-             * Only call this method after calling setVariants and when create a new product
-             *
-             * @returns {Promise<Object>} this product builder object
-             */
-            async setDefaultVariant() {
-                const variant = await Variant.findByPk(
-                    this.variants[0].variantID,
-                    {
-                        include: [
-                            {
-                                model: Product,
-                                as: "product",
-                            },
-                        ],
-                    }
-                );
-
-                await db.query(
-                    "UPDATE `products` SET `defaultVariantID`=?,`updatedAt`=? WHERE `productID` = ?",
-                    {
-                        replacements: [
-                            variant.variantID,
-                            new Date(),
-                            this.product.productID,
-                        ],
-                    }
-                );
-                this.product.dataValues.defaultVariantID = variant.variantID;
-
-                // TODO: This code is not working as expected but the above code is working. Fix this code
-                //
-                // await this.product.setDefaultVariant(variant);
-                return this;
-            },
-
-            /**
              * Build the product object
              * Should be called last
              *

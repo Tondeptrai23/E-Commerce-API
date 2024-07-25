@@ -17,7 +17,7 @@ describe("validateCreateProduct", () => {
                         price: 100,
                         stock: 100,
                         sku: "example",
-                        imageOrder: 1,
+                        imageID: "123",
                         discountPrice: 90,
                     },
                 ],
@@ -42,7 +42,7 @@ describe("validateCreateProduct", () => {
                         price: 100,
                         stock: 100,
                         sku: "example",
-                        imageOrder: 1,
+                        imageID: "123",
                         discountPrice: 90,
                     },
                 ],
@@ -60,7 +60,6 @@ describe("validateCreateProduct", () => {
         }
         const errors = validationResult(req);
 
-        console.log(errors.array());
         expect(errors.isEmpty()).toBe(true);
     });
 
@@ -74,7 +73,7 @@ describe("validateCreateProduct", () => {
                         price: 100,
                         stock: 100,
                         sku: "example",
-                        imageOrder: 1,
+                        imageID: "123",
                         discountPrice: 90,
                     },
                 ],
@@ -130,7 +129,7 @@ describe("validateCreateProduct", () => {
                         price: 100,
                         stock: 100,
                         sku: "example",
-                        imageOrder: 1,
+                        imageID: "123",
                         discountPrice: 90,
                     },
                 ],
@@ -163,7 +162,7 @@ describe("validateCreateProduct", () => {
                         price: 100,
                         stock: 100,
                         sku: "example",
-                        imageOrder: 1,
+                        imageID: "123",
                         discountPrice: 90,
                     },
                 ],
@@ -196,7 +195,7 @@ describe("validateCreateProduct", () => {
                         price: 100,
                         stock: 100,
                         sku: "example",
-                        imageOrder: 1,
+                        imageID: "123",
                         discountPrice: 90,
                     },
                 ],
@@ -228,7 +227,7 @@ describe("validateCreateProduct", () => {
                         price: 100,
                         stock: 100,
                         sku: "example",
-                        imageOrder: 1,
+                        imageID: "123",
                         discountPrice: 90,
                     },
                 ],
@@ -259,7 +258,7 @@ describe("validateCreateProduct", () => {
                     {
                         price: "invalid",
                         stock: [],
-                        imageOrder: -1,
+                        imageID: 123,
                         discountPrice: "invalid",
                     },
                 ],
@@ -291,7 +290,7 @@ describe("validateCreateProduct", () => {
                     msg: "SKU is required",
                 }),
                 expect.objectContaining({
-                    msg: "Image order should be greater than or equal to 1",
+                    msg: "ImageID should be a string",
                 }),
                 expect.objectContaining({
                     msg: "Discount price should be a number",

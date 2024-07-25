@@ -6,7 +6,7 @@ beforeAll(async () => {
     await seedData();
 });
 
-describe("productBuilderService", () => {
+describe("ProductBuilderService", () => {
     /**
      * Test suite for productBuilderService.productBuilder
      * Only testing the return values of the functions or if they throw an error/edge cases
@@ -24,7 +24,6 @@ describe("productBuilderService", () => {
                 setVariants: expect.any(Function),
                 setCategories: expect.any(Function),
                 setImages: expect.any(Function),
-                setDefaultVariant: expect.any(Function),
                 build: expect.any(Function),
             });
         });
@@ -40,7 +39,6 @@ describe("productBuilderService", () => {
                 setVariants: expect.any(Function),
                 setCategories: expect.any(Function),
                 setImages: expect.any(Function),
-                setDefaultVariant: expect.any(Function),
                 build: expect.any(Function),
             });
         });
@@ -132,61 +130,6 @@ describe("productBuilderService", () => {
         });
     });
 
-    describe("ProductBuilderService.productBuilder.setDefaultVariant", () => {
-        test("should set the default variant of the product", async () => {
-            let productBuilder = await productBuilderService.productBuilder(1);
-            const variants = [
-                {
-                    price: 10,
-                    sku: "sku1",
-                    stock: 10,
-                    attributes: {
-                        size: "M",
-                        color: "red",
-                    },
-                },
-                {
-                    price: 20,
-                    sku: "sku2",
-                    stock: 20,
-                    attributes: {
-                        size: "L",
-                        color: "blue",
-                    },
-                },
-            ];
-
-            productBuilder = await productBuilder.setVariants(variants);
-            productBuilder = await productBuilder.setDefaultVariant();
-
-            expect(productBuilder.product.defaultVariantID).toEqual(
-                productBuilder.variants[0].variantID
-            );
-        });
-
-        test("should throw an error if product is not set", async () => {
-            const productBuilder = await productBuilderService.productBuilder();
-
-            try {
-                await productBuilder.setDefaultVariant();
-            } catch (error) {
-                expect(error).toBeInstanceOf(Error);
-            }
-        });
-
-        test("should throw an error if variants is not set", async () => {
-            const productBuilder = await productBuilderService.productBuilder(
-                1
-            );
-
-            try {
-                await productBuilder.setDefaultVariant();
-            } catch (error) {
-                expect(error).toBeInstanceOf(Error);
-            }
-        });
-    });
-
     describe("ProductBuilderService.productBuilder.build", () => {
         test("should return the object without empty fields", async () => {
             const productBuilder = await productBuilderService.productBuilder(
@@ -257,7 +200,6 @@ describe("productBuilderService", () => {
                 expect(result.productID).toEqual(expect.any(String));
                 expect(result.name).toBe("product1");
                 expect(result.description).toBe("description1");
-                expect(result.defaultVariantID).toEqual(expect.any(String));
                 expect(Array.isArray(result.variants)).toBe(true);
                 expect(Array.isArray(result.images)).toBe(true);
                 expect(Array.isArray(result.categories)).toBe(true);
@@ -315,7 +257,6 @@ describe("productBuilderService", () => {
                         name: "Crew Neck Short Sleeve T-Shirt",
                         description:
                             "A simple crew neck short sleeve t-shirt for everyday wear",
-                        defaultVariantID: expect.any(String),
                         images: expect.any(Array),
                     })
                 );
@@ -367,7 +308,6 @@ describe("productBuilderService", () => {
                         name: "Crew Neck Short Sleeve T-Shirt",
                         description:
                             "A simple crew neck short sleeve t-shirt for everyday wear",
-                        defaultVariantID: expect.any(String),
                         variants: expect.any(Array),
                     })
                 );
@@ -400,7 +340,6 @@ describe("productBuilderService", () => {
                         name: "Crew Neck Short Sleeve T-Shirt",
                         description:
                             "A simple crew neck short sleeve t-shirt for everyday wear",
-                        defaultVariantID: expect.any(String),
                         categories: expect.any(Array),
                     })
                 );

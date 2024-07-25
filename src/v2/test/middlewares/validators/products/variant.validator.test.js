@@ -10,14 +10,14 @@ describe("validateCreateVariants", () => {
                         price: 100,
                         stock: 100,
                         sku: "example",
-                        imageOrder: 1,
+                        imageID: "123",
                         discountPrice: 90,
                     },
                     {
                         price: 100,
                         stock: 100,
                         sku: "example2",
-                        imageOrder: 2,
+                        imageID: "312",
                         discountPrice: 80,
                     },
                 ],
@@ -59,19 +59,19 @@ describe("validateCreateVariants", () => {
                     {
                         stock: 100,
                         sku: "example",
-                        imageOrder: 1,
+                        imageID: "123",
                         discountPrice: 90,
                     },
                     {
                         price: 100,
                         sku: "example",
-                        imageOrder: 1,
+                        imageID: "123",
                         discountPrice: 90,
                     },
                     {
                         price: 100,
                         stock: 100,
-                        imageOrder: 1,
+                        imageID: "123",
                         discountPrice: 90,
                     },
                 ],
@@ -107,7 +107,7 @@ describe("validateCreateVariants", () => {
                         price: "invalid",
                         stock: -1.5,
                         sku: 12345,
-                        imageOrder: "invalid",
+                        imageID: 123,
                         discountPrice: "invalid",
                     },
                 ],
@@ -132,7 +132,7 @@ describe("validateCreateVariants", () => {
                     msg: "SKU should be a string",
                 }),
                 expect.objectContaining({
-                    msg: "Image order should be an integer",
+                    msg: "ImageID should be a string",
                 }),
                 expect.objectContaining({
                     msg: "Discount price should be a number",
@@ -149,7 +149,7 @@ describe("validateCreateVariants", () => {
                         price: -100,
                         stock: -100,
                         sku: "",
-                        imageOrder: 0,
+                        imageID: "",
                         discountPrice: -90,
                     },
                 ],
@@ -171,9 +171,6 @@ describe("validateCreateVariants", () => {
                     msg: "Stock should be greater than or equal to 0",
                 }),
                 expect.objectContaining({
-                    msg: "Image order should be greater than or equal to 1",
-                }),
-                expect.objectContaining({
                     msg: "Discount price should be greater than or equal to 0",
                 }),
             ])
@@ -188,7 +185,7 @@ describe("validateCreateVariants", () => {
                         price: 100,
                         stock: 100,
                         sku: "example",
-                        imageOrder: 1,
+                        imageID: "123",
                         discountPrice: 120,
                     },
                 ],
@@ -218,7 +215,7 @@ describe("validatePutVariant", () => {
                 stock: 100,
                 price: 100,
                 sku: "example",
-                imageOrder: 1,
+                imageID: "123",
                 discountPrice: 90,
             },
         };
@@ -234,7 +231,7 @@ describe("validatePutVariant", () => {
     test("should return errors if required fields are missing", async () => {
         const req = {
             body: {
-                imageOrder: 1,
+                imageID: "123",
                 discountPrice: 90,
             },
         };
@@ -266,7 +263,7 @@ describe("validatePutVariant", () => {
                 stock: -10,
                 price: "invalid",
                 sku: 12345,
-                imageOrder: "invalid",
+                imageID: 123,
                 discountPrice: "invalid",
             },
         };
@@ -289,7 +286,7 @@ describe("validatePutVariant", () => {
                     msg: "SKU should be a string",
                 }),
                 expect.objectContaining({
-                    msg: "Image order should be an integer",
+                    msg: "ImageID should be a string",
                 }),
                 expect.objectContaining({
                     msg: "Discount price should be a number",
@@ -307,7 +304,7 @@ describe("validatePatchVariant", () => {
                 price: 100,
                 stock: 100,
                 sku: "example",
-                imageOrder: 1,
+                imageID: "123",
                 discountPrice: 90,
             },
         };
@@ -327,7 +324,7 @@ describe("validatePatchVariant", () => {
                 price: "invalid",
                 stock: [],
                 sku: 12345,
-                imageOrder: -5,
+                imageID: 123,
                 discountPrice: "invalid",
             },
         };
@@ -353,7 +350,7 @@ describe("validatePatchVariant", () => {
                     msg: "SKU should be a string",
                 }),
                 expect.objectContaining({
-                    msg: "Image order should be greater than or equal to 1",
+                    msg: "ImageID should be a string",
                 }),
                 expect.objectContaining({
                     msg: "Discount price should be a number",

@@ -11,7 +11,7 @@ describe("ProductImageService", () => {
     describe("getProductImage", () => {
         test("should throw ResourceNotFoundError if the product is not found", async () => {
             const productID = "7";
-            const imageID = "1";
+            const imageID = "101";
 
             await expect(
                 productImageService.getProductImage(productID, imageID)
@@ -20,7 +20,7 @@ describe("ProductImageService", () => {
 
         test("should throw ResourceNotFoundError if the image is not found", async () => {
             const productID = "2";
-            const imageID = "1";
+            const imageID = "111";
 
             await expect(
                 productImageService.getProductImage(productID, imageID)
@@ -29,7 +29,7 @@ describe("ProductImageService", () => {
 
         test("should return the image of the product if both product and image exist", async () => {
             const productID = "1";
-            const imageID = "1";
+            const imageID = "101";
 
             const productImage = await productImageService.getProductImage(
                 productID,
@@ -45,7 +45,7 @@ describe("ProductImageService", () => {
     describe("updateImage", () => {
         test("should throw ResourceNotFoundError if the product is not found", async () => {
             const productID = "7";
-            const imageID = "1";
+            const imageID = "101";
             const imageData = { url: "https://example.com/image.jpg" };
 
             await expect(
@@ -55,7 +55,7 @@ describe("ProductImageService", () => {
 
         test("should throw ResourceNotFoundError if the image is not found", async () => {
             const productID = "2";
-            const imageID = "1";
+            const imageID = "111";
             const imageData = { url: "https://example.com/image.jpg" };
 
             await expect(
@@ -65,7 +65,7 @@ describe("ProductImageService", () => {
 
         test("should update the image data and return the updated image", async () => {
             const productID = "1";
-            const imageID = "1";
+            const imageID = "101";
             const imageData = {
                 url: "https://example.com/new-image.jpg",
             };
@@ -86,7 +86,7 @@ describe("ProductImageService", () => {
     describe("deleteImage", () => {
         test("should throw ResourceNotFoundError if the product is not found", async () => {
             const productID = "7";
-            const imageID = "2";
+            const imageID = "201";
 
             await expect(
                 productImageService.deleteImage(productID, imageID)
@@ -95,7 +95,7 @@ describe("ProductImageService", () => {
 
         test("should throw ResourceNotFoundError if the image is not found", async () => {
             const productID = "2";
-            const imageID = "1";
+            const imageID = "111";
 
             await expect(
                 productImageService.deleteImage(productID, imageID)
@@ -104,7 +104,7 @@ describe("ProductImageService", () => {
 
         test("should delete the image with the given productID and imageID", async () => {
             const productID = "2";
-            const imageID = "5";
+            const imageID = "201";
 
             await productImageService.deleteImage(productID, imageID);
 
@@ -141,10 +141,10 @@ describe("ProductImageService", () => {
         test("should throw ResourceNotFoundError if the product is not found", async () => {
             const productID = "7";
             const imagesData = [
-                { imageID: "1", displayOrder: 1 },
-                { imageID: "2", displayOrder: 2 },
-                { imageID: "3", displayOrder: 3 },
-                { imageID: "4", displayOrder: 4 },
+                { imageID: "101", displayOrder: 1 },
+                { imageID: "102", displayOrder: 2 },
+                { imageID: "103", displayOrder: 3 },
+                { imageID: "104", displayOrder: 4 },
             ];
 
             await expect(
@@ -155,10 +155,10 @@ describe("ProductImageService", () => {
         test("should throw ResourceNotFoundError if any of the images is not found", async () => {
             const productID = "1";
             const imagesData = [
-                { imageID: "1", displayOrder: 1 },
-                { imageID: "10", displayOrder: 2 },
-                { imageID: "3", displayOrder: 3 },
-                { imageID: "4", displayOrder: 4 },
+                { imageID: "101", displayOrder: 1 },
+                { imageID: "601", displayOrder: 2 },
+                { imageID: "103", displayOrder: 3 },
+                { imageID: "104", displayOrder: 4 },
             ];
 
             await expect(
@@ -169,10 +169,10 @@ describe("ProductImageService", () => {
         test("should update the display order of the images and return the updated images", async () => {
             const productID = "1";
             const imagesData = [
-                { imageID: "1", displayOrder: 3 },
-                { imageID: "2", displayOrder: 4 },
-                { imageID: "3", displayOrder: 2 },
-                { imageID: "4", displayOrder: 1 },
+                { imageID: "101", displayOrder: 3 },
+                { imageID: "102", displayOrder: 4 },
+                { imageID: "103", displayOrder: 2 },
+                { imageID: "104", displayOrder: 1 },
             ];
 
             const updatedImages = await productImageService.setImagesOrder(

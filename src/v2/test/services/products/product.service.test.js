@@ -23,48 +23,17 @@ describe("ProductService", () => {
     });
 
     describe("ProductService.getProduct", () => {
-        test("should return a product with the given productID without associated", async () => {
+        test("should return a product with the given productID", async () => {
             const productID = "1";
-            const product = await productService.getProduct(productID, {});
+            const product = await productService.getProduct(productID);
 
             expect(product).toEqual(
                 expect.objectContaining({
                     productID: "1",
                     name: expect.any(String),
                     description: expect.any(String),
-                    defaultVariantID: expect.any(String),
                 })
             );
-
-            expect(product.defaultVariant).toEqual(
-                expect.objectContaining({
-                    variantID: expect.any(String),
-                    price: expect.any(Number),
-                    stock: expect.any(Number),
-                })
-            );
-
-            expect(product.iamges).toBeUndefined();
-            expect(product.variants).toBeUndefined();
-            expect(product.categories).toBeUndefined();
-        });
-
-        test("should return a product with the given productID with associated fields", async () => {
-            const productID = "1";
-            const product = await productService.getProduct(productID, {
-                includeAssociated: true,
-            });
-
-            expect(product).toEqual(
-                expect.objectContaining({
-                    productID: "1",
-                    name: expect.any(String),
-                    description: expect.any(String),
-                    defaultVariantID: expect.any(String),
-                })
-            );
-
-            expect(product.defaultVariant).toBeUndefined();
 
             expect(product.images).toEqual(
                 expect.arrayContaining([
@@ -108,7 +77,6 @@ describe("ProductService", () => {
             const updatedProductInfo = {
                 name: "Updated Product",
                 description: "Updated description",
-                defaultVariantID: "102",
             };
 
             const updatedProduct = await productService.updateProduct(
@@ -123,9 +91,6 @@ describe("ProductService", () => {
                     description: "Updated description",
                 })
             );
-            expect(updatedProduct.dataValues.defaultVariant.variantID).toEqual(
-                "102"
-            );
         });
 
         test("should throw ResourceNotFoundError when the product is not found", async () => {
@@ -133,20 +98,6 @@ describe("ProductService", () => {
             const updatedProductInfo = {
                 name: "Updated Product",
                 description: "Updated description",
-                defaultVariantID: "102",
-            };
-
-            await expect(
-                productService.updateProduct(productID, updatedProductInfo)
-            ).rejects.toThrow(ResourceNotFoundError);
-        });
-
-        test("should throw ResourceNotFoundError when the default variant is not found", async () => {
-            const productID = "1";
-            const updatedProductInfo = {
-                name: "Updated Product",
-                description: "Updated description",
-                defaultVariantID: "999",
             };
 
             await expect(

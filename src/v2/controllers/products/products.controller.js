@@ -46,13 +46,10 @@ class ProductController {
     async getProduct(req, res) {
         try {
             // Get query parameters
-            const { includeAssociated } = req.query;
             const { productID } = req.params;
 
             // Call services
-            let product = await productService.getProduct(productID, {
-                includeAssociated: includeAssociated === "true",
-            });
+            let product = await productService.getProduct(productID);
 
             if (product === null) {
                 throw new ResourceNotFoundError("Product not found");
@@ -134,13 +131,12 @@ class ProductController {
         try {
             // Get request body
             const { productID } = req.params;
-            const { name, description, defaultVariantID } = req.body;
+            const { name, description } = req.body;
 
             // Call services
             let product = await productService.updateProduct(productID, {
                 name,
                 description,
-                defaultVariantID,
             });
 
             if (product === null) {

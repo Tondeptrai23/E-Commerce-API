@@ -75,6 +75,33 @@ describe("Variant Service", () => {
                 variantService.updateVariant(productID, variantID, variantData)
             ).rejects.toThrow(BadRequestError);
         });
+
+        test("should update the imageID of a variant", async () => {
+            const productID = "1";
+            const variantID = "102";
+            const variantData = { imageID: "101" };
+
+            const updatedVariant = await variantService.updateVariant(
+                productID,
+                variantID,
+                variantData
+            );
+
+            expect(updatedVariant).toBeInstanceOf(Variant);
+            expect(updatedVariant.productID).toBe(productID);
+            expect(updatedVariant.variantID).toBe(variantID);
+            expect(updatedVariant.imageID).toBe(variantData.imageID);
+        });
+
+        test("should throw ResourceNotFoundError if the image is not found", async () => {
+            const productID = "1";
+            const variantID = "102";
+            const variantData = { imageID: "201" };
+
+            await expect(
+                variantService.updateVariant(productID, variantID, variantData)
+            ).rejects.toThrow(ResourceNotFoundError);
+        });
     });
 
     describe("deleteVariant", () => {

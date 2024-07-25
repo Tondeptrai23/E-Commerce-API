@@ -41,11 +41,6 @@ const validatePatchProduct = [
     body("name").optional().isString().withMessage("Name should be a string"),
 
     body("description").optional().isString("Description should be a string"),
-
-    body("defaultVariantID")
-        .optional()
-        .isString()
-        .withMessage("Id should be a string"),
 ];
 
 export { validateCreateProduct, validatePatchProduct };

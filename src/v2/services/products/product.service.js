@@ -13,12 +13,11 @@ class ProductService {
     /**
      * Get all products that match the given options
      *
-     * @param {Object} options the options for the query
-     * @param {Boolean} options.includeAssociated whether to include associated data or not
+     * @param {Object} query the query options to filter the products
      * @returns {Promise<Product[]>} the products that match the given options
      *
      */
-    async getProducts(query = { includeAssociated: false }) {
+    async getProducts(query) {
         const filterConverter = await QueryToFilterConditionConverter.create(
             query,
             "product"
@@ -83,16 +82,36 @@ class ProductService {
      * Get a product with the given productID, return null if not found
      *
      * @param {String} productID the product ID to be retrieved
-     * @param {Object} options the options for the query
-     * @param {Boolean} options.includeAssociated whether to include associated data or not
      * @returns {Promise<Product | null>} the product with the given productID
      */
-    async getProduct(productID, { includeAssociated = false }) {
+    async getProduct(productID) {
         const product = await Product.findOne({
             where: {
                 productID: productID,
             },
-            include: getIncludeOption(includeAssociated),
+            include: [
+                {
+                    model: Category,
+                    through: ProductCategory,
+                    as: "categories",
+                },
+                {
+                    model: ProductImage,
+                    as: "images",
+                },
+                {
+                    model: Variant,
+                    as: "variants",
+                    include: {
+                        model: AttributeValue,
+                        as: "attributeValues",
+                        include: {
+                            model: Attribute,
+                            as: "attribute",
+                        },
+                    },
+                },
+            ],
         });
 
         return product;
@@ -114,15 +133,6 @@ class ProductService {
             throw new ResourceNotFoundError("Product not found");
         }
 
-        if (defaultVariantID) {
-            const defaultVariant = await Variant.findByPk(defaultVariantID);
-            if (!defaultVariant) {
-                throw new ResourceNotFoundError("Default variant not found");
-            }
-
-            product.defaultVariantID = defaultVariantID;
-            product.dataValues.defaultVariant = defaultVariant;
-        }
         product.name = name ? name : product.name;
         product.description = description ? description : product.description;
 
@@ -146,53 +156,3 @@ class ProductService {
 }
 
 export default new ProductService();
-
-/**
- * Get the include option for Sequelize query
- * based on the includeAssociated flag
- *
- * @param {Boolean} includeAssociated whether to include associated data or not
- * @returns {Array} the include option for Sequelize query
- */
-function getIncludeOption(includeAssociated) {
-    if (includeAssociated) {
-        return [
-            {
-                model: Category,
-                through: ProductCategory,
-                as: "categories",
-            },
-            {
-                model: ProductImage,
-                as: "images",
-            },
-            {
-                model: Variant,
-                as: "variants",
-                include: {
-                    model: AttributeValue,
-                    as: "attributeValues",
-                    include: {
-                        model: Attribute,
-                        as: "attribute",
-                    },
-                },
-            },
-        ];
-    } else {
-        return [
-            {
-                model: Variant,
-                as: "defaultVariant",
-                include: {
-                    model: AttributeValue,
-                    as: "attributeValues",
-                    include: {
-                        model: Attribute,
-                        as: "attribute",
-                    },
-                },
-            },
-        ];
-    }
-}

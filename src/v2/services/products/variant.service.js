@@ -4,6 +4,7 @@ import attributeService from "./attribute.service.js";
 import { BadRequestError, ResourceNotFoundError } from "../../utils/error.js";
 import AttributeValue from "../../models/products/attributeValue.model.js";
 import Attribute from "../../models/products/attribute.model.js";
+import ProductImage from "../../models/products/productImage.model.js";
 
 class VariantService {
     /**
@@ -55,6 +56,13 @@ class VariantService {
      */
     async updateVariant(productID, variantID, variantData) {
         let variant = await this.getVariant(productID, variantID);
+
+        if (variantData.imageID) {
+            const image = await ProductImage.findByPk(variantData.imageID);
+            if (!image || image.productID !== productID) {
+                throw new ResourceNotFoundError("Image not found");
+            }
+        }
 
         if (variantData.discountPrice && !variantData.price) {
             if (variantData.discountPrice > variant.price) {
