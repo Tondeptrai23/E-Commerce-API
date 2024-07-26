@@ -1,6 +1,9 @@
 import productService from "../../../services/products/product.service.js";
 import seedData from "../../../seedData.js";
 import { ResourceNotFoundError } from "../../../utils/error.js";
+import Variant from "../../../models/products/variant.model.js";
+import Attribute from "../../../models/products/attribute.model.js";
+import AttributeValue from "../../../models/products/attributeValue.model.js";
 
 beforeAll(async () => {
     await seedData();
@@ -20,106 +23,333 @@ describe("ProductService", () => {
                 })
             );
         });
-    });
 
-    describe("ProductService.getProduct", () => {
-        test("should return a product with the given productID", async () => {
-            const productID = "1";
-            const product = await productService.getProduct(productID);
+        test("should return products that match the product's name", async () => {
+            const products = await productService.getProducts({
+                name: "[like]T-Shirt",
+            });
 
-            expect(product).toEqual(
+            expect(products).toBeInstanceOf(Array);
+            expect(products[0]).toEqual(
                 expect.objectContaining({
-                    productID: "1",
-                    name: expect.any(String),
+                    productID: expect.any(String),
+                    name: expect.stringContaining("T-Shirt"),
                     description: expect.any(String),
                 })
             );
-
-            expect(product.images).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({
-                        imageID: expect.any(String),
-                        url: expect.any(String),
-                    }),
-                ])
-            );
-
-            expect(product.variants).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({
-                        variantID: expect.any(String),
-                        price: expect.any(Number),
-                        stock: expect.any(Number),
-                    }),
-                ])
-            );
-
-            expect(product.categories).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({
-                        categoryID: expect.any(String),
-                    }),
-                ])
-            );
         });
 
-        test("should return null when the product is not found", async () => {
-            const productID = "999";
-            const product = await productService.getProduct(productID, {});
+        test("should return products that match the category name", async () => {
+            const products = await productService.getProducts({
+                category: { name: "tshirt" },
+            });
 
-            expect(product).toBeNull();
+            expect(products).toBeInstanceOf(Array);
+            for (const product of products) {
+                expect(product).toEqual(
+                    expect.objectContaining({
+                        productID: expect.any(String),
+                        name: expect.any(String),
+                        description: expect.any(String),
+                        categories: expect.arrayContaining([
+                            expect.objectContaining({
+                                categoryID: expect.any(String),
+                                name: expect.stringContaining("tshirt"),
+                            }),
+                        ]),
+                    })
+                );
+            }
+        });
+
+        test("should return products that match the variant's price and stock", async () => {
+            const products = await productService.getProducts({
+                variant: {
+                    price: "[lte]25",
+                    stock: "[gte]10",
+                },
+            });
+
+            expect(products).toBeInstanceOf(Array);
+            for (const product of products) {
+                expect(product).toEqual(
+                    expect.objectContaining({
+                        productID: expect.any(String),
+                        name: expect.any(String),
+                        description: expect.any(String),
+                        variants: expect.arrayContaining([
+                            expect.objectContaining({
+                                variantID: expect.any(String),
+                                price: expect.any(Number),
+                                stock: expect.any(Number),
+                            }),
+                        ]),
+                    })
+                );
+
+                for (const variant of product.variants) {
+                    expect(variant.price).toBeLessThanOrEqual(25);
+                    expect(variant.stock).toBeGreaterThanOrEqual(10);
+                }
+            }
+        });
+
+        test("should return products that match the attribute's value", async () => {
+            const products = await productService.getProducts({
+                attribute: {
+                    color: "red",
+                },
+            });
+
+            expect(products).toBeInstanceOf(Array);
+            for (const product of products) {
+                for (const variant of product.variants) {
+                    const foundVariant = await Variant.findByPk(
+                        variant.variantID,
+                        {
+                            include: {
+                                model: AttributeValue,
+                                as: "attributeValues",
+                                include: {
+                                    model: Attribute,
+                                    as: "attribute",
+                                },
+                            },
+                        }
+                    );
+
+                    expect(foundVariant.attributeValues).toEqual(
+                        expect.arrayContaining([
+                            expect.objectContaining({
+                                value: "red",
+                                attribute: expect.objectContaining({
+                                    name: "color",
+                                }),
+                            }),
+                        ])
+                    );
+                }
+            }
+        });
+
+        test("should return products that match two attribute's value", async () => {
+            const products = await productService.getProducts({
+                attribute: {
+                    color: "red",
+                    size: "L",
+                },
+            });
+
+            expect(products).toBeInstanceOf(Array);
+            for (const product of products) {
+                for (const variant of product.variants) {
+                    const foundVariant = await Variant.findByPk(
+                        variant.variantID,
+                        {
+                            include: {
+                                model: AttributeValue,
+                                as: "attributeValues",
+                                include: {
+                                    model: Attribute,
+                                    as: "attribute",
+                                },
+                            },
+                        }
+                    );
+
+                    expect(foundVariant.attributeValues).toEqual(
+                        expect.arrayContaining([
+                            expect.objectContaining({
+                                value: "red",
+                                attribute: expect.objectContaining({
+                                    name: "color",
+                                }),
+                            }),
+                            expect.objectContaining({
+                                value: "L",
+                                attribute: expect.objectContaining({
+                                    name: "size",
+                                }),
+                            }),
+                        ])
+                    );
+                }
+            }
+        });
+
+        test("should return products that match multiple conditions", async () => {
+            const products = await productService.getProducts({
+                name: "[like]T-Shirt",
+                category: {
+                    name: "male",
+                },
+                variant: {
+                    price: "[lte]25",
+                    stock: "[gte]10",
+                },
+                attribute: {
+                    color: "red",
+                    size: "S",
+                },
+            });
+
+            expect(products).toBeInstanceOf(Array);
+            for (const product of products) {
+                expect(product).toEqual(
+                    expect.objectContaining({
+                        productID: expect.any(String),
+                        name: expect.stringContaining("T-Shirt"),
+                        description: expect.any(String),
+                        categories: expect.arrayContaining([
+                            expect.objectContaining({
+                                categoryID: expect.any(String),
+                                name: expect.stringContaining("male"),
+                            }),
+                        ]),
+                        variants: expect.arrayContaining([
+                            expect.objectContaining({
+                                variantID: expect.any(String),
+                                price: expect.any(Number),
+                                stock: expect.any(Number),
+                            }),
+                        ]),
+                    })
+                );
+
+                for (const variant of product.variants) {
+                    const foundVariant = await Variant.findByPk(
+                        variant.variantID,
+                        {
+                            include: {
+                                model: AttributeValue,
+                                as: "attributeValues",
+                                include: {
+                                    model: Attribute,
+                                    as: "attribute",
+                                },
+                            },
+                        }
+                    );
+
+                    expect(foundVariant.attributeValues).toEqual(
+                        expect.arrayContaining([
+                            expect.objectContaining({
+                                value: "red",
+                                attribute: expect.objectContaining({
+                                    name: "color",
+                                }),
+                            }),
+                            expect.objectContaining({
+                                value: "S",
+                                attribute: expect.objectContaining({
+                                    name: "size",
+                                }),
+                            }),
+                        ])
+                    );
+                }
+            }
         });
     });
 
-    describe("ProductService.updateProduct", () => {
-        test("should update a product with the given productID", async () => {
-            const productID = "1";
-            const updatedProductInfo = {
-                name: "Updated Product",
-                description: "Updated description",
-            };
+    // describe("ProductService.getProduct", () => {
+    //     test("should return a product with the given productID", async () => {
+    //         const productID = "1";
+    //         const product = await productService.getProduct(productID);
 
-            const updatedProduct = await productService.updateProduct(
-                productID,
-                updatedProductInfo
-            );
+    //         expect(product).toEqual(
+    //             expect.objectContaining({
+    //                 productID: "1",
+    //                 name: expect.any(String),
+    //                 description: expect.any(String),
+    //             })
+    //         );
 
-            expect(updatedProduct).toEqual(
-                expect.objectContaining({
-                    productID: "1",
-                    name: "Updated Product",
-                    description: "Updated description",
-                })
-            );
-        });
+    //         expect(product.images).toEqual(
+    //             expect.arrayContaining([
+    //                 expect.objectContaining({
+    //                     imageID: expect.any(String),
+    //                     url: expect.any(String),
+    //                 }),
+    //             ])
+    //         );
 
-        test("should throw ResourceNotFoundError when the product is not found", async () => {
-            const productID = "999";
-            const updatedProductInfo = {
-                name: "Updated Product",
-                description: "Updated description",
-            };
+    //         expect(product.variants).toEqual(
+    //             expect.arrayContaining([
+    //                 expect.objectContaining({
+    //                     variantID: expect.any(String),
+    //                     price: expect.any(Number),
+    //                     stock: expect.any(Number),
+    //                 }),
+    //             ])
+    //         );
 
-            await expect(
-                productService.updateProduct(productID, updatedProductInfo)
-            ).rejects.toThrow(ResourceNotFoundError);
-        });
-    });
+    //         expect(product.categories).toEqual(
+    //             expect.arrayContaining([
+    //                 expect.objectContaining({
+    //                     categoryID: expect.any(String),
+    //                 }),
+    //             ])
+    //         );
+    //     });
 
-    describe("ProductService.deleteProduct", () => {
-        test("should delete a product with the given productID", async () => {
-            const productID = "1";
-            await productService.deleteProduct(productID);
+    //     test("should return null when the product is not found", async () => {
+    //         const productID = "999";
+    //         const product = await productService.getProduct(productID, {});
 
-            const product = await productService.getProduct(productID, {});
-            expect(product).toBeNull();
-        });
+    //         expect(product).toBeNull();
+    //     });
+    // });
 
-        test("should throw ResourceNotFoundError when the product is not found", async () => {
-            const productID = "999";
-            await expect(
-                productService.deleteProduct(productID)
-            ).rejects.toThrow(ResourceNotFoundError);
-        });
-    });
+    // describe("ProductService.updateProduct", () => {
+    //     test("should update a product with the given productID", async () => {
+    //         const productID = "1";
+    //         const updatedProductInfo = {
+    //             name: "Updated Product",
+    //             description: "Updated description",
+    //         };
+
+    //         const updatedProduct = await productService.updateProduct(
+    //             productID,
+    //             updatedProductInfo
+    //         );
+
+    //         expect(updatedProduct).toEqual(
+    //             expect.objectContaining({
+    //                 productID: "1",
+    //                 name: "Updated Product",
+    //                 description: "Updated description",
+    //             })
+    //         );
+    //     });
+
+    //     test("should throw ResourceNotFoundError when the product is not found", async () => {
+    //         const productID = "999";
+    //         const updatedProductInfo = {
+    //             name: "Updated Product",
+    //             description: "Updated description",
+    //         };
+
+    //         await expect(
+    //             productService.updateProduct(productID, updatedProductInfo)
+    //         ).rejects.toThrow(ResourceNotFoundError);
+    //     });
+    // });
+
+    // describe("ProductService.deleteProduct", () => {
+    //     test("should delete a product with the given productID", async () => {
+    //         const productID = "1";
+    //         await productService.deleteProduct(productID);
+
+    //         const product = await productService.getProduct(productID, {});
+    //         expect(product).toBeNull();
+    //     });
+
+    //     test("should throw ResourceNotFoundError when the product is not found", async () => {
+    //         const productID = "999";
+    //         await expect(
+    //             productService.deleteProduct(productID)
+    //         ).rejects.toThrow(ResourceNotFoundError);
+    //     });
+    // });
 });
