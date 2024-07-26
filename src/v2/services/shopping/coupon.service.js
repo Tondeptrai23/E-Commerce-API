@@ -4,7 +4,6 @@ import Product from "../../models/products/product.model.js";
 import Coupon from "../../models/shopping/coupon.model.js";
 import Order from "../../models/shopping/order.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
-import Variant from "../../models/products/variant.model.js";
 import productCategoryService from "../products/productCategory.service.js";
 import { flattenArray } from "../../utils/utils.js";
 
@@ -164,23 +163,17 @@ class CouponService {
                 coupon.products = [];
             }
 
-            const supportProducts = [
-                ...new Set(
-                    coupon.products
-                        .concat(
-                            (
-                                await Promise.all(
-                                    supportCategories.map(async (category) => {
-                                        return await productCategoryService.getProductsByAncestorCategory(
-                                            category.name
-                                        );
-                                    })
-                                )
-                            ).flat()
-                        )
-                        .map((product) => product.productID)
-                ),
-            ];
+            const supportProducts = flattenArray(
+                coupon.products.concat(
+                    await Promise.all(
+                        supportCategories.map(async (category) => {
+                            return await productCategoryService.getProductsByAncestorCategory(
+                                category.name
+                            );
+                        })
+                    )
+                )
+            ).map((product) => product.productID);
 
             // Calculate the total amount
             for (const product of products) {

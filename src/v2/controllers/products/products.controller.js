@@ -7,9 +7,6 @@ import ProductSerializer from "../../services/serializers/productSerializer.serv
 class ProductController {
     async getProducts(req, res) {
         try {
-            // Get query parameters
-            const { includeAssociated } = req.query;
-
             // Call services
             let products = await productService.getProducts(req.query);
 

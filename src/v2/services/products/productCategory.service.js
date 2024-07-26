@@ -102,11 +102,17 @@ class ProductCategoryService {
         );
         categories.push(category);
 
-        const products = flattenArray(
-            await Promise.all(
-                categories.map(async (category) => await category.getProducts())
-            )
-        );
+        const products = await Product.findAll({
+            include: {
+                model: Category,
+                as: "categories",
+                where: {
+                    categoryID: categories.map(
+                        (category) => category.categoryID
+                    ),
+                },
+            },
+        });
         return products;
     }
 

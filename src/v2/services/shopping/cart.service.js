@@ -6,7 +6,6 @@ import { ResourceNotFoundError } from "../../utils/error.js";
 import ShippingAddress from "../../models/user/address.model.js";
 import OrderItem from "../../models/shopping/orderItem.model.js";
 import { Op } from "sequelize";
-import orderService from "./order.service.js";
 
 /**
  * Service class for managing the user's shopping cart.

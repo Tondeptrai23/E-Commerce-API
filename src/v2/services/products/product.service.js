@@ -172,11 +172,11 @@ class ProductService {
      *
      * @param {String} productID the product ID to be updated
      * @param {Object} productInfo the product info to be updated,
-     * includes name, description, defaultVariantID
+     * includes name, description
      * @returns {Promise<Product | null>} the updated product
      * @throws {ResourceNotFoundError} if the product is not found
      */
-    async updateProduct(productID, { name, description, defaultVariantID }) {
+    async updateProduct(productID, { name, description }) {
         const product = await Product.findByPk(productID);
         if (!product) {
             throw new ResourceNotFoundError("Product not found");

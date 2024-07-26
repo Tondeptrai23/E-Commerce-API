@@ -3,11 +3,8 @@ import Category from "../../models/products/category.model.js";
 import ProductImage from "../../models/products/productImage.model.js";
 import { Op } from "sequelize";
 import { removeEmptyFields } from "../../utils/utils.js";
-import attributeService from "./attribute.service.js";
 import variantService from "./variant.service.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
-import Variant from "../../models/products/variant.model.js";
-import { db } from "../../models/index.model.js";
 
 class ProductBuilderService {
     /**

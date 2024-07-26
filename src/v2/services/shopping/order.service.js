@@ -96,9 +96,8 @@ class OrderService {
             addressID: null,
         }
     ) {
-        let shippingAddress = null;
         if (orderData.addressID) {
-            shippingAddress = await ShippingAddress.findOne({
+            const shippingAddress = await ShippingAddress.findOne({
                 where: {
                     userID: order.userID,
                     addressID: orderData.addressID,
@@ -112,9 +111,7 @@ class OrderService {
         }
 
         if (orderData.message) {
-            const message = orderData.message
-                ? orderData.message
-                : order.message;
+            const message = orderData.message;
             order.message = message;
         }
 
