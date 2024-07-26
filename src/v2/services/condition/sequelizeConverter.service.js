@@ -8,5 +8,5 @@ export default class QueryToSequelizeConditionConverter {
      * Base method to convert Request.query to Sequelize-compatible condition object
      * for querying the database
      */
-    convert() {}
+    build() {}
 }

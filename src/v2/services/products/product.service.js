@@ -4,47 +4,56 @@ import ProductImage from "../../models/products/productImage.model.js";
 import ProductCategory from "../../models/products/productCategory.model.js";
 import Variant from "../../models/products/variant.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
+import VariantAttributeValue from "../../models/products/variantAttributeValue.model.js";
 import AttributeValue from "../../models/products/attributeValue.model.js";
 import Attribute from "../../models/products/attribute.model.js";
-import QueryToFilterConditionConverter from "../conditionConverter/filterConverter.service.js";
+import FilterBuilder from "../condition/filterBuilder.service.js";
 import { Op } from "sequelize";
+import { db } from "../../models/index.model.js";
+import AttributeFilterBuilder from "../condition/attributeFilterBuilder.service.js";
 
 class ProductService {
     /**
      * Get all products that match the given options
+     * Support filtering by product, variant, category, and attribute
      *
      * @param {Object} query the query options to filter the products
      * @returns {Promise<Product[]>} the products that match the given options
      *
      */
     async getProducts(query) {
-        const filterConverter = await QueryToFilterConditionConverter.create(
-            query,
-            "product"
-        );
+        // Filter building by query
+        const productFilter = new FilterBuilder(query, "product").build();
 
-        let variantConverter = await QueryToFilterConditionConverter.create(
+        const variantFilter = new FilterBuilder(
             query.variant,
             "variant"
-        );
+        ).build();
 
-        let categoryConverter = await QueryToFilterConditionConverter.create(
+        const categoryFilter = new FilterBuilder(
             query.category,
             "category"
-        );
+        ).build();
 
-        let attributeConverter = await QueryToFilterConditionConverter.create(
-            query.variant,
-            "variantAttribute"
-        );
+        let attributeFilter = (
+            await AttributeFilterBuilder.create(query.attribute)
+        ).build();
 
+        // Retrieve all variants that match the attribute filter and the variant filter
         const variants = await Variant.findAll({
             attributes: ["variantID"],
+            joinTableAttributes: [],
             include: [
                 {
                     model: AttributeValue,
                     as: "attributeValues",
                     attributes: [],
+
+                    through: {
+                        model: VariantAttributeValue,
+                        attributes: [],
+                    },
+
                     include: {
                         model: Attribute,
                         as: "attribute",
@@ -52,18 +61,45 @@ class ProductService {
                     },
                 },
             ],
-            where: variantConverter.convert(),
+            where: [
+                ...variantFilter,
+
+                // Filter by attribute values
+                ...(attributeFilter.length !== 0
+                    ? [
+                          {
+                              [Op.or]: [
+                                  ...attributeFilter.map((attribute) => {
+                                      return {
+                                          "$attributeValues.attribute.name$":
+                                              attribute.name,
+                                          "$attributeValues.value$":
+                                              attribute.value,
+                                      };
+                                  }),
+                              ],
+                          },
+                      ]
+                    : []),
+            ],
+            group: ["variantID"],
+            having: db.literal(
+                "COUNT(DISTINCT `attributeValues`.`valueID`) >= " +
+                    attributeFilter.length
+            ),
         });
 
         const variantIDs = variants.map((variant) => variant.variantID);
 
+        // Retrieve all products that match the product filter, category filter
+        // And have at least one variant that matches the variant filter
         const products = await Product.findAll({
             include: [
                 {
                     model: Category,
                     through: ProductCategory,
                     as: "categories",
-                    where: categoryConverter.convert(),
+                    where: categoryFilter,
                 },
                 {
                     model: Variant,
@@ -73,7 +109,7 @@ class ProductService {
                     },
                 },
             ],
-            where: [...filterConverter.convert()],
+            where: [...productFilter],
         });
         return products;
     }

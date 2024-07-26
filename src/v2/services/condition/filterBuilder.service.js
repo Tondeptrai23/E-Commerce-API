@@ -1,29 +1,14 @@
 import QueryToSequelizeConditionConverter from "./sequelizeConverter.service.js";
 import { appendToObject, isEmptyObject } from "../../utils/utils.js";
-import attributeService from "../products/attribute.service.js";
 import { Op } from "sequelize";
 
-export default class QueryToFilterConditionConverter extends QueryToSequelizeConditionConverter {
+export default class FilterBuilder extends QueryToSequelizeConditionConverter {
     #allowFields = [];
     #comparisonOperators = {};
 
-    constructor(requestQuery, allowFields) {
+    constructor(requestQuery, modelName) {
         super(requestQuery);
-        this.#allowFields = allowFields;
-        this.#comparisonOperators = {
-            "[lte]": Op.lte,
-            "[gte]": Op.gte,
-            "[between]": Op.between,
-        };
-    }
 
-    /**
-     * Create a new instance of FilterQueryBuilder
-     *
-     * @param {Object} requestQuery - The query object from the request
-     * @param {string} className - The name of the class
-     */
-    static create = async (requestQuery, className) => {
         const fieldMappings = {
             product: ["name", "description"],
             category: ["name", "description"],
@@ -48,16 +33,16 @@ export default class QueryToFilterConditionConverter extends QueryToSequelizeCon
                 "startDate",
                 "endDate",
             ],
-            variantAttribute: (await attributeService.getAttributes()).map(
-                (attribute) => attribute.name
-            ),
         };
 
-        return new QueryToFilterConditionConverter(
-            requestQuery,
-            fieldMappings[className]
-        );
-    };
+        this.#allowFields = fieldMappings[modelName];
+        this.#comparisonOperators = {
+            "[lte]": Op.lte,
+            "[gte]": Op.gte,
+            "[between]": Op.between,
+            "[like]": Op.like,
+        };
+    }
 
     /**
      * Convert Request.query to Sequelize-compatible condition object for querying the database
@@ -65,7 +50,7 @@ export default class QueryToFilterConditionConverter extends QueryToSequelizeCon
      * @returns {Array} Array of conditions
      * Format: [{equalField: [value1, value2]}, {compareField: {operator1: value1, operator2: value2}}, ...]
      */
-    convert = () => {
+    build = () => {
         if (!this._query) return [];
 
         const conditions = [];
@@ -100,6 +85,10 @@ export default class QueryToFilterConditionConverter extends QueryToSequelizeCon
                         let compareValue = value.substring(comparator.length);
                         if (operator === Op.between) {
                             compareValue = compareValue.split(",");
+                        }
+
+                        if (operator === Op.like) {
+                            compareValue = `%${compareValue}%`;
                         }
 
                         comparisonConditions[field] = appendToObject(

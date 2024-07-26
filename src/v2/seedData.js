@@ -44,6 +44,7 @@ const seedAttribute = async () => {
     await Attribute.bulkCreate([
         { attributeID: 1, name: "size" },
         { attributeID: 2, name: "color" },
+        { attributeID: 3, name: "material" },
     ]);
 };
 
