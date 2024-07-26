@@ -28,6 +28,7 @@ const validator = {
 
     validateCreateProduct: productValidator.validateCreateProduct,
     validatePatchProduct: productValidator.validatePatchProduct,
+    validateQueryGetProduct: productValidator.validateQueryGetProduct,
 
     validateAddCategoriesForProduct:
         categoryValidator.validateAddCategoriesForProduct,

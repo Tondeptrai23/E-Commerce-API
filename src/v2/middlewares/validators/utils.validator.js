@@ -1,3 +1,7 @@
+const stringRegex = /^(\[like\])?([\w-]+)$/;
+
+const numberRegex = /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/;
+
 const validateMinValue = (fieldName, minValue) => {
     return (value) => {
         if (value < minValue) {
@@ -28,4 +32,39 @@ const validateInteger = (fieldName) => {
     };
 };
 
-export { validateMinValue, validateNumber, validateInteger };
+const validateQueryNumber = (fieldName) => {
+    return (value) => {
+        if (typeof value !== "string" && !Array.isArray(value)) {
+            throw new Error(`${fieldName} should be a string or an array`);
+        }
+
+        if (typeof value === "string") {
+            const isValid = numberRegex.test(value);
+            if (!isValid) {
+                throw new Error(`${fieldName} should has valid number format`);
+            }
+        }
+
+        if (Array.isArray(value)) {
+            value.forEach((element) => {
+                const isValid = numberRegex.test(element);
+                if (!isValid) {
+                    throw new Error(
+                        `${fieldName} array should contain valid number formats`
+                    );
+                }
+            });
+        }
+
+        return true;
+    };
+};
+
+export {
+    validateMinValue,
+    validateNumber,
+    validateInteger,
+    validateQueryNumber,
+    stringRegex,
+    numberRegex,
+};

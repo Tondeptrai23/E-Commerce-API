@@ -26,7 +26,6 @@ class ProductService {
     async getProducts(query) {
         // Filter building by query
         const productFilter = new FilterBuilder(query, "product").build();
-
         const variantFilter = new FilterBuilder(
             query.variant,
             "variant"

@@ -35,25 +35,31 @@ class AttributeService {
      * @returns {Promise<Variant>} the variant with the added attributes
      */
     async addAttributesForVariant(variant, attributes) {
-        const variantAttributes = await Promise.all(
-            Object.entries(attributes).map(async ([name, value]) => {
-                const attributeValue = await AttributeValue.findOne({
-                    where: {
-                        value: value,
-                    },
-                    include: {
-                        model: Attribute,
-                        as: "attribute",
+        const variantAttributes = (
+            await Promise.all(
+                Object.entries(attributes).map(async ([name, value]) => {
+                    const attributeValue = await AttributeValue.findOne({
                         where: {
-                            name: name,
+                            value: value,
                         },
-                    },
-                });
-                await variant.addAttributeValue(attributeValue);
+                        include: {
+                            model: Attribute,
+                            as: "attribute",
+                            where: {
+                                name: name,
+                            },
+                        },
+                    });
 
-                return attributeValue;
-            })
-        );
+                    if (!attributeValue) {
+                        return null;
+                    }
+                    await variant.addAttributeValue(attributeValue);
+
+                    return attributeValue;
+                })
+            )
+        ).filter((attribute) => attribute !== null);
 
         variant.dataValues.attributeValues = variantAttributes;
         return variant;

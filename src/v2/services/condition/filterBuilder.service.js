@@ -10,8 +10,8 @@ export default class FilterBuilder extends QueryToSequelizeConditionConverter {
         super(requestQuery);
 
         const fieldMappings = {
-            product: ["name", "description"],
-            category: ["name", "description"],
+            product: ["name"],
+            category: ["name"],
             user: ["name", "email"],
             variant: ["stock", "price", "discountPrice", "sku", "imageOrder"],
             order: [

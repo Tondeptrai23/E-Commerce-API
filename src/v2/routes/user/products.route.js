@@ -5,9 +5,16 @@ import variantController from "../../controllers/products/variant.controller.js"
 import productImageController from "../../controllers/products/productImage.controller.js";
 import productCategoryController from "../../controllers/products/productCategory.controller.js";
 
+import validator from "../../middlewares/validators/index.validator.js";
+
 const userProductRoute = Router();
 
-userProductRoute.get("/", productController.getProducts);
+userProductRoute.get(
+    "/",
+    validator.validateQueryGetProduct,
+    validator.handleValidationErrors,
+    productController.getProducts
+);
 
 userProductRoute.get("/:productID", productController.getProduct);
 
