@@ -70,4 +70,24 @@ describe("CategoryService", () => {
             expect(categories).toEqual([]);
         });
     });
+
+    describe("CategoryService.getDescendantCategoriesByName", () => {
+        test("should return an array of categories if the category exists", async () => {
+            const categories =
+                await categoryService.getDescendantCategoriesByName("bottoms");
+            expect(categories).toBeInstanceOf(Array);
+
+            expect(categories).toEqual(
+                expect.arrayContaining(["bottoms", "skirt", "shorts"])
+            );
+        });
+
+        test("should return an empty array if the category does not exist", async () => {
+            const categories =
+                await categoryService.getDescendantCategoriesByName(
+                    "nonexistent"
+                );
+            expect(categories).toEqual([]);
+        });
+    });
 });

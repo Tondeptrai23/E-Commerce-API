@@ -46,6 +46,31 @@ class CategoryService {
     }
 
     /**
+     * Get all descendant categories of a category by name
+     *
+     * @param {String} categoryName the category name to get all categories from
+     * @returns {Promise<Category[]>} the categories that match the given options
+     */
+    async getDescendantCategoriesByName(categoryName) {
+        const category = await Category.findOne({
+            where: {
+                name: categoryName,
+            },
+        });
+
+        if (!category) {
+            return [];
+        }
+
+        return [
+            category.name,
+            ...(await this.getDescendantCategories(category.categoryID)).map(
+                (category) => category.name
+            ),
+        ];
+    }
+
+    /**
      * Get all ascendant categories of a category
      *
      * @param {String} categoryID the category ID to get all categories from

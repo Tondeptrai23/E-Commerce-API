@@ -147,7 +147,6 @@ describe("Product Category Service", () => {
 
             expect(categories).toBeDefined();
             expect(categories).toBeInstanceOf(Array);
-            console.log(categories);
             expect(categories).toEqual(
                 expect.arrayContaining([
                     "tops",

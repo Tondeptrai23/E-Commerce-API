@@ -11,6 +11,8 @@ import FilterBuilder from "../condition/filterBuilder.service.js";
 import { Op } from "sequelize";
 import { db } from "../../models/index.model.js";
 import AttributeFilterBuilder from "../condition/attributeFilterBuilder.service.js";
+import categoryService from "./category.service.js";
+import { flattenArray, toArray } from "../../utils/utils.js";
 
 class ProductService {
     /**
@@ -30,10 +32,16 @@ class ProductService {
             "variant"
         ).build();
 
-        const categoryFilter = new FilterBuilder(
-            query.category,
-            "category"
-        ).build();
+        // Retrieve all descendant categories of the given categories
+        const categoryFilter = flattenArray(
+            await Promise.all(
+                toArray(query.category).map(async (category) => {
+                    return await categoryService.getDescendantCategoriesByName(
+                        category
+                    );
+                })
+            )
+        );
 
         let attributeFilter = (
             await AttributeFilterBuilder.create(query.attribute)
@@ -99,7 +107,12 @@ class ProductService {
                     model: Category,
                     through: ProductCategory,
                     as: "categories",
-                    where: categoryFilter,
+                    where: {
+                        name:
+                            categoryFilter.length !== 0
+                                ? { [Op.in]: categoryFilter }
+                                : { [Op.ne]: null },
+                    },
                 },
                 {
                     model: Variant,

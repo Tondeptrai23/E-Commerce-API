@@ -24,9 +24,29 @@ const appendToObject = (obj, newObject) => {
  * Flatten 2D array to 1D array and remove duplicates
  *
  * @param {Array} array the 2D array to be flattened
+ * @returns {Array} the flattened array
  */
 const flattenArray = (array) => {
     return [...new Set(array.flat())];
 };
 
-export { isEmptyObject, appendToObject, removeEmptyFields, flattenArray };
+/**
+ * Convert to an array
+ *
+ * @param {any} value the value to be converted
+ * @returns {Array} the value as an array
+ */
+const toArray = (value) => {
+    if (value === null || value === undefined) {
+        return [];
+    }
+    return Array.isArray(value) ? value : [value];
+};
+
+export {
+    isEmptyObject,
+    appendToObject,
+    removeEmptyFields,
+    flattenArray,
+    toArray,
+};
