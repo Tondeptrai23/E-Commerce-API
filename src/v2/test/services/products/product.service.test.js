@@ -14,7 +14,7 @@ describe("ProductService", () => {
     describe("ProductService.getProducts", () => {
         test("should return all products", async () => {
             const products = await productService.getProducts({});
-            expect(products).toHaveLength(6);
+            expect(products).toHaveLength(5);
 
             expect(products[0]).toEqual(
                 expect.objectContaining({
@@ -23,6 +23,17 @@ describe("ProductService", () => {
                     description: expect.any(String),
                 })
             );
+        });
+
+        test("should return all products with 1 variant if query.oneVariant flag is true", async () => {
+            const products = await productService.getProducts({
+                oneVariant: "true",
+            });
+
+            expect(products).toBeInstanceOf(Array);
+            for (const product of products) {
+                expect(product.dataValues.variants).toHaveLength(1);
+            }
         });
 
         /*
@@ -76,6 +87,7 @@ describe("ProductService", () => {
                 await productCategoryService.getProductsByAncestorCategory(
                     "tops"
                 );
+
             for (const product of products) {
                 expect(product).toEqual(
                     expect.objectContaining({
@@ -374,6 +386,39 @@ describe("ProductService", () => {
                 const sortedPrices = [...prices].sort().reverse();
                 expect(prices).toEqual(sortedPrices);
             }
+        });
+
+        /*
+         * Pagination tests
+         */
+        test("should return products with pagination", async () => {
+            const products = await productService.getProducts({
+                limit: 3,
+                offset: 0,
+            });
+
+            expect(products).toBeInstanceOf(Array);
+            expect(products).toHaveLength(3);
+            expect(products[0].productID).toBe("1");
+        });
+
+        test("should return products with pagination", async () => {
+            const products = await productService.getProducts({
+                limit: 3,
+                offset: 1,
+            });
+
+            expect(products).toBeInstanceOf(Array);
+            expect(products).toHaveLength(3);
+            expect(products[0].productID).toBe("4");
+        });
+
+        test("should return products with default pagination values", async () => {
+            const products = await productService.getProducts({});
+
+            expect(products).toBeInstanceOf(Array);
+            expect(products).toHaveLength(5);
+            expect(products[0].productID).toBe("1");
         });
     });
 

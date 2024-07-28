@@ -8,7 +8,12 @@ class ProductController {
     async getProducts(req, res) {
         try {
             // Call services
-            let products = await productService.getProducts(req.query);
+            let {
+                currentPage,
+                totalPages,
+                totalItems,
+                items: products,
+            } = await productService.getProducts(req.query);
 
             // Serialize data
             let serializer;
@@ -28,6 +33,9 @@ class ProductController {
             // Response
             let response = {
                 success: true,
+                currentPage: currentPage,
+                totalPages: totalPages,
+                totalItems: totalItems,
                 products: products,
             };
             res.status(StatusCodes.OK).json(response);
