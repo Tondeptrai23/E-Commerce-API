@@ -1,7 +1,17 @@
 import QueryToSequelizeConditionConverter from "./sequelizeConverter.service.js";
-import { appendToObject, isEmptyObject } from "../../utils/utils.js";
 import attributeService from "../products/attribute.service.js";
 
+/**
+ * @summary A class to build filtering conditions for variants' attributes
+ * from a request query to retrieve products or variants
+ *
+ * @example
+ * const attributeFilter = (await AttributeFilterBuilder.create(query)).build();
+ *
+ * @note
+ * An instance of this class should be created using the 'create' method
+ * instead of the constructor
+ */
 export default class AttributeFilterBuilder extends QueryToSequelizeConditionConverter {
     #allowFields = [];
     constructor(requestQuery, allowFields) {

@@ -3,15 +3,16 @@ import Category from "../../models/products/category.model.js";
 import ProductImage from "../../models/products/productImage.model.js";
 import ProductCategory from "../../models/products/productCategory.model.js";
 import Variant from "../../models/products/variant.model.js";
-import { ResourceNotFoundError } from "../../utils/error.js";
 import VariantAttributeValue from "../../models/products/variantAttributeValue.model.js";
 import AttributeValue from "../../models/products/attributeValue.model.js";
 import Attribute from "../../models/products/attribute.model.js";
-import FilterBuilder from "../condition/filterBuilder.service.js";
+import { ResourceNotFoundError } from "../../utils/error.js";
 import { Op } from "sequelize";
 import { db } from "../../models/index.model.js";
-import AttributeFilterBuilder from "../condition/attributeFilterBuilder.service.js";
 import categoryService from "./category.service.js";
+import FilterBuilder from "../condition/filterBuilder.service.js";
+import AttributeFilterBuilder from "../condition/attributeFilterBuilder.service.js";
+import ProductSortBuilder from "../condition/productSortBuilder.service.js";
 import { flattenArray, toArray } from "../../utils/utils.js";
 
 class ProductService {
@@ -24,6 +25,8 @@ class ProductService {
      *
      */
     async getProducts(query) {
+        const sortConditions = new ProductSortBuilder(query).build();
+
         // Filter building by query
         const productFilter = new FilterBuilder(query, "product").build();
         const variantFilter = new FilterBuilder(
@@ -55,7 +58,6 @@ class ProductService {
                     model: AttributeValue,
                     as: "attributeValues",
                     attributes: [],
-
                     through: {
                         model: VariantAttributeValue,
                         attributes: [],
@@ -122,6 +124,7 @@ class ProductService {
                 },
             ],
             where: [...productFilter],
+            order: sortConditions,
         });
         return products;
     }

@@ -2,6 +2,18 @@ import QueryToSequelizeConditionConverter from "./sequelizeConverter.service.js"
 import { appendToObject, isEmptyObject } from "../../utils/utils.js";
 import { Op } from "sequelize";
 
+/**
+ * @summary A class to build filtering conditions from a request query
+ * to retrieve products
+ *
+ * @description
+ * This class is used to build filtering conditions from a request query
+ * to retrieve products from a Sequelize magic method.
+ *
+ * @example
+ * const filterConditions = new FilterBuilder(query, "product").build();
+ *
+ */
 export default class FilterBuilder extends QueryToSequelizeConditionConverter {
     #allowFields = [];
     #comparisonOperators = {};
