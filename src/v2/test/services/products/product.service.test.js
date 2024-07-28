@@ -25,6 +25,9 @@ describe("ProductService", () => {
             );
         });
 
+        /*
+         * Filtering tests
+         */
         test("should return products that match the product's name", async () => {
             const products = await productService.getProducts({
                 name: "[like]T-Shirt",
@@ -285,6 +288,91 @@ describe("ProductService", () => {
                         ])
                     );
                 }
+            }
+        });
+
+        /*
+         * Sorting tests
+         */
+        test("should return products sorted by name in ascending order", async () => {
+            const products = await productService.getProducts({
+                sort: "name",
+            });
+
+            expect(products).toBeInstanceOf(Array);
+            const productNames = products.map((product) => product.name);
+            const sortedProductNames = [...productNames].sort();
+            expect(productNames).toEqual(sortedProductNames);
+        });
+
+        test("should return products sorted by name in descending order", async () => {
+            const products = await productService.getProducts({
+                sort: "-name",
+            });
+
+            expect(products).toBeInstanceOf(Array);
+            const productNames = products.map((product) => product.name);
+            const sortedProductNames = [...productNames].sort().reverse();
+            expect(productNames).toEqual(sortedProductNames);
+        });
+
+        test("should return products sorted by price in ascending order", async () => {
+            const products = await productService.getProducts({
+                sort: "price",
+            });
+
+            expect(products).toBeInstanceOf(Array);
+            for (const product of products) {
+                const prices = product.variants.map((variant) => variant.price);
+                const sortedPrices = [...prices].sort();
+                expect(prices).toEqual(sortedPrices);
+            }
+        });
+
+        test("should return products sorted by name and price", async () => {
+            const products = await productService.getProducts({
+                sort: "name,-price",
+            });
+
+            expect(products).toBeInstanceOf(Array);
+            const productNames = products.map((product) => product.name);
+            const sortedProductNames = [...productNames].sort();
+            expect(productNames).toEqual(sortedProductNames);
+
+            for (const product of products) {
+                const prices = product.variants.map((variant) => variant.price);
+                const sortedPrices = [...prices].sort().reverse();
+                expect(prices).toEqual(sortedPrices);
+            }
+        });
+
+        /*
+         * Filtering + Sorting tests
+         */
+        test("should return products that match the product's name and sorted by name in ascending order", async () => {
+            const products = await productService.getProducts({
+                name: "[like]T-Shirt",
+                sort: "name,-price",
+            });
+
+            expect(products).toBeInstanceOf(Array);
+
+            const productNames = products.map((product) => product.name);
+            const sortedProductNames = [...productNames].sort();
+            expect(productNames).toEqual(sortedProductNames);
+
+            for (const product of products) {
+                expect(product).toEqual(
+                    expect.objectContaining({
+                        productID: expect.any(String),
+                        name: expect.stringContaining("T-Shirt"),
+                        description: expect.any(String),
+                    })
+                );
+
+                const prices = product.variants.map((variant) => variant.price);
+                const sortedPrices = [...prices].sort().reverse();
+                expect(prices).toEqual(sortedPrices);
             }
         });
     });

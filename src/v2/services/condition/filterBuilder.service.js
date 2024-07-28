@@ -1,5 +1,4 @@
 import QueryToSequelizeConditionConverter from "./sequelizeConverter.service.js";
-import { appendToObject, isEmptyObject } from "../../utils/utils.js";
 import { Op } from "sequelize";
 
 /**
@@ -60,13 +59,12 @@ export default class FilterBuilder extends QueryToSequelizeConditionConverter {
      * Convert Request.query to Sequelize-compatible condition object for querying the database
      *
      * @returns {Array} Array of conditions
-     * Format: [{equalField: [value1, value2]}, {compareField: {operator1: value1, operator2: value2}}, ...]
+     * Format: [{field1: [value1, value2]}, {field1: {operator1: value1}}, {field1: {operator2: value2}}, ...]
      */
     build = () => {
         if (!this._query) return [];
 
         const conditions = [];
-        const comparisonConditions = {};
 
         const fields = Object.keys(this._query).filter((field) =>
             this.#allowFields.includes(field)
@@ -103,12 +101,9 @@ export default class FilterBuilder extends QueryToSequelizeConditionConverter {
                             compareValue = `%${compareValue}%`;
                         }
 
-                        comparisonConditions[field] = appendToObject(
-                            comparisonConditions[field],
-                            {
-                                [operator]: compareValue,
-                            }
-                        );
+                        conditions.push({
+                            [field]: { [operator]: compareValue },
+                        });
                     }
                 );
             });
@@ -117,10 +112,6 @@ export default class FilterBuilder extends QueryToSequelizeConditionConverter {
                 conditions.push({ [field]: equalityValues });
             }
         });
-
-        if (!isEmptyObject(comparisonConditions)) {
-            conditions.push(comparisonConditions);
-        }
 
         return conditions;
     };
