@@ -13,7 +13,7 @@ beforeAll(async () => {
 describe("ProductService", () => {
     describe("ProductService.getProducts", () => {
         test("should return all products", async () => {
-            const products = await productService.getProducts({});
+            const { products } = await productService.getProducts({});
             expect(products).toHaveLength(5);
 
             expect(products[0]).toEqual(
@@ -26,7 +26,7 @@ describe("ProductService", () => {
         });
 
         test("should return all products with 1 variant if query.oneVariant flag is true", async () => {
-            const products = await productService.getProducts({
+            const { products } = await productService.getProducts({
                 oneVariant: "true",
             });
 
@@ -40,7 +40,7 @@ describe("ProductService", () => {
          * Filtering tests
          */
         test("should return products that match the product's name", async () => {
-            const products = await productService.getProducts({
+            const { products } = await productService.getProducts({
                 name: "[like]T-Shirt",
             });
 
@@ -55,7 +55,7 @@ describe("ProductService", () => {
         });
 
         test("should return products that belong to categories", async () => {
-            const products = await productService.getProducts({
+            const { products } = await productService.getProducts({
                 category: ["tshirt", "blouse"],
             });
 
@@ -78,7 +78,7 @@ describe("ProductService", () => {
         });
 
         test("should return products that belong to a big category", async () => {
-            const products = await productService.getProducts({
+            const { products } = await productService.getProducts({
                 category: "tops",
             });
 
@@ -117,7 +117,7 @@ describe("ProductService", () => {
         });
 
         test("should return products that match the variant's price and stock", async () => {
-            const products = await productService.getProducts({
+            const { products } = await productService.getProducts({
                 variant: {
                     price: "[lte]25",
                     stock: "[gte]10",
@@ -149,7 +149,7 @@ describe("ProductService", () => {
         });
 
         test("should return products that match the attribute's value", async () => {
-            const products = await productService.getProducts({
+            const { products } = await productService.getProducts({
                 attribute: {
                     color: "red",
                 },
@@ -187,7 +187,7 @@ describe("ProductService", () => {
         });
 
         test("should return products that match two attribute's value", async () => {
-            const products = await productService.getProducts({
+            const { products } = await productService.getProducts({
                 attribute: {
                     color: "red",
                     size: "L",
@@ -232,7 +232,7 @@ describe("ProductService", () => {
         });
 
         test("should return products that match multiple conditions", async () => {
-            const products = await productService.getProducts({
+            const { products } = await productService.getProducts({
                 name: "[like]T-Shirt",
                 category: "tshirt",
                 variant: {
@@ -307,7 +307,7 @@ describe("ProductService", () => {
          * Sorting tests
          */
         test("should return products sorted by name in ascending order", async () => {
-            const products = await productService.getProducts({
+            const { products } = await productService.getProducts({
                 sort: "name",
             });
 
@@ -318,7 +318,7 @@ describe("ProductService", () => {
         });
 
         test("should return products sorted by name in descending order", async () => {
-            const products = await productService.getProducts({
+            const { products } = await productService.getProducts({
                 sort: "-name",
             });
 
@@ -329,7 +329,7 @@ describe("ProductService", () => {
         });
 
         test("should return products sorted by price in ascending order", async () => {
-            const products = await productService.getProducts({
+            const { products } = await productService.getProducts({
                 sort: "price",
             });
 
@@ -342,7 +342,7 @@ describe("ProductService", () => {
         });
 
         test("should return products sorted by name and price", async () => {
-            const products = await productService.getProducts({
+            const { products } = await productService.getProducts({
                 sort: "name,-price",
             });
 
@@ -362,7 +362,7 @@ describe("ProductService", () => {
          * Filtering + Sorting tests
          */
         test("should return products that match the product's name and sorted by name in ascending order", async () => {
-            const products = await productService.getProducts({
+            const { products } = await productService.getProducts({
                 name: "[like]T-Shirt",
                 sort: "name,-price",
             });
@@ -392,33 +392,48 @@ describe("ProductService", () => {
          * Pagination tests
          */
         test("should return products with pagination", async () => {
-            const products = await productService.getProducts({
-                limit: 3,
-                offset: 0,
-            });
+            const { products, currentPage, totalPages, totalItems } =
+                await productService.getProducts({
+                    size: 3,
+                    page: 1,
+                });
 
             expect(products).toBeInstanceOf(Array);
             expect(products).toHaveLength(3);
             expect(products[0].productID).toBe("1");
+
+            expect(currentPage).toBe(1);
+            expect(totalPages).toBe(2);
+            expect(totalItems).toBe(6);
         });
 
         test("should return products with pagination", async () => {
-            const products = await productService.getProducts({
-                limit: 3,
-                offset: 1,
-            });
+            const { products, currentPage, totalPages, totalItems } =
+                await productService.getProducts({
+                    size: 3,
+                    page: 2,
+                });
 
             expect(products).toBeInstanceOf(Array);
             expect(products).toHaveLength(3);
             expect(products[0].productID).toBe("4");
+
+            expect(currentPage).toBe(2);
+            expect(totalPages).toBe(2);
+            expect(totalItems).toBe(6);
         });
 
         test("should return products with default pagination values", async () => {
-            const products = await productService.getProducts({});
+            const { products, currentPage, totalPages, totalItems } =
+                await productService.getProducts({});
 
             expect(products).toBeInstanceOf(Array);
             expect(products).toHaveLength(5);
             expect(products[0].productID).toBe("1");
+
+            expect(currentPage).toBe(1);
+            expect(totalPages).toBe(2);
+            expect(totalItems).toBe(6);
         });
     });
 
