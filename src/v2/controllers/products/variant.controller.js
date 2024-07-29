@@ -2,7 +2,6 @@ import { StatusCodes } from "http-status-codes";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import variantService from "../../services/products/variant.service.js";
 import productBuilderService from "../../services/products/productBuilder.service.js";
-import VariantSerializer from "../../services/serializers/variantSerializer.service.js";
 
 class VariantController {
     async getProductVariants(req, res) {
@@ -14,21 +13,6 @@ class VariantController {
             let variants = await variantService.getProductVariants(productID);
 
             // Serialize data
-            let variantSerializer;
-            if (req.admin !== undefined) {
-                variantSerializer = new VariantSerializer({
-                    includeTimestamps: true,
-                    includeForeignKeys: false,
-                });
-            } else {
-                variantSerializer = new VariantSerializer({
-                    includeTimestamps: false,
-                    includeForeignKeys: false,
-                });
-            }
-            variants = variants.map((variant) =>
-                variantSerializer.serialize(variant)
-            );
 
             // Response
             res.status(StatusCodes.OK).json({
@@ -61,19 +45,6 @@ class VariantController {
             let variant = await variantService.getVariant(productID, variantID);
 
             // Serialize data
-            let variantSerializer;
-            if (req.admin !== undefined) {
-                variantSerializer = new VariantSerializer({
-                    includeTimestamps: true,
-                    includeForeignKeys: false,
-                });
-            } else {
-                variantSerializer = new VariantSerializer({
-                    includeTimestamps: false,
-                    includeForeignKeys: false,
-                });
-            }
-            variant = variantSerializer.serialize(variant);
 
             // Response
             res.status(StatusCodes.OK).json({
@@ -110,17 +81,11 @@ class VariantController {
             );
 
             // Serialize data
-            const variantSerializer = new VariantSerializer({
-                includeForeignKeys: false,
-            });
-            const serializedVariants = product.variants.map((variant) =>
-                variantSerializer.serialize(variant)
-            );
 
             // Response
             const response = {
                 success: true,
-                variants: serializedVariants,
+                variants: product.variants,
             };
             res.status(StatusCodes.CREATED).json(response);
         } catch (err) {
@@ -167,9 +132,6 @@ class VariantController {
             );
 
             // Serialize data
-            variant = new VariantSerializer({
-                includeForeignKeys: false,
-            }).serialize(variant);
 
             // Response
             res.status(StatusCodes.OK).json({
@@ -214,9 +176,6 @@ class VariantController {
             );
 
             // Serialize data
-            variant = new VariantSerializer({
-                includeForeignKeys: false,
-            }).serialize(variant);
 
             // Response
             res.status(StatusCodes.OK).json({

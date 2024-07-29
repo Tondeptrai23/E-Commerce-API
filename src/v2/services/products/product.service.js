@@ -95,14 +95,20 @@ class ProductService {
                 {
                     model: Variant,
                     as: "variants",
-                    include: {
-                        model: AttributeValue,
-                        as: "attributeValues",
-                        include: {
-                            model: Attribute,
-                            as: "attribute",
+                    include: [
+                        {
+                            model: AttributeValue,
+                            as: "attributeValues",
+                            include: {
+                                model: Attribute,
+                                as: "attribute",
+                            },
                         },
-                    },
+                        {
+                            model: ProductImage,
+                            as: "image",
+                        },
+                    ],
                 },
             ],
         });

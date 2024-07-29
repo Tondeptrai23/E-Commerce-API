@@ -1,6 +1,5 @@
 import { sequelize } from "../../config/database.config.js";
 import { DataTypes, Model } from "sequelize";
-import Product from "./product.model.js";
 
 class ProductImage extends Model {}
 

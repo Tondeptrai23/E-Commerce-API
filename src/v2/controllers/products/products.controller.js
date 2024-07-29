@@ -2,41 +2,29 @@ import { StatusCodes } from "http-status-codes";
 import productService from "../../services/products/product.service.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import productBuilderService from "../../services/products/productBuilder.service.js";
-import ProductSerializer from "../../services/serializers/productSerializer.service.js";
+import ProductSerializer from "../../services/serializers/product.serializer.service.js";
 
 class ProductController {
     async getProducts(req, res) {
         try {
             // Call services
-            let {
-                currentPage,
-                totalPages,
-                totalItems,
-                items: products,
-            } = await productService.getProducts(req.query);
+            let { currentPage, totalPages, totalItems, products } =
+                await productService.getProducts(req.query);
 
             // Serialize data
-            let serializer;
-            if (req.admin !== undefined) {
-                serializer = new ProductSerializer({
-                    includeTimestamps: true,
-                    includeForeignKeys: false,
-                });
-            } else {
-                serializer = new ProductSerializer({
-                    includeTimestamps: false,
-                    includeForeignKeys: false,
-                });
-            }
-            products = products.map((product) => serializer.serialize(product));
+            const serializedProducts = ProductSerializer.parse(products, {
+                isAdmin: req.admin ? true : false,
+            });
 
             // Response
             let response = {
                 success: true,
-                currentPage: currentPage,
-                totalPages: totalPages,
-                totalItems: totalItems,
-                products: products,
+                data: {
+                    currentPage: currentPage,
+                    totalPages: totalPages,
+                    totalItems: totalItems,
+                    products: serializedProducts,
+                },
             };
             res.status(StatusCodes.OK).json(response);
         } catch (err) {
@@ -61,24 +49,16 @@ class ProductController {
             }
 
             // Serialize data
-            let serializer;
-            if (req.admin !== undefined) {
-                serializer = new ProductSerializer({
-                    includeTimestamps: true,
-                    includeForeignKeys: false,
-                });
-            } else {
-                serializer = new ProductSerializer({
-                    includeTimestamps: false,
-                    includeForeignKeys: false,
-                });
-            }
-            product = serializer.serialize(product);
+            const serializedProduct = ProductSerializer.parse(product, {
+                isAdmin: req.admin ? true : false,
+            });
 
             // Response
             let response = {
                 success: true,
-                product: product,
+                data: {
+                    product: serializedProduct,
+                },
             };
             res.status(StatusCodes.OK).json(response);
         } catch (err) {
@@ -103,7 +83,7 @@ class ProductController {
             const { variants, categories, images, ...productInfo } = req.body;
 
             // Call services
-            let product = await productBuilderService.addProduct(
+            const product = await productBuilderService.addProduct(
                 productInfo,
                 variants,
                 categories,
@@ -111,16 +91,16 @@ class ProductController {
             );
 
             // Serialize data
-            const serializer = new ProductSerializer({
-                includeTimestamps: false,
-                includeForeignKeys: true,
+            const serializedProduct = ProductSerializer.parse(product, {
+                isAdmin: true,
             });
-            product = serializer.serialize(product);
 
             // Response
             res.status(StatusCodes.CREATED).json({
                 success: true,
-                product: product,
+                data: {
+                    product: serializedProduct,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -149,16 +129,16 @@ class ProductController {
             }
 
             // Serialize data
-            const serializer = new ProductSerializer({
-                includeTimestamps: false,
-                includeForeignKeys: true,
+            const serializedProduct = ProductSerializer.parse(product, {
+                isAdmin: true,
             });
-            product = serializer.serialize(product);
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                product: product,
+                data: {
+                    product: serializedProduct,
+                },
             });
         } catch (err) {
             console.log(err);

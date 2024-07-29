@@ -2,7 +2,6 @@ import { StatusCodes } from "http-status-codes";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import productImageService from "../../services/products/productImage.service.js";
 import productBuilderService from "../../services/products/productBuilder.service.js";
-import ImageSerializer from "../../services/serializers/imageSerializer.service.js";
 
 class ProductImageController {
     async getProductImages(req, res) {
@@ -14,19 +13,6 @@ class ProductImageController {
             let images = await productImageService.getProductImages(productID);
 
             // Serialize data
-            let serializer;
-            if (req.admin !== undefined) {
-                serializer = new ImageSerializer({
-                    includeTimestamps: true,
-                    includeForeignKeys: false,
-                });
-            } else {
-                serializer = new ImageSerializer({
-                    includeTimestamps: false,
-                    includeForeignKeys: false,
-                });
-            }
-            images = images.map((image) => serializer.serialize(image));
 
             // Response
             res.status(StatusCodes.OK).json({
@@ -63,18 +49,11 @@ class ProductImageController {
             );
 
             // Serialize data
-            const serializer = new ImageSerializer({
-                includeTimestamps: false,
-                includeForeignKeys: false,
-            });
-            const serializedImages = product.images.map((image) =>
-                serializer.serialize(image)
-            );
 
             // Response
             const response = {
                 success: true,
-                images: serializedImages,
+                images: product.images,
             };
             res.status(StatusCodes.CREATED).json(response);
         } catch (err) {
@@ -112,11 +91,6 @@ class ProductImageController {
             );
 
             // Serialize data
-            const serializer = new ImageSerializer({
-                includeTimestamps: false,
-                includeForeignKeys: false,
-            });
-            image = serializer.serialize(image);
 
             // Response
             res.status(StatusCodes.OK).json({

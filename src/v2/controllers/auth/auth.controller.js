@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import userService from "../../services/auth/user.service.js";
 import tokenService from "../../services/auth/token.service.js";
 import { BadRequestError } from "../../utils/error.js";
-import UserSerializer from "../../services/serializers/userSerializer.service.js";
+import UserSerializer from "../../services/serializers/user.serializer.service.js";
 
 class AuthController {
     async signin(req, res) {
@@ -27,9 +27,11 @@ class AuthController {
 
             await res.status(StatusCodes.OK).json({
                 success: true,
-                accessToken: accessToken,
-                refreshToken: refreshToken,
-                user: new UserSerializer().serialize(req.user),
+                data: {
+                    accessToken: accessToken,
+                    refreshToken: refreshToken,
+                    user: UserSerializer.parse(req.user),
+                },
             });
         } catch (err) {
             console.log(err);
@@ -78,7 +80,9 @@ class AuthController {
 
             res.status(StatusCodes.CREATED).json({
                 success: true,
-                accessToken: accessToken,
+                data: {
+                    accessToken: accessToken,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -102,8 +106,10 @@ class AuthController {
 
             res.status(StatusCodes.OK).json({
                 success: true,
-                accessToken: accessToken,
-                refreshToken: refreshToken,
+                data: {
+                    accessToken: accessToken,
+                    refreshToken: refreshToken,
+                },
             });
         } catch (err) {
             console.log(err);
