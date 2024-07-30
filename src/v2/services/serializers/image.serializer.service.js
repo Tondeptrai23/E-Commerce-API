@@ -14,12 +14,15 @@ const ImageSerializer = new Entity({
     displayOrder: {
         type: "number",
     },
+    productID: {
+        type: "string",
+    },
     createdAt: [
         {
             type: "Date",
         },
         function (obj, options) {
-            if (options.isAdmin) {
+            if (options.includeTimestamps) {
                 return obj.createdAt;
             }
             return undefined;
@@ -30,7 +33,7 @@ const ImageSerializer = new Entity({
             type: "Date",
         },
         function (obj, options) {
-            if (options.isAdmin) {
+            if (options.includeTimestamps) {
                 return obj.createdAt;
             }
             return undefined;

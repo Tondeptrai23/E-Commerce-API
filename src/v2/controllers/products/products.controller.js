@@ -13,7 +13,7 @@ class ProductController {
 
             // Serialize data
             const serializedProducts = ProductSerializer.parse(products, {
-                isAdmin: req.admin ? true : false,
+                includeTimestamps: req.admin ? true : false,
             });
 
             // Response
@@ -50,7 +50,7 @@ class ProductController {
 
             // Serialize data
             const serializedProduct = ProductSerializer.parse(product, {
-                isAdmin: req.admin ? true : false,
+                includeTimestamps: req.admin ? true : false,
             });
 
             // Response
@@ -92,7 +92,7 @@ class ProductController {
 
             // Serialize data
             const serializedProduct = ProductSerializer.parse(product, {
-                isAdmin: true,
+                includeTimestamps: true,
             });
 
             // Response
@@ -130,7 +130,7 @@ class ProductController {
 
             // Serialize data
             const serializedProduct = ProductSerializer.parse(product, {
-                isAdmin: true,
+                includeTimestamps: true,
             });
 
             // Response

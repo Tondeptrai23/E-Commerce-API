@@ -41,7 +41,7 @@ const ProductSerializer = new Entity({
             type: "Date",
         },
         function (obj, options) {
-            if (options.isAdmin) {
+            if (options.includeTimestamps) {
                 return obj.createdAt;
             }
             return undefined;
@@ -52,7 +52,7 @@ const ProductSerializer = new Entity({
             type: "Date",
         },
         function (obj, options) {
-            if (options.isAdmin) {
+            if (options.includeTimestamps) {
                 return obj.createdAt;
             }
             return undefined;

@@ -17,6 +17,9 @@ const VariantSerializer = new Entity({
     sku: {
         type: "string",
     },
+    productID: {
+        type: "string",
+    },
     image: [
         {
             type: "string",
@@ -44,7 +47,7 @@ const VariantSerializer = new Entity({
             type: "Date",
         },
         function (obj, options) {
-            if (options.isAdmin) {
+            if (options.includeTimestamps) {
                 return obj.createdAt;
             }
             return undefined;
@@ -55,7 +58,7 @@ const VariantSerializer = new Entity({
             type: "Date",
         },
         function (obj, options) {
-            if (options.isAdmin) {
+            if (options.includeTimestamps) {
                 return obj.createdAt;
             }
             return undefined;

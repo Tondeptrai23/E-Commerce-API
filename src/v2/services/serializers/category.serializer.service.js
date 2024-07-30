@@ -1,25 +1,16 @@
 import Entity from "./index.serializer.service.js";
 
-const UserSerializer = new Entity({
-    userID: {
+const CategorySerializer = new Entity({
+    categoryID: {
         type: "string",
         required: true,
     },
-    email: {
-        type: "string",
-    },
-    name: {
-        type: "string",
-    },
-    avatar: {
-        type: "string",
-    },
-    role: {
-        type: "string",
-    },
+    name: { type: "string" },
+    description: { type: "string" },
+    parentID: { type: "string" },
     createdAt: [
         {
-            type: "date",
+            type: "Date",
         },
         function (obj, options) {
             if (options.includeTimestamps) {
@@ -30,15 +21,15 @@ const UserSerializer = new Entity({
     ],
     updatedAt: [
         {
-            type: "date",
+            type: "Date",
         },
         function (obj, options) {
             if (options.includeTimestamps) {
-                return obj.updatedAt;
+                return obj.createdAt;
             }
             return undefined;
         },
     ],
 });
 
-export default UserSerializer;
+export default CategorySerializer;

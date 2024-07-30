@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import variantService from "../../services/products/variant.service.js";
 import productBuilderService from "../../services/products/productBuilder.service.js";
+import VariantSerializer from "../../services/serializers/variant.serializer.service.js";
 
 class VariantController {
     async getProductVariants(req, res) {
@@ -10,14 +11,19 @@ class VariantController {
             const { productID } = req.params;
 
             // Call services
-            let variants = await variantService.getProductVariants(productID);
+            const variants = await variantService.getProductVariants(productID);
 
             // Serialize data
+            const serializedVariants = VariantSerializer.serialize(variants, {
+                includeTimestamps: req.admin ? true : false,
+            });
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                variants: variants,
+                data: {
+                    variants: serializedVariants,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -42,14 +48,22 @@ class VariantController {
             const { productID, variantID } = req.params;
 
             // Call services
-            let variant = await variantService.getVariant(productID, variantID);
+            const variant = await variantService.getVariant(
+                productID,
+                variantID
+            );
 
             // Serialize data
+            const serializedVariant = VariantSerializer.serialize(variant, {
+                includeTimestamps: true,
+            });
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                variant: variant,
+                data: {
+                    variant: serializedVariant,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -81,11 +95,19 @@ class VariantController {
             );
 
             // Serialize data
+            const serializedVariants = VariantSerializer.serialize(
+                product.variants,
+                {
+                    includeTimestamps: true,
+                }
+            );
 
             // Response
             const response = {
                 success: true,
-                variants: product.variants,
+                data: {
+                    variants: serializedVariants,
+                },
             };
             res.status(StatusCodes.CREATED).json(response);
         } catch (err) {
@@ -119,7 +141,7 @@ class VariantController {
             } = req.body;
 
             // Call services
-            let variant = await variantService.updateVariant(
+            const variant = await variantService.updateVariant(
                 productID,
                 variantID,
                 {
@@ -132,11 +154,16 @@ class VariantController {
             );
 
             // Serialize data
+            const serializedVariant = VariantSerializer.serialize(variant, {
+                includeTimestamps: true,
+            });
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                variant: variant,
+                data: {
+                    variant: serializedVariant,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -163,7 +190,7 @@ class VariantController {
             const { stock, price, sku, imageOrder, discountPrice } = req.body;
 
             // Call services
-            let variant = await variantService.updateVariant(
+            const variant = await variantService.updateVariant(
                 productID,
                 variantID,
                 {
@@ -176,11 +203,16 @@ class VariantController {
             );
 
             // Serialize data
+            const serializedVariant = VariantSerializer.serialize(variant, {
+                includeTimestamps: true,
+            });
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                variant: variant,
+                data: {
+                    variant: serializedVariant,
+                },
             });
         } catch (err) {
             console.log(err);

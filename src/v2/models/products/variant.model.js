@@ -26,10 +26,6 @@ Variant.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        imageOrder: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
     },
     {
         sequelize,

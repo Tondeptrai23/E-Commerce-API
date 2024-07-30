@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import productImageService from "../../services/products/productImage.service.js";
 import productBuilderService from "../../services/products/productBuilder.service.js";
+import ImageSerializer from "../../services/serializers/image.serializer.service.js";
 
 class ProductImageController {
     async getProductImages(req, res) {
@@ -10,14 +11,21 @@ class ProductImageController {
             const { productID } = req.params;
 
             // Call services
-            let images = await productImageService.getProductImages(productID);
+            const images = await productImageService.getProductImages(
+                productID
+            );
 
             // Serialize data
+            const serializedImages = ImageSerializer.serialize(images, {
+                includeTimestamps: req.admin ? true : false,
+            });
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                images: images,
+                data: {
+                    images: serializedImages,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -49,11 +57,16 @@ class ProductImageController {
             );
 
             // Serialize data
+            const serializedImages = ImageSerializer.serialize(product.images, {
+                includeTimestamps: true,
+            });
 
             // Response
             const response = {
                 success: true,
-                images: product.images,
+                data: {
+                    images: serializedImages,
+                },
             };
             res.status(StatusCodes.CREATED).json(response);
         } catch (err) {
@@ -81,7 +94,7 @@ class ProductImageController {
             const { url, thumbnail } = req.body;
 
             // Call services
-            let image = await productImageService.updateImage(
+            const image = await productImageService.updateImage(
                 productID,
                 imageID,
                 {
@@ -91,11 +104,16 @@ class ProductImageController {
             );
 
             // Serialize data
+            const serializedImage = ImageSerializer.serialize(image, {
+                includeTimestamps: true,
+            });
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                image: image,
+                data: {
+                    image: serializedImage,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -126,10 +144,17 @@ class ProductImageController {
                 images
             );
 
+            // Serialize data
+            const serializedImages = ImageSerializer.serialize(updatedImages, {
+                includeTimestamps: true,
+            });
+
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                images: updatedImages,
+                data: {
+                    images: serializedImages,
+                },
             });
         } catch (err) {
             console.log(err);

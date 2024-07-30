@@ -1,8 +1,9 @@
 import { StatusCodes } from "http-status-codes";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import productCategoryService from "../../services/products/productCategory.service.js";
-import productService from "../../services/products/product.service.js";
 import productBuilderService from "../../services/products/productBuilder.service.js";
+import CategorySerializer from "../../services/serializers/category.serializer.service.js";
+import ProductSerializer from "../../services/serializers/product.serializer.service.js";
 
 class ProductCategory {
     async getProductCategories(req, res) {
@@ -11,16 +12,23 @@ class ProductCategory {
             const { productID } = req.params;
 
             // Call services
-            let categories = await productCategoryService.getProductCategories(
-                productID
-            );
+            const categories =
+                await productCategoryService.getProductCategories(productID);
 
             // Serialize data
+            const serializedCategories = CategorySerializer.serialize(
+                categories,
+                {
+                    includeTimestamps: req.admin ? true : false,
+                }
+            );
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                categories: categories,
+                data: {
+                    categories: serializedCategories,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -46,17 +54,22 @@ class ProductCategory {
             const { categories } = req.body;
 
             // Call services
-            let product = await productBuilderService.addCategories(
+            const product = await productBuilderService.addCategories(
                 productID,
                 categories
             );
 
             // Serialize data
+            const serializedProduct = ProductSerializer.serialize(product, {
+                includeTimestamps: true,
+            });
 
             // Response
             res.status(StatusCodes.CREATED).json({
                 success: true,
-                product: product,
+                data: {
+                    product: serializedProduct,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -82,17 +95,22 @@ class ProductCategory {
             const { categories } = req.body;
 
             // Call services
-            let product = await productCategoryService.updateCategory(
+            const product = await productCategoryService.updateCategory(
                 productID,
                 categories
             );
 
             // Serialize data
+            const serializedProduct = ProductSerializer.serialize(product, {
+                includeTimestamps: true,
+            });
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                product: product,
+                data: {
+                    product: serializedProduct,
+                },
             });
         } catch (err) {
             console.log(err);
