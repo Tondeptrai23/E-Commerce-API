@@ -6,6 +6,7 @@ import Order from "../../models/shopping/order.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import productCategoryService from "../products/productCategory.service.js";
 import { flattenArray } from "../../utils/utils.js";
+import Variant from "../../models/products/variant.model.js";
 
 class CouponService {
     /**
@@ -153,6 +154,14 @@ class CouponService {
                     break;
             }
         } else if (coupon.target === "single") {
+            if (!order.products) {
+                order = await Order.findByPk(order.orderID, {
+                    include: {
+                        model: Variant,
+                        as: "products",
+                    },
+                });
+            }
             const products = order.products;
             const supportCategories = coupon.categories;
 
@@ -178,11 +187,13 @@ class CouponService {
             // Calculate the total amount
             for (const product of products) {
                 if (supportProducts.includes(product.productID)) {
+                    let price = product.discountPrice ?? product.price;
+
                     switch (coupon.discountType) {
                         case "percentage":
                             totalAmount -=
                                 (coupon.discountValue / 100) *
-                                product.price *
+                                price *
                                 product.orderItem.quantity;
                             break;
                         case "fixed":

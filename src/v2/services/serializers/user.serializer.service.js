@@ -20,6 +20,7 @@ const UserSerializer = new Entity({
     createdAt: [
         {
             type: "date",
+            format: "iso",
         },
         function (obj, options) {
             if (options.includeTimestamps) {
@@ -31,6 +32,7 @@ const UserSerializer = new Entity({
     updatedAt: [
         {
             type: "date",
+            format: "iso",
         },
         function (obj, options) {
             if (options.includeTimestamps) {

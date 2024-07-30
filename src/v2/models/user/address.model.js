@@ -30,10 +30,6 @@ ShippingAddress.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        phoneNumber: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
     },
     {
         sequelize,

@@ -117,8 +117,8 @@ describe("ProductSerializer", () => {
                 productID: "1",
                 name: "Product",
                 description: "Description",
-                createdAt: new Date(date),
-                updatedAt: new Date(date),
+                createdAt: new Date(date).toISOString(),
+                updatedAt: new Date(date).toISOString(),
                 images: [
                     expect.objectContaining({
                         imageID: "1",
@@ -126,8 +126,8 @@ describe("ProductSerializer", () => {
                         url: "http://example.com/image.jpg",
                         displayOrder: 1,
                         productID: "1",
-                        updatedAt: new Date(date),
-                        createdAt: new Date(date),
+                        updatedAt: new Date(date).toISOString(),
+                        createdAt: new Date(date).toISOString(),
                     }),
                 ],
                 variants: [
@@ -141,8 +141,8 @@ describe("ProductSerializer", () => {
                             color: "Red",
                             size: "M",
                         },
-                        createdAt: new Date(date),
-                        updatedAt: new Date(date),
+                        createdAt: new Date(date).toISOString(),
+                        updatedAt: new Date(date).toISOString(),
                     }),
                 ],
                 categories: ["Category"],

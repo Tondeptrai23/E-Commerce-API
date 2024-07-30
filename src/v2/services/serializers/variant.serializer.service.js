@@ -44,7 +44,8 @@ const VariantSerializer = new Entity({
 
     createdAt: [
         {
-            type: "Date",
+            type: "date",
+            format: "iso",
         },
         function (obj, options) {
             if (options.includeTimestamps) {
@@ -55,7 +56,8 @@ const VariantSerializer = new Entity({
     ],
     updatedAt: [
         {
-            type: "Date",
+            type: "date",
+            format: "iso",
         },
         function (obj, options) {
             if (options.includeTimestamps) {

@@ -82,8 +82,8 @@ describe("VariantSerializer", () => {
                     color: "Red",
                     size: "M",
                 },
-                createdAt: new Date(date),
-                updatedAt: new Date(date),
+                createdAt: new Date(date).toISOString(),
+                updatedAt: new Date(date).toISOString(),
             })
         );
     });

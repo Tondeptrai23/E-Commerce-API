@@ -2,7 +2,9 @@ import Variant from "../../models/products/variant.model.js";
 import ShippingAddress from "../../models/user/address.model.js";
 import Order from "../../models/shopping/order.model.js";
 import User from "../../models/user/user.model.js";
+import Coupon from "../../models/shopping/coupon.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
+import ProductImage from "../../models/products/productImage.model.js";
 
 class OrderService {
     /**
@@ -18,10 +20,26 @@ class OrderService {
                 userID: user.userID,
                 status: "pending",
             },
-            include: {
-                model: Variant,
-                as: "products",
-            },
+            include: [
+                {
+                    model: Variant,
+                    as: "products",
+                    include: {
+                        model: ProductImage,
+                        as: "image",
+                        attributes: ["url"],
+                    },
+                },
+                {
+                    model: ShippingAddress,
+                    as: "shippingAddress",
+                },
+                {
+                    model: Coupon,
+                    as: "coupon",
+                    attributes: ["code"],
+                },
+            ],
         });
 
         if (!order) {
@@ -38,10 +56,26 @@ class OrderService {
      */
     async getOrders(user) {
         const orders = await user.getOrders({
-            include: {
-                model: Variant,
-                as: "products",
-            },
+            include: [
+                {
+                    model: Variant,
+                    as: "products",
+                    include: {
+                        model: ProductImage,
+                        as: "image",
+                        attributes: ["url"],
+                    },
+                },
+                {
+                    model: ShippingAddress,
+                    as: "shippingAddress",
+                },
+                {
+                    model: Coupon,
+                    as: "coupon",
+                    attributes: ["code"],
+                },
+            ],
         });
 
         return orders;
@@ -61,10 +95,26 @@ class OrderService {
                 userID: user.userID,
                 orderID: orderID,
             },
-            include: {
-                model: Variant,
-                as: "products",
-            },
+            include: [
+                {
+                    model: Variant,
+                    as: "products",
+                    include: {
+                        model: ProductImage,
+                        as: "image",
+                        attributes: ["url"],
+                    },
+                },
+                {
+                    model: ShippingAddress,
+                    as: "shippingAddress",
+                },
+                {
+                    model: Coupon,
+                    as: "coupon",
+                    attributes: ["code"],
+                },
+            ],
         });
         if (!order) {
             throw new ResourceNotFoundError("Order not found");
@@ -107,7 +157,7 @@ class OrderService {
                 throw new ResourceNotFoundError("Address not found");
             }
             order.shippingAddressID = shippingAddress.addressID;
-            order.dataValues.shippingAddress = shippingAddress;
+            order.shippingAddress = shippingAddress;
         }
 
         if (orderData.message) {

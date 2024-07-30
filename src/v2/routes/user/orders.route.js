@@ -33,7 +33,7 @@ userOrderRoute.get(
 );
 
 userOrderRoute.patch(
-    "/pending/address",
+    "/pending",
     validator.validatePatchOrder,
     validator.handleValidationErrors,
     verifyToken,

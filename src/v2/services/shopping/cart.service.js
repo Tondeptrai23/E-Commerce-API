@@ -6,6 +6,8 @@ import { ResourceNotFoundError } from "../../utils/error.js";
 import ShippingAddress from "../../models/user/address.model.js";
 import OrderItem from "../../models/shopping/orderItem.model.js";
 import { Op } from "sequelize";
+import ProductImage from "../../models/products/productImage.model.js";
+import Coupon from "../../models/shopping/coupon.model.js";
 
 /**
  * Service class for managing the user's shopping cart.
@@ -35,7 +37,31 @@ class CartService {
      * @returns {Promise<CartItem[]>} The cart items.
      */
     async getCart(user) {
-        const cart = await user.getCartItems();
+        const cart = (
+            await User.findByPk(user.userID, {
+                attributes: [],
+                where: {
+                    userID: user.userID,
+                },
+                include: [
+                    {
+                        model: Variant,
+                        as: "cartItems",
+                        attributes: [
+                            "productID",
+                            "variantID",
+                            "price",
+                            "discountPrice",
+                        ],
+                        include: {
+                            model: ProductImage,
+                            as: "image",
+                            attributes: ["url"],
+                        },
+                    },
+                ],
+            })
+        ).cartItems;
 
         return cart;
     }
@@ -59,6 +85,7 @@ class CartService {
                 },
             },
         });
+
         if (cart.length === 0) {
             throw new ResourceNotFoundError("No cart items found");
         }
@@ -109,10 +136,26 @@ class CartService {
         });
 
         return await Order.findByPk(newOrder.orderID, {
-            include: {
-                model: Variant,
-                as: "products",
-            },
+            include: [
+                {
+                    model: Variant,
+                    as: "products",
+                    include: {
+                        model: ProductImage,
+                        as: "image",
+                        attributes: ["url"],
+                    },
+                },
+                {
+                    model: ShippingAddress,
+                    as: "shippingAddress",
+                },
+                {
+                    model: Coupon,
+                    as: "coupon",
+                    attributes: ["code"],
+                },
+            ],
         });
     }
 
@@ -124,7 +167,7 @@ class CartService {
      * @returns {Promise<CartItem>} The updated cart item.
      * @throws {ResourceNotFoundError} If the variant is not found.
      */
-    async addToCart(user, variantID) {
+    async addToCart(user, variantID, quantity) {
         const variant = await Variant.findByPk(variantID);
         if (!variant) {
             throw new ResourceNotFoundError("Variant not found");
@@ -133,13 +176,13 @@ class CartService {
         let cartItem = await this.findCartItem(user, variantID);
 
         if (cartItem) {
-            cartItem.quantity += 1;
+            cartItem.quantity += quantity;
             cartItem = await cartItem.save();
         } else {
             cartItem = await CartItem.create({
                 userID: user.userID,
                 variantID: variantID,
-                quantity: 1,
+                quantity: quantity,
             });
         }
 

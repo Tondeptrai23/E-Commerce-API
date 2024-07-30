@@ -45,8 +45,8 @@ describe("ImageSerializer", () => {
             thumbnail: "https://example.com/thumbnail.jpg",
             productID: "1",
             displayOrder: 1,
-            createdAt: new Date(date),
-            updatedAt: new Date(date),
+            createdAt: new Date(date).toISOString(),
+            updatedAt: new Date(date).toISOString(),
         });
     });
 
@@ -67,8 +67,8 @@ describe("ImageSerializer", () => {
                 thumbnail: "https://example.com/thumbnail2.jpg",
                 productID: "1",
                 displayOrder: 2,
-                createdAt: new Date(date),
-                updatedAt: new Date(date),
+                createdAt: new Date(date).toISOString(),
+                updatedAt: new Date(date).toISOString(),
             },
         ];
 

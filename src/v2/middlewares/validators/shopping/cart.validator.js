@@ -2,20 +2,14 @@ import { body } from "express-validator";
 import { validateInteger, validateMinValue } from "../utils.validator.js";
 
 const validateAddToCart = [
-    body("variantID")
+    body("quantity")
         .notEmpty()
-        .withMessage("Variant ID is required")
-        .isString()
-        .withMessage("Variant ID should be a string"),
+        .withMessage("Quantity is required")
+        .custom(validateInteger("Quantity"))
+        .custom(validateMinValue("Quantity", 1)),
 ];
 
 const validateUpdateCart = [
-    body("variantID")
-        .notEmpty()
-        .withMessage("Variant ID is required")
-        .isString()
-        .withMessage("Variant ID should be a string"),
-
     body("quantity")
         .notEmpty()
         .withMessage("Quantity is required")

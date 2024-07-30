@@ -71,12 +71,13 @@ describe("CartService", () => {
 
             const updatedCartItem = await cartService.addToCart(
                 user,
-                variantID
+                variantID,
+                5
             );
 
             expect(updatedCartItem).toBeDefined();
             expect(updatedCartItem.variantID).toEqual(variantID);
-            expect(updatedCartItem.quantity).toBeGreaterThan(0);
+            expect(updatedCartItem.quantity).toBeGreaterThanOrEqual(5);
         });
 
         test("should increment the quantity of an existing variant in the user's cart", async () => {
@@ -89,12 +90,13 @@ describe("CartService", () => {
 
             const updatedCartItem = await cartService.addToCart(
                 user,
-                variantID
+                variantID,
+                10
             );
 
             expect(updatedCartItem).toBeDefined();
             expect(updatedCartItem.variantID).toEqual(variantID);
-            expect(updatedCartItem.quantity).toBeGreaterThan(quantity);
+            expect(updatedCartItem.quantity).toEqual(quantity + 10);
         });
 
         test("should throw an error if the variant is not found", async () => {

@@ -5,7 +5,7 @@ describe("validateAddToCart", () => {
     test("should return empty error array if all fields are valid", async () => {
         const req = {
             body: {
-                variantID: "VariantID",
+                quantity: 1,
             },
         };
 
@@ -17,10 +17,30 @@ describe("validateAddToCart", () => {
         expect(errors.isEmpty()).toBe(true);
     });
 
-    test("should return error if variantID is not a string", async () => {
+    test("should return error if quantity is missing", async () => {
+        const req = {
+            body: {},
+        };
+
+        for (const validationChain of validator.validateAddToCart) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Quantity is required",
+                }),
+            ])
+        );
+    });
+
+    test("should return error if quantity is not an integer", async () => {
         const req = {
             body: {
-                variantID: 123,
+                quantity: 1.25,
             },
         };
 
@@ -33,7 +53,29 @@ describe("validateAddToCart", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Variant ID should be a string",
+                    msg: "Quantity should be an integer",
+                }),
+            ])
+        );
+    });
+
+    test("should return error if quantity is less than 1", async () => {
+        const req = {
+            body: {
+                quantity: 0,
+            },
+        };
+
+        for (const validationChain of validator.validateAddToCart) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Quantity should be greater than or equal to 1",
                 }),
             ])
         );
@@ -44,7 +86,6 @@ describe("validateUpdateCart", () => {
     test("should return empty error array if all fields are valid", async () => {
         const req = {
             body: {
-                variantID: "VariantID",
                 quantity: 1,
             },
         };
@@ -57,12 +98,9 @@ describe("validateUpdateCart", () => {
         expect(errors.isEmpty()).toBe(true);
     });
 
-    test("should return error if variantID is not a string", async () => {
+    test("should return error if quantity is missing", async () => {
         const req = {
-            body: {
-                variantID: 123,
-                quantity: 1,
-            },
+            body: {},
         };
 
         for (const validationChain of validator.validateUpdateCart) {
@@ -74,7 +112,7 @@ describe("validateUpdateCart", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Variant ID should be a string",
+                    msg: "Quantity is required",
                 }),
             ])
         );
@@ -83,7 +121,6 @@ describe("validateUpdateCart", () => {
     test("should return error if quantity is not an integer", async () => {
         const req = {
             body: {
-                variantID: "VariantID",
                 quantity: 1.25,
             },
         };
@@ -106,7 +143,6 @@ describe("validateUpdateCart", () => {
     test("should return error if quantity is less than 1", async () => {
         const req = {
             body: {
-                variantID: "VariantID",
                 quantity: 0,
             },
         };

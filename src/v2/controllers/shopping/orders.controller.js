@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import orderService from "../../services/shopping/order.service.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import couponService from "../../services/shopping/coupon.service.js";
+import OrderSerializer from "../../services/serializers/order.serializer.service.js";
 
 class OrderController {
     async getOrders(req, res) {
@@ -11,11 +12,16 @@ class OrderController {
             const orders = await orderService.getOrders(req.user);
 
             // Serialize data
+            const serializedOrders = OrderSerializer.parse(orders, {
+                includeTimestamps: true,
+            });
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                orders: orders,
+                data: {
+                    orders: serializedOrders,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -32,14 +38,20 @@ class OrderController {
             const { orderID } = req.params;
 
             // Call service
-            let order = await orderService.getOrder(req.user, orderID);
+            const order = await orderService.getOrder(req.user, orderID);
 
             // Serialize data
+            const serializedOrder = OrderSerializer.parse(order, {
+                includeTimestamps: true,
+                detailAddress: true,
+            });
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                order: order,
+                data: {
+                    order: serializedOrder,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -84,11 +96,16 @@ class OrderController {
             });
 
             // Serialize data
+            const serializedOrder = OrderSerializer.parse(order, {
+                detailAddress: true,
+            });
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                order: order,
+                data: {
+                    order: serializedOrder,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -117,11 +134,16 @@ class OrderController {
             order = await couponService.applyCoupon(order, couponCode);
 
             // Serailize data
+            const serializedOrder = OrderSerializer.parse(order, {
+                detailAddress: true,
+            });
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                order: order,
+                data: {
+                    order: serializedOrder,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -144,14 +166,20 @@ class OrderController {
         try {
             // Call service
             const order = await orderService.getPendingOrder(req.user);
-            let coupons = await couponService.getRecommendedCoupons(order);
+            const coupons = await couponService.getRecommendedCoupons(order);
 
             // Serialize data
+            coupons.forEach((coupon) => {
+                coupon.code = coupon.coupon.code;
+                coupon.coupon = undefined;
+            });
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                coupons: coupons,
+                data: {
+                    coupons: coupons,
+                },
             });
         } catch (err) {
             console.log(err);

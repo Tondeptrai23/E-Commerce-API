@@ -15,6 +15,8 @@ import CartItem from "./models/shopping/cartItem.model.js";
 import ProductCategory from "./models/products/productCategory.model.js";
 import userService from "./services/auth/user.service.js";
 import ShippingAddress from "./models/user/address.model.js";
+import orderService from "./services/shopping/order.service.js";
+import couponService from "./services/shopping/coupon.service.js";
 
 // Seed data for a fresh database for a clothes store
 const seedData = async () => {
@@ -330,7 +332,6 @@ const seedVariant = async () => {
             price: 10.0,
             stock: 5,
             sku: "TSHIRT1-S-WHITE",
-            imageID: 103,
             productID: 1,
             discountPrice: 8.0,
         },
@@ -1037,6 +1038,9 @@ const seedOrderItem = async () => {
             { where: { orderID: order.orderID } }
         );
     }
+
+    await couponService.applyCoupon(await Order.findByPk("1"), "10OFF");
+    await couponService.applyCoupon(await Order.findByPk("2"), "20OFF_SHORTS");
 };
 
 const seedCartItem = async () => {

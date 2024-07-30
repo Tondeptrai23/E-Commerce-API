@@ -10,7 +10,8 @@ const CategorySerializer = new Entity({
     parentID: { type: "string" },
     createdAt: [
         {
-            type: "Date",
+            type: "date",
+            format: "iso",
         },
         function (obj, options) {
             if (options.includeTimestamps) {
@@ -21,7 +22,8 @@ const CategorySerializer = new Entity({
     ],
     updatedAt: [
         {
-            type: "Date",
+            type: "date",
+            format: "iso",
         },
         function (obj, options) {
             if (options.includeTimestamps) {

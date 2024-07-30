@@ -38,7 +38,8 @@ const ProductSerializer = new Entity({
 
     createdAt: [
         {
-            type: "Date",
+            type: "date",
+            format: "iso",
         },
         function (obj, options) {
             if (options.includeTimestamps) {
@@ -49,11 +50,12 @@ const ProductSerializer = new Entity({
     ],
     updatedAt: [
         {
-            type: "Date",
+            type: "date",
+            format: "iso",
         },
         function (obj, options) {
             if (options.includeTimestamps) {
-                return obj.createdAt;
+                return obj.updatedAt;
             }
             return undefined;
         },

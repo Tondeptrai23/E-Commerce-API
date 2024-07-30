@@ -1,6 +1,7 @@
 import { ResourceNotFoundError } from "../../utils/error.js";
 import { StatusCodes } from "http-status-codes";
 import couponService from "../../services/shopping/coupon.service.js";
+import CouponSerializer from "../../services/serializers/coupon.serializer.service.js";
 
 class CouponController {
     async getCoupons(req, res) {
@@ -14,11 +15,14 @@ class CouponController {
             });
 
             // Serialize data
+            const serializedCoupons = CouponSerializer.parse(coupons);
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                coupons: coupons,
+                data: {
+                    coupons: serializedCoupons,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -42,11 +46,14 @@ class CouponController {
             });
 
             // Serialize data
+            const serializedCoupon = CouponSerializer.parse(coupon);
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                coupon: coupon,
+                data: {
+                    coupon: serializedCoupon,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -90,11 +97,14 @@ class CouponController {
             });
 
             // Serialize data
+            const serializedCoupon = CouponSerializer.parse(coupon);
 
             // Response
             res.status(StatusCodes.CREATED).json({
                 success: true,
-                coupon: coupon,
+                data: {
+                    coupon: serializedCoupon,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -140,11 +150,14 @@ class CouponController {
             });
 
             // Serialize data
+            const serializedCoupon = CouponSerializer.parse(coupon);
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                coupon: coupon,
+                data: {
+                    coupon: serializedCoupon,
+                },
             });
         } catch (err) {
             console.log(err);
@@ -181,11 +194,14 @@ class CouponController {
             });
 
             // Serialize data
+            const serializedCoupon = CouponSerializer.parse(coupon);
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                coupon: coupon,
+                data: {
+                    coupon: serializedCoupon,
+                },
             });
         } catch (err) {
             console.log(err);

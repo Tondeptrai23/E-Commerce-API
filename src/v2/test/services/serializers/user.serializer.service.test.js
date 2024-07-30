@@ -42,8 +42,8 @@ describe("UserSerializer", () => {
             name: "Random User",
             avatar: "http://example.com/avatar.jpg",
             role: "user",
-            createdAt: new Date(date),
-            updatedAt: new Date(date),
+            createdAt: new Date(date).toISOString(),
+            updatedAt: new Date(date).toISOString(),
         });
     });
 

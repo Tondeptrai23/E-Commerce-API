@@ -88,8 +88,8 @@ describe("Category Serializer", () => {
             description: "Description 1",
             parentID: "2",
 
-            createdAt: new Date(date),
-            updatedAt: new Date(date),
+            createdAt: new Date(date).toISOString(),
+            updatedAt: new Date(date).toISOString(),
         });
     });
 

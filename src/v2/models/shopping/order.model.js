@@ -28,12 +28,12 @@ Order.init(
             allowNull: true,
         },
         subTotal: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.FLOAT,
             allowNull: false,
             defaultValue: 0,
         },
         finalTotal: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.FLOAT,
             allowNull: false,
             defaultValue: 0,
         },
