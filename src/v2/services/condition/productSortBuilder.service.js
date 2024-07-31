@@ -8,10 +8,9 @@ import SortBuilder from "./sortBuilder.service.js";
  * const sortConditions = new ProductSortBuilder(query).build();
  */
 export default class ProductSortBuilder extends SortBuilder {
-    #mapping;
     constructor(requestQuery) {
         super(requestQuery);
-        this.#mapping = {
+        this._map = {
             name: ["name"],
             createdAt: ["createdAt"],
             updatedAt: ["updatedAt"],
@@ -20,17 +19,5 @@ export default class ProductSortBuilder extends SortBuilder {
             discountPrice: ["variants", "discountPrice"],
             stock: ["variants", "stock"],
         };
-    }
-
-    /**
-     * @summary Get the mapping of the field names in the request query to the field names in the database
-     *
-     * @protected
-     * @param {string} name the name of the field in the request query
-     * @returns {Object} the mapping of the field names in the request query to the field names in the database
-     *
-     */
-    _mapping(name) {
-        return this.#mapping[name];
     }
 }

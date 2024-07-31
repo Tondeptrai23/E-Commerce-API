@@ -242,6 +242,57 @@ describe("CouponService", () => {
                 ).toBe(true);
             }
         });
+
+        //Sorting coupons
+        test("Get all coupons with sorting", async () => {
+            const coupons = await couponService.getCoupons({
+                sort: "discountValue",
+            });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+
+            const sortedCoupons = [...coupons].sort(
+                (a, b) => a.discountValue - b.discountValue
+            );
+            expect(coupons).toEqual(sortedCoupons);
+        });
+
+        test("Get all coupons with sorting 2", async () => {
+            const coupons = await couponService.getCoupons({
+                sort: "-discountValue",
+            });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+
+            const sortedCoupons = [...coupons].sort(
+                (a, b) => b.discountValue - a.discountValue
+            );
+            expect(coupons).toEqual(sortedCoupons);
+        });
+
+        //Filtering and sorting coupons
+        test("Get all coupons with filtering and sorting", async () => {
+            const coupons = await couponService.getCoupons({
+                discountType: "percentage",
+                sort: "discountValue",
+            });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+            expect(
+                coupons.every((coupon) => coupon.discountType === "percentage")
+            ).toBe(true);
+
+            const sortedCoupons = [...coupons].sort(
+                (a, b) => a.discountValue - b.discountValue
+            );
+            expect(coupons).toEqual(sortedCoupons);
+        });
     });
 
     describe("getCoupon", () => {
@@ -324,7 +375,7 @@ describe("CouponService", () => {
 
     describe("deleteCoupon", () => {
         test("Delete a coupon", async () => {
-            const couponID = "2";
+            const couponID = "9";
 
             await couponService.deleteCoupon(couponID);
 
@@ -509,7 +560,7 @@ describe("CouponService", () => {
 
     describe("applyCoupon", () => {
         test("Apply a coupon to the order", async () => {
-            const couponCode = "SUMMER20";
+            const couponCode = "20OFF_SHORTS";
             const coupon = await Coupon.findOne({
                 where: { code: couponCode },
             });
@@ -523,14 +574,14 @@ describe("CouponService", () => {
             expect(updatedOrder).toBeDefined();
             expect(updatedOrder).toBeInstanceOf(Order);
             expect(updatedOrder.orderID).toBe(order.orderID);
-            expect(updatedOrder.finalTotal).toBe(54);
+            expect(updatedOrder.finalTotal).toBe(52);
 
             // Verify that the coupon is used
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // Add a delay of 1 second
+
             const updatedCoupon = await Coupon.findOne({
                 where: { code: couponCode },
             });
-
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // Add a delay of 1 second
             expect(updatedCoupon.timesUsed).toBe(coupon.timesUsed + 1);
         });
 

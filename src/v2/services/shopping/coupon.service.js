@@ -10,6 +10,7 @@ import { flattenArray } from "../../utils/utils.js";
 import Variant from "../../models/products/variant.model.js";
 import FilterBuilder from "../condition/filterBuilder.service.js";
 import categoryService from "../products/category.service.js";
+import CouponSortBuilder from "../condition/couponSortBuilder.service.js";
 
 class CouponService {
     /**
@@ -80,17 +81,23 @@ class CouponService {
             )
         );
 
+        const sortingCondition = new CouponSortBuilder(query).build();
+
         return {
             couponFilter,
             productFilter,
             categoryFilter,
+            sortingCondition,
         };
     }
 
     /**
+     * Get product IDs based on the product filter
      *
+     * @param {Object[]} productFilter The product filter
+     * @returns {Promise<String[]>} The list of product IDs
      */
-    async helper(productFilter) {
+    async #getProductIDs(productFilter) {
         if (productFilter.length === 0) {
             return null;
         }
@@ -113,7 +120,7 @@ class CouponService {
     async getCoupons(query) {
         const conditions = await this.#buildCondition(query);
 
-        const productIDs = await this.helper(conditions.productFilter);
+        const productIDs = await this.#getProductIDs(conditions.productFilter);
 
         const promotionCondition = {};
         if (productIDs) {
@@ -151,6 +158,7 @@ class CouponService {
                     attributes: ["name"],
                 },
             ],
+            order: conditions.sortingCondition,
         });
 
         return coupons;
@@ -327,7 +335,7 @@ class CouponService {
 
         // Update order
         if (order.couponID) {
-            Coupon.update(
+            await Coupon.update(
                 { timesUsed: Sequelize.literal("timesUsed - 1") },
                 {
                     where: {
@@ -337,7 +345,7 @@ class CouponService {
             );
         }
         order.couponID = coupon.couponID;
-        coupon.increment("timesUsed");
+        await coupon.increment("timesUsed");
 
         return await order.save();
     }

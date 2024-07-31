@@ -1,19 +1,20 @@
 import QueryToSequelizeConditionConverter from "./sequelizeConverter.service.js";
 
 /**
- * @summary A class to build sorting conditions from a request query
+ * @summary A Base class to build sorting conditions from a request query
  * to retrieve a sorted data from a Sequelize magic method.
+ * Must be extended by a child class to define the mapping of the field names
  *
  * @example
  * const sortConditions = new SortBuilder(query).build();
  *
  * @note
- * This class should be extended to implement the _mapping method
- * if the sort field names contain nested fields
+ * Child class should define _map property to map the field names in the request query
  */
 export default class SortBuilder extends QueryToSequelizeConditionConverter {
     constructor(requestQuery) {
         super(requestQuery);
+        this._map = {};
     }
 
     /**
@@ -51,13 +52,12 @@ export default class SortBuilder extends QueryToSequelizeConditionConverter {
 
     /**
      * @summary Get the mapping of the field names in the request query to the field names in the database
-     * Should be implemented in the child class
      *
      * @protected
      * @param {string} name the name of the field in the request query
      * @returns {Object[]} the mapping of the field names in the request query to the field names in the database
      */
     _mapping(name) {
-        return [name];
+        return this._map[name];
     }
 }
