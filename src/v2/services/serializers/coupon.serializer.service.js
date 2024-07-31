@@ -1,6 +1,10 @@
 import Entity from "./index.serializer.service.js";
 
 const CouponSerializer = new Entity({
+    couponID: {
+        type: "string",
+        required: true,
+    },
     code: {
         type: "string",
         required: true,

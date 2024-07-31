@@ -10,6 +10,272 @@ beforeAll(async () => {
 }, 15000);
 
 describe("CouponService", () => {
+    describe("getCoupons", () => {
+        test("Get all coupons", async () => {
+            const { coupons } = await couponService.getCoupons();
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+        });
+
+        //Filtering coupons
+        test("Get all coupons with filtering", async () => {
+            const { coupons } = await couponService.getCoupons({
+                discountType: "percentage",
+            });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+            expect(
+                coupons.every((coupon) => coupon.discountType === "percentage")
+            ).toBe(true);
+        });
+
+        test("Get all coupons with filtering 2", async () => {
+            const { coupons } = await couponService.getCoupons({
+                discountType: "fixed",
+                discountValue: "[gte]10",
+            });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+            expect(
+                coupons.every(
+                    (coupon) =>
+                        coupon.discountType === "fixed" &&
+                        coupon.discountValue >= 10
+                )
+            ).toBe(true);
+        });
+
+        test("Get all coupons with filtering 3", async () => {
+            const { coupons } = await couponService.getCoupons({
+                product: {
+                    name: "[like]T-shirt",
+                },
+            });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+            for (const coupon of coupons) {
+                expect(
+                    coupon.products.some((product) =>
+                        product.name.toLowerCase().includes("t-shirt")
+                    )
+                ).toBe(true);
+            }
+        });
+
+        test("Get all coupons with filtering 4", async () => {
+            const { coupons } = await couponService.getCoupons({
+                category: ["tops"],
+            });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+
+            for (const coupon of coupons) {
+                const categoryNames = coupon.categories.map(
+                    (category) => category.name
+                );
+                expect(
+                    categoryNames.some(
+                        (name) =>
+                            name === "tops" ||
+                            name === "blouse" ||
+                            name === "tshirt"
+                    )
+                ).toBe(true);
+            }
+        });
+
+        test("Get all coupons with filtering 5", async () => {
+            const { coupons } = await couponService.getCoupons({
+                product: {
+                    productID: ["1", "2"],
+                },
+                categories: ["shorts"],
+            });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+
+            for (const coupon of coupons) {
+                const productIDs = coupon.products.map(
+                    (product) => product.productID
+                );
+
+                const categoryNames = coupon.categories.map(
+                    (category) => category.name
+                );
+                expect(
+                    categoryNames.some((name) => name === "shorts") ||
+                        productIDs.some((id) => id === "1" || id === "2")
+                ).toBe(true);
+            }
+        });
+
+        //Sorting coupons
+        test("Get all coupons with sorting", async () => {
+            const { coupons } = await couponService.getCoupons({
+                sort: "discountValue",
+            });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+
+            const sortedCoupons = [...coupons].sort(
+                (a, b) => a.discountValue - b.discountValue
+            );
+            expect(coupons).toEqual(sortedCoupons);
+        });
+
+        test("Get all coupons with sorting 2", async () => {
+            const { coupons } = await couponService.getCoupons({
+                sort: "-discountValue",
+            });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+
+            const sortedCoupons = [...coupons].sort(
+                (a, b) => b.discountValue - a.discountValue
+            );
+            expect(coupons).toEqual(sortedCoupons);
+        });
+
+        //Filtering and sorting coupons
+        test("Get all coupons with filtering and sorting", async () => {
+            const { coupons } = await couponService.getCoupons({
+                discountType: "percentage",
+                sort: "discountValue",
+            });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+            expect(
+                coupons.every((coupon) => coupon.discountType === "percentage")
+            ).toBe(true);
+
+            const sortedCoupons = [...coupons].sort(
+                (a, b) => a.discountValue - b.discountValue
+            );
+            expect(coupons).toEqual(sortedCoupons);
+        });
+
+        //Pagination for coupons
+        test("Get all coupons with pagination", async () => {
+            const { coupons, currentPage, totalPages, totalItems } =
+                await couponService.getCoupons({
+                    page: 1,
+                    size: 5,
+                });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeLessThanOrEqual(5);
+            expect(currentPage).toBe(1);
+            expect(totalPages).toBeGreaterThan(0);
+            expect(totalItems).toBe(9);
+        });
+
+        test("Get all coupons with pagination 2", async () => {
+            const { coupons, currentPage, totalPages, totalItems } =
+                await couponService.getCoupons({
+                    page: 2,
+                    size: 3,
+                });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeLessThanOrEqual(5);
+            expect(currentPage).toBe(2);
+            expect(totalPages).toBe(3);
+            expect(totalItems).toBe(9);
+        });
+
+        test("Get all coupons with pagination 3", async () => {
+            const { coupons, currentPage, totalPages, totalItems } =
+                await couponService.getCoupons();
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeLessThanOrEqual(5);
+            expect(currentPage).toBe(1);
+            expect(totalPages).toBe(2);
+            expect(totalItems).toBe(9);
+        });
+
+        //Combining filtering, sorting, and pagination
+        test("Get all coupons with filtering, sorting, and pagination", async () => {
+            const { coupons, currentPage, totalPages, totalItems } =
+                await couponService.getCoupons({
+                    discountType: "percentage",
+                    sort: "discountValue",
+                    page: 1,
+                    size: 2,
+                });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeLessThanOrEqual(2);
+            expect(currentPage).toBe(1);
+            expect(totalPages).toBe(2);
+            expect(totalItems).toBe(4);
+            expect(
+                coupons.every((coupon) => coupon.discountType === "percentage")
+            ).toBe(true);
+
+            const sortedCoupons = [...coupons].sort(
+                (a, b) => a.discountValue - b.discountValue
+            );
+            expect(coupons).toEqual(sortedCoupons);
+        });
+    });
+
+    describe("getCoupon", () => {
+        test("Get a specific coupon by ID", async () => {
+            const couponID = "1";
+
+            const coupon = await couponService.getCoupon(couponID);
+
+            expect(coupon).toBeDefined();
+            expect(coupon.couponID).toBe(couponID);
+        });
+
+        test("Get a specific coupon by ID with associated models", async () => {
+            const couponID = "1";
+
+            const coupon = await couponService.getCoupon(couponID, {
+                includeAssociated: true,
+            });
+
+            expect(coupon).toBeDefined();
+            expect(coupon.couponID).toBe(couponID);
+            expect(coupon.categories).toBeDefined();
+            expect(Array.isArray(coupon.categories)).toBe(true);
+            expect(coupon.products).toBeDefined();
+            expect(Array.isArray(coupon.products)).toBe(true);
+        });
+
+        test("Get a specific coupon by ID throws error if not found", async () => {
+            const couponID = "999";
+
+            await expect(couponService.getCoupon(couponID)).rejects.toThrow(
+                ResourceNotFoundError
+            );
+        });
+    });
+
     describe("createCoupon", () => {
         test("Create a new coupon", async () => {
             const couponData = {
@@ -129,203 +395,6 @@ describe("CouponService", () => {
             expect(createdCoupon.maxUsage).toBe(couponData.maxUsage);
             expect(createdCoupon.dataValues.categories).toBeUndefined();
             expect(createdCoupon.dataValues.products).toBeUndefined();
-        });
-    });
-
-    describe("getCoupons", () => {
-        test("Get all coupons", async () => {
-            const coupons = await couponService.getCoupons();
-
-            expect(coupons).toBeDefined();
-            expect(Array.isArray(coupons)).toBe(true);
-            expect(coupons.length).toBeGreaterThan(0);
-        });
-
-        //Filtering coupons
-        test("Get all coupons with filtering", async () => {
-            const coupons = await couponService.getCoupons({
-                discountType: "percentage",
-            });
-
-            expect(coupons).toBeDefined();
-            expect(Array.isArray(coupons)).toBe(true);
-            expect(coupons.length).toBeGreaterThan(0);
-            expect(
-                coupons.every((coupon) => coupon.discountType === "percentage")
-            ).toBe(true);
-        });
-
-        test("Get all coupons with filtering 2", async () => {
-            const coupons = await couponService.getCoupons({
-                discountType: "fixed",
-                discountValue: "[gte]10",
-            });
-
-            expect(coupons).toBeDefined();
-            expect(Array.isArray(coupons)).toBe(true);
-            expect(coupons.length).toBeGreaterThan(0);
-            expect(
-                coupons.every(
-                    (coupon) =>
-                        coupon.discountType === "fixed" &&
-                        coupon.discountValue >= 10
-                )
-            ).toBe(true);
-        });
-
-        test("Get all coupons with filtering 3", async () => {
-            const coupons = await couponService.getCoupons({
-                product: {
-                    name: "[like]T-shirt",
-                },
-            });
-
-            expect(coupons).toBeDefined();
-            expect(Array.isArray(coupons)).toBe(true);
-            expect(coupons.length).toBeGreaterThan(0);
-            for (const coupon of coupons) {
-                expect(
-                    coupon.products.some((product) =>
-                        product.name.toLowerCase().includes("t-shirt")
-                    )
-                ).toBe(true);
-            }
-        });
-
-        test("Get all coupons with filtering 4", async () => {
-            const coupons = await couponService.getCoupons({
-                category: ["tops"],
-            });
-
-            expect(coupons).toBeDefined();
-            expect(Array.isArray(coupons)).toBe(true);
-            expect(coupons.length).toBeGreaterThan(0);
-
-            for (const coupon of coupons) {
-                const categoryNames = coupon.categories.map(
-                    (category) => category.name
-                );
-                expect(
-                    categoryNames.some(
-                        (name) =>
-                            name === "tops" ||
-                            name === "blouse" ||
-                            name === "tshirt"
-                    )
-                ).toBe(true);
-            }
-        });
-
-        test("Get all coupons with filtering 5", async () => {
-            const coupons = await couponService.getCoupons({
-                product: {
-                    productID: ["1", "2"],
-                },
-                categories: ["shorts"],
-            });
-
-            expect(coupons).toBeDefined();
-            expect(Array.isArray(coupons)).toBe(true);
-            expect(coupons.length).toBeGreaterThan(0);
-
-            for (const coupon of coupons) {
-                const productIDs = coupon.products.map(
-                    (product) => product.productID
-                );
-
-                const categoryNames = coupon.categories.map(
-                    (category) => category.name
-                );
-                expect(
-                    categoryNames.some((name) => name === "shorts") ||
-                        productIDs.some((id) => id === "1" || id === "2")
-                ).toBe(true);
-            }
-        });
-
-        //Sorting coupons
-        test("Get all coupons with sorting", async () => {
-            const coupons = await couponService.getCoupons({
-                sort: "discountValue",
-            });
-
-            expect(coupons).toBeDefined();
-            expect(Array.isArray(coupons)).toBe(true);
-            expect(coupons.length).toBeGreaterThan(0);
-
-            const sortedCoupons = [...coupons].sort(
-                (a, b) => a.discountValue - b.discountValue
-            );
-            expect(coupons).toEqual(sortedCoupons);
-        });
-
-        test("Get all coupons with sorting 2", async () => {
-            const coupons = await couponService.getCoupons({
-                sort: "-discountValue",
-            });
-
-            expect(coupons).toBeDefined();
-            expect(Array.isArray(coupons)).toBe(true);
-            expect(coupons.length).toBeGreaterThan(0);
-
-            const sortedCoupons = [...coupons].sort(
-                (a, b) => b.discountValue - a.discountValue
-            );
-            expect(coupons).toEqual(sortedCoupons);
-        });
-
-        //Filtering and sorting coupons
-        test("Get all coupons with filtering and sorting", async () => {
-            const coupons = await couponService.getCoupons({
-                discountType: "percentage",
-                sort: "discountValue",
-            });
-
-            expect(coupons).toBeDefined();
-            expect(Array.isArray(coupons)).toBe(true);
-            expect(coupons.length).toBeGreaterThan(0);
-            expect(
-                coupons.every((coupon) => coupon.discountType === "percentage")
-            ).toBe(true);
-
-            const sortedCoupons = [...coupons].sort(
-                (a, b) => a.discountValue - b.discountValue
-            );
-            expect(coupons).toEqual(sortedCoupons);
-        });
-    });
-
-    describe("getCoupon", () => {
-        test("Get a specific coupon by ID", async () => {
-            const couponID = "1";
-
-            const coupon = await couponService.getCoupon(couponID);
-
-            expect(coupon).toBeDefined();
-            expect(coupon.couponID).toBe(couponID);
-        });
-
-        test("Get a specific coupon by ID with associated models", async () => {
-            const couponID = "1";
-
-            const coupon = await couponService.getCoupon(couponID, {
-                includeAssociated: true,
-            });
-
-            expect(coupon).toBeDefined();
-            expect(coupon.couponID).toBe(couponID);
-            expect(coupon.categories).toBeDefined();
-            expect(Array.isArray(coupon.categories)).toBe(true);
-            expect(coupon.products).toBeDefined();
-            expect(Array.isArray(coupon.products)).toBe(true);
-        });
-
-        test("Get a specific coupon by ID throws error if not found", async () => {
-            const couponID = "999";
-
-            await expect(couponService.getCoupon(couponID)).rejects.toThrow(
-                ResourceNotFoundError
-            );
         });
     });
 

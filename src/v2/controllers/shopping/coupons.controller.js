@@ -7,16 +7,20 @@ class CouponController {
     async getCoupons(req, res) {
         try {
             // Call service
-            const coupons = await couponService.getCoupons(req.query);
+            const { coupons, currentPage, totalPages, totalItems } =
+                await couponService.getCoupons(req.query);
 
             // Serialize data
-            // const serializedCoupons = CouponSerializer.parse(coupons);
+            const serializedCoupons = CouponSerializer.parse(coupons);
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
                 data: {
-                    coupons: coupons,
+                    currentPage,
+                    totalPages,
+                    totalItems,
+                    coupons: serializedCoupons,
                 },
             });
         } catch (err) {
@@ -33,12 +37,9 @@ class CouponController {
         try {
             // Get param
             const { couponID } = req.params;
-            const { includeAssociated } = req.query;
 
             // Call service
-            const coupon = await couponService.getCoupon(couponID, {
-                includeAssociated: includeAssociated === "true",
-            });
+            const coupon = await couponService.getCoupon(couponID);
 
             // Serialize data
             const serializedCoupon = CouponSerializer.parse(coupon);

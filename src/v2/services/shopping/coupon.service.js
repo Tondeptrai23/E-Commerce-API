@@ -11,6 +11,8 @@ import Variant from "../../models/products/variant.model.js";
 import FilterBuilder from "../condition/filterBuilder.service.js";
 import categoryService from "../products/category.service.js";
 import CouponSortBuilder from "../condition/couponSortBuilder.service.js";
+import PaginationBuilder from "../condition/paginationBuilder.service.js";
+import { db } from "../../models/index.model.js";
 
 class CouponService {
     /**
@@ -56,11 +58,15 @@ class CouponService {
      * @returns {Object} The conditions
      */
     async #buildCondition(query) {
+        const paginationCondition = new PaginationBuilder(query).build();
+
         if (!query) {
             return {
                 couponFilter: [],
                 productFilter: [],
                 categoryFilter: [],
+                sortingCondition: [],
+                paginationCondition,
             };
         }
 
@@ -88,6 +94,7 @@ class CouponService {
             productFilter,
             categoryFilter,
             sortingCondition,
+            paginationCondition,
         };
     }
 
@@ -112,34 +119,70 @@ class CouponService {
     }
 
     /**
-     * Get all coupons
+     * Find satisfied coupon IDs based on the conditions
      *
-     * @param {Object} query The query to get
-     * @returns {Promise<Coupon[]>} The list of coupons
+     * @param {Object[]} couponFilter The coupon filter
+     * @param {Object} promotionCondition The promotion condition
+     * @returns {Promise<Object>} The count and list of satisfied coupon IDs
      */
-    async getCoupons(query) {
-        const conditions = await this.#buildCondition(query);
-
-        const productIDs = await this.#getProductIDs(conditions.productFilter);
-
-        const promotionCondition = {};
-        if (productIDs) {
-            promotionCondition["$products.productID$"] = productIDs;
-        }
-        if (conditions.categoryFilter.length > 0) {
-            promotionCondition["$categories.name$"] = conditions.categoryFilter;
-        }
-
-        const coupons = await Coupon.findAll({
-            subQuery: false,
+    async #findSatisfiedIDs(
+        couponFilter = [],
+        paginationCondition = {},
+        promotionCondition = {}
+    ) {
+        const { count, rows } = await Coupon.findAndCountAll({
+            distinct: true,
+            attributes: [
+                [db.literal("DISTINCT `coupon`.`couponID`"), "couponID"],
+            ],
             where: [
-                ...conditions.couponFilter,
+                ...couponFilter,
                 Object.keys(promotionCondition).length > 0
                     ? {
                           [Op.or]: promotionCondition,
                       }
                     : {},
             ],
+            include: [
+                {
+                    model: Product,
+                    as: "products",
+                    attributes: [],
+                    through: {
+                        attributes: [],
+                    },
+                },
+                {
+                    model: Category,
+                    as: "categories",
+                    through: {
+                        attributes: [],
+                    },
+                    attributes: [],
+                },
+            ],
+            ...paginationCondition,
+            subQuery: false,
+            raw: true,
+        });
+
+        const satisfiedIDs = rows.map((row) => row.couponID);
+
+        return { count, satisfiedIDs };
+    }
+
+    /**
+     * Fetch detailed information of coupons by satisfied IDs
+     *
+     * @param {Object[]} sortingCondition The sorting condition
+     * @param {Object[]} satisfiedIDs The satisfied IDs
+     * @returns {Promise<Object>} The list of coupons and pagination info
+     */
+    async #fetchDetailedCoupons(sortingCondition = [], satisfiedIDs = []) {
+        const coupons = await Coupon.findAll({
+            where: {
+                couponID: satisfiedIDs,
+            },
             include: [
                 {
                     model: Product,
@@ -158,10 +201,51 @@ class CouponService {
                     attributes: ["name"],
                 },
             ],
-            order: conditions.sortingCondition,
+            order: sortingCondition,
         });
 
         return coupons;
+    }
+
+    /**
+     * Get all coupons by query
+     *
+     * @param {Object} query The query to get
+     * @returns {Promise<Object>} The list of coupons and pagination info
+     */
+    async getCoupons(query) {
+        const conditions = await this.#buildCondition(query);
+
+        const productIDs = await this.#getProductIDs(conditions.productFilter);
+
+        const promotionCondition = {};
+        if (productIDs) {
+            promotionCondition["$products.productID$"] = productIDs;
+        }
+        if (conditions.categoryFilter.length > 0) {
+            promotionCondition["$categories.name$"] = conditions.categoryFilter;
+        }
+
+        const { count, satisfiedIDs } = await this.#findSatisfiedIDs(
+            conditions.couponFilter,
+            conditions.paginationCondition,
+            promotionCondition
+        );
+
+        const coupons = await this.#fetchDetailedCoupons(
+            conditions.sortingCondition,
+            satisfiedIDs
+        );
+
+        return {
+            currentPage:
+                conditions.paginationCondition.offset /
+                    conditions.paginationCondition.limit +
+                1,
+            totalPages: Math.ceil(count / conditions.paginationCondition.limit),
+            totalItems: count,
+            coupons,
+        };
     }
 
     /**
@@ -174,14 +258,26 @@ class CouponService {
      * @returns {Promise<Coupon>} The coupon
      * @throws {ResourceNotFoundError} If the coupon is not found
      */
-    async getCoupon(
-        couponID,
-        options = {
-            includeAssociated: false,
-        }
-    ) {
+    async getCoupon(couponID) {
         const coupon = await Coupon.findByPk(couponID, {
-            include: options.includeAssociated ? getIncludeOptions() : [],
+            include: [
+                {
+                    model: Product,
+                    as: "products",
+                    through: {
+                        attributes: [],
+                    },
+                    attributes: ["productID", "name"],
+                },
+                {
+                    model: Category,
+                    as: "categories",
+                    through: {
+                        attributes: [],
+                    },
+                    attributes: ["name"],
+                },
+            ],
         });
 
         if (!coupon) {

@@ -5,6 +5,7 @@ describe("Coupon Serializer", () => {
 
     test("should serialize coupon", () => {
         const coupon = {
+            couponID: "couponID",
             code: "CODE",
             discountType: "percentage",
             discountValue: 10,
@@ -41,6 +42,7 @@ describe("Coupon Serializer", () => {
         const serializedCoupon = CouponSerializer.parse(coupon);
 
         expect(serializedCoupon).toEqual({
+            couponID: "couponID",
             code: "CODE",
             discountType: "percentage",
             discountValue: 10,
@@ -64,6 +66,7 @@ describe("Coupon Serializer", () => {
 
     test("should serialize coupon without optional fields", () => {
         const coupon = {
+            couponID: "couponID",
             code: "CODE",
             discountType: "percentage",
             discountValue: 10,
@@ -73,6 +76,7 @@ describe("Coupon Serializer", () => {
         const serializedCoupon = CouponSerializer.parse(coupon);
 
         expect(serializedCoupon).toEqual({
+            couponID: "couponID",
             code: "CODE",
             discountType: "percentage",
             discountValue: 10,
