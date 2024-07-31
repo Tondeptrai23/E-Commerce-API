@@ -846,7 +846,7 @@ const seedCoupon = async () => {
             timesUsed: 0,
             maxUsage: 10,
             startDate: new Date("2024-06-01"),
-            endDate: new Date("2024-07-31"),
+            endDate: new Date("2024-08-31"),
         },
         {
             couponID: 2,
@@ -857,7 +857,7 @@ const seedCoupon = async () => {
             timesUsed: 3,
             maxUsage: 5,
             startDate: new Date("2024-06-01"),
-            endDate: new Date("2024-07-31"),
+            endDate: new Date("2024-08-31"),
         },
         {
             couponID: 3,
@@ -878,7 +878,7 @@ const seedCoupon = async () => {
             target: "all",
             minimumOrderAmount: 50,
             startDate: new Date("2024-06-01"),
-            endDate: new Date("2024-07-31"),
+            endDate: new Date("2024-08-31"),
         },
         {
             couponID: 5,
@@ -887,7 +887,7 @@ const seedCoupon = async () => {
             discountValue: 0,
             target: "single",
             startDate: new Date("2024-06-01"),
-            endDate: new Date("2024-07-31"),
+            endDate: new Date("2024-08-31"),
         },
         {
             couponID: 6,
@@ -898,7 +898,38 @@ const seedCoupon = async () => {
             timesUsed: 0,
             maxUsage: 20,
             startDate: new Date("2024-06-01"),
-            endDate: new Date("2024-07-31"),
+            endDate: new Date("2024-08-31"),
+        },
+        {
+            couponID: 7,
+            code: "FLASHSALE",
+            discountType: "percentage",
+            discountValue: 30,
+            target: "all",
+            timesUsed: 0,
+            maxUsage: 50,
+            startDate: new Date("2024-06-01"),
+            endDate: new Date("2024-06-30"),
+        },
+        {
+            couponID: 8,
+            code: "FREESHIPPING",
+            discountType: "fixed",
+            discountValue: 2,
+            target: "all",
+            startDate: new Date("2024-06-01"),
+            endDate: new Date("2024-06-30"),
+        },
+        {
+            couponID: 9,
+            code: "10OFF_SHORTS",
+            discountType: "percentage",
+            discountValue: 10,
+            target: "single",
+            timesUsed: 0,
+            maxUsage: 10,
+            startDate: new Date("2024-06-01"),
+            endDate: new Date("2024-08-31"),
         },
     ]);
 };
@@ -907,7 +938,9 @@ const seedCategoryCoupon = async () => {
     await CategoryCoupon.bulkCreate([
         { couponID: 2, categoryID: 10 },
         { couponID: 4, categoryID: 6 },
-        { couponID: 6, categoryID: 1 },
+        { couponID: 6, categoryID: 3 },
+        { couponID: 7, categoryID: 9 },
+        { couponID: 8, categoryID: 11 },
     ]);
 };
 
@@ -916,6 +949,22 @@ const seedProductCoupon = async () => {
         { couponID: 1, productID: 1 },
         { couponID: 1, productID: 2 },
         { couponID: 3, productID: 3 },
+        {
+            couponID: 7,
+            productID: 4,
+        },
+        {
+            couponID: 7,
+            productID: 5,
+        },
+        {
+            couponID: 9,
+            productID: 2,
+        },
+        {
+            couponID: 9,
+            productID: 4,
+        },
     ]);
 };
 

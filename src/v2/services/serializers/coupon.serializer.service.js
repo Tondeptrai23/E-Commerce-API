@@ -50,7 +50,7 @@ const CouponSerializer = new Entity({
             return obj.products.map((product) => {
                 return {
                     productID: product.productID,
-                    variantID: product.variantID,
+                    name: product.name,
                 };
             });
         },

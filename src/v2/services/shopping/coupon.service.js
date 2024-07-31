@@ -1,3 +1,4 @@
+import { toArray } from "../../utils/utils.js";
 import { Op, Sequelize } from "sequelize";
 import Category from "../../models/products/category.model.js";
 import Product from "../../models/products/product.model.js";
@@ -7,6 +8,8 @@ import { ResourceNotFoundError } from "../../utils/error.js";
 import productCategoryService from "../products/productCategory.service.js";
 import { flattenArray } from "../../utils/utils.js";
 import Variant from "../../models/products/variant.model.js";
+import FilterBuilder from "../condition/filterBuilder.service.js";
+import categoryService from "../products/category.service.js";
 
 class CouponService {
     /**
@@ -46,20 +49,108 @@ class CouponService {
     }
 
     /**
+     * Build conditions for the query
+     *
+     * @param {Object} query The query to build conditions for
+     * @returns {Object} The conditions
+     */
+    async #buildCondition(query) {
+        if (!query) {
+            return {
+                couponFilter: [],
+                productFilter: [],
+                categoryFilter: [],
+            };
+        }
+
+        const couponFilter = new FilterBuilder(query, "coupon").build();
+
+        const productFilter = new FilterBuilder(
+            query.product,
+            "product"
+        ).build();
+
+        const categoryFilter = flattenArray(
+            await Promise.all(
+                toArray(query.category).map(async (category) => {
+                    return await categoryService.getDescendantCategoriesByName(
+                        category
+                    );
+                })
+            )
+        );
+
+        return {
+            couponFilter,
+            productFilter,
+            categoryFilter,
+        };
+    }
+
+    /**
+     *
+     */
+    async helper(productFilter) {
+        if (productFilter.length === 0) {
+            return null;
+        }
+
+        const productIDs = (
+            await Product.findAll({
+                where: [...productFilter],
+                attributes: ["productID"],
+            })
+        ).map((product) => product.productID);
+        return productIDs;
+    }
+
+    /**
      * Get all coupons
      *
-     * @param {Object} options The options to get coupons
-     * @param {Boolean} options.includeAssociated Include associated models
-     *
+     * @param {Object} query The query to get
      * @returns {Promise<Coupon[]>} The list of coupons
      */
-    async getCoupons(
-        options = {
-            includeAssociated: false,
+    async getCoupons(query) {
+        const conditions = await this.#buildCondition(query);
+
+        const productIDs = await this.helper(conditions.productFilter);
+
+        const promotionCondition = {};
+        if (productIDs) {
+            promotionCondition["$products.productID$"] = productIDs;
         }
-    ) {
+        if (conditions.categoryFilter.length > 0) {
+            promotionCondition["$categories.name$"] = conditions.categoryFilter;
+        }
+
         const coupons = await Coupon.findAll({
-            include: options.includeAssociated ? getIncludeOptions() : [],
+            subQuery: false,
+            where: [
+                ...conditions.couponFilter,
+                Object.keys(promotionCondition).length > 0
+                    ? {
+                          [Op.or]: promotionCondition,
+                      }
+                    : {},
+            ],
+            include: [
+                {
+                    model: Product,
+                    as: "products",
+                    through: {
+                        attributes: [],
+                    },
+                    attributes: ["productID", "name"],
+                },
+                {
+                    model: Category,
+                    as: "categories",
+                    through: {
+                        attributes: [],
+                    },
+                    attributes: ["name"],
+                },
+            ],
         });
 
         return coupons;

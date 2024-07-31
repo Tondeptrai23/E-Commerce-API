@@ -141,20 +141,106 @@ describe("CouponService", () => {
             expect(coupons.length).toBeGreaterThan(0);
         });
 
-        test("Get all coupons with associated models", async () => {
+        //Filtering coupons
+        test("Get all coupons with filtering", async () => {
             const coupons = await couponService.getCoupons({
-                includeAssociated: true,
+                discountType: "percentage",
+            });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+            expect(
+                coupons.every((coupon) => coupon.discountType === "percentage")
+            ).toBe(true);
+        });
+
+        test("Get all coupons with filtering 2", async () => {
+            const coupons = await couponService.getCoupons({
+                discountType: "fixed",
+                discountValue: "[gte]10",
+            });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+            expect(
+                coupons.every(
+                    (coupon) =>
+                        coupon.discountType === "fixed" &&
+                        coupon.discountValue >= 10
+                )
+            ).toBe(true);
+        });
+
+        test("Get all coupons with filtering 3", async () => {
+            const coupons = await couponService.getCoupons({
+                product: {
+                    name: "[like]T-shirt",
+                },
+            });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+            for (const coupon of coupons) {
+                expect(
+                    coupon.products.some((product) =>
+                        product.name.toLowerCase().includes("t-shirt")
+                    )
+                ).toBe(true);
+            }
+        });
+
+        test("Get all coupons with filtering 4", async () => {
+            const coupons = await couponService.getCoupons({
+                category: ["tops"],
             });
 
             expect(coupons).toBeDefined();
             expect(Array.isArray(coupons)).toBe(true);
             expect(coupons.length).toBeGreaterThan(0);
 
-            const coupon = coupons[0];
-            expect(coupon.categories).toBeDefined();
-            expect(Array.isArray(coupon.categories)).toBe(true);
-            expect(coupon.products).toBeDefined();
-            expect(Array.isArray(coupon.products)).toBe(true);
+            for (const coupon of coupons) {
+                const categoryNames = coupon.categories.map(
+                    (category) => category.name
+                );
+                expect(
+                    categoryNames.some(
+                        (name) =>
+                            name === "tops" ||
+                            name === "blouse" ||
+                            name === "tshirt"
+                    )
+                ).toBe(true);
+            }
+        });
+
+        test("Get all coupons with filtering 5", async () => {
+            const coupons = await couponService.getCoupons({
+                product: {
+                    productID: ["1", "2"],
+                },
+                categories: ["shorts"],
+            });
+
+            expect(coupons).toBeDefined();
+            expect(Array.isArray(coupons)).toBe(true);
+            expect(coupons.length).toBeGreaterThan(0);
+
+            for (const coupon of coupons) {
+                const productIDs = coupon.products.map(
+                    (product) => product.productID
+                );
+
+                const categoryNames = coupon.categories.map(
+                    (category) => category.name
+                );
+                expect(
+                    categoryNames.some((name) => name === "shorts") ||
+                        productIDs.some((id) => id === "1" || id === "2")
+                ).toBe(true);
+            }
         });
     });
 

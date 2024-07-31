@@ -6,22 +6,17 @@ import CouponSerializer from "../../services/serializers/coupon.serializer.servi
 class CouponController {
     async getCoupons(req, res) {
         try {
-            // Get params
-            const { includeAssociated } = req.query;
-
             // Call service
-            const coupons = await couponService.getCoupons({
-                includeAssociated: includeAssociated === "true",
-            });
+            const coupons = await couponService.getCoupons(req.query);
 
             // Serialize data
-            const serializedCoupons = CouponSerializer.parse(coupons);
+            // const serializedCoupons = CouponSerializer.parse(coupons);
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
                 data: {
-                    coupons: serializedCoupons,
+                    coupons: coupons,
                 },
             });
         } catch (err) {

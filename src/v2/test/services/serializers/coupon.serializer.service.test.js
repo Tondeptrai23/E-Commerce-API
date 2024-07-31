@@ -20,16 +20,18 @@ describe("Coupon Serializer", () => {
             products: [
                 {
                     productID: "productID",
-                    variantID: "variantID",
+                    name: "name",
                     extraField: "extraField",
                 },
             ],
             categories: [
                 {
+                    categoryID: "categoryID",
                     name: "category1",
                     extraField: "extraField",
                 },
                 {
+                    categoryID: "categoryID",
                     name: "category2",
                     extraField: "extraField",
                 },
@@ -53,7 +55,7 @@ describe("Coupon Serializer", () => {
             products: [
                 {
                     productID: "productID",
-                    variantID: "variantID",
+                    name: "name",
                 },
             ],
             categories: ["category1", "category2"],
