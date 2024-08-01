@@ -8,6 +8,28 @@ import seedData from "./seedData.js";
 
 import { router } from "./routes/index.route.js";
 
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUI from "swagger-ui-express";
+
+const swaggerOptions = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "E-commerce API",
+            version: "2.0.0",
+            description: "A simple e-commerce API",
+        },
+        servers: [
+            {
+                url: `http://localhost:${process.env.PORT || 3000}/api/v2`,
+            },
+        ],
+    },
+    apis: ["./src/v2/routes/*.js", "./src/v2/routes/**/*.js"],
+};
+
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
+
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -26,6 +48,7 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 app.use("/api/v2", router);
 
 db.sync()
