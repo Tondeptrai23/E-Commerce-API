@@ -92,7 +92,7 @@ Product.belongsToMany(Category, {
 });
 
 // Category - <1, 1> - Category
-Category.hasOne(Category, {
+Category.belongsTo(Category, {
     foreignKey: {
         name: "parentID",
         allowNull: true,

@@ -1,6 +1,45 @@
 import Category from "../../models/products/category.model.js";
+import { ResourceNotFoundError } from "../../utils/error.js";
+import { Op } from "sequelize";
 
 class CategoryService {
+    /**
+     * Get all categories
+     *
+     * @param {Object} query the query object
+     * @returns {Promise<Category[]>} the categories that match the given options
+     */
+    async getCategories(query) {
+        const categories = await Category.findAll({});
+
+        return categories;
+    }
+
+    /**
+     * Get a category by name
+     *
+     * @param {String} name the category name to get
+     * @returns {Promise<Category>} the category that matches the given options
+     * @throws {ResourceNotFoundError} if the category does not exist
+     */
+    async getCategory(name) {
+        const category = await Category.findOne({
+            where: {
+                name: name,
+            },
+            include: {
+                model: Category,
+                as: "parent",
+            },
+        });
+
+        if (!category) {
+            throw new ResourceNotFoundError("Category not found");
+        }
+
+        return category;
+    }
+
     /**
      * Get all categories' names
      *
@@ -48,38 +87,37 @@ class CategoryService {
     /**
      * Get all descendant categories of a category by name
      *
-     * @param {String} categoryName the category name to get all categories from
+     * @param {String} name the category name to get all categories from
      * @returns {Promise<Category[]>} the categories that match the given options
+     * @throws {ResourceNotFoundError} if the category does not exist
      */
-    async getDescendantCategoriesByName(categoryName) {
+    async getDescendantCategoriesByName(name) {
         const category = await Category.findOne({
             where: {
-                name: categoryName,
+                name: name,
             },
         });
 
         if (!category) {
-            return [];
+            throw new ResourceNotFoundError("Category not found");
         }
 
         return [
-            category.name,
-            ...(await this.getDescendantCategories(category.categoryID)).map(
-                (category) => category.name
-            ),
+            category,
+            ...(await this.getDescendantCategories(category.categoryID)),
         ];
     }
 
     /**
      * Get all ascendant categories of a category
      *
-     * @param {String} categoryID the category ID to get all categories from
+     * @param {String} categoryInfo the category ID or category name to get all categories from
      * @returns {Promise<Category[]>} the categories that match the given options
      */
-    async getAscendantCategories(categoryID) {
+    async getAscendantCategories(categoryInfo) {
         const category = await Category.findOne({
             where: {
-                categoryID: categoryID,
+                [Op.or]: { categoryID: categoryInfo, name: categoryInfo },
             },
         });
 
@@ -95,6 +133,95 @@ class CategoryService {
         }
 
         return [category];
+    }
+
+    /**
+     * Create a category
+     *
+     * @param {Object} category the category object
+     * @returns {Promise<Category>} the created category
+     * @throws {ResourceNotFoundError} if the parent category does not exist
+     */
+    async createCategory(categoryData) {
+        if (categoryData.parent) {
+            const parent = await Category.findOne({
+                where: {
+                    [Op.or]: {
+                        name: categoryData.parent,
+                        categoryID: categoryData.parent,
+                    },
+                },
+            });
+
+            if (!parent) {
+                throw new ResourceNotFoundError(
+                    "Parent category does not exist"
+                );
+            }
+            categoryData.parentID = parent.categoryID;
+        }
+        return await Category.create(categoryData);
+    }
+
+    /**
+     * Update a category
+     *
+     * @param {String} name the category name to update
+     * @param {Object} category the category object
+     * @returns {Promise<Category>} the updated category
+     * @throws {ResourceNotFoundError} if the category or parent category does not exist
+     */
+    async updateCategory(name, categoryData) {
+        if (categoryData.parent) {
+            const parent = await Category.findOne({
+                where: {
+                    [Op.or]: {
+                        name: categoryData.parent,
+                        categoryID: categoryData.parent,
+                    },
+                },
+            });
+
+            if (!parent) {
+                throw new ResourceNotFoundError(
+                    "Parent category does not exist"
+                );
+            }
+
+            categoryData.parentID = parent.categoryID;
+        }
+
+        const category = await Category.findOne({
+            where: {
+                name: name,
+            },
+        });
+
+        if (!category) {
+            throw new ResourceNotFoundError("Category not found");
+        }
+
+        return await category.update(categoryData);
+    }
+
+    /**
+     * Delete a category
+     *
+     * @param {String} name the category name to delete
+     * @throws {ResourceNotFoundError} if the category does not exist
+     */
+    async deleteCategory(name) {
+        const category = await Category.findOne({
+            where: {
+                name: name,
+            },
+        });
+
+        if (!category) {
+            throw new ResourceNotFoundError("Category not found");
+        }
+
+        await category.destroy();
     }
 }
 

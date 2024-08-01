@@ -11,6 +11,7 @@ import adminCouponRoute from "./admin/coupons.route.js";
 import userCartRoute from "./user/cart.route.js";
 import userOrderRoute from "./user/orders.route.js";
 import userProductRoute from "./user/products.route.js";
+import userCategoryRoute from "./user/categories.route.js";
 
 const router = Router();
 
@@ -19,6 +20,7 @@ router.use("/auth", authRoute);
 router.use("/cart", userCartRoute);
 router.use("/orders", userOrderRoute);
 router.use("/products", userProductRoute);
+router.use("/categories", userCategoryRoute);
 
 router.use("/admin", adminCartRoute);
 router.use("/admin", adminProductRoute);

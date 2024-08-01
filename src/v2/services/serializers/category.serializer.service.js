@@ -8,6 +8,19 @@ const CategorySerializer = new Entity({
     name: { type: "string" },
     description: { type: "string" },
     parentID: { type: "string" },
+    parent: [
+        {
+            type: "object",
+            default: undefined,
+        },
+        function (obj, options) {
+            if (!obj.parent) {
+                return undefined;
+            }
+
+            return CategorySerializer.parse(obj.parent, options);
+        },
+    ],
     createdAt: [
         {
             type: "date",

@@ -178,9 +178,18 @@ class ProductService {
         const categoryFilter = flattenArray(
             await Promise.all(
                 toArray(query.category).map(async (category) => {
-                    return await categoryService.getDescendantCategoriesByName(
-                        category
-                    );
+                    try {
+                        const categoryNames = (
+                            await categoryService.getDescendantCategoriesByName(
+                                category
+                            )
+                        ).map((category) => category.name);
+
+                        return categoryNames;
+                    } catch (err) {
+                        // If the category does not exist, return an empty array
+                        return [];
+                    }
                 })
             )
         );

@@ -6,20 +6,14 @@ const adminCategoryRoute = Router();
 
 adminCategoryRoute.get("/categories", categoryController.getCategories);
 
-adminCategoryRoute.get(
-    "/categories/:categoryID",
-    categoryController.getCategory
-);
+adminCategoryRoute.get("/categories/:name", categoryController.getCategory);
 
 adminCategoryRoute.post("/categories", categoryController.addCategory);
 
-adminCategoryRoute.put(
-    "/categories/:categoryID",
-    categoryController.updateCategory
-);
+adminCategoryRoute.put("/categories/:name", categoryController.updateCategory);
 
 adminCategoryRoute.delete(
-    "/categories/:categoryID",
+    "/categories/:name",
     categoryController.deleteCategory
 );
 

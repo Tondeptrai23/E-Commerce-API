@@ -80,9 +80,11 @@ class CouponService {
         const categoryFilter = flattenArray(
             await Promise.all(
                 toArray(query.category).map(async (category) => {
-                    return await categoryService.getDescendantCategoriesByName(
-                        category
-                    );
+                    return (
+                        await categoryService.getDescendantCategoriesByName(
+                            category
+                        )
+                    ).map((category) => category.name);
                 })
             )
         );
