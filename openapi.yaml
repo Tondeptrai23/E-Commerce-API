@@ -1,0 +1,125 @@
+openapi: 3.0.0
+
+info:
+  title: E-commerce API
+  description: This API provides endpoints for managing products in an E-commerce system.
+  version: 2.0.0
+
+servers:
+  - url: https://localhost:3000/api/v2
+  
+tags:
+  - name: products
+    description: 
+      This field represents the description of something.
+    
+paths:
+  /products:
+    get:
+      tags:
+        - products
+      summary: Get all products
+      description: Retrieves a list of all products with optional filtering, sorting, and pagination.
+      parameters:
+        - name: page
+          in: query
+          description: Page to retrieve
+          required: false
+          schema:
+            type: integer
+        - name: size
+          in: query
+          description: Size each page
+          required: false
+          schema:
+            type: integer
+        - name: variant
+          in: query
+          description: Filter by variant
+          required: false
+          schema:
+            type: object
+            properties:
+              price:
+                type: integer
+              discountPrice:
+                type: integer
+      responses:
+          200:
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/getProducts"
+          500:
+            description: Server error
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    success:
+                      type: string
+                      example: "false"
+                    error:
+                      type: string
+                      example: "Server error in getting products"
+          
+components:
+  schemas:
+    getProducts:
+      type: object
+      properties:
+        success:
+          type: string
+          example: "true"
+        currentPage:
+          type: integer
+          example: 1
+        totalPages:
+          type: integer
+          example: 10
+        totalItems:
+          type: integer
+          example: 20
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              productID: 
+                type: string
+                example: "1"
+              name: 
+                type: string
+                example: "T-shirt"
+              description: 
+                type: string
+                nullable: true
+              variants:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    variantID:
+                      type: string
+                      example: "101"
+                    price:
+                      type: integer
+                      example: 100
+                    discountPrice:
+                      type: integer
+                      example: 90
+                      nullable: true
+                    productID:
+                      type: string
+                      example: "1"
+                    image:
+                      type: string
+                      example: "image.com/image.jpg"
+                      nullable: true
+              categories:
+                type: array
+                example: ["male", "tshirt"]
+                items:
+                  type: string
