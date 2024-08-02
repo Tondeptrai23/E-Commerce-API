@@ -1,0 +1,73 @@
+openapi: 3.0.0
+
+info:
+  title: E-commerce API
+  description: This API provides endpoints for managing products in an E-commerce system.
+  version: 2.0.0
+
+servers:
+  - url: https://localhost:3000/api/v2
+
+tags:
+  - name: User Products
+    description: 
+      This field represents the description of something.
+  - name: Admin Products
+    description: 
+      This field represents the description of something.
+
+paths:
+  # User Products
+  /products:
+    $ref: ./paths/index.paths.yaml#/userProducts
+  
+  /products/{productID}:
+    $ref: ./paths/index.paths.yaml#/userProduct
+
+  /products/{productID}/variants:
+    $ref: ./paths/index.paths.yaml#/userProductVariants
+
+  /products/{productID}/images:
+    $ref: ./paths/index.paths.yaml#/userProductImages
+
+  /products/{productID}/categories:
+    $ref: ./paths/index.paths.yaml#/userProductCategories
+
+  # Admin Products
+  /admin/products:
+    $ref: ./paths/index.paths.yaml#/adminProducts
+
+  /admin/products/{productID}:
+    $ref: ./paths/index.paths.yaml#/adminProduct
+
+  # /admin/products/{productID}/variants:
+          
+components:
+  schemas:
+    error400:
+      $ref: ./schemas/error/error400.yaml
+    error402:
+      $ref: ./schemas/error/error402.yaml
+    error403:
+      $ref: ./schemas/error/error403.yaml
+    error404:
+      $ref: ./schemas/error/error404.yaml
+    error500:
+      $ref: ./schemas/error/error500.yaml
+      
+    product:
+      $ref: ./schemas/products/product.yaml
+    variantForUser:
+      $ref: ./schemas/products/variantForUser.yaml
+    variantForAdmin:
+      $ref: ./schemas/products/variantForAdmin.yaml
+    variantAttribute: 
+      $ref: ./schemas/products/variantAttribute.yaml
+    categoryNames:
+      $ref: ./schemas/products/categoryNames.yaml
+    image:
+      $ref: ./schemas/products/image.yaml
+    category:
+      $ref: ./schemas/products/category.yaml
+    timestamps:
+      $ref: ./schemas/timestamps.yaml

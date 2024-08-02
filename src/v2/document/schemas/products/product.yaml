@@ -1,0 +1,11 @@
+type: object
+properties:
+  productID: 
+    type: string
+    example: "1"
+  name: 
+    type: string
+    example: "T-shirt"
+  description: 
+    type: string
+    nullable: true

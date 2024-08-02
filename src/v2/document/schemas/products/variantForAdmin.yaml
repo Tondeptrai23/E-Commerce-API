@@ -1,0 +1,24 @@
+type: object
+properties:
+  variantID:
+    type: string
+    example: "101"
+  price:
+    type: number
+    example: 100
+  discountPrice:
+    type: number
+    example: 90
+    nullable: true
+  stock:
+    type: integer
+    example: 10
+  sku:
+    type: string
+  productID:
+    type: string
+    example: "1"
+  image:
+    type: string
+    example: "image.com/image.jpg"
+    nullable: true

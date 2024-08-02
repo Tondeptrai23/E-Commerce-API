@@ -1,0 +1,8 @@
+type: object
+properties:      
+  attributes:
+    type: object
+    description: Dynamic attributes of the product
+    example:
+      color: "red"
+      size: "M"

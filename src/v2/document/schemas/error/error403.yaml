@@ -1,0 +1,8 @@
+type: object
+properties:
+  success:
+    type: string
+    example: "false"
+  error:
+    type: string
+    example: "Not an admin. Cannot retrieve administrative data"

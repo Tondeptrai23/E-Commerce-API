@@ -1,0 +1,55 @@
+# GET /admin/products/{productID}
+tags:
+  - Admin Products
+summary: Get a product
+description: Returns a product with the given ID.
+parameters:
+  - name: productID
+    in: path
+    description: ID of the product to get
+    required: true
+    schema:
+      type: string
+      example: "1"
+responses:
+  200:
+    description: Product found
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: string
+              example: "true"
+            product:
+              type: object
+              properties:
+                variants:
+                  type: array
+                  items:
+                    type: object
+                    allOf:
+                      - $ref: "../../schemas/products/variantForAdmin.yaml"
+                      - $ref: "../../schemas/timestamps.yaml"
+                    properties:
+                      attributes:
+                          $ref: "../../schemas/products/variantAttribute.yaml"
+                categories:
+                  $ref: "../../schemas/products/categoryNames.yaml"
+                allOf:
+                  - $ref: "../../schemas/products/product.yaml"
+              allOf:
+                - $ref: "../../schemas/timestamps.yaml"
+  404:
+    description: Product not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml"

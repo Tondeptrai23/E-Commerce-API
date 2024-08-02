@@ -1,37 +1,22 @@
 openapi: 3.0.0
-
 info:
   title: E-commerce API
   description: This API provides endpoints for managing products in an E-commerce system.
   version: 2.0.0
-
 servers:
-  - url: https://localhost:3000/api/v2
-  
+  - url: 'https://localhost:3000/api/v2'
 tags:
   - name: User Products
-    description: 
-      This field represents the description of something.
+    description: This field represents the description of something.
   - name: Admin Products
-    description: 
-      This field represents the description of something.
-
+    description: This field represents the description of something.
 paths:
-#
-#
-# User Products Route
-#
-#
-# GET /products
   /products:
     get:
       tags:
         - User Products
       summary: Get all products
-      description: Retrieves a list of all products with optional filtering, sorting, and pagination. <br>
-        - Filtering by name, category, variant, and attributes. <br>
-        - Sorting by one or more fields. <br>
-        - Pagination by page and size. <br>
+      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> - Filtering by name, category, variant, and attributes. <br> - Sorting by one or more fields. <br> - Pagination by page and size. <br>'
       parameters:
         - name: page
           in: query
@@ -39,52 +24,45 @@ paths:
           required: false
           schema:
             type: integer
-
         - name: size
           in: query
           description: Size each page
           required: false
           schema:
             type: integer
-
         - name: name
           in: query
-          description: Filter by name. Support partial matching using "[like]name"
+          description: 'Filter by name. Support partial matching using "[like]name"'
           required: false
           schema:
             type: string
-
         - name: variant
           in: query
-          description: Filter by variant's price and discountPrice. <br> 
-              - Support operators "[lte]100", "[gte]100", "[between]100,200"
+          description: 'Filter by variant''s price and discountPrice. <br> - Support operators "[lte]100", "[gte]100", "[between]100,200"'
           required: false
           schema:
             type: object
             properties:
               price:
-                pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
-                example: "[gte]100"
+                pattern: '/^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/'
+                example: '[gte]100'
               discountPrice:
-                pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
-                example: 90.0
-
+                pattern: '/^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/'
+                example: 90
         - name: category
           in: query
           description: Filter by category
           required: false
           schema:
-            $ref: "#/components/schemas/categoryNames"
-        
+            $ref: '#/components/schemas/categoryNames'
         - name: sort
           in: query
-          description: Sort products by one or more fields. <br> - A comma-separated list of fields ("price,-discountPrice"). <br> - A single field ("price"). <br> - An array of fields (["price", "-discountPrice"]). <br> A leading '-' indicates descending order. <br> Sorting is applied from left to right
+          description: 'Sort products by one or more fields. <br> - A comma-separated list of fields ("price,-discountPrice"). <br> - A single field ("price"). <br> - An array of fields (["price", "-discountPrice"]). <br> A leading ''-'' indicates descending order. <br> Sorting is applied from left to right'
           required: false
           schema:
             oneOf:
               - type: string
               - type: array
-
         - name: oneVariant
           in: query
           description: Return only one variant of each product
@@ -92,7 +70,6 @@ paths:
           schema:
             type: boolean
             example: true
-
         - name: attributes
           in: query
           description: Filter by attributes
@@ -103,59 +80,56 @@ paths:
             properties:
               color:
                 type: string
-                example: "red"
+                example: red
               size:
                 type: string
-                example: "M"
+                example: M
       responses:
-          200:
-            description: Successful operation
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    success:
-                      type: string
-                      example: "true"
-                    currentPage:
-                      type: integer
-                      example: 1
-                    totalPages:
-                      type: integer
-                      example: 10
-                    totalItems:
-                      type: integer
-                      example: 20
-                    products:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          variants:
-                            type: array
-                            items:
-                              $ref: "#/components/schemas/variantForUser"
-                          categories:
-                            $ref: "#/components/schemas/categoryNames"
-                        allOf:
-                          - $ref: "#/components/schemas/product"
-          500:
-            description: Server error
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    success:
-                      type: string
-                      example: "false"
-                    error:
-                      type: string
-                      example: "Server error in getting products"
-
-# GET /products/{productID}
-  /products/{productID}:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  currentPage:
+                    type: integer
+                    example: 1
+                  totalPages:
+                    type: integer
+                    example: 10
+                  totalItems:
+                    type: integer
+                    example: 20
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        variants:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/variantForUser'
+                        categories:
+                          $ref: '#/components/schemas/categoryNames'
+                      allOf:
+                        - $ref: '#/components/schemas/product'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/products/{productID}':
     get:
       tags:
         - User Products
@@ -169,176 +143,355 @@ paths:
           schema:
             type: string
       responses:
-          200:
-            description: Successful operation
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    success: 
-                      type: string
-                      example: "true"
-                    product:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  product:
+                    type: object
+                    properties:
+                      variants:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/components/schemas/variantForUser'
+                            - $ref: '#/components/schemas/variantAttribute'
+                    allOf:
+                      - $ref: '#/components/schemas/product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/products/{productID}/variants':
+    get:
+      tags:
+        - User Products
+      summary: Get product variants
+      description: Returns all variants of a product with the given ID.
+      parameters:
+        - name: productID
+          in: path
+          description: ID of the product to get variants
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Variants found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  variants:
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - $ref: '#/components/schemas/variantForUser'
+                      properties:
+                        attributes:
+                          $ref: '#/components/schemas/variantAttribute'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/products/{productID}/images':
+    get:
+      tags:
+        - User Products
+      summary: Get product images
+      description: Returns all images of a product with the given ID.
+      parameters:
+        - name: productID
+          in: path
+          description: ID of the product to get images
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Images found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  images:
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - $ref: '#/components/schemas/image'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/products/{productID}/categories':
+    get:
+      tags:
+        - User Products
+      summary: Get product categories
+      description: Returns all categories of a product with the given ID.
+      parameters:
+        - name: productID
+          in: path
+          description: ID of the product to get categories
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Categories found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  categories:
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - $ref: '#/components/schemas/category'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  /admin/products:
+    get:
+      tags:
+        - Admin Products
+      summary: Get all products
+      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> - Filtering by name, category, variant, and attributes. <br> - Sorting by one or more fields. <br> - Pagination by page and size. <br>'
+      parameters:
+        - name: page
+          in: query
+          description: Page to retrieve
+          required: false
+          schema:
+            type: integer
+        - name: size
+          in: query
+          description: Size each page
+          required: false
+          schema:
+            type: integer
+        - name: name
+          in: query
+          description: 'Filter by name. Support partial matching using "[like]name"'
+          required: false
+          schema:
+            type: string
+        - name: variant
+          in: query
+          description: 'Filter by variant''s price and discountPrice. <br> - Support operators "[lte]100", "[gte]100", "[between]100,200"'
+          required: false
+          schema:
+            type: object
+            properties:
+              price:
+                pattern: '/^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/'
+                example: '[gte]100'
+              discountPrice:
+                pattern: '/^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/'
+                example: 90
+              sku:
+                type: string
+              stock:
+                type: integer
+                example: 10
+        - name: category
+          in: query
+          description: Filter by category
+          required: false
+          schema:
+            $ref: '#/components/schemas/categoryNames'
+        - name: sort
+          in: query
+          description: 'Sort products by one or more fields. <br> - A comma-separated list of fields ("price,-discountPrice"). <br> - A single field ("price"). <br> - An array of fields (["price", "-discountPrice"]). <br> A leading ''-'' indicates descending order. <br> Sorting is applied from left to right'
+          required: false
+          schema:
+            oneOf:
+              - type: string
+              - type: array
+        - name: oneVariant
+          in: query
+          description: Return only one variant of each product
+          required: false
+          schema:
+            type: boolean
+            example: true
+        - name: attributes
+          in: query
+          description: Filter by attributes
+          required: false
+          schema:
+            type: object
+            description: Dynamic attributes of the product
+            properties:
+              color:
+                type: string
+                example: red
+              size:
+                type: string
+                example: M
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  currentPage:
+                    type: integer
+                    example: 1
+                  totalPages:
+                    type: integer
+                    example: 10
+                  totalItems:
+                    type: integer
+                    example: 20
+                  products:
+                    type: array
+                    items:
                       type: object
                       properties:
                         variants:
                           type: array
                           items:
-                            allOf:  
-                              - $ref: "#/components/schemas/variantForUser"
-                              - $ref: "#/components/schemas/variantAttribute"
+                            type: object
+                            allOf:
+                              - $ref: '#/components/schemas/variantForAdmin'
+                              - $ref: '#/components/schemas/timestamps'
+                        categories:
+                          allOf:
+                            - $ref: '#/components/schemas/categoryNames'
                       allOf:
-                      - $ref: "#/components/schemas/product"
-# GET /products/{productID}/variants
-  /products/{productID}/variants:
+                        - $ref: '#/components/schemas/product'
+                        - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/admin/products/{productID}':
     get:
       tags:
-        - User Products
-      summary: Get all variants of a product
-      description: Retrieves all variants of a product by its ID.
+        - Admin Products
+      summary: Get a product
+      description: Returns a product with the given ID.
       parameters:
         - name: productID
           in: path
-          description: ID of the product to retrieve
+          description: ID of the product to get
           required: true
           schema:
             type: string
+            example: '1'
       responses:
-          200:
-            description: Successful operation
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    success: 
-                      type: string
-                      example: "true"
-                    variants:
-                      type: array
-                      items:
-                        allOf:
-                          - $ref: "#/components/schemas/variantForUser"
-                          - $ref: "#/components/schemas/variantAttribute"
-
-          404:
-            description: Product not found
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    success:
-                      type: string
-                      example: "false"
-                    error:
-                      type: string
-                      example: "Product not found"
-
-          500:
-            description: Server error
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    success:
-                      type: string
-                      example: "false"
-                    error:
-                      type: string
-                      example: "Server error in getting variants"
- 
-# GET /products/{productID}/images
-  /products/{productID}/images:
-    get:
-      tags:
-        - User Products
-      summary: Get all images of a product
-      description: Retrieves all images of a product by its ID.
-      parameters:
-        - name: productID
-          in: path
-          description: ID of the product to retrieve
-          required: true
-          schema:
-            type: string
-      responses:
-          200:
-            description: Successful operation
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    success: 
-                      type: string
-                      example: "true"
-                    images:
-                      type: array
-                      items:
-                        allOf:
-                          - $ref: "#/components/schemas/image"
-
-          404:
-            description: Product not found
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/error404"
-
-          500:
-            description: Server error
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/error500"
-
-# GET /products/{productID}/categories
-  /products/{productID}/categories:
-    get:
-      tags:
-        - User Products
-      summary: Get all categories of a product
-      description: Retrieves all categories of a product by its ID.
-      parameters:
-        - name: productID
-          in: path
-          description: ID of the product to retrieve
-          required: true
-          schema:
-            type: string
-      responses:
-          200:
-            description: Successful operation
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/categoryNames"
-
-          404:
-            description: Product not found
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/error404"
-
-          500:
-            description: Server error
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/error500"
-
-
-#
-#
-# Admin Products Route
-#
-#
-# POST admin/products
-  /admin/products:
+        '200':
+          description: Product found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  product:
+                    type: object
+                    properties:
+                      variants:
+                        type: array
+                        items:
+                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/variantForAdmin'
+                            - $ref: '#/components/schemas/timestamps'
+                          properties:
+                            attributes:
+                              $ref: '#/components/schemas/variantAttribute'
+                      categories:
+                        $ref: '#/components/schemas/categoryNames'
+                      allOf:
+                        - $ref: '#/components/schemas/product'
+                    allOf:
+                      - $ref: '#/components/schemas/timestamps'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
     post:
       tags:
         - Admin Products
@@ -351,12 +504,6 @@ paths:
             schema:
               type: object
               properties:
-                name:
-                  type: string
-                  example: "T-shirt"
-                description:
-                  type: string
-                  nullable: true
                 variants:
                   type: array
                   items:
@@ -374,80 +521,72 @@ paths:
                         example: 10
                       sku:
                         type: string
-                      
                     allOf:
-                      - $ref: "#/components/schemas/variantAttribute"
-
+                      - $ref: '#/components/schemas/variantForAdmin'
                 categories:
-                  $ref: "#/components/schemas/categoryNames"
+                  $ref: '#/components/schemas/categoryNames'
       responses:
-          201:
-            description: Product created
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    success:
-                      type: string
-                      example: "true"
-                    product:
-                      type: object
-                      properties:
-                        variants:
-                          type: array
-                          items:
-                            allOf:
-                              - $ref: "#/components/schemas/variantForAdmin"
-                              - $ref: "#/components/schemas/timestamps"
-                        images:
-                          type: array
-                          items:
-                            allOf:
-                              - $ref: "#/components/schemas/image"
-                              - $ref: "#/components/schemas/timestamps"
-                        categories:
-                          $ref: "#/components/schemas/categoryNames"
-                      allOf:
-                        - $ref: "#/components/schemas/product"
-                        - $ref: "#/components/schemas/timestamps"
-                      
-          400:
-            description: Validation Error
-            content:
-              application/json:
-                schema:
-                  errors:
-                    $ref: "#/components/schemas/error400"
-
-          
-          402:
-            description: Token error, not authenticated
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/error402"
-
-          403:
-            description: Not an admin
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/error403" 
-          500:
-            description: Server error
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/error500" 
-
-# PUT /admin/products/{productID}
-  /admin/products/{productID}:
+        '201':
+          description: Product created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  product:
+                    type: object
+                    properties:
+                      variants:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: '#/components/schemas/variantForAdmin'
+                            - $ref: '#/components/schemas/variantAttribute'
+                            - $ref: '#/components/schemas/timestamps'
+                      images:
+                        type: array
+                        items:
+                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/image'
+                            - $ref: '#/components/schemas/timestamps'
+                      categories:
+                        $ref: '#/components/schemas/categoryNames'
+                    allOf:
+                      - $ref: '#/components/schemas/product'
+                      - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '402':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error402'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
     patch:
       tags:
         - Admin Products
-      summary: Update a product by ID
-      description: Updates a product by its ID.
+      summary: Update a product
+      description: Updates a product with the given data.
       parameters:
         - name: productID
           in: path
@@ -455,6 +594,7 @@ paths:
           required: true
           schema:
             type: string
+            example: '1'
       requestBody:
         required: true
         content:
@@ -464,95 +604,171 @@ paths:
               properties:
                 name:
                   type: string
-                  example: "T-shirt"
+                  example: Product Name
                 description:
                   type: string
-                  nullable: true
+                  example: Product Description
       responses:
-          200:
-            description: Product updated
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    success:
-                      type: string
-                      example: "true"
-                    product:
-                      type: object
-                      allOf:
-                      - $ref: "#/components/schemas/product"
-                      - $ref: "#/components/schemas/timestamps"
-
-          400:
-            description: Validation Error
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/error400"
-
-          402:
-            description: Token error, not authenticated
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/error402"
-
-          403:
-            description: Not an admin
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/error403"
-
-          404:
-            description: Product not found
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/error404"
-
-          500:
-            description: Server error
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/error500"
-          
+        '200':
+          description: Product updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  product:
+                    type: object
+                    properties:
+                      productID:
+                        type: string
+                        example: '1'
+                      name:
+                        type: string
+                        example: Product Name
+                      description:
+                        type: string
+                        example: Product Description
+                  allOf:
+                    - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    delete:
+      tags:
+        - Admin Products
+      summary: Delete a product
+      description: Deletes a product with the given ID.
+      parameters:
+        - name: productID
+          in: path
+          description: ID of the product to delete
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Product deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
 components:
   schemas:
+    error400:
+      type: object
+      properties:
+        success:
+          type: string
+          example: 'false'
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                example: field
+              value:
+                description: The value of the field that caused the error (can be anything)
+                example: {}
+              message:
+                type: string
+                example: Price is required
+              path:
+                type: string
+                example: 'variants[0].price'
+              location:
+                type: string
+                example: body
+    error402:
+      type: object
+      properties:
+        success:
+          type: string
+          example: 'false'
+        error:
+          type: string
+          example: Token invalid
+    error403:
+      type: object
+      properties:
+        success:
+          type: string
+          example: 'false'
+        error:
+          type: string
+          example: Not an admin. Cannot retrieve administrative data
+    error404:
+      type: object
+      properties:
+        success:
+          type: string
+          example: 'false'
+        error:
+          type: string
+          example: Something not found
+    error500:
+      type: object
+      properties:
+        success:
+          type: string
+          example: 'false'
+        error:
+          type: string
+          example: Server error
     product:
       type: object
       properties:
-        productID: 
+        productID:
           type: string
-          example: "1"
-        name: 
+          example: '1'
+        name:
           type: string
-          example: "T-shirt"
-        description: 
+          example: T-shirt
+        description:
           type: string
           nullable: true
-
-    timestamps:
-      type: object
-      properties:
-        createdAt:
-          type: string
-          format: date
-          example: "2024-01-01T00:00:00.000Z"
-        updatedAt:
-          type: string
-          format: date
-          example: "2024-01-01T00:00:00.000Z"
-
     variantForUser:
       type: object
       properties:
         variantID:
           type: string
-          example: "101"
+          example: '101'
         price:
           type: integer
           example: 100
@@ -562,18 +778,17 @@ components:
           nullable: true
         productID:
           type: string
-          example: "1"
+          example: '1'
         image:
           type: string
-          example: "image.com/image.jpg"
+          example: image.com/image.jpg
           nullable: true
-
     variantForAdmin:
       type: object
       properties:
         variantID:
           type: string
-          example: "101"
+          example: '101'
         price:
           type: number
           example: 100
@@ -588,38 +803,36 @@ components:
           type: string
         productID:
           type: string
-          example: "1"
+          example: '1'
         image:
           type: string
-          example: "image.com/image.jpg"
+          example: image.com/image.jpg
           nullable: true
-          
-
-    variantAttribute: 
+    variantAttribute:
       type: object
-      properties:      
+      properties:
         attributes:
           type: object
           description: Dynamic attributes of the product
           example:
-            color: "red"
-            size: "M"
-
+            color: red
+            size: M
     categoryNames:
       type: array
-      example: ["tops", "male"]
+      example:
+        - tops
+        - male
       items:
         type: string
-
     image:
       type: object
       properties:
         imageID:
           type: string
-          example: "101"
+          example: '101'
         url:
           type: string
-          example: "image.com/image.jpg"
+          example: image.com/image.jpg
         thumbnail:
           type: string
           nullable: true
@@ -627,87 +840,30 @@ components:
           type: integer
         productID:
           type: string
-          example: "1"
-        
+          example: '1'
     category:
       type: object
       properties:
         categoryID:
           type: string
-          example: "8"
-        name: 
+          example: '8'
+        name:
           type: string
-          example: "tshirt"
-        description: 
+          example: tshirt
+        description:
           type: string
           nullable: true
         parentID:
           type: string
-          example: "6"
-
-    error400:
+          example: '6'
+    timestamps:
       type: object
       properties:
-        success:
+        createdAt:
           type: string
-          example: "false"
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              type: 
-                type: string
-                example: "field"
-              value:
-                description: The value of the field that caused the error (can be anything) 
-                example: {}
-              message:
-                type: string
-                example: "Price is required"
-              path:
-                type: string
-                example: "variants[0].price"
-              location:
-                type: string
-                example: "body"
-    
-    error404:
-      type: object
-      properties:
-        success:
+          format: date
+          example: '2024-01-01T00:00:00.000Z'
+        updatedAt:
           type: string
-          example: "false"
-        error:
-          type: string
-          example: "Something not found"
-
-    error500:
-      type: object
-      properties:
-        success:
-          type: string
-          example: "false"
-        error:
-          type: string
-          example: "Server error"
-
-    error403:
-      type: object
-      properties:
-        success:
-          type: string
-          example: "false"
-        error:
-          type: string
-          example: "Not an admin. Cannot retrieve administrative data"
-
-    error402:
-      type: object
-      properties:
-        success:
-          type: string
-          example: "false"
-        error:
-          type: string
-          example: "Token invalid"
+          format: date
+          example: '2024-01-01T00:00:00.000Z'

@@ -1,0 +1,25 @@
+type: object
+properties:
+  success:
+    type: string
+    example: "false"
+  errors:
+    type: array
+    items:
+      type: object
+      properties:
+        type: 
+          type: string
+          example: "field"
+        value:
+          description: The value of the field that caused the error (can be anything) 
+          example: {}
+        message:
+          type: string
+          example: "Price is required"
+        path:
+          type: string
+          example: "variants[0].price"
+        location:
+          type: string
+          example: "body"

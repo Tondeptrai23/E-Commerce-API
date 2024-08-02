@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --verbose",
-    "start": "nodemon src/v2/server.js"
+    "start": "npm run build:swagger && nodemon src/v2/server.js",
+    "build:swagger": "swagger-cli bundle src/v2/document/index.yaml --outfile openapi.yaml --type yaml"
   },
   "keywords": [],
   "type": "module",

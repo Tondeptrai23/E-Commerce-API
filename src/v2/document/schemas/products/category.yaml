@@ -1,0 +1,14 @@
+type: object
+properties:
+  categoryID:
+    type: string
+    example: "8"
+  name: 
+    type: string
+    example: "tshirt"
+  description: 
+    type: string
+    nullable: true
+  parentID:
+    type: string
+    example: "6"

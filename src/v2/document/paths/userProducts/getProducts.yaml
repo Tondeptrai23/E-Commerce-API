@@ -1,0 +1,130 @@
+# GET /products
+tags:
+  - User Products
+summary: Get all products
+description: Retrieves a list of all products with optional filtering, sorting, and pagination. <br>
+  - Filtering by name, category, variant, and attributes. <br>
+  - Sorting by one or more fields. <br>
+  - Pagination by page and size. <br>
+parameters:
+  - name: page
+    in: query
+    description: Page to retrieve
+    required: false
+    schema:
+      type: integer
+
+  - name: size
+    in: query
+    description: Size each page
+    required: false
+    schema:
+      type: integer
+
+  - name: name
+    in: query
+    description: Filter by name. Support partial matching using "[like]name"
+    required: false
+    schema:
+      type: string
+
+  - name: variant
+    in: query
+    description: Filter by variant's price and discountPrice. <br> 
+        - Support operators "[lte]100", "[gte]100", "[between]100,200"
+    required: false
+    schema:
+      type: object
+      properties:
+        price:
+          pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
+          example: "[gte]100"
+        discountPrice:
+          pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
+          example: 90.0
+
+  - name: category
+    in: query
+    description: Filter by category
+    required: false
+    schema:
+      $ref: "../../schemas/products/categoryNames.yaml"
+  
+  - name: sort
+    in: query
+    description: Sort products by one or more fields. <br> - A comma-separated list of fields ("price,-discountPrice"). <br> - A single field ("price"). <br> - An array of fields (["price", "-discountPrice"]). <br> A leading '-' indicates descending order. <br> Sorting is applied from left to right
+    required: false
+    schema:
+      oneOf:
+        - type: string
+        - type: array
+
+  - name: oneVariant
+    in: query
+    description: Return only one variant of each product
+    required: false
+    schema:
+      type: boolean
+      example: true
+
+  - name: attributes
+    in: query
+    description: Filter by attributes
+    required: false
+    schema:
+      type: object
+      description: Dynamic attributes of the product
+      properties:
+        color:
+          type: string
+          example: "red"
+        size:
+          type: string
+          example: "M"
+responses:
+    200:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: string
+                example: "true"
+              currentPage:
+                type: integer
+                example: 1
+              totalPages:
+                type: integer
+                example: 10
+              totalItems:
+                type: integer
+                example: 20
+              products:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    variants:
+                      type: array
+                      items:
+                        $ref: "../../schemas/products/variantForUser.yaml"
+                    categories:
+                      $ref: "../../schemas/products/categoryNames.yaml"
+                  allOf:
+                    - $ref: "../../schemas/products/product.yaml"
+
+    400:
+      description: Validation Error
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/error/error400.yaml"
+
+    500:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/error/error500.yaml"

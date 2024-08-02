@@ -1,0 +1,72 @@
+# PATCH /admin/products/{productID}
+tags:
+  - Admin Products
+summary: Update a product
+description: Updates a product with the given data.
+parameters:
+  - name: productID
+    in: path
+    description: ID of the product to update
+    required: true
+    schema:
+      type: string
+      example: "1"
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name: 
+            type: string
+            example: "Product Name"
+          description:
+            type: string
+            example: "Product Description"
+responses:
+  200: 
+    description: Product updated
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: string
+              example: "true"
+            product:
+              type: object
+              properties:
+                productID: 
+                  type: string
+                  example: "1"
+                name:
+                  type: string
+                  example: "Product Name"
+                description:
+                  type: string
+                  example: "Product Description"
+            allOf:
+              - $ref: "../../schemas/timestamps.yaml"
+            
+  404:
+    description: Product not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error404.yaml"
+
+  400:
+    description: Validation Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error400.yaml"
+
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml"

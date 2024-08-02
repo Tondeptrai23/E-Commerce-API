@@ -1,0 +1,16 @@
+type: object
+properties:
+  imageID:
+    type: string
+    example: "101"
+  url:
+    type: string
+    example: "image.com/image.jpg"
+  thumbnail:
+    type: string
+    nullable: true
+  displayOrder:
+    type: integer
+  productID:
+    type: string
+    example: "1"

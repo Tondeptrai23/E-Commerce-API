@@ -1,0 +1,35 @@
+# ADMIN PRODUCTS
+adminProducts:
+  get:
+    $ref: "./adminProducts/getProducts.yaml"
+
+adminProduct:
+  get:
+    $ref: "./adminProducts/getProduct.yaml"
+  post:
+    $ref: "./adminProducts/postProduct.yaml"
+  patch:
+    $ref: "./adminProducts/patchProduct.yaml"
+  delete:
+    $ref: "./adminProducts/deleteProduct.yaml"
+
+# USER PRODUCTS
+userProducts:
+  get:
+    $ref: "./userProducts/getProducts.yaml"
+
+userProduct:
+  get:
+    $ref: "./userProducts/getProduct.yaml"
+
+userProductVariants:
+  get:
+    $ref: "./userProducts/getVariants.yaml"
+
+userProductImages:
+  get:
+    $ref: "./userProducts/getImages.yaml"
+
+userProductCategories:
+  get:
+    $ref: "./userProducts/getProductCategories.yaml"
