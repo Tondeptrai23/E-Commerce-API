@@ -33,6 +33,8 @@ parameters:
     description: Filter by variant's price and discountPrice. <br> 
         - Support operators "[lte]100", "[gte]100", "[between]100,200"
     required: false
+    style: deepObject
+    explode: false
     schema:
       type: object
       properties:
@@ -71,6 +73,8 @@ parameters:
     in: query
     description: Filter by attributes
     required: false
+    style: deepObject
+    explode: false
     schema:
       type: object
       description: Dynamic attributes of the product

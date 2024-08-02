@@ -1,0 +1,67 @@
+# POST /auth/signin
+tags:
+  - Authentication
+summary: Sign in
+description: Sign in with the given credentials.
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          email:
+            type: string
+            example: "example@gmail.com"
+          password:
+            type: string
+            example: "password"
+responses:
+  200:
+    description: Sign in successful
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: string
+              example: "true"
+            accessToken:
+              type: string
+            refreshToken:
+              type: string
+            user:
+              type: object
+              properties:
+                userID:
+                  type: string
+                  example: "1"
+                email:
+                  type: string
+                  example: "example@gmail.com"
+                role:
+                  type: string
+                  example: "user"
+
+  409:
+    description: Email or password incorrect
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error409.yaml"
+
+  404:
+    description: User not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error404.yaml"
+
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml"
+  

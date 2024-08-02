@@ -1,3 +1,20 @@
+# AUTHENTICATION
+signin:
+  post:
+    $ref: "./auth/signin.yaml"
+
+signup:
+  post:
+    $ref: "./auth/signup.yaml"
+
+refresh:
+  post:
+    $ref: "./auth/refresh.yaml"
+
+resetToken:
+  post:
+    $ref: "./auth/reset.yaml"
+
 # ADMIN PRODUCTS
 adminProducts:
   get:

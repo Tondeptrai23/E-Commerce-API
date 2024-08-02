@@ -29,6 +29,8 @@ responses:
                       allOf:  
                         - $ref: "../../schemas/products/variantForUser.yaml"
                         - $ref: "../../schemas/products/variantAttribute.yaml"
+                  categories:
+                    $ref: "../../schemas/products/categoryNames.yaml"
                 allOf:
                 - $ref: "../../schemas/products/product.yaml"
 

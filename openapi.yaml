@@ -6,11 +6,244 @@ info:
 servers:
   - url: 'https://localhost:3000/api/v2'
 tags:
+  - name: Authentication
+    description: This field represents the description of something.
   - name: User Products
     description: This field represents the description of something.
   - name: Admin Products
     description: This field represents the description of something.
 paths:
+  /auth/signin:
+    post:
+      tags:
+        - Authentication
+      summary: Sign in
+      description: Sign in with the given credentials.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: example@gmail.com
+                password:
+                  type: string
+                  example: password
+      responses:
+        '200':
+          description: Sign in successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      userID:
+                        type: string
+                        example: '1'
+                      email:
+                        type: string
+                        example: example@gmail.com
+                      role:
+                        type: string
+                        example: user
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '409':
+          description: Email or password incorrect
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'false'
+                  error:
+                    type: string
+                    example: Conflict Error
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  /auth/signup:
+    post:
+      tags:
+        - Authentication
+      summary: Sign up
+      description: Sign up with the given credentials.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: example@gmail.com
+                password:
+                  type: string
+                  example: password
+                role:
+                  type: string
+                  enum:
+                    - user
+                    - admin
+                  example: user
+      responses:
+        '201':
+          description: Sign up successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      userID:
+                        type: string
+                        example: '1'
+                      email:
+                        type: string
+                        example: example@gmail.com
+                      role:
+                        type: string
+                        example: user
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  /auth/refreshToken:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh token
+      description: Refresh the access token with the given refresh token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  example: refreshToken
+      responses:
+        '200':
+          description: Refresh token successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  accessToken:
+                    type: string
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  /auth/refreshToken/reset:
+    post:
+      tags:
+        - Authentication
+      summary: Reset refresh token
+      description: Reset the refresh token with the given refresh token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  example: refreshToken
+      responses:
+        '200':
+          description: Reset refresh token successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
   /products:
     get:
       tags:
@@ -40,6 +273,8 @@ paths:
           in: query
           description: 'Filter by variant''s price and discountPrice. <br> - Support operators "[lte]100", "[gte]100", "[between]100,200"'
           required: false
+          style: deepObject
+          explode: false
           schema:
             type: object
             properties:
@@ -74,6 +309,8 @@ paths:
           in: query
           description: Filter by attributes
           required: false
+          style: deepObject
+          explode: false
           schema:
             type: object
             description: Dynamic attributes of the product
@@ -162,6 +399,8 @@ paths:
                           allOf:
                             - $ref: '#/components/schemas/variantForUser'
                             - $ref: '#/components/schemas/variantAttribute'
+                      categories:
+                        $ref: '#/components/schemas/categoryNames'
                     allOf:
                       - $ref: '#/components/schemas/product'
         '404':
@@ -314,6 +553,8 @@ paths:
         - Admin Products
       summary: Get all products
       description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> - Filtering by name, category, variant, and attributes. <br> - Sorting by one or more fields. <br> - Pagination by page and size. <br>'
+      security:
+        - bearerAuth: []
       parameters:
         - name: page
           in: query
@@ -335,6 +576,8 @@ paths:
             type: string
         - name: variant
           in: query
+          style: deepObject
+          explode: true
           description: 'Filter by variant''s price and discountPrice. <br> - Support operators "[lte]100", "[gte]100", "[between]100,200"'
           required: false
           schema:
@@ -376,6 +619,7 @@ paths:
           in: query
           description: Filter by attributes
           required: false
+          style: deepObject
           schema:
             type: object
             description: Dynamic attributes of the product
@@ -430,6 +674,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
         '500':
           description: Server error
           content:
@@ -441,6 +691,8 @@ paths:
       tags:
         - Admin Products
       summary: Get a product
+      security:
+        - bearerAuth: []
       description: Returns a product with the given ID.
       parameters:
         - name: productID
@@ -476,10 +728,15 @@ paths:
                               $ref: '#/components/schemas/variantAttribute'
                       categories:
                         $ref: '#/components/schemas/categoryNames'
-                      allOf:
-                        - $ref: '#/components/schemas/product'
                     allOf:
+                      - $ref: '#/components/schemas/product'
                       - $ref: '#/components/schemas/timestamps'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
         '404':
           description: Product not found
           content:
@@ -497,6 +754,8 @@ paths:
         - Admin Products
       summary: Create a new product
       description: Creates a new product with the given data.
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -504,6 +763,11 @@ paths:
             schema:
               type: object
               properties:
+                name:
+                  type: string
+                  example: T-Shirt
+                description:
+                  type: string
                 variants:
                   type: array
                   items:
@@ -564,12 +828,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error400'
-        '402':
+        '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error402'
+                $ref: '#/components/schemas/error401'
         '403':
           description: Not an admin
           content:
@@ -587,6 +851,8 @@ paths:
         - Admin Products
       summary: Update a product
       description: Updates a product with the given data.
+      security:
+        - bearerAuth: []
       parameters:
         - name: productID
           in: path
@@ -631,14 +897,20 @@ paths:
                       description:
                         type: string
                         example: Product Description
-                  allOf:
-                    - $ref: '#/components/schemas/timestamps'
+                    allOf:
+                      - $ref: '#/components/schemas/timestamps'
         '400':
           description: Validation Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
         '404':
           description: Product not found
           content:
@@ -656,6 +928,8 @@ paths:
         - Admin Products
       summary: Delete a product
       description: Deletes a product with the given ID.
+      security:
+        - bearerAuth: []
       parameters:
         - name: productID
           in: path
@@ -675,6 +949,12 @@ paths:
                   success:
                     type: string
                     example: 'true'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
         '404':
           description: Product not found
           content:
@@ -688,6 +968,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/error500'
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     error400:
       type: object
@@ -715,7 +1000,7 @@ components:
               location:
                 type: string
                 example: body
-    error402:
+    error401:
       type: object
       properties:
         success:
@@ -838,6 +1123,7 @@ components:
           nullable: true
         displayOrder:
           type: integer
+          example: 1
         productID:
           type: string
           example: '1'

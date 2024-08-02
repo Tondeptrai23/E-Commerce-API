@@ -1,0 +1,44 @@
+# POST /auth/refreshToken/reset
+tags:
+  - Authentication
+summary: Reset refresh token
+description: Reset the refresh token with the given refresh token.
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          token:
+            type: string
+            example: "refreshToken"
+responses:
+  200:
+    description: Reset refresh token successful
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: string
+              example: "true"
+            accessToken:
+              type: string
+            refreshToken:
+              type: string
+
+  401:
+    description: Token error, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error401.yaml"
+
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml"

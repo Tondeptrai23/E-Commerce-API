@@ -34,7 +34,14 @@ app.use((req, res, next) => {
 const file = fs.readFileSync("./openapi.yaml", "utf8");
 const swaggerDocument = YAML.parse(file);
 swaggerDocument.servers[0].url = `http://localhost:${process.env.PORT}/api/v2`;
-app.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+app.use(
+    "/docs",
+    swaggerUI.serve,
+    swaggerUI.setup(swaggerDocument, {
+        customCss:
+            ".swagger-ui { font-family: Verdana; } .parameters-col_description p { font-size: 0.8em}",
+    })
+);
 app.use("/api/v2", router);
 
 db.sync()

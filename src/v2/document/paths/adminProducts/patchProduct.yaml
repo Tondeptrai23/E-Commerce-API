@@ -3,6 +3,8 @@ tags:
   - Admin Products
 summary: Update a product
 description: Updates a product with the given data.
+security:
+  - bearerAuth: []
 parameters:
   - name: productID
     in: path
@@ -47,8 +49,8 @@ responses:
                 description:
                   type: string
                   example: "Product Description"
-            allOf:
-              - $ref: "../../schemas/timestamps.yaml"
+              allOf:
+                - $ref: "../../schemas/timestamps.yaml"
             
   404:
     description: Product not found
@@ -63,6 +65,13 @@ responses:
       application/json:
         schema:
           $ref: "../../schemas/error/error400.yaml"
+
+  401:
+    description: Token error, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error401.yaml"
 
   500:
     description: Internal Server Error

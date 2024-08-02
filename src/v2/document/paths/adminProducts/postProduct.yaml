@@ -3,6 +3,8 @@ tags:
   - Admin Products
 summary: Create a new product
 description: Creates a new product with the given data.
+security:
+  - bearerAuth: []
 requestBody:
   required: true
   content:
@@ -10,6 +12,11 @@ requestBody:
       schema:
         type: object
         properties:
+          name: 
+            type: string
+            example: "T-Shirt"
+          description:
+            type: string
           variants:
             type: array
             items:
@@ -74,12 +81,12 @@ responses:
           schema:
             $ref: "../../schemas/error/error400.yaml"
     
-    402:
+    401:
       description: Token error, not authenticated
       content:
         application/json:
           schema:
-            $ref: "../../schemas/error/error402.yaml"
+            $ref: "../../schemas/error/error401.yaml"
 
     403:
       description: Not an admin

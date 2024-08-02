@@ -6,6 +6,8 @@ description: Retrieves a list of all products with optional filtering, sorting, 
   - Filtering by name, category, variant, and attributes. <br>
   - Sorting by one or more fields. <br>
   - Pagination by page and size. <br>
+security:
+  - bearerAuth: []
 parameters:
   - name: page
     in: query
@@ -30,6 +32,8 @@ parameters:
 
   - name: variant
     in: query
+    style: deepObject
+    explode: true
     description: Filter by variant's price and discountPrice. <br> 
         - Support operators "[lte]100", "[gte]100", "[between]100,200"
     required: false
@@ -76,6 +80,7 @@ parameters:
     in: query
     description: Filter by attributes
     required: false
+    style: deepObject
     schema:
       type: object
       description: Dynamic attributes of the product
@@ -131,6 +136,13 @@ responses:
         application/json:
           schema:
             $ref: "../../schemas/error/error400.yaml"
+
+    401:
+      description: Token error, not authenticated
+      content:
+        application/json:
+          schema:
+            $ref: "../../schemas/error/error401.yaml"
 
     500:
       description: Server error

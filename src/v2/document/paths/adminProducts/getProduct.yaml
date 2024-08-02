@@ -2,6 +2,8 @@
 tags:
   - Admin Products
 summary: Get a product
+security:
+  - bearerAuth: []  
 description: Returns a product with the given ID.
 parameters:
   - name: productID
@@ -37,16 +39,24 @@ responses:
                           $ref: "../../schemas/products/variantAttribute.yaml"
                 categories:
                   $ref: "../../schemas/products/categoryNames.yaml"
-                allOf:
-                  - $ref: "../../schemas/products/product.yaml"
               allOf:
+                - $ref: "../../schemas/products/product.yaml"
                 - $ref: "../../schemas/timestamps.yaml"
+
   404:
     description: Product not found
     content:
       application/json:
         schema:
           $ref: "../../schemas/error/error404.yaml"
+
+  401:
+    description: Token error, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error401.yaml"
+
   500:
     description: Internal Server Error
     content:

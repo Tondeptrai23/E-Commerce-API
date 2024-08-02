@@ -1,0 +1,49 @@
+# POST /auth/refreshToken
+tags:
+  - Authentication
+summary: Refresh token
+description: Refresh the access token with the given refresh token.
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          token:
+            type: string
+            example: "refreshToken"
+responses:
+  200:
+    description: Refresh token successful
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: string
+              example: "true"
+            accessToken:
+              type: string
+
+  401:
+    description: Unauthorized
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error401.yaml"
+
+  400:
+    description: Validation Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error400.yaml"
+
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml"

@@ -3,6 +3,8 @@ tags:
   - Admin Products
 summary: Delete a product
 description: Deletes a product with the given ID.
+security:
+  - bearerAuth: []
 parameters:
   - name: productID
     in: path
@@ -22,12 +24,20 @@ responses:
             success:
               type: string
               example: "true"
+
   404:
     description: Product not found
     content:
       application/json:
         schema:
           $ref: "../../schemas/error/error404.yaml"
+
+  401:
+    description: Token error, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error401.yaml"
 
   500:
     description: Internal Server Error
