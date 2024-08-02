@@ -16,12 +16,9 @@ class ProductCategory {
                 await productCategoryService.getProductCategories(productID);
 
             // Serialize data
-            const serializedCategories = CategorySerializer.serialize(
-                categories,
-                {
-                    includeTimestamps: req.admin ? true : false,
-                }
-            );
+            const serializedCategories = CategorySerializer.parse(categories, {
+                includeTimestamps: req.admin ? true : false,
+            });
 
             // Response
             res.status(StatusCodes.OK).json({
@@ -60,7 +57,7 @@ class ProductCategory {
             );
 
             // Serialize data
-            const serializedProduct = ProductSerializer.serialize(product, {
+            const serializedProduct = ProductSerializer.parse(product, {
                 includeTimestamps: true,
             });
 
@@ -101,7 +98,7 @@ class ProductCategory {
             );
 
             // Serialize data
-            const serializedProduct = ProductSerializer.serialize(product, {
+            const serializedProduct = ProductSerializer.parse(product, {
                 includeTimestamps: true,
             });
 

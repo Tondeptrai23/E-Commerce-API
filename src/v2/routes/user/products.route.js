@@ -9,34 +9,6 @@ import validator from "../../middlewares/validators/index.validator.js";
 
 const userProductRoute = Router();
 
-/**
- * @swagger
- * tags:
- *   name: User Products
- *   description: API endpoints for managing user products
- */
-
-/**
- * @swagger
- * /products:
- *   get:
- *     summary: Get all products
- *     description: Retrieve a list of all products
- *     tags: [User Products]
- *     parameters:
- *       - in: query
- *         name: name
- *         schema:
- *           type: string
- *         description: Filter products by name
- *     responses:
- *       200:
- *         description: Returns an array of products
- *       400:
- *         description: Invalid request parameters
- *       500:
- *         description: Internal server error
- */
 userProductRoute.get(
     "/",
     validator.validateQueryGetProduct,
