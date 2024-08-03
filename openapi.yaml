@@ -56,9 +56,17 @@ paths:
                       email:
                         type: string
                         example: example@gmail.com
+                      name:
+                        type: string
+                        example: John Doe
+                        nullable: true
                       role:
                         type: string
                         example: user
+                      avatar:
+                        type: string
+                        example: 'https://example.com/avatar.jpg'
+                        nullable: true
         '404':
           description: User not found
           content:
@@ -103,12 +111,6 @@ paths:
                 password:
                   type: string
                   example: password
-                role:
-                  type: string
-                  enum:
-                    - user
-                    - admin
-                  example: user
       responses:
         '201':
           description: Sign up successful
@@ -120,22 +122,6 @@ paths:
                   success:
                     type: string
                     example: 'true'
-                  accessToken:
-                    type: string
-                  refreshToken:
-                    type: string
-                  user:
-                    type: object
-                    properties:
-                      userID:
-                        type: string
-                        example: '1'
-                      email:
-                        type: string
-                        example: example@gmail.com
-                      role:
-                        type: string
-                        example: user
         '400':
           description: Validation Error
           content:
@@ -401,6 +387,10 @@ paths:
                             - $ref: '#/components/schemas/variantAttribute'
                       categories:
                         $ref: '#/components/schemas/categoryNames'
+                      images:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/image'
                     allOf:
                       - $ref: '#/components/schemas/product'
         '404':
@@ -669,7 +659,7 @@ paths:
                         - $ref: '#/components/schemas/product'
                         - $ref: '#/components/schemas/timestamps'
         '400':
-          description: Validation Error
+          description: Invalid query parameters
           content:
             application/json:
               schema:
@@ -680,75 +670,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error401'
-        '500':
-          description: Server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error500'
-  '/admin/products/{productID}':
-    get:
-      tags:
-        - Admin Products
-      summary: Get a product
-      security:
-        - bearerAuth: []
-      description: Returns a product with the given ID.
-      parameters:
-        - name: productID
-          in: path
-          description: ID of the product to get
-          required: true
-          schema:
-            type: string
-            example: '1'
-      responses:
-        '200':
-          description: Product found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: string
-                    example: 'true'
-                  product:
-                    type: object
-                    properties:
-                      variants:
-                        type: array
-                        items:
-                          type: object
-                          allOf:
-                            - $ref: '#/components/schemas/variantForAdmin'
-                            - $ref: '#/components/schemas/timestamps'
-                          properties:
-                            attributes:
-                              $ref: '#/components/schemas/variantAttribute'
-                      categories:
-                        $ref: '#/components/schemas/categoryNames'
-                    allOf:
-                      - $ref: '#/components/schemas/product'
-                      - $ref: '#/components/schemas/timestamps'
-        '401':
-          description: 'Token error, not authenticated'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error401'
-        '404':
-          description: Product not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error404'
+        '403': null
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
+        description: Not an admin
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/error403'
     post:
       tags:
         - Admin Products
@@ -789,6 +722,17 @@ paths:
                       - $ref: '#/components/schemas/variantForAdmin'
                 categories:
                   $ref: '#/components/schemas/categoryNames'
+                images:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                        example: 'https://example.com/image.jpg'
+                      thumbnail:
+                        type: string
+                        example: 'https://example.com/image-thumbnail.jpg'
       responses:
         '201':
           description: Product created
@@ -846,6 +790,75 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
+  '/admin/products/{productID}':
+    get:
+      tags:
+        - Admin Products
+      summary: Get a product
+      security:
+        - bearerAuth: []
+      description: Returns a product with the given ID.
+      parameters:
+        - name: productID
+          in: path
+          description: ID of the product to get
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Product found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  product:
+                    type: object
+                    properties:
+                      variants:
+                        type: array
+                        items:
+                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/variantForAdmin'
+                            - $ref: '#/components/schemas/timestamps'
+                          properties:
+                            attributes:
+                              $ref: '#/components/schemas/variantAttribute'
+                      categories:
+                        $ref: '#/components/schemas/categoryNames'
+                    allOf:
+                      - $ref: '#/components/schemas/product'
+                      - $ref: '#/components/schemas/timestamps'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403': null
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+        description: Not an admin
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/error403'
     patch:
       tags:
         - Admin Products
@@ -871,9 +884,11 @@ paths:
                 name:
                   type: string
                   example: Product Name
+                  nullable: true
                 description:
                   type: string
                   example: Product Description
+                  nullable: true
       responses:
         '200':
           description: Product updated
@@ -911,18 +926,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error401'
-        '404':
-          description: Product not found
+        '403':
+          description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/error403'
+        '404': null
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
+        description: Product not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/error404'
     delete:
       tags:
         - Admin Products
@@ -955,6 +976,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error401'
+        '403': null
         '404':
           description: Product not found
           content:
@@ -967,6 +989,468 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
+        description: Not an admin
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/error403'
+  '/admin/products/{productID}/variants':
+    get:
+      tags:
+        - Admin Products
+      summary: Get all variants of a product
+      description: Returns all variants of a product.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: productID
+          in: path
+          description: ID of the product to get variants of
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Variants found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  variants:
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - $ref: '#/components/schemas/variantForAdmin'
+                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/variantAttribute'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403': null
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+        description: Not an admin
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/error403'
+    post:
+      tags:
+        - Admin Products
+      summary: Create a new variant
+      description: Creates a new variant for a product with the given data.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: productID
+          in: path
+          description: ID of the product to create a variant for
+          required: true
+          schema:
+            type: string
+            example: '1'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              variants:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    price:
+                      type: number
+                      example: 100
+                    discountPrice:
+                      type: number
+                      example: 90
+                      nullable: true
+                    stock:
+                      type: integer
+                      example: 10
+                    sku:
+                      type: string
+                    attributes:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/variantAttribute'
+      responses:
+        '201':
+          description: Variant created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  variant:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/variantForAdmin'
+                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/variantAttribute'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404': null
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+        description: Product or variant not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/error404'
+  '/admin/products/{productID}/variants/{variantID}':
+    get:
+      tags:
+        - Admin Products
+      summary: Get a variant of a product
+      description: Returns a variant of a product.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: productID
+          in: path
+          description: ID of the product to get a variant of
+          required: true
+          schema:
+            type: string
+            example: '1'
+        - name: variantID
+          in: path
+          description: ID of the variant to get
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Variant found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  variants:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/variantForAdmin'
+                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/variantAttribute'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403': null
+        '404':
+          description: Product or variant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+        description: Not an admin
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/error403'
+    patch:
+      tags:
+        - Admin Products
+      summary: Update a variant
+      description: Updates given fields of a variant with given data.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: productId
+          in: path
+          description: ID of the product to update a variant of
+          required: true
+          schema:
+            type: string
+            example: '1'
+        - name: variantId
+          in: path
+          description: ID of the variant to update
+          required: true
+          schema:
+            type: string
+            example: '1'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                price:
+                  type: number
+                  example: 100
+                  nullable: true
+                discountPrice:
+                  type: number
+                  example: 90
+                  nullable: true
+                stock:
+                  type: integer
+                  example: 10
+                  nullable: true
+                sku:
+                  type: string
+                  nullable: true
+                attributes:
+                  type: array
+                  nullable: true
+                  items:
+                    $ref: '#/components/schemas/variantAttribute'
+      responses:
+        '200':
+          description: Variant updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  variant:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/variantForAdmin'
+                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/variantAttribute'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404': null
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+        description: Product or variant not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/error404'
+    put:
+      tags:
+        - Admin Products
+      summary: Update a variant
+      description: Updates a variant with the given data.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: productID
+          in: path
+          description: ID of the product to update a variant of
+          required: true
+          schema:
+            type: string
+            example: '1'
+        - name: variantID
+          in: path
+          description: ID of the variant to update
+          required: true
+          schema:
+            type: string
+            example: '1'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                price:
+                  type: number
+                  example: 100
+                discountPrice:
+                  type: number
+                  example: 90
+                  nullable: true
+                stock:
+                  type: integer
+                  example: 10
+                sku:
+                  type: string
+                attributes:
+                  type: array
+                  nullable: true
+                  items:
+                    $ref: '#/components/schemas/variantAttribute'
+      responses:
+        '200':
+          description: Variant updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+                  variant:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/variantForAdmin'
+                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/variantAttribute'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404': null
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+        description: Product or variant not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/error404'
+    delete:
+      tags:
+        - Admin Products
+      summary: Delete a variant
+      description: Deletes a variant with the given ID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: productID
+          in: path
+          description: ID of the product to delete a variant of
+          required: true
+          schema:
+            type: string
+            example: '1'
+        - name: variantID
+          in: path
+          description: ID of the variant to delete
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Variant deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: 'true'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403': null
+        '404':
+          description: Product or variant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+        description: Not an admin
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/error403'
 components:
   securitySchemes:
     bearerAuth:

@@ -58,7 +58,14 @@ paths:
   /admin/products/{productID}:
     $ref: ./paths/index.paths.yaml#/adminProduct
 
-  # /admin/products/{productID}/variants:
+  # Admin Products Variants
+
+  /admin/products/{productID}/variants:
+    $ref: ./paths/index.paths.yaml#/adminProductVariants
+
+  /admin/products/{productID}/variants/{variantID}:
+    $ref: ./paths/index.paths.yaml#/adminProductVariant
+
           
 components:
   securitySchemes:

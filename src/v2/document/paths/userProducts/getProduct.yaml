@@ -31,6 +31,10 @@ responses:
                         - $ref: "../../schemas/products/variantAttribute.yaml"
                   categories:
                     $ref: "../../schemas/products/categoryNames.yaml"
+                  images:
+                    type: array
+                    items:
+                      $ref: "../../schemas/products/image.yaml"
                 allOf:
                 - $ref: "../../schemas/products/product.yaml"
 

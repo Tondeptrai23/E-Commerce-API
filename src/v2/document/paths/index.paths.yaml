@@ -19,16 +19,33 @@ resetToken:
 adminProducts:
   get:
     $ref: "./adminProducts/getProducts.yaml"
+  post:
+    $ref: "./adminProducts/postProduct.yaml"
 
 adminProduct:
   get:
     $ref: "./adminProducts/getProduct.yaml"
-  post:
-    $ref: "./adminProducts/postProduct.yaml"
   patch:
     $ref: "./adminProducts/patchProduct.yaml"
   delete:
     $ref: "./adminProducts/deleteProduct.yaml"
+
+adminProductVariants:
+  get:
+    $ref: "./adminProducts/getVariants.yaml"
+  post:
+    $ref: "./adminProducts/postVariant.yaml"
+
+adminProductVariant:
+  get:
+    $ref: "./adminProducts/getVariant.yaml"
+  patch:
+    $ref: "./adminProducts/patchVariant.yaml"
+  put:
+    $ref: "./adminProducts/putVariant.yaml"
+  delete:
+    $ref: "./adminProducts/deleteVariant.yaml"  
+
 
 # USER PRODUCTS
 userProducts:

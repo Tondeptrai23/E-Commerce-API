@@ -1,4 +1,4 @@
-# GET /products
+# GET /admin/products
 tags:
   - Admin Products
 summary: Get all products
@@ -131,7 +131,7 @@ responses:
                     - $ref: "../../schemas/timestamps.yaml"
 
     400:
-      description: Validation Error
+      description: Invalid query parameters
       content:
         application/json:
           schema:
@@ -144,9 +144,16 @@ responses:
           schema:
             $ref: "../../schemas/error/error401.yaml"
 
+    403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error403.yaml"  
+
     500:
-      description: Server error
+      description: Internal Server Error
       content:
         application/json:
           schema:
-            $ref: "../../schemas/error/error500.yaml"
+            $ref: "../../schemas/error/error500.yaml" 

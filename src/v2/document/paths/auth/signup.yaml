@@ -16,10 +16,6 @@ requestBody:
           password:
             type: string
             example: "password"
-          role:
-            type: string
-            enum: ["user", "admin"]
-            example: "user"
 
 responses:
   201:
@@ -32,22 +28,6 @@ responses:
             success:
               type: string
               example: "true"
-            accessToken:
-              type: string
-            refreshToken:
-              type: string
-            user:
-              type: object
-              properties:
-                userID:
-                  type: string
-                  example: "1"
-                email:
-                  type: string
-                  example: "example@gmail.com"
-                role:
-                  type: string
-                  example: "user"
 
   409:
     description: Email already exists

@@ -1,14 +1,14 @@
-# PATCH /admin/products/{productID}
+# POST /admin/products/{productID}/variants
 tags:
   - Admin Products
-summary: Update a product
-description: Updates a product with the given data.
+summary: Create a new variant
+description: Creates a new variant for a product with the given data.
 security:
   - bearerAuth: []
 parameters:
   - name: productID
     in: path
-    description: ID of the product to update
+    description: ID of the product to create a variant for
     required: true
     schema:
       type: string
@@ -18,19 +18,30 @@ requestBody:
   content:
     application/json:
       schema:
-        type: object
-        properties:
-          name: 
-            type: string
-            example: "Product Name"
-            nullable: true
-          description:
-            type: string
-            example: "Product Description"
-            nullable: true
+        variants:
+          type: array
+          items:
+            type: object
+            properties:
+              price:
+                type: number
+                example: 100
+              discountPrice:
+                type: number
+                example: 90
+                nullable: true
+              stock:
+                type: integer
+                example: 10
+              sku:
+                type: string
+              attributes:
+                type: array
+                items:
+                  $ref: "../../schemas/products/variantAttribute.yaml"
 responses:
-  200: 
-    description: Product updated
+  201:
+    description: Variant created
     content:
       application/json:
         schema:
@@ -39,21 +50,12 @@ responses:
             success:
               type: string
               example: "true"
-            product:
+            variant:
               type: object
-              properties:
-                productID: 
-                  type: string
-                  example: "1"
-                name:
-                  type: string
-                  example: "Product Name"
-                description:
-                  type: string
-                  example: "Product Description"
               allOf:
+                - $ref: "../../schemas/products/variantForAdmin.yaml"
                 - $ref: "../../schemas/timestamps.yaml"
-            
+                - $ref: "../../schemas/products/variantAttribute.yaml"
   400:
     description: Validation Error
     content:
@@ -76,7 +78,7 @@ responses:
           $ref: "../../schemas/error/error403.yaml"
 
   404:
-  description: Product not found
+  description: Product or variant not found
   content:
     application/json:
       schema:

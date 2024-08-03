@@ -1,21 +1,28 @@
-# DELETE /admin/products/{productID}
+# DELETE /admin/products/{productID}/variants/{variantID}
 tags:
-  - Admin Products
-summary: Delete a product
-description: Deletes a product with the given ID.
+  - Admin Products 
+summary: Delete a variant
+description: Deletes a variant with the given ID.
 security:
   - bearerAuth: []
 parameters:
   - name: productID
     in: path
-    description: ID of the product to delete
+    description: ID of the product to delete a variant of
+    required: true
+    schema:
+      type: string
+      example: "1"
+  - name: variantID
+    in: path
+    description: ID of the variant to delete
     required: true
     schema:
       type: string
       example: "1"
 responses:
   200:
-    description: Product deleted
+    description: Variant deleted
     content:
       application/json:
         schema:
@@ -24,7 +31,6 @@ responses:
             success:
               type: string
               example: "true"
-
   401:
     description: Token error, not authenticated
     content:
@@ -40,7 +46,7 @@ responses:
         $ref: "../../schemas/error/error403.yaml"  
 
   404:
-    description: Product not found
+    description: Product or variant not found
     content:
       application/json:
         schema:

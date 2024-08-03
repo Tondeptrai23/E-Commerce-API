@@ -1,4 +1,4 @@
-# POST /products
+# POST /admin/products
 tags:
   - Admin Products
 summary: Create a new product
@@ -40,6 +40,18 @@ requestBody:
 
           categories:
             $ref: "../../schemas/products/categoryNames.yaml"
+          images:
+            type: array
+            items:
+              type: object
+              properties:
+                url:
+                  type: string
+                  example: "https://example.com/image.jpg"
+                thumbnail:
+                  type: string
+                  example: "https://example.com/image-thumbnail.jpg"
+                  
 responses:
     201:
       description: Product created

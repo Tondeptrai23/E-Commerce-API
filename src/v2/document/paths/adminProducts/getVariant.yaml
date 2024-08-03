@@ -1,21 +1,28 @@
-# GET /admin/products/{productID}
+# GET /admin/products/{productID}/variants/{variantID}
 tags:
   - Admin Products
-summary: Get a product
+summary: Get a variant of a product
+description: Returns a variant of a product.
 security:
-  - bearerAuth: []  
-description: Returns a product with the given ID.
+  - bearerAuth: []
 parameters:
   - name: productID
     in: path
-    description: ID of the product to get
+    description: ID of the product to get a variant of
+    required: true
+    schema:
+      type: string
+      example: "1"
+  - name: variantID
+    in: path
+    description: ID of the variant to get
     required: true
     schema:
       type: string
       example: "1"
 responses:
   200:
-    description: Product found
+    description: Variant found
     content:
       application/json:
         schema:
@@ -24,25 +31,13 @@ responses:
             success:
               type: string
               example: "true"
-            product:
+            variants:
               type: object
-              properties:
-                variants:
-                  type: array
-                  items:
-                    type: object
-                    allOf:
-                      - $ref: "../../schemas/products/variantForAdmin.yaml"
-                      - $ref: "../../schemas/timestamps.yaml"
-                    properties:
-                      attributes:
-                          $ref: "../../schemas/products/variantAttribute.yaml"
-                categories:
-                  $ref: "../../schemas/products/categoryNames.yaml"
               allOf:
-                - $ref: "../../schemas/products/product.yaml"
+                - $ref: "../../schemas/products/variantForAdmin.yaml"
                 - $ref: "../../schemas/timestamps.yaml"
-
+                - $ref: "../../schemas/products/variantAttribute.yaml"
+                
   401:
     description: Token error, not authenticated
     content:
@@ -58,7 +53,7 @@ responses:
         $ref: "../../schemas/error/error403.yaml"  
 
   404:
-    description: Product not found
+    description: Product or variant not found
     content:
       application/json:
         schema:
