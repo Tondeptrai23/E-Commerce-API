@@ -1,0 +1,57 @@
+# DELETE /admin/products/{productID}/images/{imageID}:
+tags:
+  - Admin Products
+summary: Delete an image from a product
+description: Delete an image from a product
+security:
+  - bearerAuth: []
+parameters:
+  - name: productID
+    in: path
+    description: ID of the product to delete an image from
+    required: true
+    schema:
+      type: string
+      example: "1"
+  - name: imageID
+    in: path
+    description: ID of the image to delete
+    required: true
+    schema:
+      type: string
+      example: "1"
+responses:
+  200:
+    description: Image deleted
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: string
+              example: "true"
+  401:
+    description: Token error, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
+  404:
+    description: Product or image not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal server error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

@@ -52,39 +52,39 @@ responses:
                   type: string
                   example: "Product Description"
               allOf:
-                - $ref: "../../schemas/timestamps.yaml"
+                - $ref: "../../../schemas/timestamps.yaml"
             
   400:
     description: Validation Error
     content:
       application/json:
         schema:
-          $ref: "../../schemas/error/error400.yaml"
+          $ref: "../../../schemas/error/error400.yaml"
 
   401:
     description: Token error, not authenticated
     content:
       application/json:
         schema:
-          $ref: "../../schemas/error/error401.yaml"
+          $ref: "../../../schemas/error/error401.yaml"
 
   403:
     description: Not an admin
     content:
       application/json:
         schema:
-          $ref: "../../schemas/error/error403.yaml"
+          $ref: "../../../schemas/error/error403.yaml"
 
   404:
   description: Product not found
   content:
     application/json:
       schema:
-        $ref: "../../schemas/error/error404.yaml"
+        $ref: "../../../schemas/error/error404.yaml"
 
   500:
     description: Internal Server Error
     content:
       application/json:
         schema:
-          $ref: "../../schemas/error/error500.yaml"
+          $ref: "../../../schemas/error/error500.yaml"

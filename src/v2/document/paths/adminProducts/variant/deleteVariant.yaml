@@ -36,25 +36,25 @@ responses:
     content:
       application/json:
         schema:
-          $ref: "../../schemas/error/error401.yaml"
+          $ref: "../../../schemas/error/error401.yaml"
 
   403:
   description: Not an admin
   content:
     application/json:
       schema:
-        $ref: "../../schemas/error/error403.yaml"  
+        $ref: "../../../schemas/error/error403.yaml"  
 
   404:
     description: Product or variant not found
     content:
       application/json:
         schema:
-          $ref: "../../schemas/error/error404.yaml"
+          $ref: "../../../schemas/error/error404.yaml"
 
   500:
     description: Internal Server Error
     content:
       application/json:
         schema:
-          $ref: "../../schemas/error/error500.yaml" 
+          $ref: "../../../schemas/error/error500.yaml" 

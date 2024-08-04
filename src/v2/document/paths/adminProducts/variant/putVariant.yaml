@@ -43,7 +43,7 @@ requestBody:
             type: array
             nullable: true
             items:
-              $ref: "../../schemas/products/variantAttribute.yaml"
+              $ref: "../../../schemas/products/variantAttribute.yaml"
 responses:
   200:
     description: Variant updated
@@ -58,40 +58,40 @@ responses:
             variant:
               type: object
               allOf:
-                - $ref: "../../schemas/products/variantForAdmin.yaml"
-                - $ref: "../../schemas/timestamps.yaml"
-                - $ref: "../../schemas/products/variantAttribute.yaml"
+                - $ref: "../../../schemas/products/variantForAdmin.yaml"
+                - $ref: "../../../schemas/timestamps.yaml"
+                - $ref: "../../../schemas/products/variantAttribute.yaml"
   400:
     description: Validation Error
     content:
       application/json:
         schema:
-          $ref: "../../schemas/error/error400.yaml"
+          $ref: "../../../schemas/error/error400.yaml"
 
   401:
     description: Token error, not authenticated
     content:
       application/json:
         schema:
-          $ref: "../../schemas/error/error401.yaml"
+          $ref: "../../../schemas/error/error401.yaml"
 
   403:
     description: Not an admin
     content:
       application/json:
         schema:
-          $ref: "../../schemas/error/error403.yaml"
+          $ref: "../../../schemas/error/error403.yaml"
 
   404:
   description: Product or variant not found
   content:
     application/json:
       schema:
-        $ref: "../../schemas/error/error404.yaml"
+        $ref: "../../../schemas/error/error404.yaml"
 
   500:
     description: Internal Server Error
     content:
       application/json:
         schema:
-          $ref: "../../schemas/error/error500.yaml"
+          $ref: "../../../schemas/error/error500.yaml"

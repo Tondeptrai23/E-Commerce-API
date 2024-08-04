@@ -1,0 +1,61 @@
+# GET /admin/products/{productID}/variants:
+tags:
+  - Admin Products
+summary: Get all variants of a product
+description: Returns all variants of a product.
+security:
+  - bearerAuth: []
+parameters:
+  - name: productID
+    in: path
+    description: ID of the product to get variants of
+    required: true
+    schema:
+      type: string
+      example: "1"
+responses:
+  200:
+    description: Variants found
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: string
+              example: "true"
+            variants:
+              type: array
+              items:
+                type: object
+                allOf:
+                  - $ref: "../../../schemas/products/variantForAdmin.yaml"
+                  - $ref: "../../../schemas/timestamps.yaml"
+                  - $ref: "../../../schemas/products/variantAttribute.yaml"
+  401:
+    description: Token error, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+
+  403:
+  description: Not an admin
+  content:
+    application/json:
+      schema:
+        $ref: "../../../schemas/error/error403.yaml"  
+
+  404:
+    description: Product not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml" 

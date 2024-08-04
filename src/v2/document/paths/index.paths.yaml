@@ -18,34 +18,59 @@ resetToken:
 # ADMIN PRODUCTS
 adminProducts:
   get:
-    $ref: "./adminProducts/getProducts.yaml"
+    $ref: "./adminProducts/product/getProducts.yaml"
   post:
-    $ref: "./adminProducts/postProduct.yaml"
+    $ref: "./adminProducts/product/postProduct.yaml"
 
 adminProduct:
   get:
-    $ref: "./adminProducts/getProduct.yaml"
+    $ref: "./adminProducts/product/getProduct.yaml"
   patch:
-    $ref: "./adminProducts/patchProduct.yaml"
+    $ref: "./adminProducts/product/patchProduct.yaml"
   delete:
-    $ref: "./adminProducts/deleteProduct.yaml"
+    $ref: "./adminProducts/product/deleteProduct.yaml"
 
 adminProductVariants:
   get:
-    $ref: "./adminProducts/getVariants.yaml"
+    $ref: "./adminProducts/variant/getVariants.yaml"
   post:
-    $ref: "./adminProducts/postVariant.yaml"
+    $ref: "./adminProducts/variant/postVariant.yaml"
 
 adminProductVariant:
   get:
-    $ref: "./adminProducts/getVariant.yaml"
+    $ref: "./adminProducts/variant/getVariant.yaml"
   patch:
-    $ref: "./adminProducts/patchVariant.yaml"
+    $ref: "./adminProducts/variant/patchVariant.yaml"
   put:
-    $ref: "./adminProducts/putVariant.yaml"
+    $ref: "./adminProducts/variant/putVariant.yaml"
   delete:
-    $ref: "./adminProducts/deleteVariant.yaml"  
+    $ref: "./adminProducts/variant/deleteVariant.yaml"  
 
+adminProductImages:
+  get:
+    $ref: "./adminProducts/image/getImages.yaml"
+  post:
+    $ref: "./adminProducts/image/postImages.yaml"
+  patch:
+    $ref: "./adminProducts/image/patchImages.yaml"
+
+adminProductImage:
+  patch:
+    $ref: "./adminProducts/image/patchImage.yaml"
+  delete:
+    $ref: "./adminProducts/image/deleteImage.yaml"
+
+adminProductCategories:
+  get:
+    $ref: "./adminProducts/category/getCategories.yaml"
+  post:
+    $ref: "./adminProducts/category/postCategories.yaml"
+  put:
+    $ref: "./adminProducts/category/putCategories.yaml"
+
+adminProductCategory:
+  delete:
+    $ref: "./adminProducts/category/deleteCategory.yaml"
 
 # USER PRODUCTS
 userProducts:

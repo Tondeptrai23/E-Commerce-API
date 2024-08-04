@@ -25,21 +25,21 @@ productImageRoute.post(
 );
 
 productImageRoute.patch(
+    "/products/:productID/images",
+    validator.validateReorderImages,
+    validator.handleValidationErrors,
+    verifyToken,
+    isAdmin,
+    productImageController.setImagesOrder
+);
+
+productImageRoute.patch(
     "/products/:productID/images/:imageID",
     validator.validatePatchImage,
     validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     productImageController.updateProductImage
-);
-
-productImageRoute.post(
-    "/products/:productID/images/reorder",
-    validator.validateReorderImages,
-    validator.handleValidationErrors,
-    verifyToken,
-    isAdmin,
-    productImageController.setImagesOrder
 );
 
 productImageRoute.delete(

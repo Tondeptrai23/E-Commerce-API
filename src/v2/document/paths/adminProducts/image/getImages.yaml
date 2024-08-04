@@ -1,0 +1,43 @@
+# GET /admin/products/{productID}/images
+tags:
+  - Admin Products
+summary: Get product images
+description: Returns all images of a product with the given ID.
+parameters:
+  - name: productID
+    in: path
+    description: ID of the product to get images
+    required: true
+    schema:
+      type: string
+      example: "1"
+responses:
+  200:
+    description: Images found
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: string
+              example: "true"
+            images:
+              type: array
+              items:
+                type: object
+                allOf:
+                  - $ref: "../../../schemas/products/image.yaml"
+                  - $ref: "../../../schemas/timestamps.yaml"
+  404:
+    description: Product not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

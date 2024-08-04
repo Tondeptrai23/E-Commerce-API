@@ -36,10 +36,10 @@ requestBody:
                   type: string
                 
               allOf:
-                - $ref: "../../schemas/products/variantForAdmin.yaml"
+                - $ref: "../../../schemas/products/variantForAdmin.yaml"
 
           categories:
-            $ref: "../../schemas/products/categoryNames.yaml"
+            $ref: "../../../schemas/products/categoryNames.yaml"
           images:
             type: array
             items:
@@ -70,46 +70,46 @@ responses:
                     type: array
                     items:
                       allOf:
-                        - $ref: "../../schemas/products/variantForAdmin.yaml"
-                        - $ref: "../../schemas/products/variantAttribute.yaml"
-                        - $ref: "../../schemas/timestamps.yaml"
+                        - $ref: "../../../schemas/products/variantForAdmin.yaml"
+                        - $ref: "../../../schemas/products/variantAttribute.yaml"
+                        - $ref: "../../../schemas/timestamps.yaml"
                   images:
                     type: array
                     items:
                       type: object
                       allOf:
-                        - $ref: "../../schemas/products/image.yaml"
-                        - $ref: "../../schemas/timestamps.yaml"
+                        - $ref: "../../../schemas/products/image.yaml"
+                        - $ref: "../../../schemas/timestamps.yaml"
                   categories:
-                    $ref: "../../schemas/products/categoryNames.yaml"
+                    $ref: "../../../schemas/products/categoryNames.yaml"
                 allOf:
-                  - $ref: "../../schemas/products/product.yaml"
-                  - $ref: "../../schemas/timestamps.yaml"
+                  - $ref: "../../../schemas/products/product.yaml"
+                  - $ref: "../../../schemas/timestamps.yaml"
                 
     400:
       description: Validation Error
       content:
         application/json:
           schema:
-            $ref: "../../schemas/error/error400.yaml"
+            $ref: "../../../schemas/error/error400.yaml"
     
     401:
       description: Token error, not authenticated
       content:
         application/json:
           schema:
-            $ref: "../../schemas/error/error401.yaml"
+            $ref: "../../../schemas/error/error401.yaml"
 
     403:
       description: Not an admin
       content:
         application/json:
           schema:
-            $ref: "../../schemas/error/error403.yaml"
+            $ref: "../../../schemas/error/error403.yaml"
 
     500:
       description: Server error
       content:
         application/json:
           schema:
-            $ref: "../../schemas/error/error500.yaml"
+            $ref: "../../../schemas/error/error500.yaml"

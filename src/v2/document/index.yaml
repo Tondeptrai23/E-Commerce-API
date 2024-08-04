@@ -66,6 +66,21 @@ paths:
   /admin/products/{productID}/variants/{variantID}:
     $ref: ./paths/index.paths.yaml#/adminProductVariant
 
+  # Admin Products Images
+  /admin/products/{productID}/images:
+    $ref: ./paths/index.paths.yaml#/adminProductImages
+
+  /admin/products/{productID}/images/{imageID}:
+    $ref: ./paths/index.paths.yaml#/adminProductImage
+
+  # Admin Products Categories
+
+  /admin/products/{productID}/categories:
+    $ref: ./paths/index.paths.yaml#/adminProductCategories
+
+  /admin/products/{productID}/categories/{categoryName}:
+    $ref: ./paths/index.paths.yaml#/adminProductCategory
+
           
 components:
   securitySchemes:

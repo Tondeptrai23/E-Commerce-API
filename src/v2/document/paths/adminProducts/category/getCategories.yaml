@@ -1,0 +1,57 @@
+# GET /admin/products/{productID}/categories:
+tags:
+  - Admin Products
+summary: Get all categories of a product
+description: Get all categories of a product
+security:
+  - bearerAuth: []
+parameters:
+  - name: productID
+    in: path
+    description: ID of the product to get categories of
+    required: true
+    schema:
+      type: string
+      example: "1"
+responses:
+  200:
+    description: Categories found
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: string
+              example: "true"
+            categories:
+              type: array
+              items:
+                type: object
+                allOf:
+                  - $ref: "../../../schemas/products/category.yaml"
+                  - $ref: "../../../schemas/timestamps.yaml"
+  401:
+    description: Token error, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
+  404:
+    description: Product not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal server error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"
