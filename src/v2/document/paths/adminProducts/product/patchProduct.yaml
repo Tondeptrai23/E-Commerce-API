@@ -37,8 +37,8 @@ responses:
           type: object
           properties:
             success:
-              type: string
-              example: "true"
+              type: boolean
+              example: true
             product:
               type: object
               properties:
@@ -76,11 +76,11 @@ responses:
           $ref: "../../../schemas/error/error403.yaml"
 
   404:
-  description: Product not found
-  content:
-    application/json:
-      schema:
-        $ref: "../../../schemas/error/error404.yaml"
+    description: Product not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
 
   500:
     description: Internal Server Error

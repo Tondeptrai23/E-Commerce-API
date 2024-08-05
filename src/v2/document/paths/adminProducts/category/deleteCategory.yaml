@@ -29,8 +29,8 @@ responses:
           type: object
           properties:
             success:
-              type: string
-              example: "true"
+              type: boolean
+              example: true
   401:
     description: Token error, not authenticated
     content:

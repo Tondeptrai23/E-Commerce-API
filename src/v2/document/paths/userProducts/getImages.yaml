@@ -20,8 +20,8 @@ responses:
           type: object
           properties:
             success:
-              type: string
-              example: "true"
+              type: true
+              example: true
             images:
               type: array
               items:

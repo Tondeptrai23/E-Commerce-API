@@ -53,8 +53,8 @@ responses:
           type: object
           properties:
             success:
-              type: string
-              example: "true"
+              type: boolean
+              example: true
             variant:
               type: object
               allOf:
@@ -83,11 +83,11 @@ responses:
           $ref: "../../../schemas/error/error403.yaml"
 
   404:
-  description: Product or variant not found
-  content:
-    application/json:
-      schema:
-        $ref: "../../../schemas/error/error404.yaml"
+    description: Product or variant not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
 
   500:
     description: Internal Server Error

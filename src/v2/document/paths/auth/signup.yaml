@@ -26,8 +26,8 @@ responses:
           type: object
           properties:
             success:
-              type: string
-              example: "true"
+              type: boolean
+              example: true
 
   409:
     description: Email already exists

@@ -72,6 +72,21 @@ adminProductCategory:
   delete:
     $ref: "./adminProducts/category/deleteCategory.yaml"
 
+# ADMIN CATEGORIES
+adminCategories:
+  get:
+    $ref: "./adminCategories/getCategories.yaml"
+  post:
+    $ref: "./adminCategories/postCategories.yaml"
+
+adminCategory:
+  get:
+    $ref: "./adminCategories/getCategory.yaml"
+  put:
+    $ref: "./adminCategories/putCategory.yaml"
+  delete:
+    $ref: "./adminCategories/deleteCategory.yaml"
+
 # USER PRODUCTS
 userProducts:
   get:
@@ -92,3 +107,21 @@ userProductImages:
 userProductCategories:
   get:
     $ref: "./userProducts/getProductCategories.yaml"
+
+# USER CATEGORIES
+
+userCategories:
+  get:
+    $ref: "./userCategories/getCategories.yaml"
+
+userCategory:
+  get:
+    $ref: "./userCategories/getCategory.yaml"
+
+userAscendantCategories:
+  get:
+    $ref: "./userCategories/getAscendant.yaml"
+
+userDescendantCategories:
+  get:
+    $ref: "./userCategories/getDescendant.yaml"

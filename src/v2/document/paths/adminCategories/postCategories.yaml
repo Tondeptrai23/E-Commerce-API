@@ -1,0 +1,73 @@
+# POST /admin/categories/{name}:
+tags:
+  - Admin Categories
+summary: Create a category
+description: |
+  Create a category by name. The name must be unique.
+security:
+  - bearerAuth: []
+parameters:
+  - name: name
+    in: path
+    description: The name of the category
+    required: true
+    schema:
+      type: string
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+            example: Category
+          description:
+            type: string
+            example: Category description
+            nullable: true
+          parent:
+            type: string
+            description: The name or id of the parent category (both are accepted)
+            example: Parent category 
+            nullable: true
+responses:
+  201:
+    description: Category created
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success: 
+              type: boolean
+              example: true
+            category:
+              type: object
+              allOf:
+                - $ref: '../../schemas/products/category.yaml'
+                - $ref: '../../schemas/timestamps.yaml'
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/error/error401.yaml'
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/error/error403.yaml'
+  409:
+    description: Category already exists
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/error/error409.yaml'
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/error/error500.yaml'

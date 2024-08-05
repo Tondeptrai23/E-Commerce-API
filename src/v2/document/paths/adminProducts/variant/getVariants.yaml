@@ -22,8 +22,8 @@ responses:
           type: object
           properties:
             success:
-              type: string
-              example: "true"
+              type: boolean
+              example: true
             variants:
               type: array
               items:
@@ -40,11 +40,11 @@ responses:
           $ref: "../../../schemas/error/error401.yaml"
 
   403:
-  description: Not an admin
-  content:
-    application/json:
-      schema:
-        $ref: "../../../schemas/error/error403.yaml"  
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"  
 
   404:
     description: Product not found

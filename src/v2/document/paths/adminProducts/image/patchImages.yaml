@@ -37,8 +37,8 @@ responses:
           type: object
           properties:
             success:
-              type: string
-              example: "true"
+              type: boolean
+              example: true
             images:
               type: array
               items:

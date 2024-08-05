@@ -1,0 +1,40 @@
+# GET /categories/{name}/ascendant:
+tags:
+  - User Categories
+summary: Get all ascendant categories of a category
+description: |
+  Get all ascendant categories of a category by name. Includes the category itself.
+parameters:
+  - name: name
+    in: path
+    description: The name of the category
+    required: true
+    schema:
+      type: string
+responses:
+  200:
+    description: Category found
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            categories:
+              type: array
+              items:
+                $ref: '../../schemas/products/category.yaml'
+  404:
+    description: Category not found
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/error/error404.yaml'
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/error/error500.yaml'

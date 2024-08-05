@@ -22,8 +22,8 @@ responses:
           type: object
           properties:
             success:
-              type: string
-              example: "true"
+              type: boolean
+              example: true
             product:
               type: object
               properties:
@@ -36,7 +36,7 @@ responses:
                       - $ref: "../../../schemas/timestamps.yaml"
                     properties:
                       attributes:
-                          $ref: "../../../schemas/products/variantAttribute.yaml"
+                        $ref: "../../../schemas/products/variantAttribute.yaml"
                 categories:
                   $ref: "../../../schemas/products/categoryNames.yaml"
               allOf:
@@ -51,11 +51,11 @@ responses:
           $ref: "../../../schemas/error/error401.yaml"
 
   403:
-  description: Not an admin
-  content:
-    application/json:
-      schema:
-        $ref: "../../../schemas/error/error403.yaml"  
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"  
 
   404:
     description: Product not found

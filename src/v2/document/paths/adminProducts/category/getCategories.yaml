@@ -22,8 +22,8 @@ responses:
           type: object
           properties:
             success:
-              type: string
-              example: "true"
+              type: boolean
+              example: true
             categories:
               type: array
               items:

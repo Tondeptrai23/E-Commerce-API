@@ -3,9 +3,7 @@ tags:
   - Admin Products
 summary: Get all products
 description: Retrieves a list of all products with optional filtering, sorting, and pagination. <br>
-  - Filtering by name, category, variant, and attributes. <br>
-  - Sorting by one or more fields. <br>
-  - Pagination by page and size. <br>
+  - The same as the user's endpoint but with sorting/filtering by createdAt and updatedAt. 
 security:
   - bearerAuth: []
 parameters:
@@ -25,7 +23,24 @@ parameters:
 
   - name: name
     in: query
-    description: Filter by name. Support partial matching using "[like]name"
+    description: Filter by name. <br> 
+      - Support partial matching using "[like]name"
+    required: false
+    schema:
+      type: string
+
+  - name: createdAt
+    in: query
+    description: Filter by createdAt. <br> 
+      - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2022-01-01"
+    required: false
+    schema:
+      type: string
+
+  - name: updatedAt
+    in: query
+    description: Filter by updatedAt. <br> 
+      - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2022-01-01"
     required: false
     schema:
       type: string
@@ -61,7 +76,12 @@ parameters:
   
   - name: sort
     in: query
-    description: Sort products by one or more fields. <br> - A comma-separated list of fields ("price,-discountPrice"). <br> - A single field ("price"). <br> - An array of fields (["price", "-discountPrice"]). <br> A leading '-' indicates descending order. <br> Sorting is applied from left to right
+    description: Sort products by one or more fields. <br> 
+      - A comma-separated list of fields ("price,-discountPrice"). <br>
+      - A single field ("price"). <br> 
+      - An array of fields (["price", "-discountPrice"]). <br> 
+      - A leading '-' indicates descending order. <br>
+      - Sorting is applied from left to right
     required: false
     schema:
       oneOf:
@@ -86,74 +106,71 @@ parameters:
       description: Dynamic attributes of the product
       properties:
         color:
-          type: string
           example: "red"
         size:
-          type: string
-          example: "M"
+          example: "M,L"
+
 responses:
-    200:
-      description: Successful operation
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              success:
-                type: string
-                example: "true"
-              currentPage:
-                type: integer
-                example: 1
-              totalPages:
-                type: integer
-                example: 10
-              totalItems:
-                type: integer
-                example: 20
-              products:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    variants:
-                      type: array
-                      items:
-                        type: object
-                        allOf:
-                          - $ref: "../../../schemas/products/variantForAdmin.yaml"
-                          - $ref: "../../../schemas/timestamps.yaml"
-                    categories:
+  200:
+    description: Successful operation
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            currentPage:
+              type: integer
+              example: 1
+            totalPages:
+              type: integer
+              example: 10
+            totalItems:
+              type: integer
+              example: 20
+            products:
+              type: array
+              items:
+                type: object
+                properties:
+                  variants:
+                    type: array
+                    items:
                       allOf:
-                        - $ref: "../../../schemas/products/categoryNames.yaml"
-                  allOf:
-                    - $ref: "../../../schemas/products/product.yaml"
-                    - $ref: "../../../schemas/timestamps.yaml"
+                        - $ref: "../../../schemas/products/variantForAdmin.yaml"
+                        - $ref: "../../../schemas/timestamps.yaml"
+                  categories:
+                    $ref: "../../../schemas/products/categoryNames.yaml"
+                allOf:
+                  - $ref: "../../../schemas/products/product.yaml"
+                  - $ref: "../../../schemas/timestamps.yaml"
 
-    400:
-      description: Invalid query parameters
-      content:
-        application/json:
-          schema:
-            $ref: "../../../schemas/error/error400.yaml"
+  400:
+    description: Invalid query parameters
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error400.yaml"
 
-    401:
-      description: Token error, not authenticated
-      content:
-        application/json:
-          schema:
-            $ref: "../../../schemas/error/error401.yaml"
+  401:
+    description: Token error, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
 
-    403:
+  403:
     description: Not an admin
     content:
       application/json:
         schema:
           $ref: "../../../schemas/error/error403.yaml"  
 
-    500:
-      description: Internal Server Error
-      content:
-        application/json:
-          schema:
-            $ref: "../../../schemas/error/error500.yaml" 
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml" 

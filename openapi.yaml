@@ -10,7 +10,11 @@ tags:
     description: This field represents the description of something.
   - name: User Products
     description: This field represents the description of something.
+  - name: User Categories
+    description: This field represents the description of something.
   - name: Admin Products
+    description: This field represents the description of something.
+  - name: Admin Categories
     description: This field represents the description of something.
 paths:
   /auth/signin:
@@ -41,8 +45,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   accessToken:
                     type: string
                   refreshToken:
@@ -81,8 +85,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'false'
+                    type: boolean
+                    example: false
                   error:
                     type: string
                     example: Conflict Error
@@ -120,8 +124,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
         '400':
           description: Validation Error
           content:
@@ -165,8 +169,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   accessToken:
                     type: string
         '400':
@@ -212,8 +216,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   accessToken:
                     type: string
                   refreshToken:
@@ -255,6 +259,7 @@ paths:
           required: false
           schema:
             type: string
+            pattern: '/^(\[like\])?([\w-]+)$/'
         - name: variant
           in: query
           description: 'Filter by variant''s price and discountPrice. <br> - Support operators "[lte]100", "[gte]100", "[between]100,200"'
@@ -286,14 +291,14 @@ paths:
               - type: array
         - name: oneVariant
           in: query
-          description: Return only one variant of each product
+          description: Return only one variant of each product. Default is false
           required: false
           schema:
             type: boolean
             example: true
         - name: attributes
           in: query
-          description: Filter by attributes
+          description: 'Filter by attributes. <br> - Only support exact matching. <br> - Support multiple attributes. <br> - For example, to find products that have red variant and size M or L, use "color=red&size=M,L" or "color=red&size=M&size=L". <br>'
           required: false
           style: deepObject
           explode: false
@@ -302,11 +307,9 @@ paths:
             description: Dynamic attributes of the product
             properties:
               color:
-                type: string
                 example: red
               size:
-                type: string
-                example: M
+                example: 'M,L'
       responses:
         '200':
           description: Successful operation
@@ -316,8 +319,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   currentPage:
                     type: integer
                     example: 1
@@ -374,8 +377,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   product:
                     type: object
                     properties:
@@ -428,8 +431,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   variants:
                     type: array
                     items:
@@ -474,8 +477,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: true
+                    example: true
                   images:
                     type: array
                     items:
@@ -517,8 +520,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   categories:
                     type: array
                     items:
@@ -537,12 +540,170 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
+  /categories:
+    get:
+      tags:
+        - User Categories
+      summary: Get all categories
+      description: |
+        Get all categories.
+      responses:
+        '200':
+          description: Categories found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  categories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/category'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/categories/{categoryName}':
+    get:
+      tags:
+        - User Categories
+      summary: Get a category
+      description: |
+        Get a category by name.
+      parameters:
+        - name: name
+          in: path
+          description: The name of the category
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Category found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  category:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        parent:
+                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/category'
+                      allOf:
+                        - $ref: '#/components/schemas/category'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/categories/{categoryName}/ascendants':
+    get:
+      tags:
+        - User Categories
+      summary: Get all ascendant categories of a category
+      description: |
+        Get all ascendant categories of a category by name. Includes the category itself.
+      parameters:
+        - name: name
+          in: path
+          description: The name of the category
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Category found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  categories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/category'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/categories/{categoryName}/descendants':
+    get:
+      tags:
+        - User Categories
+      summary: Get all descendant categories of a category
+      description: |
+        Get all descendant categories of a category by name. Includes the category itself.
+      parameters:
+        - name: name
+          in: path
+          description: The name of the category
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Category found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  categories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/category'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
   /admin/products:
     get:
       tags:
         - Admin Products
       summary: Get all products
-      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> - Filtering by name, category, variant, and attributes. <br> - Sorting by one or more fields. <br> - Pagination by page and size. <br>'
+      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> - The same as the user''s endpoint but with sorting/filtering by createdAt and updatedAt.'
       security:
         - bearerAuth: []
       parameters:
@@ -560,7 +721,19 @@ paths:
             type: integer
         - name: name
           in: query
-          description: 'Filter by name. Support partial matching using "[like]name"'
+          description: 'Filter by name. <br> - Support partial matching using "[like]name"'
+          required: false
+          schema:
+            type: string
+        - name: createdAt
+          in: query
+          description: 'Filter by createdAt. <br> - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2022-01-01"'
+          required: false
+          schema:
+            type: string
+        - name: updatedAt
+          in: query
+          description: 'Filter by updatedAt. <br> - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2022-01-01"'
           required: false
           schema:
             type: string
@@ -592,7 +765,7 @@ paths:
             $ref: '#/components/schemas/categoryNames'
         - name: sort
           in: query
-          description: 'Sort products by one or more fields. <br> - A comma-separated list of fields ("price,-discountPrice"). <br> - A single field ("price"). <br> - An array of fields (["price", "-discountPrice"]). <br> A leading ''-'' indicates descending order. <br> Sorting is applied from left to right'
+          description: 'Sort products by one or more fields. <br> - A comma-separated list of fields ("price,-discountPrice"). <br> - A single field ("price"). <br> - An array of fields (["price", "-discountPrice"]). <br> - A leading ''-'' indicates descending order. <br> - Sorting is applied from left to right'
           required: false
           schema:
             oneOf:
@@ -615,11 +788,9 @@ paths:
             description: Dynamic attributes of the product
             properties:
               color:
-                type: string
                 example: red
               size:
-                type: string
-                example: M
+                example: 'M,L'
       responses:
         '200':
           description: Successful operation
@@ -629,8 +800,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   currentPage:
                     type: integer
                     example: 1
@@ -648,13 +819,11 @@ paths:
                         variants:
                           type: array
                           items:
-                            type: object
                             allOf:
                               - $ref: '#/components/schemas/variantForAdmin'
                               - $ref: '#/components/schemas/timestamps'
                         categories:
-                          allOf:
-                            - $ref: '#/components/schemas/categoryNames'
+                          $ref: '#/components/schemas/categoryNames'
                       allOf:
                         - $ref: '#/components/schemas/product'
                         - $ref: '#/components/schemas/timestamps'
@@ -670,18 +839,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error401'
-        '403': null
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
-        description: Not an admin
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/error403'
     post:
       tags:
         - Admin Products
@@ -743,7 +912,7 @@ paths:
                 properties:
                   success:
                     type: string
-                    example: 'true'
+                    example: true
                   product:
                     type: object
                     properties:
@@ -815,8 +984,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   product:
                     type: object
                     properties:
@@ -841,7 +1010,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error401'
-        '403': null
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
         '404':
           description: Product not found
           content:
@@ -854,11 +1028,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
-        description: Not an admin
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/error403'
     patch:
       tags:
         - Admin Products
@@ -898,8 +1067,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   product:
                     type: object
                     properties:
@@ -932,18 +1101,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error403'
-        '404': null
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
-        description: Product not found
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/error404'
     delete:
       tags:
         - Admin Products
@@ -968,15 +1137,20 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error401'
-        '403': null
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
         '404':
           description: Product not found
           content:
@@ -989,11 +1163,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
-        description: Not an admin
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/error403'
   '/admin/products/{productID}/variants':
     get:
       tags:
@@ -1019,8 +1188,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   variants:
                     type: array
                     items:
@@ -1035,7 +1204,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error401'
-        '403': null
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
         '404':
           description: Product not found
           content:
@@ -1048,22 +1222,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
-        description: Not an admin
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/error403'
     post:
       tags:
         - Admin Products
-      summary: Create a new variant
-      description: Creates a new variant for a product with the given data.
+      summary: Create new variants for a product
+      description: Create multiple variants for a product with the given ID.
       security:
         - bearerAuth: []
       parameters:
         - name: productID
           in: path
-          description: ID of the product to create a variant for
+          description: ID of the product to create variants for
           required: true
           schema:
             type: string
@@ -1073,27 +1242,29 @@ paths:
         content:
           application/json:
             schema:
-              variants:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    price:
-                      type: number
-                      example: 100
-                    discountPrice:
-                      type: number
-                      example: 90
-                      nullable: true
-                    stock:
-                      type: integer
-                      example: 10
-                    sku:
-                      type: string
-                    attributes:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/variantAttribute'
+              type: object
+              properties:
+                variants:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      price:
+                        type: number
+                        example: 100
+                      discountPrice:
+                        type: number
+                        example: 90
+                        nullable: true
+                      stock:
+                        type: integer
+                        example: 10
+                      sku:
+                        type: string
+                      attributes:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/variantAttribute'
       responses:
         '201':
           description: Variant created
@@ -1103,8 +1274,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   variant:
                     type: object
                     allOf:
@@ -1129,18 +1300,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error403'
-        '404': null
+        '404':
+          description: Product or variant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
-        description: Product or variant not found
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/error404'
   '/admin/products/{productID}/variants/{variantID}':
     get:
       tags:
@@ -1174,7 +1345,7 @@ paths:
                 properties:
                   success:
                     type: string
-                    example: 'true'
+                    example: true
                   variants:
                     type: object
                     allOf:
@@ -1187,7 +1358,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error401'
-        '403': null
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
         '404':
           description: Product or variant not found
           content:
@@ -1200,11 +1376,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
-        description: Not an admin
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/error403'
     patch:
       tags:
         - Admin Products
@@ -1263,8 +1434,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   variant:
                     type: object
                     allOf:
@@ -1289,18 +1460,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error403'
-        '404': null
+        '404':
+          description: Product or variant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
-        description: Product or variant not found
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/error404'
     put:
       tags:
         - Admin Products
@@ -1356,8 +1527,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   variant:
                     type: object
                     allOf:
@@ -1382,18 +1553,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error403'
-        '404': null
+        '404':
+          description: Product or variant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
-        description: Product or variant not found
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/error404'
     delete:
       tags:
         - Admin Products
@@ -1426,14 +1597,19 @@ paths:
                 properties:
                   success:
                     type: string
-                    example: 'true'
+                    example: true
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error401'
-        '403': null
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
         '404':
           description: Product or variant not found
           content:
@@ -1446,17 +1622,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
-        description: Not an admin
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/error403'
   '/admin/products/{productID}/images':
     get:
       tags:
         - Admin Products
-      summary: Get product images
+      summary: Get images of a product
       description: Returns all images of a product with the given ID.
+      security:
+        - bearerAuth: []
       parameters:
         - name: productID
           in: path
@@ -1474,8 +1647,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   images:
                     type: array
                     items:
@@ -1538,8 +1711,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   images:
                     type: array
                     items:
@@ -1611,8 +1784,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   images:
                     type: array
                     items:
@@ -1690,8 +1863,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   image:
                     type: object
                     allOf:
@@ -1752,8 +1925,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
         '401':
           description: 'Token error, not authenticated'
           content:
@@ -1803,8 +1976,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   categories:
                     type: array
                     items:
@@ -1867,8 +2040,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   product:
                     type: object
                     properties:
@@ -1932,8 +2105,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
                   product:
                     type: object
                     properties:
@@ -1998,8 +2171,8 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: string
-                    example: 'true'
+                    type: boolean
+                    example: true
         '401':
           description: 'Token error, not authenticated'
           content:
@@ -2024,6 +2197,370 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
+  /admin/categories:
+    get:
+      tags:
+        - Admin Categories
+      summary: Get all categories
+      description: |
+        Get all categories. <br>
+        - Support pagination by page and size. <br>
+        - Support partial matching filtering by name, parentID, parentName. <br>
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page to retrieve
+          required: false
+          schema:
+            type: integer
+        - name: size
+          in: query
+          description: Size each page
+          required: false
+          schema:
+            type: integer
+        - name: name
+          in: query
+          description: 'Filter by name. <br> - Support partial matching using "[like]name"'
+          required: false
+          schema:
+            type: string
+            pattern: '/^(\[like\])?([\w-]+)$/'
+        - name: parentID
+          in: query
+          description: Filter by parentID
+          required: false
+          schema:
+            type: string
+        - name: parentName
+          in: query
+          description: 'Filter by parentName. <br> - Support partial matching using "[like]parentName"'
+          required: false
+          schema:
+            type: string
+            pattern: '/^(\[like\])?([\w-]+)$/'
+        - name: createdAt
+          in: query
+          description: 'Filter by createdAt. <br> - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2022-01-01"'
+          required: false
+          schema:
+            type: string
+        - name: updatedAt
+          in: query
+          description: 'Filter by updatedAt. <br> - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2022-01-01"'
+          required: false
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: 'Sort categories by one or more fields. <br> - A comma-separated list of fields ("name,-createdAt"). <br> - A single field ("name"). <br> - An array of fields (["name", "-createdAt"]). <br> - A leading ''-'' indicates descending order. <br> - Sorting is applied from left to right'
+          required: false
+          schema:
+            oneOf:
+              - type: string
+              - type: array
+      responses:
+        '200':
+          description: Categories found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  categories:
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - $ref: '#/components/schemas/category'
+                        - $ref: '#/components/schemas/timestamps'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    post:
+      tags:
+        - Admin Categories
+      summary: Create a category
+      description: |
+        Create a category by name. The name must be unique.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: name
+          in: path
+          description: The name of the category
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Category
+                description:
+                  type: string
+                  example: Category description
+                  nullable: true
+                parent:
+                  type: string
+                  description: The name or id of the parent category (both are accepted)
+                  example: Parent category
+                  nullable: true
+      responses:
+        '201':
+          description: Category created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  category:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/category'
+                      - $ref: '#/components/schemas/timestamps'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '409':
+          description: Category already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/admin/categories/{categoryName}':
+    get:
+      tags:
+        - Admin Categories
+      summary: Get a category
+      description: |
+        Get a category by name.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: name
+          in: path
+          description: The name of the category
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Category found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  category:
+                    type: object
+                    properties:
+                      parent:
+                        type: object
+                        allOf:
+                          - $ref: '#/components/schemas/category'
+                          - $ref: '#/components/schemas/timestamps'
+                    allOf:
+                      - $ref: '#/components/schemas/category'
+                      - $ref: '#/components/schemas/timestamps'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    put:
+      tags:
+        - Admin Categories
+      summary: Update a category
+      description: |
+        Update a category by name. The updated name must be unique.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: name
+          in: path
+          description: The name of the category
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Category
+                description:
+                  type: string
+                  example: Category description
+                  nullable: true
+                parent:
+                  type: string
+                  description: The name or id of the parent category (both are accepted)
+                  example: Parent category
+                  nullable: true
+      responses:
+        '200':
+          description: Category updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  category:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/category'
+                      - $ref: '#/components/schemas/timestamps'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '409':
+          description: Category already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    delete:
+      tags:
+        - Admin Categories
+      summary: Delete a category
+      description: |
+        Delete a category by name.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: name
+          in: path
+          description: The name of the category
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Category deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
 components:
   securitySchemes:
     bearerAuth:
@@ -2035,8 +2572,8 @@ components:
       type: object
       properties:
         success:
-          type: string
-          example: 'false'
+          type: boolean
+          example: false
         errors:
           type: array
           items:
@@ -2061,8 +2598,8 @@ components:
       type: object
       properties:
         success:
-          type: string
-          example: 'false'
+          type: boolean
+          example: false
         error:
           type: string
           example: Token invalid
@@ -2070,8 +2607,8 @@ components:
       type: object
       properties:
         success:
-          type: string
-          example: 'false'
+          type: boolean
+          example: false
         error:
           type: string
           example: Not an admin. Cannot retrieve administrative data
@@ -2079,8 +2616,8 @@ components:
       type: object
       properties:
         success:
-          type: string
-          example: 'false'
+          type: boolean
+          example: false
         error:
           type: string
           example: Something not found
@@ -2088,8 +2625,8 @@ components:
       type: object
       properties:
         success:
-          type: string
-          example: 'false'
+          type: boolean
+          example: false
         error:
           type: string
           example: Server error
@@ -2204,9 +2741,9 @@ components:
       properties:
         createdAt:
           type: string
-          format: date
+          format: date-time
           example: '2024-01-01T00:00:00.000Z'
         updatedAt:
           type: string
-          format: date
+          format: date-time
           example: '2024-01-01T00:00:00.000Z'

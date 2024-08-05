@@ -62,7 +62,7 @@ responses:
             properties:
               success:
                 type: string
-                example: "true"
+                example: true
               product:
                 type: object
                 properties:

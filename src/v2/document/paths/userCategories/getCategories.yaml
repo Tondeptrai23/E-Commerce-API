@@ -1,0 +1,27 @@
+# GET /categories
+tags:
+  - User Categories
+summary: Get all categories
+description: |
+  Get all categories.
+responses:
+  200:
+    description: Categories found
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success: 
+              type: boolean
+              example: true
+            categories:
+              type: array
+              items:
+                $ref: '../../schemas/products/category.yaml'
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/error/error500.yaml'

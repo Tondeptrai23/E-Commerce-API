@@ -30,7 +30,7 @@ responses:
           properties:
             success:
               type: string
-              example: "true"
+              example: true
             variants:
               type: object
               allOf:
@@ -46,11 +46,11 @@ responses:
           $ref: "../../../schemas/error/error401.yaml"
 
   403:
-  description: Not an admin
-  content:
-    application/json:
-      schema:
-        $ref: "../../../schemas/error/error403.yaml"  
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"  
 
   404:
     description: Product or variant not found

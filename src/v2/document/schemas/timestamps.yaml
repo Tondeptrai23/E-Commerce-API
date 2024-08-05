@@ -2,9 +2,9 @@ type: object
 properties:
   createdAt:
     type: string
-    format: date
+    format: date-time
     example: "2024-01-01T00:00:00.000Z"
   updatedAt:
     type: string
-    format: date
+    format: date-time
     example: "2024-01-01T00:00:00.000Z"

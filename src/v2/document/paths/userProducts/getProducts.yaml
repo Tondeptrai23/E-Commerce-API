@@ -27,6 +27,7 @@ parameters:
     required: false
     schema:
       type: string
+      pattern: /^(\[like\])?([\w-]+)$/
 
   - name: variant
     in: query
@@ -63,7 +64,7 @@ parameters:
 
   - name: oneVariant
     in: query
-    description: Return only one variant of each product
+    description: Return only one variant of each product. Default is false
     required: false
     schema:
       type: boolean
@@ -71,7 +72,11 @@ parameters:
 
   - name: attributes
     in: query
-    description: Filter by attributes
+    description: Filter by attributes. <br>
+      - Only support exact matching. <br>
+      - Support multiple attributes. <br>
+      - For example, to find products that have red variant and size M or L, use "color=red&size=M,L"
+      or "color=red&size=M&size=L". <br>
     required: false
     style: deepObject
     explode: false
@@ -80,11 +85,9 @@ parameters:
       description: Dynamic attributes of the product
       properties:
         color:
-          type: string
           example: "red"
         size:
-          type: string
-          example: "M"
+          example: "M,L"
 responses:
     200:
       description: Successful operation
@@ -94,8 +97,8 @@ responses:
             type: object
             properties:
               success:
-                type: string
-                example: "true"
+                type: boolean
+                example: true
               currentPage:
                 type: integer
                 example: 1

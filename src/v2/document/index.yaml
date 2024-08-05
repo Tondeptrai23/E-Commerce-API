@@ -17,7 +17,15 @@ tags:
     description: 
       This field represents the description of something.
 
+  - name: User Categories
+    description: 
+      This field represents the description of something.
+
   - name: Admin Products
+    description: 
+      This field represents the description of something.
+
+  - name: Admin Categories
     description: 
       This field represents the description of something.
 
@@ -51,6 +59,19 @@ paths:
   /products/{productID}/categories:
     $ref: ./paths/index.paths.yaml#/userProductCategories
 
+  # User Categories
+  /categories:
+    $ref: ./paths/index.paths.yaml#/userCategories
+
+  /categories/{categoryName}:
+    $ref: ./paths/index.paths.yaml#/userCategory
+
+  /categories/{categoryName}/ascendants:
+    $ref: ./paths/index.paths.yaml#/userAscendantCategories
+
+  /categories/{categoryName}/descendants:
+    $ref: ./paths/index.paths.yaml#/userDescendantCategories
+
   # Admin Products
   /admin/products:
     $ref: ./paths/index.paths.yaml#/adminProducts
@@ -80,6 +101,14 @@ paths:
 
   /admin/products/{productID}/categories/{categoryName}:
     $ref: ./paths/index.paths.yaml#/adminProductCategory
+
+  # Admin Categories
+
+  /admin/categories:
+    $ref: ./paths/index.paths.yaml#/adminCategories
+
+  /admin/categories/{categoryName}:
+    $ref: ./paths/index.paths.yaml#/adminCategory
 
           
 components:
