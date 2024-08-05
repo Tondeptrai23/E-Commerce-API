@@ -1,0 +1,39 @@
+type: object
+properties:
+  couponID:
+    type: string
+    example: "1"
+  code:
+    type: string
+    example: "10OFF"
+  discountValue:
+    type: number
+    example: 10
+  discountType:
+    type: string
+    enum: ["percentage", "fixed"]
+    example: "percentage"
+  target:
+    type: string
+    enum: ["single", "all"]
+    example: "all"
+  minimumOrderAmount:
+    type: number
+    example: 100
+  timesUsed:
+    type: number
+    example: 1
+  maxUsage:
+    type: number
+    example: 10
+    nullable: true
+  startDate:
+    type: string
+    format: date-time
+    example: "2024-01-01T00:00:00Z"
+    nullable: true
+  endDate:
+    type: string
+    format: date-time
+    example: "2024-01-01T00:00:00Z"
+    nullable: true

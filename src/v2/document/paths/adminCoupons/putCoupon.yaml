@@ -1,0 +1,98 @@
+# PUT /admin/coupons/{couponID}
+tags:
+  - Admin Coupons
+summary: Update a coupon by couponID
+description: Update a coupon by couponID. The old coupon will be replaced by the new coupon data.
+security:
+  - bearerAuth: []
+parameters:
+  - name: couponID
+    in: path
+    description: Coupon ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          code:
+            type: string
+            example: "10OFF"
+            required: true
+          discountValue:
+            type: number
+            example: 10
+            required: true
+          discountType:
+            type: string
+            enum: ["percentage", "fixed"]
+            example: "percentage"
+            required: true
+          minimumOrderAmount:
+            type: number
+            example: 100
+          target:
+            type: string
+            enum: ["single", "all"]
+            example: "all"
+            required: true
+          endDate:
+            type: string
+            format: date-time
+            example: "2022-01-01T00:00:00Z"
+responses:
+  200:
+    description: Coupon updated
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            coupon:
+              type: object
+              allOf:
+                - $ref: "../../schemas/shopping/coupon.yaml"
+                - $ref: "../../schemas/timestamps.yaml"
+  400:
+    description: Invalid request parameters
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error400.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error403.yaml"
+  404:
+    description: Coupon not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error404.yaml"
+  409:
+    description: Coupon code already exists
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error409.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml"

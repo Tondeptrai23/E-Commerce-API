@@ -1,0 +1,85 @@
+# PATCH /admin/coupons/{couponID}
+tags:
+  - Admin Coupons
+summary: Update a coupon by couponID
+description: Update a coupon by couponID. Only the provided fields will be updated.
+security:
+  - bearerAuth: []
+parameters:
+  - name: couponID
+    in: path
+    description: Coupon ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          discountValue:
+            type: number
+            example: 10
+          discountType:
+            type: string
+            enum: ["percentage", "fixed"]
+            example: "percentage"
+          minimumOrderAmount:
+            type: number
+            example: 100
+          target:
+            type: string
+            enum: ["single", "all"]
+            example: "all"
+          endDate:
+            type: string
+            format: date-time
+            example: "2022-01-01T00:00:00Z"
+responses:
+  200:
+    description: Coupon updated
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            coupon:
+              type: object
+              allOf:
+                - $ref: "../../schemas/shopping/coupon.yaml"
+                - $ref: "../../schemas/timestamps.yaml"
+  400:
+    description: Invalid request parameters
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error400.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error403.yaml"
+  404:
+    description: Coupon not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml"

@@ -3,7 +3,7 @@ tags:
   - Admin Products
 summary: Get all products
 description: Retrieves a list of all products with optional filtering, sorting, and pagination. <br>
-  - The same as the user's endpoint but with sorting/filtering by createdAt and updatedAt. 
+  - The same as the user's endpoint but with sorting/filtering by productID, createdAt and updatedAt. 
 security:
   - bearerAuth: []
 parameters:
@@ -21,6 +21,14 @@ parameters:
     schema:
       type: integer
 
+  - name: productID
+    in: query
+    description: Filter by productID. <br> 
+      - Support partial matching using "[like]productID"
+    required: false
+    schema:
+      type: string
+
   - name: name
     in: query
     description: Filter by name. <br> 
@@ -32,7 +40,10 @@ parameters:
   - name: createdAt
     in: query
     description: Filter by createdAt. <br> 
-      - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2022-01-01"
+      - Support operators <br> 
+      + [lte]2024-01-01 <br> 
+      + [gte]2024-01-01 <br> 
+      + [between]2024-01-01,2022-01-01 <br> 
     required: false
     schema:
       type: string
@@ -40,7 +51,10 @@ parameters:
   - name: updatedAt
     in: query
     description: Filter by updatedAt. <br> 
-      - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2022-01-01"
+      - Support operators <br> 
+      + [lte]2024-01-01 <br> 
+      + [gte]2024-01-01 <br> 
+      + [between]2024-01-01,2022-01-01 <br> 
     required: false
     schema:
       type: string
@@ -117,19 +131,12 @@ responses:
       application/json:
         schema:
           type: object
+          allOf:
+            - $ref: "../../../schemas/pagination.yaml"
           properties:
             success:
               type: boolean
               example: true
-            currentPage:
-              type: integer
-              example: 1
-            totalPages:
-              type: integer
-              example: 10
-            totalItems:
-              type: integer
-              example: 20
             products:
               type: array
               items:

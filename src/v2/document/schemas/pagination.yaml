@@ -1,0 +1,11 @@
+type: object
+properties:
+  currentPage:
+    type: integer
+    example: 1
+  totalPages:
+    type: integer
+    example: 10
+  totalItems:
+    type: integer
+    example: 20

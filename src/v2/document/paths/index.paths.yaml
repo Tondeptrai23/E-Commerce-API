@@ -87,6 +87,29 @@ adminCategory:
   delete:
     $ref: "./adminCategories/deleteCategory.yaml"
 
+# ADMIN COUPONS
+adminCoupons:
+  get:
+    $ref: "./adminCoupons/getCoupons.yaml"
+  post:
+    $ref: "./adminCoupons/postCoupons.yaml"
+
+adminCoupon:
+  get:
+    $ref: "./adminCoupons/getCoupon.yaml"
+  patch:
+    $ref: "./adminCoupons/patchCoupon.yaml"
+  delete:
+    $ref: "./adminCoupons/deleteCoupon.yaml"
+
+adminCouponProducts:
+  post:
+    $ref: "./adminCoupons/addProductsCoupon.yaml"
+
+adminCouponCategories:
+  post:
+    $ref: "./adminCoupons/addCategoriesCoupon.yaml"
+
 # USER PRODUCTS
 userProducts:
   get:
