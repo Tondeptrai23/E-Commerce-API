@@ -110,6 +110,37 @@ adminCouponCategories:
   post:
     $ref: "./adminCoupons/addCategoriesCoupon.yaml"
 
+# ADMIN ATTRIBUTES
+
+adminAttributes:
+  get:
+    $ref: "./adminAttributes/getAttributes.yaml"
+  post:
+    $ref: "./adminAttributes/postAttributes.yaml"
+
+adminAttribute:
+  get:
+    $ref: "./adminAttributes/getAttribute.yaml"
+  patch:
+    $ref: "./adminAttributes/patchAttribute.yaml"
+  put:
+    $ref: "./adminAttributes/putAttribute.yaml"
+  post:
+    $ref: "./adminAttributes/postAttribute.yaml"
+  delete:
+    $ref: "./adminAttributes/deleteAttribute.yaml"
+
+adminAttributeValues:
+  put:
+    $ref: "./adminAttributes/putAttributeValues.yaml"
+  delete:
+    $ref: "./adminAttributes/deleteAttributeValues.yaml"
+
+adminAttributeVariants:
+  get:
+    $ref: "./adminAttributes/getVariantAttributes.yaml"
+
+
 # USER PRODUCTS
 userProducts:
   get:

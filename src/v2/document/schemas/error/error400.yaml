@@ -16,10 +16,10 @@ properties:
           example: {}
         message:
           type: string
-          example: "Price is required"
+          example: "Something is invalid"
         path:
           type: string
-          example: "variants[0].price"
+          example: "array[0].field"
         location:
           type: string
           example: "body"

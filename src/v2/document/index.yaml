@@ -33,6 +33,10 @@ tags:
     description: 
       This field represents the description of something.
 
+  - name: Admin Attributes
+    description: 
+      This field represents the description of something.
+
 paths:
   # Authentication
   /auth/signin:
@@ -128,6 +132,20 @@ paths:
   /admin/coupons/{couponID}/products:
     $ref: ./paths/index.paths.yaml#/adminCouponProducts
 
+  # Admin Attributes
+
+  /admin/attributes:
+    $ref: ./paths/index.paths.yaml#/adminAttributes
+
+  /admin/attributes/{attributeID}:
+    $ref: ./paths/index.paths.yaml#/adminAttribute
+
+  /admin/attributes/{attributeID}/values/{valueID}:
+    $ref: ./paths/index.paths.yaml#/adminAttributeValues
+
+  /admin/attributes/{attributeID}/variants:
+    $ref: ./paths/index.paths.yaml#/adminAttributeVariants  
+
 components:
   securitySchemes:
     bearerAuth:
@@ -163,6 +181,10 @@ components:
       $ref: ./schemas/products/category.yaml
     coupon:
       $ref: ./schemas/shopping/coupon.yaml
+    attribute:
+      $ref: ./schemas/products/attribute.yaml
+    value:
+      $ref: ./schemas/products/value.yaml
     timestamps:
       $ref: ./schemas/timestamps.yaml
     pagination:

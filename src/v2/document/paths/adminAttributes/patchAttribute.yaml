@@ -1,0 +1,74 @@
+# PATCH /admin/attributes/{attributeID}
+tags:
+  - Admin Attributes
+summary: Rename an attribute
+description: |
+  Rename an attribute by ID.
+  The attribute name must be unique. 
+security:
+  - bearerAuth: []
+parameters:
+  - name: attributeID
+    in: path
+    description: Attribute ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        required: true
+        type: object
+        properties:
+          name:
+            type: string
+            example: "color"
+responses:
+  200:
+    description: Attribute updated
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            attribute:
+              type: object
+              allOf:
+                - $ref: "../../schemas/products/attribute.yaml"
+                - $ref: "../../schemas/timestamps.yaml"
+  400:
+    description: Invalid request parameters
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error400.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error403.yaml"
+  404:
+    description: Attribute Not Found
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml" 

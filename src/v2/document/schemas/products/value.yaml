@@ -1,0 +1,11 @@
+type: object
+properties:
+  valueID:
+    type: string
+    example: "1"
+  value:
+    type: string
+    example: "red"
+  attributeID:
+    type: string
+    example: "1"

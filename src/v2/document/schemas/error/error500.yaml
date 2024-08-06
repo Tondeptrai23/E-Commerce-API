@@ -3,6 +3,14 @@ properties:
   success:
     type: boolean
     example: false
-  error:
-    type: string
-    example: "Server error"
+  errors:
+    type: array
+    items:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "InternalServerError"
+        message:
+          type: string
+          example: "Something went wrong"

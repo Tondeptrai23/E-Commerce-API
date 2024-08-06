@@ -1,0 +1,52 @@
+# DELETE /admin/attributes/{attributeID}:
+tags:
+  - Admin Attributes
+summary: Delete an attribute
+description: |
+  Delete an attribute by ID. 
+  The attribute must not be used by any product.
+security:
+  - bearerAuth: []
+parameters:
+  - name: attributeID
+    in: path
+    description: Attribute ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+responses:
+  200:
+    description: Attribute deleted
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error403.yaml"
+  404:
+    description: Attribute Not Found
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml"

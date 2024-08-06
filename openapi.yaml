@@ -18,6 +18,8 @@ tags:
     description: This field represents the description of something.
   - name: Admin Coupons
     description: This field represents the description of something.
+  - name: Admin Attributes
+    description: This field represents the description of something.
 paths:
   /auth/signin:
     post:
@@ -89,9 +91,17 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  error:
-                    type: string
-                    example: Conflict Error
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: ConflictError
+                        message:
+                          type: string
+                          example: Something already exists
         '500':
           description: Internal Server Error
           content:
@@ -2789,6 +2799,9 @@ paths:
                 minimumOrderAmount:
                   type: number
                   example: 100
+                maxUsage:
+                  type: number
+                  example: 100
                 target:
                   type: string
                   enum:
@@ -3239,6 +3252,838 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
+  /admin/attributes:
+    get:
+      tags:
+        - Admin Attributes
+      summary: Get all attributes
+      description: |
+        Get all attributes and their values. 
+        Support pagination, filtering and sorting.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page to retrieve
+          required: false
+          schema:
+            type: integer
+        - name: size
+          in: query
+          description: Size each page
+          required: false
+          schema:
+            type: integer
+        - name: name
+          in: query
+          description: 'Filter by name. <br> - Support partial matching using "[like]name"'
+          required: false
+          schema:
+            type: string
+            example: '[like]color'
+        - name: values
+          in: query
+          description: 'Filter by values. <br> - Support partial matching using "[like]value" - Support multiple values using comma "," <br> - Attributes with any of the values will be included'
+          required: false
+          schema:
+            type: string
+            example: '[like]red,[like]M'
+        - name: createdAt
+          in: query
+          description: 'Filter by createdAt. <br> - Support operators ([lte], [gte], [between]) <br>'
+          required: false
+          schema:
+            type: string
+            example: '[gte]2022-01-01'
+        - name: updatedAt
+          in: query
+          description: 'Filter by updatedAt. <br> - Support operators ([lte], [gte], [between]) <br>'
+          required: false
+          schema:
+            type: string
+            example: '[gte]2022-01-01'
+        - name: sort
+          in: query
+          description: 'Sort by attributeID, name, or type. <br> - Support multiple sorting using comma ",". <br> - Support descending order using "-" prefix <br> - Dont support sorting by nested fields'
+          required: false
+          schema:
+            type: string
+            example: 'attributeID,-createdAt'
+      responses:
+        '200':
+          description: Attributes retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/pagination'
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  attributes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        values:
+                          type: array
+                          items:
+                            type: string
+                          example:
+                            - red
+                            - blue
+                      allOf:
+                        - $ref: '#/components/schemas/attribute'
+                        - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    post:
+      tags:
+        - Admin Attributes
+      summary: Create an attribute
+      description: |
+        Create a new attribute with values. 
+        The attribute name must be unique. 
+        The values must be unique within the attribute. 
+        The values can be empty.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required: true
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: color
+                  required: true
+                values:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - red
+                    - blue
+      responses:
+        '201':
+          description: Attribute created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  attribute:
+                    type: object
+                    properties:
+                      values:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                          - red
+                          - blue
+                    allOf:
+                      - $ref: '#/components/schemas/attribute'
+                      - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '409':
+          description: Attribute name already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/admin/attributes/{attributeID}':
+    get:
+      tags:
+        - Admin Attributes
+      summary: Get attribute by ID
+      description: |
+        Get attribute by ID. 
+        Support pagination, filtering and sorting.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: attributeID
+          in: path
+          description: Attribute ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Attributes retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  attribute:
+                    type: object
+                    properties:
+                      attributeID:
+                        type: string
+                        example: '1'
+                      name:
+                        type: string
+                        example: color
+                      values:
+                        type: array
+                        items:
+                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/value'
+                            - $ref: '#/components/schemas/timestamps'
+                    allOf:
+                      - $ref: '#/components/schemas/timestamps'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Attribute Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    patch:
+      tags:
+        - Admin Attributes
+      summary: Rename an attribute
+      description: |
+        Rename an attribute by ID.
+        The attribute name must be unique. 
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: attributeID
+          in: path
+          description: Attribute ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required: true
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: color
+      responses:
+        '200':
+          description: Attribute updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  attribute:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/attribute'
+                      - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Attribute Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    put:
+      tags:
+        - Admin Attributes
+      summary: Update an attribute
+      description: |
+        Update an attribute by ID. Replace existing values with new values. 
+        The attribute name must be unique. 
+        The values must be unique within the attribute. 
+        The values can be empty.
+        (If only want to rename the attribute, use PATCH /admin/attributes/{attributeID})
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: attributeID
+          in: path
+          description: Attribute ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required: true
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: color
+                values:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - red
+                    - blue
+      responses:
+        '200':
+          description: Attribute updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  attribute:
+                    type: object
+                    properties:
+                      values:
+                        type: array
+                        items:
+                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/value'
+                            - $ref: '#/components/schemas/timestamps'
+                    allOf:
+                      - $ref: '#/components/schemas/attribute'
+                      - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Attribute Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    post:
+      tags:
+        - Admin Attributes
+      summary: Add values to an attribute
+      description: |
+        Add values to an attribute. 
+        The values must be unique within the attribute. 
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: attributeID
+          in: path
+          description: Attribute ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required: true
+              type: object
+              properties:
+                values:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - red
+                    - blue
+      responses:
+        '200':
+          description: Values added to attribute
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  values:
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - $ref: '#/components/schemas/value'
+                        - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Attribute not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '409':
+          description: Attribute value already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    delete:
+      tags:
+        - Admin Attributes
+      summary: Delete an attribute
+      description: |
+        Delete an attribute by ID. 
+        The attribute must not be used by any product.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: attributeID
+          in: path
+          description: Attribute ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Attribute deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Attribute Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/admin/attributes/{attributeID}/values/{valueID}':
+    put:
+      tags:
+        - Admin Attributes
+      summary: Update an attribute value
+      description: |
+        Replace an attribute value by the new value.
+        The value must be unique within the attribute. 
+        The value can be empty.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: attributeID
+          in: path
+          description: Attribute ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+        - name: valueID
+          in: path
+          description: Value ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required: true
+              type: object
+              properties:
+                value:
+                  type: string
+                  example: red
+      responses:
+        '200':
+          description: Value updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  value:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/value'
+                      - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Attribute or value not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '409':
+          description: Value already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    delete:
+      tags:
+        - Admin Attributes
+      summary: Delete an attribute value
+      description: |
+        Delete an attribute value by ID. 
+        The value must not be used by any product.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: attributeID
+          in: path
+          description: Attribute ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+        - name: valueID
+          in: path
+          description: Value ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Attribute value deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Attribute Value Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/admin/attributes/{attributeID}/variants':
+    get:
+      tags:
+        - Admin Attributes
+      summary: Get variants which have the attribute
+      description: |
+        Get variants which have the attributeID. 
+        Support pagination, sorting and filtering.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: attributeID
+          in: path
+          description: Attribute ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+        - name: page
+          in: query
+          description: Page to retrieve
+          required: false
+          schema:
+            type: integer
+        - name: size
+          in: query
+          description: Size each page
+          required: false
+          schema:
+            type: integer
+        - name: price
+          in: query
+          description: 'Filter by variants'' price. <br> - Support operators ([lte], [gte], [between]) <br>'
+          required: false
+          schema:
+            type: string
+            example: '[gte]100'
+        - name: stock
+          in: query
+          description: 'Filter by variants'' stock. <br> - Support operators ([lte], [gte], [between]) <br>'
+          required: false
+          schema:
+            type: string
+            example: '[lte]100'
+        - name: createdAt
+          in: query
+          description: 'Filter by variants'' created time. <br> - Support operators ([lte], [gte], [between]) <br>'
+          required: false
+          schema:
+            type: string
+            example: '[gte]2022-01-01'
+        - name: updatedAt
+          in: query
+          description: 'Filter by variants'' updated time. <br> - Support operators ([lte], [gte], [between]) <br>'
+          required: false
+          schema:
+            type: string
+            example: '[gte]2022-01-01'
+        - name: sort
+          in: query
+          description: 'Sort by attribute. <br> - Support multiple sort using comma "," <br> - Support descending order using "-" prefix <br>'
+          required: false
+          schema:
+            type: string
+            example: 'price,-createdAt'
+      responses:
+        '200':
+          description: Variants found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  variants:
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - $ref: '#/components/schemas/variantForAdmin'
+                        - $ref: '#/components/schemas/timestamps'
+                allOf:
+                  - $ref: '#/components/schemas/pagination'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Attribute Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
 components:
   securitySchemes:
     bearerAuth:
@@ -3265,10 +4110,10 @@ components:
                 example: {}
               message:
                 type: string
-                example: Price is required
+                example: Something is invalid
               path:
                 type: string
-                example: 'variants[0].price'
+                example: 'array[0].field'
               location:
                 type: string
                 example: body
@@ -3278,36 +4123,68 @@ components:
         success:
           type: boolean
           example: false
-        error:
-          type: string
-          example: Token invalid
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Unauthorized
+              message:
+                type: string
+                example: Token invalid
     error403:
       type: object
       properties:
         success:
           type: boolean
           example: false
-        error:
-          type: string
-          example: Not an admin. Cannot retrieve administrative data
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Forbidden
+              message:
+                type: string
+                example: Not an admin. Cannot retrieve administrative data
     error404:
       type: object
       properties:
         success:
           type: boolean
           example: false
-        error:
-          type: string
-          example: Something not found
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              error:
+                type: string
+                example: NotFound
+              message:
+                type: string
+                example: Something not found
     error500:
       type: object
       properties:
         success:
           type: boolean
           example: false
-        error:
-          type: string
-          example: Server error
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                example: InternalServerError
+              message:
+                type: string
+                example: Something went wrong
     product:
       type: object
       properties:
@@ -3458,6 +4335,27 @@ components:
           format: date-time
           example: '2024-01-01T00:00:00Z'
           nullable: true
+    attribute:
+      type: object
+      properties:
+        attributeID:
+          type: string
+          example: '1'
+        name:
+          type: string
+          example: color
+    value:
+      type: object
+      properties:
+        valueID:
+          type: string
+          example: '1'
+        value:
+          type: string
+          example: red
+        attributeID:
+          type: string
+          example: '1'
     timestamps:
       type: object
       properties:

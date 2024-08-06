@@ -3,6 +3,14 @@ properties:
   success:
     type: boolean
     example: false
-  error:
-    type: string
-    example: "Conflict Error"
+  errors:
+    type: array
+    items:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "ConflictError"
+        message:  
+          type: string
+          example: "Something already exists"

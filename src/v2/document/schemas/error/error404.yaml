@@ -3,6 +3,14 @@ properties:
   success:
     type: boolean
     example: false
-  error:
-    type: string
-    example: "Something not found"
+  errors:
+    type: array
+    items:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "NotFound"
+        message:
+          type: string
+          example: "Something not found"

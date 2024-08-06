@@ -1,0 +1,8 @@
+type: object
+properties:
+  attributeID:
+    type: string
+    example: "1"
+  name:
+    type: string
+    example: "color"
