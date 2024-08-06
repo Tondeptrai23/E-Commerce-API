@@ -140,6 +140,21 @@ adminAttributeVariants:
   get:
     $ref: "./adminAttributes/getVariantAttributes.yaml"
 
+# ADMIN USERS
+
+adminUsers:
+  get:
+    $ref: "./adminUsers/getUsers.yaml"
+
+adminUser:
+  get:
+    $ref: "./adminUsers/getUser.yaml"
+  delete:
+    $ref: "./adminUsers/deleteUser.yaml"
+  
+adminUserCart:
+  get:
+    $ref: "./adminUsers/getUserCart.yaml"
 
 # USER PRODUCTS
 userProducts:

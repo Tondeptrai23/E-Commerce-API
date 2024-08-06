@@ -1,0 +1,60 @@
+# GET /admin/users/{userID}
+tags:
+  - Admin Users
+summary: Get user by ID
+description: Get user by ID, association with its addresses
+security:
+  - bearerAuth: []
+parameters:
+  - name: userID
+    in: path
+    description: User ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+responses:
+  200:
+    description: Get user by ID successful
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            user:
+              type: object
+              allOf:
+                - $ref: "../../schemas/users/user.yaml"
+                - $ref: "../../schemas/timestamps.yaml"
+              properties:
+                addresses:
+                  type: array
+                  items:
+                    $ref: "../../schemas/users/address.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error403.yaml"
+  404:
+    description: User not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml"

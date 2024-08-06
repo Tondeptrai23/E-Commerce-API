@@ -1,0 +1,50 @@
+# DELETE /admin/users/{userID}
+tags:
+  - Admin Users
+summary: Delete user by ID
+description: Delete user by ID, all addresses and cart items will be deleted as well
+security:
+  - bearerAuth: []
+parameters:
+  - name: userID
+    in: path
+    description: User ID
+    required: true
+    schema:
+      type: string
+      example: "1"  
+responses:
+  200:
+    description: Delete user by ID successful
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+  401:
+    description: Unauthorized
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error403.yaml"
+  404:
+    description: User not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml"

@@ -1,0 +1,17 @@
+type: object
+properties:
+  userID:
+    type: string
+    example: "1"
+  email:
+    type: string
+    example: "example@gmail.com"
+  name:
+    type: string
+    example: "John Doe"
+  role:
+    type: string
+    example: "user"
+  avatar:
+    type: string
+    example: "https://example.com/avatar.jpg"  

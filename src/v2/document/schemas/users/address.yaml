@@ -1,0 +1,23 @@
+type: object
+properties:
+  addressID:
+    type: string
+    example: "1"
+  userID:
+    type: string
+    example: "1"
+  phoneNumber:
+    type: string
+    example: "0123456789"
+  recipientName:
+    type: string
+    example: "John Doe"
+  address:
+    type: string
+    example: "123 Bui Huu Nghia"
+  city:
+    type: string
+    example: "Bien Hoa City"
+  district:
+    type: string
+    example: "Dong Nai"

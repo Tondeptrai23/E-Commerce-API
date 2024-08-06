@@ -144,7 +144,18 @@ paths:
     $ref: ./paths/index.paths.yaml#/adminAttributeValues
 
   /admin/attributes/{attributeID}/variants:
-    $ref: ./paths/index.paths.yaml#/adminAttributeVariants  
+    $ref: ./paths/index.paths.yaml#/adminAttributeVariants
+    
+  # Admin Users
+
+  /admin/users:
+    $ref: ./paths/index.paths.yaml#/adminUsers
+
+  /admin/users/{userID}:
+    $ref: ./paths/index.paths.yaml#/adminUser
+
+  /admin/users/{userID}/cart:
+    $ref: ./paths/index.paths.yaml#/adminUserCart
 
 components:
   securitySchemes:
@@ -185,6 +196,10 @@ components:
       $ref: ./schemas/products/attribute.yaml
     value:
       $ref: ./schemas/products/value.yaml
+    user:
+      $ref: ./schemas/users/user.yaml
+    address:
+      $ref: ./schemas/users/address.yaml
     timestamps:
       $ref: ./schemas/timestamps.yaml
     pagination:

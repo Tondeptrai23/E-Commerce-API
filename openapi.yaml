@@ -4084,6 +4084,321 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
+  /admin/users:
+    get:
+      tags:
+        - Admin Users
+      summary: Get all users
+      description: |
+        Get all users
+        Support filtering, sorting, and pagination
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page to retrieve
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: size
+          in: query
+          description: Size each page
+          required: false
+          schema:
+            type: integer
+            example: 10
+        - name: email
+          in: query
+          description: Filter by email
+          required: false
+          schema:
+            type: string
+            example: '[like]gmail.com'
+        - name: name
+          in: query
+          description: Filter by name
+          required: false
+          schema:
+            type: string
+            example: '[like]John'
+        - name: role
+          in: query
+          description: Filter by role
+          required: false
+          schema:
+            type: string
+            enum:
+              - user
+              - admin
+            example: user
+        - name: createdAt
+          in: query
+          description: Filter by createdAt
+          required: false
+          schema:
+            type: string
+            example: '[between]2021-01-01,2021-12-31'
+        - name: updatedAt
+          in: query
+          description: Filter by updatedAt
+          required: false
+          schema:
+            type: string
+            example: '[between]2021-01-01,2021-12-31'
+        - name: sort
+          in: query
+          description: Sort by field
+          required: false
+          schema:
+            type: string
+            example: '-createdAt,name'
+      responses:
+        '200':
+          description: Get all users successful
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/pagination'
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  users:
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - $ref: '#/paths/~1admin~1users~1%7BuserID%7D/get/responses/200/content/application~1json/schema/properties/user/allOf/0'
+                        - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/admin/users/{userID}':
+    get:
+      tags:
+        - Admin Users
+      summary: Get user by ID
+      description: 'Get user by ID, association with its addresses'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userID
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Get user by ID successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  user:
+                    type: object
+                    allOf:
+                      - type: object
+                        properties:
+                          userID:
+                            type: string
+                            example: '1'
+                          email:
+                            type: string
+                            example: example@gmail.com
+                          name:
+                            type: string
+                            example: John Doe
+                          role:
+                            type: string
+                            example: user
+                          avatar:
+                            type: string
+                            example: 'https://example.com/avatar.jpg'
+                      - $ref: '#/components/schemas/timestamps'
+                    properties:
+                      addresses:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            addressID:
+                              type: string
+                              example: '1'
+                            userID:
+                              type: string
+                              example: '1'
+                            phoneNumber:
+                              type: string
+                              example: 0123456789
+                            recipientName:
+                              type: string
+                              example: John Doe
+                            address:
+                              type: string
+                              example: 123 Bui Huu Nghia
+                            city:
+                              type: string
+                              example: Bien Hoa City
+                            district:
+                              type: string
+                              example: Dong Nai
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    delete:
+      tags:
+        - Admin Users
+      summary: Delete user by ID
+      description: 'Delete user by ID, all addresses and cart items will be deleted as well'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userID
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Delete user by ID successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/admin/users/{userID}/cart':
+    get:
+      tags:
+        - Admin Users
+      summary: Get user's cart
+      description: |
+        Get user's cart
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userID
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Get user's cart successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
 components:
   securitySchemes:
     bearerAuth:
