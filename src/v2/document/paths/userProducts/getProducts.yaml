@@ -55,7 +55,11 @@ parameters:
   
   - name: sort
     in: query
-    description: Sort products by one or more fields. <br> - A comma-separated list of fields ("price,-discountPrice"). <br> - A single field ("price"). <br> - An array of fields (["price", "-discountPrice"]). <br> A leading '-' indicates descending order. <br> Sorting is applied from left to right
+    description: Sort products by one or more fields. <br> 
+      - A comma-separated list of fields ("price,-discountPrice"). <br> 
+      - A single field ("price"). <br> - An array of fields (["price", "-discountPrice"]). <br>
+      - A leading '-' indicates descending order. <br> 
+      - Sorting is applied from left to right
     required: false
     schema:
       oneOf:

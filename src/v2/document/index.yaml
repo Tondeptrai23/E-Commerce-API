@@ -21,6 +21,14 @@ tags:
     description: 
       This field represents the description of something.
 
+  - name: User Cart
+    description: 
+      This field represents the description of something.
+
+  - name: User Orders
+    description: 
+      This field represents the description of something.
+
   - name: Admin Products
     description: 
       This field represents the description of something.
@@ -79,6 +87,29 @@ paths:
 
   /categories/{categoryName}/descendants:
     $ref: ./paths/index.paths.yaml#/userDescendantCategories
+
+  # User Cart
+  /cart:
+    $ref: ./paths/index.paths.yaml#/userCart
+
+  /cart/items:
+    $ref: ./paths/index.paths.yaml#/userCartItems
+
+  /cart/items/{variantID}:
+    $ref: ./paths/index.paths.yaml#/userCartItemsVariant
+
+  # User Order
+  /orders:
+    $ref: ./paths/index.paths.yaml#/userOrders
+  
+  /orders/{orderID}:
+    $ref: ./paths/index.paths.yaml#/userOrder
+  
+  /orders/pending:
+    $ref: ./paths/index.paths.yaml#/userPendingOrder
+
+  /orders/pending/coupons:
+    $ref: ./paths/index.paths.yaml#/userPendingCoupon
 
   # Admin Products
   /admin/products:
@@ -190,12 +221,14 @@ components:
       $ref: ./schemas/products/categoryNames.yaml
     category:
       $ref: ./schemas/products/category.yaml
-    coupon:
-      $ref: ./schemas/shopping/coupon.yaml
     attribute:
       $ref: ./schemas/products/attribute.yaml
     value:
       $ref: ./schemas/products/value.yaml
+    coupon:
+      $ref: ./schemas/shopping/coupon.yaml
+    order:
+      $ref: ./schemas/shopping/order.yaml
     user:
       $ref: ./schemas/users/user.yaml
     address:

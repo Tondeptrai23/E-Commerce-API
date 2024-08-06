@@ -1,0 +1,68 @@
+# GET /cart
+tags:
+  - User Cart
+summary: Get user cart
+description: |
+  Get the user's cart.
+  - The cart is a list of items that the user has added to their cart.
+  - Support pagination.
+security:
+  - bearerAuth: []
+parameters:
+  - name: page
+    in: query
+    description: Page to retrieve
+    required: false
+    schema:
+      type: integer
+      example: 1
+
+  - name: size
+    in: query
+    description: Size each page
+    required: false
+    schema:
+      type: integer
+      example: 10
+responses:
+  200:
+    description: Cart found
+    content:
+      application/json:
+        schema:
+          type: object
+          allOf:
+            - $ref: '../../schemas/pagination.yaml'
+          properties:
+            success:
+              type: boolean
+              example: true
+            cart:
+              type: array
+              items:
+                $ref: '../../schemas/products/variantForUser.yaml'
+                properties:
+                  quantity:
+                    type: number
+                    example: 1
+                  totalPrice:
+                    type: number
+                    example: 90
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/error/error401.yaml'
+  404:
+    description: Cart not found
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/error/error404.yaml'
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: '../../schemas/error/error500.yaml'

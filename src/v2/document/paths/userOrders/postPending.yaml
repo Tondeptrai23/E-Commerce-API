@@ -1,0 +1,4 @@
+# POST /orders/pending
+tags:
+  - User Orders
+summary: Check out pending order (Will be added later)

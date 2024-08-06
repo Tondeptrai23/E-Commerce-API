@@ -1,0 +1,23 @@
+type: object
+properties:
+  orderID:
+    type: string
+    example: "1"
+  status:
+    type: string
+    example: "pending"
+  message:
+    type: string
+    example: "Message here"
+  subTotal:
+    type: number
+    example: 90
+  finalTotal:
+    type: number
+    example: 90
+  paymentMethod:
+    type: string
+    example: "COD"
+  userID:
+    type: string
+    example: "1"

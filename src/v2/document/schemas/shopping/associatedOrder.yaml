@@ -1,0 +1,23 @@
+# Doesn't have shippingAddress or shippingAddressID yet.
+# Need to add to order based on the needs
+type: object
+properties:
+  coupon:
+    type: string
+    example: "CODE"
+  orderItems:
+    type: array
+    items:
+      type: object
+      allOf:
+        - $ref: "../../schemas/products/variantForUser.yaml"
+      properties:
+        quantity:
+          type: number
+          example: 1
+        totalPrice:
+          type: number
+          example: 90
+allOf:
+  - $ref: "../../schemas/shopping/order.yaml"
+  - $ref: "../../schemas/timestamps.yaml"

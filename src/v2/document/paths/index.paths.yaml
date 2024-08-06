@@ -194,3 +194,49 @@ userAscendantCategories:
 userDescendantCategories:
   get:
     $ref: "./userCategories/getDescendant.yaml"
+
+# USER CART
+
+userCart:
+  get:
+    $ref: "./userCart/getCart.yaml"
+  post:
+    $ref: "./userCart/postCart.yaml"
+  delete:
+    $ref: "./userCart/deleteCart.yaml"
+
+userCartItems:
+  post:
+    $ref: "./userCart/postCartItems.yaml"
+
+userCartItemsVariant:
+  patch:
+    $ref: "./userCart/patchCartItemsVariant.yaml"
+  delete:
+    $ref: "./userCart/deleteCartItemsVariant.yaml"
+
+# USER ORDER
+
+userOrders:
+  get:
+    $ref: "./userOrders/getOrders.yaml"
+
+userOrder:
+  get:
+    $ref: "./userOrders/getOrder.yaml"
+  delete:
+    $ref: "./userOrders/deleteOrder.yaml"
+  
+userPendingOrder:
+  get:
+    $ref: "./userOrders/getPending.yaml"
+  post:
+    $ref: "./userOrders/postPending.yaml"
+  patch:
+    $ref: "./userOrders/patchPending.yaml"
+  
+userPendingCoupon:
+  get:
+    $ref: "./userOrders/getPendingCoupon.yaml"
+  post:
+    $ref: "./userOrders/postPendingCoupon.yaml"

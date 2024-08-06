@@ -12,6 +12,10 @@ tags:
     description: This field represents the description of something.
   - name: User Categories
     description: This field represents the description of something.
+  - name: User Cart
+    description: This field represents the description of something.
+  - name: User Orders
+    description: This field represents the description of something.
   - name: Admin Products
     description: This field represents the description of something.
   - name: Admin Categories
@@ -295,7 +299,7 @@ paths:
             $ref: '#/components/schemas/categoryNames'
         - name: sort
           in: query
-          description: 'Sort products by one or more fields. <br> - A comma-separated list of fields ("price,-discountPrice"). <br> - A single field ("price"). <br> - An array of fields (["price", "-discountPrice"]). <br> A leading ''-'' indicates descending order. <br> Sorting is applied from left to right'
+          description: 'Sort products by one or more fields. <br> - A comma-separated list of fields ("price,-discountPrice"). <br> - A single field ("price"). <br> - An array of fields (["price", "-discountPrice"]). <br> - A leading ''-'' indicates descending order. <br> - Sorting is applied from left to right'
           required: false
           schema:
             oneOf:
@@ -700,6 +704,766 @@ paths:
                       $ref: '#/components/schemas/category'
         '404':
           description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  /cart:
+    get:
+      tags:
+        - User Cart
+      summary: Get user cart
+      description: |
+        Get the user's cart.
+        - The cart is a list of items that the user has added to their cart.
+        - Support pagination.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page to retrieve
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: size
+          in: query
+          description: Size each page
+          required: false
+          schema:
+            type: integer
+            example: 10
+      responses:
+        '200':
+          description: Cart found
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/pagination'
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  cart:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/variantForUser'
+                      properties:
+                        quantity:
+                          type: number
+                          example: 1
+                        totalPrice:
+                          type: number
+                          example: 90
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '404':
+          description: Cart not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    post:
+      tags:
+        - User Cart
+      summary: Fetch cart to order
+      description: |
+        Fetch cart items to a new order
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required: true
+              description: VariantIDs in cart that the user wants to order. <br> - The variantID must be in the cart. <br> - The variantID will be left in the cart until the order is checked out.
+              type: object
+              items:
+                type: string
+                example:
+                  - '1'
+                  - '2'
+      responses:
+        '200':
+          description: Cart fetched
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  order:
+                    type: object
+                    properties:
+                      coupon:
+                        type: string
+                        example: CODE
+                      orderItems:
+                        type: array
+                        items:
+                          type: object
+                          allOf:
+                            - $ref: '#/components/schemas/variantForUser'
+                          properties:
+                            quantity:
+                              type: number
+                              example: 1
+                            totalPrice:
+                              type: number
+                              example: 90
+                    allOf:
+                      - $ref: '#/components/schemas/order'
+                      - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    delete:
+      tags:
+        - User Cart
+      summary: Delete cart
+      description: |
+        Delete all cart items in cart
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Cart deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  /cart/items:
+    post:
+      tags:
+        - User Cart
+      summary: Add item to cart
+      description: |
+        Add item to cart
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required: true
+              description: VariantID in cart that the user wants to add.
+              type: object
+              properties:
+                variantID:
+                  type: string
+                  example: '1'
+                quantity:
+                  type: number
+                  example: 1
+      responses:
+        '200':
+          description: Item added to cart
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  cart:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/variantForUser'
+                    properties:
+                      quantity:
+                        type: number
+                        example: 1
+                      totalPrice:
+                        type: number
+                        example: 90
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+  '/cart/items/{variantID}':
+    patch:
+      tags:
+        - User Cart
+      summary: Update item in cart
+      description: |
+        Update item in cart 
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: variantID
+          required: true
+          description: VariantID in cart that the user wants to update.
+          schema:
+            type: string
+            example: '1'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required: true
+              description: Quantity of the variantID that the user wants to update.
+              type: object
+              properties:
+                quantity:
+                  type: number
+                  example: 1
+      responses:
+        '200':
+          description: Item updated in cart
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  cartItem:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/variantForUser'
+                    properties:
+                      quantity:
+                        type: number
+                        example: 1
+                      totalPrice:
+                        type: number
+                        example: 90
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '404':
+          description: Cart item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    delete:
+      tags:
+        - User Cart
+      summary: Delete item from cart
+      description: |
+        Delete item from cart
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: variantID
+          required: true
+          description: VariantID in cart that the user wants to delete.
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Item deleted from cart
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '404':
+          description: Cart item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  /orders:
+    get:
+      tags:
+        - User Orders
+      summary: Get orders
+      description: 'Get all orders belongs to user. <br> - The orders will not be shown if it is marked as deleted. <br> - Support pagination, filtering, and sorting. <br> - Don''t support filtering or sorting by nested fields. <br>'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page to retrieve
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: size
+          in: query
+          description: Size per page
+          required: false
+          schema:
+            type: integer
+            example: 10
+        - name: sort
+          in: query
+          description: 'Sort orders by one or more fields. <br> - A comma-separated list of fields ("finalTotal,-createdAt"). <br> - A single field ("finalTotal"). <br> - An array of fields (["finalTotal", "-createdAt"]). <br>'
+          required: false
+          schema:
+            type: string
+            example: 'finalTotal,-createdAt'
+        - name: status
+          in: query
+          description: Filter by status
+          required: false
+          schema:
+            type: string
+            example: delivered
+        - name: paymentMethod
+          in: query
+          description: Filter by payment method
+          required: false
+          schema:
+            type: string
+            example: COD
+        - name: subTotal
+          in: query
+          description: 'Filter by subTotal. <br> - Support operators "[lte]100", "[gte]100", "[between]100,200"'
+          required: false
+          schema:
+            type: string
+            example: '[gte]100'
+        - name: finalTotal
+          in: query
+          description: 'Filter by finalTotal. <br> - Support operators "[lte]100", "[gte]100", "[between]100,200"'
+          required: false
+          schema:
+            type: string
+            example: '[gte]100'
+        - name: createdAt
+          in: query
+          description: 'Filter by createdAt. <br> - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2021-12-31"'
+          required: false
+          schema:
+            type: string
+            example: '[gte]2021-01-01'
+        - name: updatedAt
+          in: query
+          description: 'Filter by updatedAt. <br> - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2021-12-31"'
+          required: false
+          schema:
+            type: string
+            example: '[lte]2021-12-31'
+      responses:
+        '200':
+          description: Orders found
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/pagination'
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  orders:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: '#/components/schemas/order'
+                        - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/orders/{orderID}':
+    get:
+      tags:
+        - User Orders
+      summary: Get an order
+      description: Get an order belongs to user by orderID. <br> - The order will not be shown if it is marked as deleted. <br>
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orderID
+          in: path
+          description: Order ID
+          required: true
+          schema:
+            type: string
+          example: '1'
+      responses:
+        '200':
+          description: Order found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  order:
+                    $ref: '#/paths/~1cart/post/responses/200/content/application~1json/schema/properties/order'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    delete:
+      tags:
+        - User Orders
+      summary: Delete an order
+      description: 'Delete an order belongs to user by orderID. <br> - The order will not permanently deleted, it will be marked as deleted unless it is pending order. <br>'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orderID
+          in: path
+          description: Order ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Order deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  /orders/pending:
+    get:
+      tags:
+        - User Orders
+      summary: Get the pending order
+      description: 'Get the pending order belongs to the user. <br> - A user can only has one pending order as the workspace for buying things, applying coupons and checking out.'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Pending order found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  order:
+                    type: object
+                    properties:
+                      shippingAddress:
+                        $ref: '#/components/schemas/address'
+                    allOf:
+                      - $ref: '#/paths/~1cart/post/responses/200/content/application~1json/schema/properties/order'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '404':
+          description: Pending order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    post:
+      tags:
+        - User Orders
+      summary: Check out pending order (Will be added later)
+    patch:
+      tags:
+        - User Orders
+      summary: Update a pending order
+      description: Update message or shipping address for a pending order.
+      security:
+        - bearerAuth: []
+      requestBody: null
+      responses:
+        '200':
+          description: Pending order found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  order:
+                    type: object
+                    properties:
+                      shippingAddress:
+                        $ref: '#/components/schemas/address'
+                    allOf:
+                      - $ref: '#/paths/~1cart/post/responses/200/content/application~1json/schema/properties/order'
+        '400':
+          description: Invalid query parameters
+          content:
+            schema:
+              $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '404':
+          description: Pending order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  /orders/pending/coupons:
+    get:
+      tags:
+        - User Orders
+      summary: null
+      description: null
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: null
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  coupons:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: CODE
+                        subTotal:
+                          type: number
+                          example: 100
+                        finalTotal:
+                          type: number
+                          example: 90
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '404':
+          description: Pending order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    post:
+      tags:
+        - User Orders
+      summary: Apply coupon to pending order
+      description: null
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  example: CODE
+      responses:
+        '200':
+          description: Apply coupon successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  order:
+                    type: object
+                    properties:
+                      shippingAddressID:
+                        type: string
+                        example: '1'
+                    allOf:
+                      - $ref: '#/paths/~1cart/post/responses/200/content/application~1json/schema/properties/order'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '404':
+          description: Pending order not found
           content:
             application/json:
               schema:
@@ -4172,7 +4936,7 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/paths/~1admin~1users~1%7BuserID%7D/get/responses/200/content/application~1json/schema/properties/user/allOf/0'
+                        - $ref: '#/components/schemas/user'
                         - $ref: '#/components/schemas/timestamps'
         '400':
           description: Invalid query parameters
@@ -4228,51 +4992,13 @@ paths:
                   user:
                     type: object
                     allOf:
-                      - type: object
-                        properties:
-                          userID:
-                            type: string
-                            example: '1'
-                          email:
-                            type: string
-                            example: example@gmail.com
-                          name:
-                            type: string
-                            example: John Doe
-                          role:
-                            type: string
-                            example: user
-                          avatar:
-                            type: string
-                            example: 'https://example.com/avatar.jpg'
+                      - $ref: '#/components/schemas/user'
                       - $ref: '#/components/schemas/timestamps'
                     properties:
                       addresses:
                         type: array
                         items:
-                          type: object
-                          properties:
-                            addressID:
-                              type: string
-                              example: '1'
-                            userID:
-                              type: string
-                              example: '1'
-                            phoneNumber:
-                              type: string
-                              example: 0123456789
-                            recipientName:
-                              type: string
-                              example: John Doe
-                            address:
-                              type: string
-                              example: 123 Bui Huu Nghia
-                            city:
-                              type: string
-                              example: Bien Hoa City
-                            district:
-                              type: string
-                              example: Dong Nai
+                          $ref: '#/components/schemas/address'
         '401':
           description: 'Token invalid, not authenticated'
           content:
@@ -4606,6 +5332,27 @@ components:
         parentID:
           type: string
           example: '6'
+    attribute:
+      type: object
+      properties:
+        attributeID:
+          type: string
+          example: '1'
+        name:
+          type: string
+          example: color
+    value:
+      type: object
+      properties:
+        valueID:
+          type: string
+          example: '1'
+        value:
+          type: string
+          example: red
+        attributeID:
+          type: string
+          example: '1'
     coupon:
       type: object
       properties:
@@ -4650,27 +5397,72 @@ components:
           format: date-time
           example: '2024-01-01T00:00:00Z'
           nullable: true
-    attribute:
+    order:
       type: object
       properties:
-        attributeID:
+        orderID:
           type: string
           example: '1'
+        status:
+          type: string
+          example: pending
+        message:
+          type: string
+          example: Message here
+        subTotal:
+          type: number
+          example: 90
+        finalTotal:
+          type: number
+          example: 90
+        paymentMethod:
+          type: string
+          example: COD
+        userID:
+          type: string
+          example: '1'
+    user:
+      type: object
+      properties:
+        userID:
+          type: string
+          example: '1'
+        email:
+          type: string
+          example: example@gmail.com
         name:
           type: string
-          example: color
-    value:
+          example: John Doe
+        role:
+          type: string
+          example: user
+        avatar:
+          type: string
+          example: 'https://example.com/avatar.jpg'
+    address:
       type: object
       properties:
-        valueID:
+        addressID:
           type: string
           example: '1'
-        value:
-          type: string
-          example: red
-        attributeID:
+        userID:
           type: string
           example: '1'
+        phoneNumber:
+          type: string
+          example: 0123456789
+        recipientName:
+          type: string
+          example: John Doe
+        address:
+          type: string
+          example: 123 Bui Huu Nghia
+        city:
+          type: string
+          example: Bien Hoa City
+        district:
+          type: string
+          example: Dong Nai
     timestamps:
       type: object
       properties:

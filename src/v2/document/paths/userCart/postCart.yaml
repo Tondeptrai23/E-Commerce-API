@@ -1,0 +1,53 @@
+# POST /cart
+tags:
+  - User Cart
+summary: Fetch cart to order
+description: |
+  Fetch cart items to a new order
+security:
+  - bearerAuth: []
+requestBody:
+  content:
+    application/json:
+      schema:
+        required: true
+        description: VariantIDs in cart that the user wants to order. <br>
+          - The variantID must be in the cart. <br>
+          - The variantID will be left in the cart until the order is checked out.
+        type: object
+        items:
+          type: string
+          example: ["1", "2"]
+responses:
+  200:
+    description: Cart fetched
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            order:
+              $ref: "../../schemas/shopping/associatedOrder.yaml"
+
+  400:
+    description: Invalid request parameters
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error400.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error401.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml"
+
