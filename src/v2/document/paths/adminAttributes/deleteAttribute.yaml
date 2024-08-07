@@ -1,10 +1,9 @@
-# DELETE /admin/attributes/{attributeID}:
+# DELETE /admin/attributes/{attributeID}
 tags:
   - Admin Attributes
-summary: Delete an attribute
-description: |
-  Delete an attribute by ID. 
-  The attribute must not be used by any product.
+summary: Delete attribute
+description: Deletes an attribute and its associated values. 
+  Any product variants using this attribute will have the attribute removed.
 security:
   - bearerAuth: []
 parameters:
@@ -44,6 +43,12 @@ responses:
       application/json:
         schema:
           $ref: "../../schemas/error/error404.yaml"
+  409:
+    description: Attribute in Use
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error409.yaml"
   500:
     description: Internal Server Error
     content:

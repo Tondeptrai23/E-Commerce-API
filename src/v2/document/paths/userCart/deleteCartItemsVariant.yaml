@@ -25,12 +25,6 @@ responses:
             success:
               type: boolean
               example: true
-  400:
-    description: Invalid request parameters
-    content:
-      application/json:
-        schema:
-          $ref: "../../schemas/error/error400.yaml"
   401:
     description: Token invalid, not authenticated
     content:

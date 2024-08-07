@@ -3,6 +3,7 @@ tags:
   - Admin Products
 summary: Delete a product
 description: Deletes a product with the given ID.
+  Deleting a product will also delete all its images and variants.
 security:
   - bearerAuth: []
 parameters:

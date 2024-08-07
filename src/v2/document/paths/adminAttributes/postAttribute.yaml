@@ -15,12 +15,12 @@ parameters:
     schema:
       type: string
       example: "1"
+      
 requestBody:
   required: true
   content:
     application/json:
       schema:
-        required: true
         type: object
         properties:
           values:

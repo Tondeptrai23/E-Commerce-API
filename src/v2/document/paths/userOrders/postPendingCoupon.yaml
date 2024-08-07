@@ -1,8 +1,9 @@
 # POST /order/pending/coupons
 tags:
   - User Orders
-summary: Apply coupon to pending order
-description: 
+summary: Apply a coupon to a pending order
+description: Applies the specified coupon to the user's pending order. 
+  The coupon must be valid and available.
 security:
   - bearerAuth: []
 requestBody:

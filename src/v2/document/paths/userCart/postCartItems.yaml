@@ -7,10 +7,10 @@ description: |
 security:
   - bearerAuth: []
 requestBody:
+  required: true
   content:
     application/json:
       schema:
-        required: true
         description: VariantID in cart that the user wants to add.
         type: object
         properties:

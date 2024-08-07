@@ -7,17 +7,20 @@ description: |
 security:
   - bearerAuth: []
 requestBody:
+  required: true
   content:
     application/json:
       schema:
-        required: true
         description: VariantIDs in cart that the user wants to order. <br>
           - The variantID must be in the cart. <br>
           - The variantID will be left in the cart until the order is checked out.
         type: object
-        items:
-          type: string
-          example: ["1", "2"]
+        properties:
+          variantIDs:
+            type: array
+            items:
+              type: string
+            example: ["1", "2"]
 responses:
   200:
     description: Cart fetched

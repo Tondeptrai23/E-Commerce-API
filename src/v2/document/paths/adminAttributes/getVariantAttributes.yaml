@@ -37,6 +37,7 @@ parameters:
     schema:
       type: string
       example: "[gte]100"
+
   - name: stock
     in: query
     description: Filter by variants' stock. <br> 
@@ -45,6 +46,7 @@ parameters:
     schema:
       type: string
       example: "[lte]100"
+
   - name: createdAt
     in: query
     description: Filter by variants' created time. <br> 
@@ -53,6 +55,7 @@ parameters:
     schema:
       type: string
       example: "[gte]2022-01-01"
+
   - name: updatedAt
     in: query
     description: Filter by variants' updated time. <br> 

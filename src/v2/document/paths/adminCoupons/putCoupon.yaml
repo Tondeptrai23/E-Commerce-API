@@ -1,8 +1,8 @@
 # PUT /admin/coupons/{couponID}
 tags:
   - Admin Coupons
-summary: Update a coupon by couponID
-description: Update a coupon by couponID. The old coupon will be replaced by the new coupon data.
+summary: Update coupon
+description: Replaces an existing coupon with the provided data. The coupon must not have been used to be updated.
 security:
   - bearerAuth: []
 parameters:
@@ -14,7 +14,8 @@ parameters:
       type: string
       example: "1"
 requestBody:
-  content:
+  required: true
+content:
     application/json:
       schema:
         type: object
@@ -23,6 +24,9 @@ requestBody:
             type: string
             example: "10OFF"
             required: true
+          description:
+            type: string
+            example: "10% off"
           discountValue:
             type: number
             example: 10
@@ -35,6 +39,10 @@ requestBody:
           minimumOrderAmount:
             type: number
             example: 100
+          maxUsage:
+            type: number
+            example: 100
+            nullable: true
           target:
             type: string
             enum: ["single", "all"]
@@ -85,7 +93,7 @@ responses:
         schema:
           $ref: "../../schemas/error/error404.yaml"
   409:
-    description: Coupon code already exists
+    description: Coupon code already exists or coupon has been used
     content:
       application/json:
         schema:

@@ -1,10 +1,9 @@
 # GET /admin/attributes
 tags:
   - Admin Attributes
-summary: Get all attributes
-description: |
-  Get all attributes and their values. 
-  Support pagination, filtering and sorting.
+summary: Retrieve attributes
+description: Retrieves a list of available attributes, including their values. <br>
+  Supports pagination, filtering, and sorting.
 security:
   - bearerAuth: []
 parameters:

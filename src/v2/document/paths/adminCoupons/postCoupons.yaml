@@ -2,11 +2,14 @@
 tags:
   - Admin Coupons
 summary: Create a coupon
-description: Create a coupon with the given data. <br>
-  - The coupon code must be unique. <br>
+description: | 
+  Creates a new coupon with the provided data. <br>
+  The coupon code must be unique. <br>
+  The `maxUsage` field controls the coupon's usage limit: 0 disables the coupon, and null indicates unlimited usage.
 security:
   - bearerAuth: []
 requestBody:
+  required: true
   content:
     application/json:
       schema:
@@ -16,6 +19,9 @@ requestBody:
             type: string
             example: "10OFF"
             required: true
+          description:
+            type: string
+            example: "10% off"
           discountValue:
             type: number
             example: 10
@@ -31,6 +37,7 @@ requestBody:
           maxUsage:
             type: number
             example: 100
+            nullable: true
           target:
             type: string
             enum: ["single", "all"]

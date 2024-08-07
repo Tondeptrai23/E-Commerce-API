@@ -14,13 +14,11 @@ requestBody:
   content:
     application/json:
       schema:
-        required: true
         type: object
         properties:
           name:
             type: string
             example: "color"
-            required: true
           values:
             type: array
             items:

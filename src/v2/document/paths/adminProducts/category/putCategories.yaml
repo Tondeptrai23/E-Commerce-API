@@ -1,8 +1,9 @@
-# PUT /admin/products/{productID}/categories:
+# PUT /admin/products/{productID}/categories
 tags:
   - Admin Products
-summary: Update categories of a product
-description: Update categories of a product. Old categories will be removed and new categories will be added.
+summary: Update product categories
+description: Replaces the entire set of categories associated with a product. <br>
+  Any existing categories will be removed, and the provided categories will be assigned.
 security:
   - bearerAuth: []
 parameters:

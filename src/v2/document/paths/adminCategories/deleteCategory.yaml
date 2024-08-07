@@ -1,9 +1,10 @@
-# DELETE /admin/categories/{name}:
+# DELETE /admin/categories/{name}
 tags:
   - Admin Categories
-summary: Delete a category
-description: |
-  Delete a category by name.
+summary: Delete category
+description: Deletes a category by name. <br>
+  If the category is a parent category, a conflict error will be returned. <br> 
+  All associations between products and the deleted category will be removed.
 security:
   - bearerAuth: []
 parameters:

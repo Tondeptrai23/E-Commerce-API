@@ -1,10 +1,9 @@
 # GET /admin/coupons
 tags:
   - Admin Coupons
-summary: Get all coupons 
-description: |
-  Retrieve a list of all coupons with optional filtering, sorting, and pagination. <br>
-  If product and category fields are both provided, the filtered coupons will be those that satisfy either product or category. <br>
+summary: Retrieve coupons
+description: Retrieves a list of coupons with optional filtering, sorting, and pagination. 
+  The `product` and `category` filters support an OR logic, meaning coupons matching either criteria will be included in the results.
 security:
   - bearerAuth: []
 parameters:

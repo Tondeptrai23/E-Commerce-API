@@ -4,8 +4,8 @@ tags:
 summary: Get all categories
 description: |
   Get all categories. <br>
-  - Support pagination by page and size. <br>
-  - Support partial matching filtering by name, parentID, parentName. <br>
+  Support pagination by page and size. <br>
+  Support partial matching filtering by name, parentID, parentName. <br>
 security:
   - bearerAuth: []
 parameters:

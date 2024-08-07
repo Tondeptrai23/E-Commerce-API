@@ -1,8 +1,9 @@
 # PATCH /admin/coupons/{couponID}
 tags:
   - Admin Coupons
-summary: Update a coupon by couponID
-description: Update a coupon by couponID. Only the provided fields will be updated.
+summary: Update coupon details
+description: Updates specific fields of an existing coupon identified by its coupon ID. 
+  Only `description`, `minimumOrderAmount`, `maxUsage`, and `endDate` can be modified to maintain financial integrity.
 security:
   - bearerAuth: []
 parameters:
@@ -13,26 +14,24 @@ parameters:
     schema:
       type: string
       example: "1"
+      
 requestBody:
+  required: true
   content:
     application/json:
       schema:
         type: object
         properties:
-          discountValue:
-            type: number
-            example: 10
-          discountType:
+          description:
             type: string
-            enum: ["percentage", "fixed"]
-            example: "percentage"
+            example: "10% off"
           minimumOrderAmount:
             type: number
             example: 100
-          target:
-            type: string
-            enum: ["single", "all"]
-            example: "all"
+          maxUsage:
+            type: number
+            example: 100
+            nullable: true
           endDate:
             type: string
             format: date-time

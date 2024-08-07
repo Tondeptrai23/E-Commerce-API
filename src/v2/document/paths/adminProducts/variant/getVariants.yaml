@@ -1,8 +1,8 @@
 # GET /admin/products/{productID}/variants:
 tags:
   - Admin Products
-summary: Get all variants of a product
-description: Returns all variants of a product.
+summary: Retrieve product variants
+description: Retrieves a list of all variants associated with a specific product.
 security:
   - bearerAuth: []
 parameters:

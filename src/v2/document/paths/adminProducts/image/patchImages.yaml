@@ -1,10 +1,10 @@
 # PATCH /admin/products/{productID}/images
 tags:
   - Admin Products
-summary: Reorder images of a product
-description: Reorder images of a product. The order of the images will be updated according to the given data. <br>
-  The data should be an array of all images in the order they should be displayed.
-  All images not included in the array will be appended to the end of the list.
+summary: Reorder product images
+description: Reorders the images associated with a product. <br>
+  The request body should contain an array of image IDs specifying the desired display order. <br>
+  Images not included in the array will be moved to the end of the list.
 security:
   - bearerAuth: []
 parameters:

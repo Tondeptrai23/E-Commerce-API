@@ -15,10 +15,10 @@ parameters:
       type: string
       example: "1"
 requestBody:
+  required: true
   content:
     application/json:
       schema:
-        required: true
         description: Quantity of the variantID that the user wants to update.
         type: object
         properties:

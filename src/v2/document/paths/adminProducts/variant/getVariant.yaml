@@ -2,7 +2,7 @@
 tags:
   - Admin Products
 summary: Get a variant of a product
-description: Returns a variant of a product.
+description: Retrieves detailed information about a specific variant belonging to a product.
 security:
   - bearerAuth: []
 parameters:

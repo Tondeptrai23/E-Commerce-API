@@ -1,4 +1,4 @@
-# PATCH /admin/products/{productId}/variants/{variantId}
+# PATCH /admin/products/{productID}/variants/{variantID}
 tags:
   - Admin Products
 summary: Update a variant
@@ -6,14 +6,14 @@ description: Updates given fields of a variant with given data.
 security:
   - bearerAuth: []
 parameters:
-  - name: productId
+  - name: productID
     in: path
     description: ID of the product to update a variant of
     required: true
     schema:
       type: string
       example: "1"
-  - name: variantId
+  - name: variantID
     in: path
     description: ID of the variant to update
     required: true

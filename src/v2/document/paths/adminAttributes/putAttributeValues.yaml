@@ -1,11 +1,12 @@
 # PUT /admin/attributes/{attributeID}/values/{valueID}
 tags:
   - Admin Attributes
-summary: Update an attribute value
+summary: Replace an attribute value
 description: |
-  Replace an attribute value by the new value.
-  The value must be unique within the attribute. 
-  The value can be empty.
+  Replace an attribute value by the new value. <br>
+  The value must be unique within the attribute. <br>
+  Any products associated with the value will have it removed. <br>
+  To modify only the value, use the PATCH method.
 security:
   - bearerAuth: []
 parameters:
@@ -28,7 +29,6 @@ requestBody:
   content:
     application/json:
       schema:
-        required: true
         type: object
         properties:
           value:

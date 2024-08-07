@@ -1,9 +1,9 @@
 # GET /orders/pending
 tags:
   - User Orders
-summary: Get the pending order
-description: Get the pending order belongs to the user. <br>
-  - A user can only has one pending order as the workspace for buying things, applying coupons and checking out.
+summary: Retrieve the user's pending order
+description: Retrieves the user's active pending order. <br>
+  A user can only have one pending order at a time for buying items, applying coupons, and checking out.
 security:
   - bearerAuth: []
 responses:

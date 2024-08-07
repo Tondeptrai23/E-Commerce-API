@@ -1,8 +1,10 @@
 # POST /admin/products
 tags:
   - Admin Products
-summary: Create a new product
-description: Creates a new product with the given data.
+summary: Create a product
+description: Creates a new product. <br>
+  The product name must be unique. <br>
+  The order of images in the request body determines their display order on the product.
 security:
   - bearerAuth: []
 requestBody:
@@ -106,6 +108,13 @@ responses:
         application/json:
           schema:
             $ref: "../../../schemas/error/error403.yaml"
+
+    409:
+      description: Product name already exists
+      content:
+        application/json:
+          schema:
+            $ref: "../../../schemas/error/error409.yaml"
 
     500:
       description: Server error

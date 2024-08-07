@@ -1,10 +1,8 @@
 # GET /admin/attributes/{attributeID}:
 tags:
   - Admin Attributes
-summary: Get attribute by ID
-description: |
-  Get attribute by ID. 
-  Support pagination, filtering and sorting.
+summary: Retrieve attribute details
+description: Retrieves detailed information about a specific attribute based on its ID.
 security:
   - bearerAuth: []
 parameters:

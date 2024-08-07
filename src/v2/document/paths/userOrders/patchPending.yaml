@@ -6,7 +6,18 @@ description: Update message or shipping address for a pending order.
 security:
   - bearerAuth: []
 requestBody:
-
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          message:
+            type: string
+            example: "Please deliver before 5pm"
+          shippingAddressID:
+            type: string
+            example: "1"
 responses:
   200:
     description: Pending order found
@@ -28,6 +39,7 @@ responses:
   400:
     description: Invalid query parameters
     content:
+      application/json:
         schema:
           $ref: "../../schemas/error/error400.yaml"
   401:

@@ -2,7 +2,7 @@
 tags:
   - Admin Products
 summary: Get images of a product
-description: Returns all images of a product with the given ID.
+description: Retrieve all images of a product with the given ID.
 security:
   - bearerAuth: []
 parameters:

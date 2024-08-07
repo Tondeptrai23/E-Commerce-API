@@ -3,7 +3,8 @@ tags:
   - User Orders
 summary: Delete an order
 description: Delete an order belongs to user by orderID. <br>
-  - The order will not permanently deleted, it will be marked as deleted unless it is pending order. <br>
+  - Only delivered order or pending order can be deleted. <br>
+  - The order will be marked as deleted, only pending order will be permanently deleted. <br>
 security:
   - bearerAuth: []
 parameters:
@@ -43,6 +44,12 @@ responses:
       application/json:
         schema:
           $ref: "../../schemas/error/error404.yaml"
+  409:
+    description: Order cannot be deleted
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error409.yaml"
   500:
     description: Internal Server Error
     content:

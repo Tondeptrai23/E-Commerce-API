@@ -791,17 +791,20 @@ paths:
       security:
         - bearerAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              required: true
               description: VariantIDs in cart that the user wants to order. <br> - The variantID must be in the cart. <br> - The variantID will be left in the cart until the order is checked out.
               type: object
-              items:
-                type: string
-                example:
-                  - '1'
-                  - '2'
+              properties:
+                variantIDs:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - '1'
+                    - '2'
       responses:
         '200':
           description: Cart fetched
@@ -894,10 +897,10 @@ paths:
       security:
         - bearerAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              required: true
               description: VariantID in cart that the user wants to add.
               type: object
               properties:
@@ -953,10 +956,10 @@ paths:
             type: string
             example: '1'
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              required: true
               description: Quantity of the variantID that the user wants to update.
               type: object
               properties:
@@ -1036,12 +1039,6 @@ paths:
                   success:
                     type: boolean
                     example: true
-        '400':
-          description: Invalid request parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
@@ -1220,7 +1217,7 @@ paths:
       tags:
         - User Orders
       summary: Delete an order
-      description: 'Delete an order belongs to user by orderID. <br> - The order will not permanently deleted, it will be marked as deleted unless it is pending order. <br>'
+      description: 'Delete an order belongs to user by orderID. <br> - Only delivered order or pending order can be deleted. <br> - The order will be marked as deleted, only pending order will be permanently deleted. <br>'
       security:
         - bearerAuth: []
       parameters:
@@ -1260,6 +1257,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error404'
+        '409':
+          description: Order cannot be deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal Server Error
           content:
@@ -1270,8 +1273,8 @@ paths:
     get:
       tags:
         - User Orders
-      summary: Get the pending order
-      description: 'Get the pending order belongs to the user. <br> - A user can only has one pending order as the workspace for buying things, applying coupons and checking out.'
+      summary: Retrieve the user's pending order
+      description: 'Retrieves the user''s active pending order. <br> A user can only have one pending order at a time for buying items, applying coupons, and checking out.'
       security:
         - bearerAuth: []
       responses:
@@ -1321,7 +1324,19 @@ paths:
       description: Update message or shipping address for a pending order.
       security:
         - bearerAuth: []
-      requestBody: null
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Please deliver before 5pm
+                shippingAddressID:
+                  type: string
+                  example: '1'
       responses:
         '200':
           description: Pending order found
@@ -1343,8 +1358,9 @@ paths:
         '400':
           description: Invalid query parameters
           content:
-            schema:
-              $ref: '#/components/schemas/error400'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
@@ -1367,8 +1383,8 @@ paths:
     get:
       tags:
         - User Orders
-      summary: null
-      description: null
+      summary: Get recommended coupons for pending order
+      description: Retrieves a list of recommended coupons applicable to the specified pending order. These coupons can be applied to reduce the order's total amount.
       security:
         - bearerAuth: []
       responses:
@@ -1417,8 +1433,8 @@ paths:
     post:
       tags:
         - User Orders
-      summary: Apply coupon to pending order
-      description: null
+      summary: Apply a coupon to a pending order
+      description: Applies the specified coupon to the user's pending order. The coupon must be valid and available.
       security:
         - bearerAuth: []
       requestBody:
@@ -1629,8 +1645,8 @@ paths:
     post:
       tags:
         - Admin Products
-      summary: Create a new product
-      description: Creates a new product with the given data.
+      summary: Create a product
+      description: Creates a new product. <br> The product name must be unique. <br> The order of images in the request body determines their display order on the product.
       security:
         - bearerAuth: []
       requestBody:
@@ -1728,6 +1744,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error403'
+        '409':
+          description: Product name already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
         '500':
           description: Server error
           content:
@@ -1892,7 +1914,7 @@ paths:
       tags:
         - Admin Products
       summary: Delete a product
-      description: Deletes a product with the given ID.
+      description: Deletes a product with the given ID. Deleting a product will also delete all its images and variants.
       security:
         - bearerAuth: []
       parameters:
@@ -1942,8 +1964,8 @@ paths:
     get:
       tags:
         - Admin Products
-      summary: Get all variants of a product
-      description: Returns all variants of a product.
+      summary: Retrieve product variants
+      description: Retrieves a list of all variants associated with a specific product.
       security:
         - bearerAuth: []
       parameters:
@@ -2000,8 +2022,8 @@ paths:
     post:
       tags:
         - Admin Products
-      summary: Create new variants for a product
-      description: Create multiple variants for a product with the given ID.
+      summary: Create product variants
+      description: Creates multiple product variants for the specified product.
       security:
         - bearerAuth: []
       parameters:
@@ -2092,7 +2114,7 @@ paths:
       tags:
         - Admin Products
       summary: Get a variant of a product
-      description: Returns a variant of a product.
+      description: Retrieves detailed information about a specific variant belonging to a product.
       security:
         - bearerAuth: []
       parameters:
@@ -2159,14 +2181,14 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: productId
+        - name: productID
           in: path
           description: ID of the product to update a variant of
           required: true
           schema:
             type: string
             example: '1'
-        - name: variantId
+        - name: variantID
           in: path
           description: ID of the variant to update
           required: true
@@ -2402,7 +2424,7 @@ paths:
       tags:
         - Admin Products
       summary: Get images of a product
-      description: Returns all images of a product with the given ID.
+      description: Retrieve all images of a product with the given ID.
       security:
         - bearerAuth: []
       parameters:
@@ -2522,8 +2544,8 @@ paths:
     patch:
       tags:
         - Admin Products
-      summary: Reorder images of a product
-      description: Reorder images of a product. The order of the images will be updated according to the given data. <br> The data should be an array of all images in the order they should be displayed. All images not included in the array will be appended to the end of the list.
+      summary: Reorder product images
+      description: Reorders the images associated with a product. <br> The request body should contain an array of image IDs specifying the desired display order. <br> Images not included in the array will be moved to the end of the list.
       security:
         - bearerAuth: []
       parameters:
@@ -2852,8 +2874,8 @@ paths:
     put:
       tags:
         - Admin Products
-      summary: Update categories of a product
-      description: Update categories of a product. Old categories will be removed and new categories will be added.
+      summary: Update product categories
+      description: 'Replaces the entire set of categories associated with a product. <br> Any existing categories will be removed, and the provided categories will be assigned.'
       security:
         - bearerAuth: []
       parameters:
@@ -2979,8 +3001,8 @@ paths:
       summary: Get all categories
       description: |
         Get all categories. <br>
-        - Support pagination by page and size. <br>
-        - Support partial matching filtering by name, parentID, parentName. <br>
+        Support pagination by page and size. <br>
+        Support partial matching filtering by name, parentID, parentName. <br>
       security:
         - bearerAuth: []
       parameters:
@@ -3089,6 +3111,7 @@ paths:
           schema:
             type: string
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -3224,6 +3247,7 @@ paths:
           schema:
             type: string
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -3290,9 +3314,8 @@ paths:
     delete:
       tags:
         - Admin Categories
-      summary: Delete a category
-      description: |
-        Delete a category by name.
+      summary: Delete category
+      description: 'Deletes a category by name. <br> If the category is a parent category, a conflict error will be returned. <br> All associations between products and the deleted category will be removed.'
       security:
         - bearerAuth: []
       parameters:
@@ -3341,10 +3364,8 @@ paths:
     get:
       tags:
         - Admin Coupons
-      summary: Get all coupons
-      description: |
-        Retrieve a list of all coupons with optional filtering, sorting, and pagination. <br>
-        If product and category fields are both provided, the filtered coupons will be those that satisfy either product or category. <br>
+      summary: Retrieve coupons
+      description: 'Retrieves a list of coupons with optional filtering, sorting, and pagination. The `product` and `category` filters support an OR logic, meaning coupons matching either criteria will be included in the results.'
       security:
         - bearerAuth: []
       parameters:
@@ -3536,10 +3557,14 @@ paths:
       tags:
         - Admin Coupons
       summary: Create a coupon
-      description: Create a coupon with the given data. <br> - The coupon code must be unique. <br>
+      description: |
+        Creates a new coupon with the provided data. <br>
+        The coupon code must be unique. <br>
+        The `maxUsage` field controls the coupon's usage limit: 0 disables the coupon, and null indicates unlimited usage.
       security:
         - bearerAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -3549,6 +3574,9 @@ paths:
                   type: string
                   example: 10OFF
                   required: true
+                description:
+                  type: string
+                  example: 10% off
                 discountValue:
                   type: number
                   example: 10
@@ -3566,6 +3594,7 @@ paths:
                 maxUsage:
                   type: number
                   example: 100
+                  nullable: true
                 target:
                   type: string
                   enum:
@@ -3726,8 +3755,8 @@ paths:
     patch:
       tags:
         - Admin Coupons
-      summary: Update a coupon by couponID
-      description: Update a coupon by couponID. Only the provided fields will be updated.
+      summary: Update coupon details
+      description: 'Updates specific fields of an existing coupon identified by its coupon ID. Only `description`, `minimumOrderAmount`, `maxUsage`, and `endDate` can be modified to maintain financial integrity.'
       security:
         - bearerAuth: []
       parameters:
@@ -3739,29 +3768,22 @@ paths:
             type: string
             example: '1'
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
               properties:
-                discountValue:
-                  type: number
-                  example: 10
-                discountType:
+                description:
                   type: string
-                  enum:
-                    - percentage
-                    - fixed
-                  example: percentage
+                  example: 10% off
                 minimumOrderAmount:
                   type: number
                   example: 100
-                target:
-                  type: string
-                  enum:
-                    - single
-                    - all
-                  example: all
+                maxUsage:
+                  type: number
+                  example: 100
+                  nullable: true
                 endDate:
                   type: string
                   format: date-time
@@ -3815,8 +3837,8 @@ paths:
     delete:
       tags:
         - Admin Coupons
-      summary: Delete a coupon by ID
-      description: Delete a coupon by couponID.
+      summary: Disable coupon
+      description: 'Soft deletes a coupon by its ID. <br> The coupon''s `maxUsage` is set to 0, effectively disabling it. <br> Can reactivate the coupon by updating the `maxUsage` to a positive number.'
       security:
         - bearerAuth: []
       parameters:
@@ -3879,6 +3901,7 @@ paths:
             type: string
             example: '1'
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -3946,6 +3969,7 @@ paths:
             type: string
             example: '1'
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -4020,10 +4044,8 @@ paths:
     get:
       tags:
         - Admin Attributes
-      summary: Get all attributes
-      description: |
-        Get all attributes and their values. 
-        Support pagination, filtering and sorting.
+      summary: Retrieve attributes
+      description: 'Retrieves a list of available attributes, including their values. <br> Supports pagination, filtering, and sorting.'
       security:
         - bearerAuth: []
       parameters:
@@ -4142,13 +4164,11 @@ paths:
         content:
           application/json:
             schema:
-              required: true
               type: object
               properties:
                 name:
                   type: string
                   example: color
-                  required: true
                 values:
                   type: array
                   items:
@@ -4214,10 +4234,8 @@ paths:
     get:
       tags:
         - Admin Attributes
-      summary: Get attribute by ID
-      description: |
-        Get attribute by ID. 
-        Support pagination, filtering and sorting.
+      summary: Retrieve attribute details
+      description: Retrieves detailed information about a specific attribute based on its ID.
       security:
         - bearerAuth: []
       parameters:
@@ -4303,7 +4321,6 @@ paths:
         content:
           application/json:
             schema:
-              required: true
               type: object
               properties:
                 name:
@@ -4358,13 +4375,8 @@ paths:
     put:
       tags:
         - Admin Attributes
-      summary: Update an attribute
-      description: |
-        Update an attribute by ID. Replace existing values with new values. 
-        The attribute name must be unique. 
-        The values must be unique within the attribute. 
-        The values can be empty.
-        (If only want to rename the attribute, use PATCH /admin/attributes/{attributeID})
+      summary: Replace attribute details
+      description: 'Replaces all details of an existing attribute. <br> The attribute name must be unique. <br> Values must be unique within the attribute and can be empty. <br> Any products associated with the attribute will have it removed. <br> To modify only the attribute name, use the PATCH method.'
       security:
         - bearerAuth: []
       parameters:
@@ -4380,7 +4392,6 @@ paths:
         content:
           application/json:
             schema:
-              required: true
               type: object
               properties:
                 name:
@@ -4469,7 +4480,6 @@ paths:
         content:
           application/json:
             schema:
-              required: true
               type: object
               properties:
                 values:
@@ -4536,10 +4546,8 @@ paths:
     delete:
       tags:
         - Admin Attributes
-      summary: Delete an attribute
-      description: |
-        Delete an attribute by ID. 
-        The attribute must not be used by any product.
+      summary: Delete attribute
+      description: Deletes an attribute and its associated values. Any product variants using this attribute will have the attribute removed.
       security:
         - bearerAuth: []
       parameters:
@@ -4579,6 +4587,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error404'
+        '409':
+          description: Attribute in Use
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal Server Error
           content:
@@ -4586,14 +4600,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/error500'
   '/admin/attributes/{attributeID}/values/{valueID}':
-    put:
+    patch:
       tags:
         - Admin Attributes
-      summary: Update an attribute value
+      summary: Update attribute value
       description: |
-        Replace an attribute value by the new value.
-        The value must be unique within the attribute. 
-        The value can be empty.
+        Updates the name of an attribute value. <br>
+        The value must be unique within the attribute. <br>
       security:
         - bearerAuth: []
       parameters:
@@ -4616,7 +4629,94 @@ paths:
         content:
           application/json:
             schema:
-              required: true
+              type: object
+              properties:
+                value:
+                  type: string
+                  example: red
+      responses:
+        '200':
+          description: Value updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  value:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/value'
+                      - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Attribute or value not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '409':
+          description: Value already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    put:
+      tags:
+        - Admin Attributes
+      summary: Replace an attribute value
+      description: |
+        Replace an attribute value by the new value. <br>
+        The value must be unique within the attribute. <br>
+        Any products associated with the value will have it removed. <br>
+        To modify only the value, use the PATCH method.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: attributeID
+          in: path
+          description: Attribute ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+        - name: valueID
+          in: path
+          description: Value ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
               type: object
               properties:
                 value:
@@ -4677,10 +4777,8 @@ paths:
     delete:
       tags:
         - Admin Attributes
-      summary: Delete an attribute value
-      description: |
-        Delete an attribute value by ID. 
-        The value must not be used by any product.
+      summary: Delete attribute value
+      description: Deletes a specific attribute value. This action will remove the value from the attribute and any associated product variants.
       security:
         - bearerAuth: []
       parameters:
@@ -4727,6 +4825,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error404'
+        '409':
+          description: Attribute Value in Use
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal Server Error
           content:
@@ -5026,8 +5130,8 @@ paths:
     delete:
       tags:
         - Admin Users
-      summary: Delete user by ID
-      description: 'Delete user by ID, all addresses and cart items will be deleted as well'
+      summary: Soft delete user
+      description: Soft deletes a user by their ID. <br> The user will be unable to log in. <br> Associated cart items and pending order will be deleted. <br> Checked-out orders and addresses remain unaffected.
       security:
         - bearerAuth: []
       parameters:
@@ -5362,6 +5466,9 @@ components:
         code:
           type: string
           example: 10OFF
+        description:
+          type: string
+          example: 10% off
         discountValue:
           type: number
           example: 10

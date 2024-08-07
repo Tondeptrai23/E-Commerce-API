@@ -131,6 +131,8 @@ adminAttribute:
     $ref: "./adminAttributes/deleteAttribute.yaml"
 
 adminAttributeValues:
+  patch:
+    $ref: "./adminAttributes/patchAttributeValues.yaml"
   put:
     $ref: "./adminAttributes/putAttributeValues.yaml"
   delete:

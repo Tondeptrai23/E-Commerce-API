@@ -1,8 +1,8 @@
 # POST /admin/products/{productID}/variants
 tags:
   - Admin Products
-summary: Create new variants for a product
-description: Create multiple variants for a product with the given ID.
+summary: Create product variants
+description: Creates multiple product variants for the specified product.
 security:
   - bearerAuth: []
 parameters:

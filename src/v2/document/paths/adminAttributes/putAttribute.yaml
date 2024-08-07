@@ -1,13 +1,12 @@
 # PUT /admin/attributes/{attributeID}
 tags:
   - Admin Attributes
-summary: Update an attribute
-description: |
-  Update an attribute by ID. Replace existing values with new values. 
-  The attribute name must be unique. 
-  The values must be unique within the attribute. 
-  The values can be empty.
-  (If only want to rename the attribute, use PATCH /admin/attributes/{attributeID})
+summary: Replace attribute details
+description: Replaces all details of an existing attribute. <br>
+  The attribute name must be unique. <br>
+  Values must be unique within the attribute and can be empty. <br>
+  Any products associated with the attribute will have it removed. <br>
+  To modify only the attribute name, use the PATCH method.
 security:
   - bearerAuth: []
 parameters:
@@ -23,7 +22,6 @@ requestBody:
   content:
     application/json:
       schema:
-        required: true
         type: object
         properties:
           name:

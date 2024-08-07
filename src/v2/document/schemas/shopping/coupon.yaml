@@ -6,6 +6,9 @@ properties:
   code:
     type: string
     example: "10OFF"
+  description:
+    type: string
+    example: "10% off"
   discountValue:
     type: number
     example: 10

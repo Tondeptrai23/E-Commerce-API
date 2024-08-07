@@ -1,8 +1,9 @@
 # GET /orders/pending/coupons
 tags:
   - User Orders
-summary:
-description:
+summary: Get recommended coupons for pending order
+description: Retrieves a list of recommended coupons applicable to the specified pending order. 
+  These coupons can be applied to reduce the order's total amount.
 security:
   - bearerAuth: []
 responses:
