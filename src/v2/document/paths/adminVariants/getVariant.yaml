@@ -1,18 +1,11 @@
-# GET /admin/products/{productID}/variants/{variantID}
+# GET /admin/variants/{variantID}
 tags:
-  - Admin Products
-summary: Get a variant of a product
-description: Retrieves detailed information about a specific variant belonging to a product.
+  - Admin Variants
+summary: Get a variant 
+description: Retrieves detailed information about a specific variant.
 security:
   - bearerAuth: []
 parameters:
-  - name: productID
-    in: path
-    description: ID of the product to get a variant of
-    required: true
-    schema:
-      type: string
-      example: "1"
   - name: variantID
     in: path
     description: ID of the variant to get
@@ -34,34 +27,34 @@ responses:
             variant:
               type: object
               allOf:
-                - $ref: "../../../schemas/products/variantForAdmin.yaml"
-                - $ref: "../../../schemas/timestamps.yaml"
-                - $ref: "../../../schemas/products/variantAttribute.yaml"
+                - $ref: "../../schemas/products/variantForAdmin.yaml"
+                - $ref: "../../schemas/timestamps.yaml"
+                - $ref: "../../schemas/products/variantAttribute.yaml"
                 
   401:
     description: Token error, not authenticated
     content:
       application/json:
         schema:
-          $ref: "../../../schemas/error/error401.yaml"
+          $ref: "../../schemas/error/error401.yaml"
 
   403:
     description: Not an admin
     content:
       application/json:
         schema:
-          $ref: "../../../schemas/error/error403.yaml"  
+          $ref: "../../schemas/error/error403.yaml"  
 
   404:
-    description: Product or variant not found
+    description: Variant not found
     content:
       application/json:
         schema:
-          $ref: "../../../schemas/error/error404.yaml"
+          $ref: "../../schemas/error/error404.yaml"
 
   500:
     description: Internal Server Error
     content:
       application/json:
         schema:
-          $ref: "../../../schemas/error/error500.yaml" 
+          $ref: "../../schemas/error/error500.yaml" 

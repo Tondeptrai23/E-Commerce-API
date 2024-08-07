@@ -72,6 +72,16 @@ adminProductCategory:
   delete:
     $ref: "./adminProducts/category/deleteCategory.yaml"
 
+# ADMIN VARIANTS
+
+adminVariants:
+  get:
+    $ref: "./adminVariants/getVariants.yaml"
+
+adminVariant:
+  get:
+    $ref: "./adminVariants/getVariant.yaml"
+
 # ADMIN CATEGORIES
 adminCategories:
   get:

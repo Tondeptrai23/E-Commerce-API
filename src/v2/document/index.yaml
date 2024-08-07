@@ -10,40 +10,35 @@ servers:
 
 tags:
   - name: Authentication
-    description: 
-      This field represents the description of something.
+    description: Endpoints related to user authentication and authorization.
 
   - name: User Products
-    description: 
-      This field represents the description of something.
+    description: Endpoints for managing user-specific product interactions.
 
   - name: User Categories
-    description: 
-      This field represents the description of something.
+    description: Endpoints for managing user-specific category interactions.
 
   - name: User Cart
-    description: 
-      This field represents the description of something.
+    description: Endpoints for managing user shopping carts.
 
   - name: User Orders
-    description: 
-      This field represents the description of something.
+    description: Endpoints for managing user orders.
 
   - name: Admin Products
-    description: 
-      This field represents the description of something.
+    description: Endpoints for managing product data, variants, images and categories.
+
+  - name: Admin Variants
+    description: Endpoints for managing variants.
 
   - name: Admin Categories
-    description: 
-      This field represents the description of something.
+    description: Endpoints for managing categories.
 
   - name: Admin Coupons
-    description: 
-      This field represents the description of something.
+    description: Endpoints for managing discount coupons.
 
   - name: Admin Attributes
-    description: 
-      This field represents the description of something.
+    description: Endpoints for managing attributes.
+
 
 paths:
   # Authentication
@@ -140,6 +135,14 @@ paths:
 
   /admin/products/{productID}/categories/{categoryName}:
     $ref: ./paths/index.paths.yaml#/adminProductCategory
+
+  # Admin Variants
+
+  /admin/variants:
+    $ref: ./paths/index.paths.yaml#/adminVariants
+
+  /admin/{variantID}:
+    $ref: ./paths/index.paths.yaml#/adminVariant
 
   # Admin Categories
 

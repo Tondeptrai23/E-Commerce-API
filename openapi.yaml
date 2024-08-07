@@ -7,23 +7,25 @@ servers:
   - url: 'https://localhost:3000/api/v2'
 tags:
   - name: Authentication
-    description: This field represents the description of something.
+    description: Endpoints related to user authentication and authorization.
   - name: User Products
-    description: This field represents the description of something.
+    description: Endpoints for managing user-specific product interactions.
   - name: User Categories
-    description: This field represents the description of something.
+    description: Endpoints for managing user-specific category interactions.
   - name: User Cart
-    description: This field represents the description of something.
+    description: Endpoints for managing user shopping carts.
   - name: User Orders
-    description: This field represents the description of something.
+    description: Endpoints for managing user orders.
   - name: Admin Products
-    description: This field represents the description of something.
+    description: 'Endpoints for managing product data, variants, images and categories.'
+  - name: Admin Variants
+    description: Endpoints for managing variants.
   - name: Admin Categories
-    description: This field represents the description of something.
+    description: Endpoints for managing categories.
   - name: Admin Coupons
-    description: This field represents the description of something.
+    description: Endpoints for managing discount coupons.
   - name: Admin Attributes
-    description: This field represents the description of something.
+    description: Endpoints for managing attributes.
 paths:
   /auth/signin:
     post:
@@ -1563,7 +1565,7 @@ paths:
             $ref: '#/components/schemas/categoryNames'
         - name: sort
           in: query
-          description: 'Sort products by one or more fields. <br> - A comma-separated list of fields ("price,-discountPrice"). <br> - A single field ("price"). <br> - An array of fields (["price", "-discountPrice"]). <br> - A leading ''-'' indicates descending order. <br> - Sorting is applied from left to right'
+          description: 'Sort products by one or more fields. <br> Specify fields in a comma-separated string ("price,-discountPrice"), as a single string ("price"), or as an array of strings (["price", "-discountPrice"]). <br> A leading ''-'' indicates descending order. Sorting is applied from left to right.'
           required: false
           schema:
             oneOf:
@@ -1578,7 +1580,7 @@ paths:
             example: true
         - name: attributes
           in: query
-          description: Filter by attributes
+          description: 'Filter products by attributes. <br> The `attributes` parameter is a dynamic object where keys represent attribute names and values represent desired attribute values.  <br> A product is included in the results if at least one of its variants matches all specified attributes.  <br> For example, `attributes={"color":"red","size":"M"}` will return products with a variant having both the color "red" and size "M".  <br> Note that `size="M,L"` is different from `size=["M","L"]`. <br> - The former filters for products with either size M or L, while the latter filters for products with both sizes (which is typically impossible).'
           required: false
           style: deepObject
           schema:
@@ -2143,7 +2145,7 @@ paths:
                   success:
                     type: string
                     example: true
-                  variants:
+                  variant:
                     type: object
                     allOf:
                       - $ref: '#/components/schemas/variantForAdmin'
@@ -2990,6 +2992,199 @@ paths:
                 $ref: '#/components/schemas/error404'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  /admin/variants:
+    get:
+      tags:
+        - Admin Variants
+      summary: Get all variants
+      description: 'Retrieves detailed information about all variants. <br> Supports pagination, sorting, and filtering.'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page to retrieve
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: size
+          in: query
+          description: Size per page
+          required: false
+          schema:
+            type: integer
+            example: 10
+        - name: productID
+          in: query
+          description: 'Filter by productID. <br> - Support partial matching using "[like]productID"'
+          required: false
+          schema:
+            type: string
+        - name: createdAt
+          in: query
+          description: 'Filter by createdAt. <br> - Support operators <br> + [lte]2024-01-01 <br> + [gte]2024-01-01 <br> + [between]2024-01-01,2022-01-01 <br>'
+          required: false
+          schema:
+            type: string
+            example: '[gte]2024-01-01'
+        - name: updatedAt
+          in: query
+          description: 'Filter by updatedAt. <br> - Support operators [lte], [gte], [between] <br> + [lte]2024-01-01 <br> + [gte]2024-01-01 <br> + [between]2024-01-01,2022-01-01 <br>'
+          required: false
+          schema:
+            type: string
+            example: '[lte]2024-01-01'
+        - name: price
+          in: query
+          description: 'Filter by price. <br> - Support operators [lte], [gte], [between]<br> + [lte]1000 <br> + [gte]1000 <br> + [between]1000,2000 <br>'
+          required: false
+          schema:
+            type: string
+            example: '[lte]1000'
+        - name: discountPrice
+          in: query
+          description: 'Filter by discountPrice. <br> - Support operators [lte], [gte], [between]<br> + [lte]1000 <br> + [gte]1000 <br> + [between]1000,2000 <br>'
+          required: false
+          schema:
+            type: string
+            example: '[lte]1000'
+        - name: sku
+          in: query
+          description: 'Filter by sku. <br> - Support partial matching using "[like]sku"'
+          required: false
+          schema:
+            type: string
+        - name: stock
+          in: query
+          description: 'Filter by stock. <br> - Support operators [lte], [gte], [between]<br> + [lte]1000 <br> + [gte]1000 <br> + [between]1000,2000 <br>'
+          required: false
+          schema:
+            type: string
+            example: '[lte]1000'
+        - name: attributes
+          in: query
+          description: Filter by attributes
+          required: false
+          style: deepObject
+          schema:
+            type: object
+            description: Dynamic attributes of the product
+            properties:
+              color:
+                example: red
+              size:
+                example: 'M,L'
+        - name: sort
+          in: query
+          description: 'Sort variants by one or more fields. <br> Specify fields in a comma-separated string ("price,-discountPrice"), as a single string ("price"), or as an array of strings (["price", "-discountPrice"]). <br> A leading ''-'' indicates descending order. Sorting is applied from left to right.'
+          required: false
+          schema:
+            oneOf:
+              - type: string
+              - type: array
+      responses:
+        '200':
+          description: Variants found
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/pagination'
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  variants:
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - $ref: '#/components/schemas/variantForAdmin'
+                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/variantAttribute'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/admin/{variantID}':
+    get:
+      tags:
+        - Admin Variants
+      summary: Get a variant
+      description: Retrieves detailed information about a specific variant.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: variantID
+          in: path
+          description: ID of the variant to get
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Variant found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: true
+                  variant:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/variantForAdmin'
+                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/variantAttribute'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Variant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:

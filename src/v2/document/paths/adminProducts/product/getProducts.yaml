@@ -91,11 +91,8 @@ parameters:
   - name: sort
     in: query
     description: Sort products by one or more fields. <br> 
-      - A comma-separated list of fields ("price,-discountPrice"). <br>
-      - A single field ("price"). <br> 
-      - An array of fields (["price", "-discountPrice"]). <br> 
-      - A leading '-' indicates descending order. <br>
-      - Sorting is applied from left to right
+      Specify fields in a comma-separated string ("price,-discountPrice"), as a single string ("price"), or as an array of strings (["price", "-discountPrice"]). <br>
+      A leading '-' indicates descending order. Sorting is applied from left to right.
     required: false
     schema:
       oneOf:
@@ -112,7 +109,12 @@ parameters:
 
   - name: attributes
     in: query
-    description: Filter by attributes
+    description: Filter products by attributes. <br>
+      The `attributes` parameter is a dynamic object where keys represent attribute names and values represent desired attribute values.  <br>
+      A product is included in the results if at least one of its variants matches all specified attributes.  <br>
+      For example, `attributes={"color":"red","size":"M"}` will return products with a variant having both the color "red" and size "M".  <br>
+      Note that `size="M,L"` is different from `size=["M","L"]`. <br>
+        - The former filters for products with either size M or L, while the latter filters for products with both sizes (which is typically impossible).
     required: false
     style: deepObject
     schema:
