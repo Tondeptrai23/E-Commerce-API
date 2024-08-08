@@ -1,9 +1,9 @@
 # GET /admin/products
 tags:
   - Admin Products
-summary: Get all products
+summary: Retrieve all products
 description: Retrieves a list of all products with optional filtering, sorting, and pagination. <br>
-  - The same as the user's endpoint but with sorting/filtering by productID, createdAt and updatedAt. 
+  Admin-specific filters and sorting options are available, including product ID, creation date, and update date.
 security:
   - bearerAuth: []
 parameters:
@@ -148,7 +148,7 @@ responses:
                     type: array
                     items:
                       allOf:
-                        - $ref: "../../../schemas/products/variantForAdmin.yaml"
+                        - $ref: "../../../schemas/products/variant.yaml"
                         - $ref: "../../../schemas/timestamps.yaml"
                   categories:
                     $ref: "../../../schemas/products/categoryNames.yaml"

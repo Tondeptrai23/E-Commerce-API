@@ -90,7 +90,7 @@ responses:
               items:
                 type: object
                 allOf:
-                  - $ref: "../../schemas/products/variantForAdmin.yaml"
+                  - $ref: "../../schemas/products/variant.yaml"
                   - $ref: "../../schemas/timestamps.yaml"
           allOf:
             - $ref: "../../schemas/pagination.yaml"

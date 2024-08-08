@@ -2,7 +2,8 @@
 tags:
   - Admin Products
 summary: Update a variant
-description: Updates a variant with the given data.
+description: Updates a variant with the given data. <br>
+  If name is not provided, it will use the product name
 security:
   - bearerAuth: []
 parameters:
@@ -27,6 +28,10 @@ requestBody:
       schema:
         type: object
         properties:
+          name:
+            type: string
+            example: "Red T-Shirt"
+            nullable: true
           price:
             type: number
             example: 100
@@ -58,7 +63,7 @@ responses:
             variant:
               type: object
               allOf:
-                - $ref: "../../../schemas/products/variantForAdmin.yaml"
+                - $ref: "../../../schemas/products/variant.yaml"
                 - $ref: "../../../schemas/timestamps.yaml"
                 - $ref: "../../../schemas/products/variantAttribute.yaml"
   400:

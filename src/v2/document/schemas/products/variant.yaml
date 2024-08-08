@@ -3,6 +3,10 @@ properties:
   variantID:
     type: string
     example: "101"
+  name:
+    type: string
+    example: "Red T-Shirt"
+    nullable: true
   price:
     type: number
     example: 100
@@ -16,6 +20,9 @@ properties:
   sku:
     type: string
   productID:
+    type: string
+    example: "1"
+  imageID:
     type: string
     example: "1"
   image:

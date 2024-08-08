@@ -293,6 +293,11 @@ paths:
               discountPrice:
                 pattern: '/^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/'
                 example: 90
+              sku:
+                type: string
+              stock:
+                type: integer
+                example: 10
         - name: category
           in: query
           description: Filter by category
@@ -356,7 +361,7 @@ paths:
                         variants:
                           type: array
                           items:
-                            $ref: '#/components/schemas/variantForUser'
+                            $ref: '#/components/schemas/variant'
                         categories:
                           $ref: '#/components/schemas/categoryNames'
                       allOf:
@@ -404,7 +409,7 @@ paths:
                         type: array
                         items:
                           allOf:
-                            - $ref: '#/components/schemas/variantForUser'
+                            - $ref: '#/components/schemas/variant'
                             - $ref: '#/components/schemas/variantAttribute'
                       categories:
                         $ref: '#/components/schemas/categoryNames'
@@ -456,7 +461,7 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/variantForUser'
+                        - $ref: '#/components/schemas/variant'
                       properties:
                         attributes:
                           $ref: '#/components/schemas/variantAttribute'
@@ -758,7 +763,7 @@ paths:
                   cart:
                     type: array
                     items:
-                      $ref: '#/components/schemas/variantForUser'
+                      $ref: '#/components/schemas/variant'
                       properties:
                         quantity:
                           type: number
@@ -829,7 +834,7 @@ paths:
                         items:
                           type: object
                           allOf:
-                            - $ref: '#/components/schemas/variantForUser'
+                            - $ref: '#/components/schemas/variant'
                           properties:
                             quantity:
                               type: number
@@ -926,7 +931,7 @@ paths:
                   cart:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/variantForUser'
+                      - $ref: '#/components/schemas/variant'
                     properties:
                       quantity:
                         type: number
@@ -982,7 +987,7 @@ paths:
                   cartItem:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/variantForUser'
+                      - $ref: '#/components/schemas/variant'
                     properties:
                       quantity:
                         type: number
@@ -1496,8 +1501,8 @@ paths:
     get:
       tags:
         - Admin Products
-      summary: Get all products
-      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> - The same as the user''s endpoint but with sorting/filtering by productID, createdAt and updatedAt.'
+      summary: Retrieve all products
+      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> Admin-specific filters and sorting options are available, including product ID, creation date, and update date.'
       security:
         - bearerAuth: []
       parameters:
@@ -1613,7 +1618,7 @@ paths:
                           type: array
                           items:
                             allOf:
-                              - $ref: '#/components/schemas/variantForAdmin'
+                              - $ref: '#/components/schemas/variant'
                               - $ref: '#/components/schemas/timestamps'
                         categories:
                           $ref: '#/components/schemas/categoryNames'
@@ -1648,7 +1653,7 @@ paths:
       tags:
         - Admin Products
       summary: Create a product
-      description: Creates a new product. <br> The product name must be unique. <br> The order of images in the request body determines their display order on the product.
+      description: 'Creates a new product. <br> The product name must be unique. <br> The order of images in the request body determines their display order on the product. <br> The product should have at least 1 variant. <br> If variant''s name is not provided, it will use the product name'
       security:
         - bearerAuth: []
       requestBody:
@@ -1667,21 +1672,9 @@ paths:
                   type: array
                   items:
                     type: object
-                    properties:
-                      price:
-                        type: number
-                        example: 100
-                      discountPrice:
-                        type: number
-                        example: 90
-                        nullable: true
-                      stock:
-                        type: integer
-                        example: 10
-                      sku:
-                        type: string
                     allOf:
-                      - $ref: '#/components/schemas/variantForAdmin'
+                      - $ref: '#/components/schemas/variant'
+                      - $ref: '#/components/schemas/variantAttribute'
                 categories:
                   $ref: '#/components/schemas/categoryNames'
                 images:
@@ -1713,16 +1706,14 @@ paths:
                         type: array
                         items:
                           allOf:
-                            - $ref: '#/components/schemas/variantForAdmin'
+                            - $ref: '#/components/schemas/variant'
                             - $ref: '#/components/schemas/variantAttribute'
-                            - $ref: '#/components/schemas/timestamps'
                       images:
                         type: array
                         items:
                           type: object
                           allOf:
                             - $ref: '#/components/schemas/image'
-                            - $ref: '#/components/schemas/timestamps'
                       categories:
                         $ref: '#/components/schemas/categoryNames'
                     allOf:
@@ -1793,7 +1784,7 @@ paths:
                         items:
                           type: object
                           allOf:
-                            - $ref: '#/components/schemas/variantForAdmin'
+                            - $ref: '#/components/schemas/variant'
                             - $ref: '#/components/schemas/timestamps'
                           properties:
                             attributes:
@@ -1831,7 +1822,7 @@ paths:
       tags:
         - Admin Products
       summary: Update a product
-      description: Updates a product with the given data.
+      description: Updates a product with the given data. <br> Product name must be unique. <br>
       security:
         - bearerAuth: []
       parameters:
@@ -1906,6 +1897,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error404'
+        '409':
+          description: Product name already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal Server Error
           content:
@@ -1994,7 +1991,7 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/variantForAdmin'
+                        - $ref: '#/components/schemas/variant'
                         - $ref: '#/components/schemas/timestamps'
                         - $ref: '#/components/schemas/variantAttribute'
         '401':
@@ -2025,7 +2022,7 @@ paths:
       tags:
         - Admin Products
       summary: Create product variants
-      description: Creates multiple product variants for the specified product.
+      description: 'Creates multiple product variants for the specified product. <br> If variant''s name is not provided, it will use the product name'
       security:
         - bearerAuth: []
       parameters:
@@ -2048,6 +2045,10 @@ paths:
                   items:
                     type: object
                     properties:
+                      name:
+                        type: string
+                        example: Variant name
+                        nullable: true
                       price:
                         type: number
                         example: 100
@@ -2078,7 +2079,7 @@ paths:
                   variant:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/variantForAdmin'
+                      - $ref: '#/components/schemas/variant'
                       - $ref: '#/components/schemas/timestamps'
                       - $ref: '#/components/schemas/variantAttribute'
         '400':
@@ -2148,7 +2149,7 @@ paths:
                   variant:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/variantForAdmin'
+                      - $ref: '#/components/schemas/variant'
                       - $ref: '#/components/schemas/timestamps'
                       - $ref: '#/components/schemas/variantAttribute'
         '401':
@@ -2204,6 +2205,10 @@ paths:
             schema:
               type: object
               properties:
+                name:
+                  type: string
+                  example: Red T-Shirt
+                  nullable: true
                 price:
                   type: number
                   example: 100
@@ -2219,11 +2224,6 @@ paths:
                 sku:
                   type: string
                   nullable: true
-                attributes:
-                  type: array
-                  nullable: true
-                  items:
-                    $ref: '#/components/schemas/variantAttribute'
       responses:
         '200':
           description: Variant updated
@@ -2238,9 +2238,8 @@ paths:
                   variant:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/variantForAdmin'
+                      - $ref: '#/components/schemas/variant'
                       - $ref: '#/components/schemas/timestamps'
-                      - $ref: '#/components/schemas/variantAttribute'
         '400':
           description: Validation Error
           content:
@@ -2275,7 +2274,7 @@ paths:
       tags:
         - Admin Products
       summary: Update a variant
-      description: Updates a variant with the given data.
+      description: 'Updates a variant with the given data. <br> If name is not provided, it will use the product name'
       security:
         - bearerAuth: []
       parameters:
@@ -2300,6 +2299,10 @@ paths:
             schema:
               type: object
               properties:
+                name:
+                  type: string
+                  example: Red T-Shirt
+                  nullable: true
                 price:
                   type: number
                   example: 100
@@ -2331,7 +2334,7 @@ paths:
                   variant:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/variantForAdmin'
+                      - $ref: '#/components/schemas/variant'
                       - $ref: '#/components/schemas/timestamps'
                       - $ref: '#/components/schemas/variantAttribute'
         '400':
@@ -3068,7 +3071,7 @@ paths:
             example: '[lte]1000'
         - name: attributes
           in: query
-          description: Filter by attributes
+          description: 'Filter variants by attributes. <br> The `attributes` parameter is a dynamic object where keys represent attribute names and values represent desired attribute values.  <br> For example, `attributes={"color":"red","size":"M"}` will return a variant having both the color "red" and size "M".  <br> Note that `size="M,L"` is different from `size=["M","L"]`. <br> - The former filters for variants with either size M or L, while the latter filters for variants with both sizes (which is typically impossible).'
           required: false
           style: deepObject
           schema:
@@ -3105,7 +3108,7 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/variantForAdmin'
+                        - $ref: '#/components/schemas/variant'
                         - $ref: '#/components/schemas/timestamps'
                         - $ref: '#/components/schemas/variantAttribute'
         '400':
@@ -3162,7 +3165,7 @@ paths:
                   variant:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/variantForAdmin'
+                      - $ref: '#/components/schemas/variant'
                       - $ref: '#/components/schemas/timestamps'
                       - $ref: '#/components/schemas/variantAttribute'
         '401':
@@ -5113,7 +5116,7 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/variantForAdmin'
+                        - $ref: '#/components/schemas/variant'
                         - $ref: '#/components/schemas/timestamps'
                 allOf:
                   - $ref: '#/components/schemas/pagination'
@@ -5537,32 +5540,16 @@ components:
         description:
           type: string
           nullable: true
-    variantForUser:
+    variant:
       type: object
       properties:
         variantID:
           type: string
           example: '101'
-        price:
-          type: integer
-          example: 100
-        discountPrice:
-          type: integer
-          example: 90
+        name:
+          type: string
+          example: Red T-Shirt
           nullable: true
-        productID:
-          type: string
-          example: '1'
-        image:
-          type: string
-          example: image.com/image.jpg
-          nullable: true
-    variantForAdmin:
-      type: object
-      properties:
-        variantID:
-          type: string
-          example: '101'
         price:
           type: number
           example: 100
@@ -5576,6 +5563,9 @@ components:
         sku:
           type: string
         productID:
+          type: string
+          example: '1'
+        imageID:
           type: string
           example: '1'
         image:

@@ -34,7 +34,7 @@ responses:
             cart:
               type: object
               allOf:
-                - $ref: "../../schemas/products/variantForUser.yaml"
+                - $ref: "../../schemas/products/variant.yaml"
               properties:
                 quantity:
                   type: number

@@ -145,7 +145,7 @@ responses:
               items:
                 type: object
                 allOf:
-                  - $ref: "../../schemas/products/variantForAdmin.yaml"
+                  - $ref: "../../schemas/products/variant.yaml"
                   - $ref: "../../schemas/timestamps.yaml"
                   - $ref: "../../schemas/products/variantAttribute.yaml"
   400:

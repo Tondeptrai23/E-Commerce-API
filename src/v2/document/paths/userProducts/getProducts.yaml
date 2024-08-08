@@ -45,6 +45,11 @@ parameters:
         discountPrice:
           pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
           example: 90.0
+        sku:
+          type: string
+        stock:
+          type: integer
+          example: 10
 
   - name: category
     in: query
@@ -120,7 +125,7 @@ responses:
                     variants:
                       type: array
                       items:
-                        $ref: "../../schemas/products/variantForUser.yaml"
+                        $ref: "../../schemas/products/variant.yaml"
                     categories:
                       $ref: "../../schemas/products/categoryNames.yaml"
                   allOf:

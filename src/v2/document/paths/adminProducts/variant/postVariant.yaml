@@ -2,7 +2,8 @@
 tags:
   - Admin Products
 summary: Create product variants
-description: Creates multiple product variants for the specified product.
+description: Creates multiple product variants for the specified product. <br>
+  If variant's name is not provided, it will use the product name
 security:
   - bearerAuth: []
 parameters:
@@ -25,6 +26,10 @@ requestBody:
             items:
               type: object
               properties:
+                name:
+                  type: string
+                  example: "Variant name"
+                  nullable: true
                 price:
                   type: number
                   example: 100
@@ -55,7 +60,7 @@ responses:
             variant:
               type: object
               allOf:
-                - $ref: "../../../schemas/products/variantForAdmin.yaml"
+                - $ref: "../../../schemas/products/variant.yaml"
                 - $ref: "../../../schemas/timestamps.yaml"
                 - $ref: "../../../schemas/products/variantAttribute.yaml"
   400:

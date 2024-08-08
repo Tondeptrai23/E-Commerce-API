@@ -212,10 +212,8 @@ components:
       
     product:
       $ref: ./schemas/products/product.yaml
-    variantForUser:
-      $ref: ./schemas/products/variantForUser.yaml
-    variantForAdmin:
-      $ref: ./schemas/products/variantForAdmin.yaml
+    variant:
+      $ref: ./schemas/products/variant.yaml
     variantAttribute: 
       $ref: ./schemas/products/variantAttribute.yaml
     image:

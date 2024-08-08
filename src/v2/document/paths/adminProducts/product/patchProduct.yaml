@@ -2,7 +2,8 @@
 tags:
   - Admin Products
 summary: Update a product
-description: Updates a product with the given data.
+description: Updates a product with the given data. <br>
+  Product name must be unique. <br>
 security:
   - bearerAuth: []
 parameters:
@@ -81,6 +82,13 @@ responses:
       application/json:
         schema:
           $ref: "../../../schemas/error/error404.yaml"
+
+  409:
+    description: Product name already exists
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error409.yaml"
 
   500:
     description: Internal Server Error

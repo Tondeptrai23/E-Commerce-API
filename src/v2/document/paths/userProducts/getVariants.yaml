@@ -27,7 +27,7 @@ responses:
               items:
                 type: object
                 allOf:
-                  - $ref: "../../schemas/products/variantForUser.yaml"
+                  - $ref: "../../schemas/products/variant.yaml"
                 properties:
                   attributes:
                       $ref: "../../schemas/products/variantAttribute.yaml"
