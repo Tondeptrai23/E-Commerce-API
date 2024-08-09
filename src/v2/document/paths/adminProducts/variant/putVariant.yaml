@@ -1,8 +1,8 @@
 # POST /admin/products/{productID}/variants/{variantID}
 tags:
   - Admin Products
-summary: Update a variant
-description: Updates a variant with the given data. <br>
+summary: Replace a variant
+description: Replace a variant by a new variant with given data. <br>
   If name is not provided, it will use the product name
 security:
   - bearerAuth: []
@@ -45,8 +45,6 @@ requestBody:
           sku:
             type: string
           attributes:
-            type: array
-            nullable: true
             items:
               $ref: "../../../schemas/products/variantAttribute.yaml"
 responses:

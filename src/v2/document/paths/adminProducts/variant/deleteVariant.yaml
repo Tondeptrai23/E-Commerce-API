@@ -2,7 +2,7 @@
 tags:
   - Admin Products 
 summary: Delete a variant
-description: Deletes a variant with the given ID.
+description: Soft deletes a variant with the given ID.
 security:
   - bearerAuth: []
 parameters:

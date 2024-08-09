@@ -59,6 +59,17 @@ parameters:
     schema:
       type: string
 
+  - name: deletedAt
+    in: query
+    description: Filter by deletedAt. <br> 
+      - Support operators <br> 
+      + [lte]2024-01-01 <br> 
+      + [gte]2024-01-01 <br> 
+      + [between]2024-01-01,2022-01-01 <br> 
+    required: false
+    schema:
+      type: string
+
   - name: variant
     in: query
     style: deepObject
@@ -150,11 +161,13 @@ responses:
                       allOf:
                         - $ref: "../../../schemas/products/variant.yaml"
                         - $ref: "../../../schemas/timestamps.yaml"
+                        - $ref: "../../../schemas/deleteTimestamps.yaml"    
                   categories:
                     $ref: "../../../schemas/products/categoryNames.yaml"
                 allOf:
                   - $ref: "../../../schemas/products/product.yaml"
                   - $ref: "../../../schemas/timestamps.yaml"
+                  - $ref: "../../../schemas/deleteTimestamps.yaml"
 
   400:
     description: Invalid query parameters
