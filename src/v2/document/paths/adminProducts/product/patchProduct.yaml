@@ -4,6 +4,7 @@ tags:
 summary: Update a product
 description: Updates a product with the given data. <br>
   Product name must be unique. <br>
+  Cannot update deleted products.
 security:
   - bearerAuth: []
 parameters:

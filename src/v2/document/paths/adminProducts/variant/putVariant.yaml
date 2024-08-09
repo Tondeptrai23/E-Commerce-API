@@ -4,6 +4,7 @@ tags:
 summary: Replace a variant
 description: Replace a variant by a new variant with given data. <br>
   If name is not provided, it will use the product name
+  Cannot replace deleted variants.
 security:
   - bearerAuth: []
 parameters:

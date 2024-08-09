@@ -3,6 +3,7 @@ tags:
   - Admin Products
 summary: Update a variant
 description: Updates given fields of a variant with given data.
+  Cannot update deleted variants.
 security:
   - bearerAuth: []
 parameters:

@@ -34,6 +34,7 @@ responses:
                     allOf:
                       - $ref: "../../../schemas/products/variant.yaml"
                       - $ref: "../../../schemas/timestamps.yaml"
+                      - $ref: "../../../schemas/deleteTimestamps.yaml"
                     properties:
                       attributes:
                         $ref: "../../../schemas/products/variantAttribute.yaml"
@@ -42,6 +43,7 @@ responses:
               allOf:
                 - $ref: "../../../schemas/products/product.yaml"
                 - $ref: "../../../schemas/timestamps.yaml"
+                - $ref: "../../../schemas/deleteTimestamps.yaml"
 
   401:
     description: Token error, not authenticated

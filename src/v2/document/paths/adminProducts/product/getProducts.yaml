@@ -161,7 +161,7 @@ responses:
                       allOf:
                         - $ref: "../../../schemas/products/variant.yaml"
                         - $ref: "../../../schemas/timestamps.yaml"
-                        - $ref: "../../../schemas/deleteTimestamps.yaml"    
+                        - $ref: "../../../schemas/deleteTimestamps.yaml"
                   categories:
                     $ref: "../../../schemas/products/categoryNames.yaml"
                 allOf:

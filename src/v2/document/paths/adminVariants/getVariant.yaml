@@ -30,7 +30,7 @@ responses:
                 - $ref: "../../schemas/products/variant.yaml"
                 - $ref: "../../schemas/timestamps.yaml"
                 - $ref: "../../schemas/products/variantAttribute.yaml"
-                
+                - $ref: "../../schemas/deleteTimestamps.yaml"
   401:
     description: Token error, not authenticated
     content:

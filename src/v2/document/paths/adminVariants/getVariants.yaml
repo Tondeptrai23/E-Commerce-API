@@ -55,6 +55,18 @@ parameters:
       type: string
       example: "[lte]2024-01-01"
 
+  - name: deletedAt
+    in: query
+    description: Filter by deletedAt. <br> 
+      - Support operators [lte], [gte], [between] <br> 
+      + [lte]2024-01-01 <br> 
+      + [gte]2024-01-01 <br> 
+      + [between]2024-01-01,2022-01-01 <br> 
+    required: false
+    schema:
+      type: string
+      example: "[lte]2024-01-01"
+
   - name: price
     in: query
     description: Filter by price. <br>
@@ -148,6 +160,7 @@ responses:
                   - $ref: "../../schemas/products/variant.yaml"
                   - $ref: "../../schemas/timestamps.yaml"
                   - $ref: "../../schemas/products/variantAttribute.yaml"
+                  - $ref: "../../schemas/deleteTimestamps.yaml"
   400:
     description: Invalid query parameters
     content:
