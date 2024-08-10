@@ -168,6 +168,16 @@ adminUserCart:
   get:
     $ref: "./adminUsers/getUserCart.yaml"
 
+# ADMIN ORDERS
+
+adminOrders:
+  get:
+    $ref: "./adminOrders/getOrders.yaml"
+
+adminOrder:
+  get:
+    $ref: "./adminOrders/getOrder.yaml"
+
 # USER PRODUCTS
 userProducts:
   get:
@@ -252,3 +262,19 @@ userPendingCoupon:
     $ref: "./userOrders/getPendingCoupon.yaml"
   post:
     $ref: "./userOrders/postPendingCoupon.yaml"
+
+# USER ADDRESS
+
+userAddresses:
+  get:
+    $ref: "./userInfo/getAddresses.yaml"
+  post:
+    $ref: "./userInfo/postAddresses.yaml"
+
+userAddress:
+  get:
+    $ref: "./userInfo/getAddress.yaml"
+  patch:
+    $ref: "./userInfo/patchAddress.yaml"
+  delete:
+    $ref: "./userInfo/deleteAddress.yaml"

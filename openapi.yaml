@@ -16,6 +16,8 @@ tags:
     description: Endpoints for managing user shopping carts.
   - name: User Orders
     description: Endpoints for managing user orders.
+  - name: User Address
+    description: Endpoints for managing user addresses.
   - name: Admin Products
     description: 'Endpoints for managing product data, variants, images and categories.'
   - name: Admin Variants
@@ -26,6 +28,8 @@ tags:
     description: Endpoints for managing discount coupons.
   - name: Admin Attributes
     description: Endpoints for managing attributes.
+  - name: Admin Orders
+    description: Endpoints for managing orders.
 paths:
   /auth/signin:
     post:
@@ -500,7 +504,7 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: true
+                    type: boolean
                     example: true
                   images:
                     type: array
@@ -1396,7 +1400,7 @@ paths:
         - bearerAuth: []
       responses:
         '200':
-          description: null
+          description: Recommended coupons found
           content:
             application/json:
               schema:
@@ -1497,6 +1501,291 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
+  /address:
+    get:
+      tags:
+        - User Address
+      summary: Get addresses
+      description: |
+        Get all addresses of the authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Addresses found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  addresses:
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - $ref: '#/components/schemas/address'
+                        - $ref: '#/components/schemas/timestamps'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    post:
+      tags:
+        - User Address
+      summary: Add address
+      description: |
+        Add address to the authenticated user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phoneNumber:
+                  type: string
+                  example: 0123456789
+                recipientName:
+                  type: string
+                  example: John Doe
+                address:
+                  type: string
+                  example: 123 Bui Huu Nghia
+                city:
+                  type: string
+                  example: Bien Hoa City
+                district:
+                  type: string
+                  example: Dong Nai
+      responses:
+        '200':
+          description: Address added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  address:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/address'
+                      - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/address/{addressID}':
+    get:
+      tags:
+        - User Address
+      summary: Get address by addressID
+      description: |
+        Get address by addressID
+        Only the owner can get the address
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: addressID
+          in: path
+          description: Address ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Address found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  address:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/address'
+                      - $ref: '#/components/schemas/timestamps'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '404':
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    patch:
+      tags:
+        - User Address
+      summary: Update address by addressID
+      description: |
+        Update address by addressID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: addressID
+          in: path
+          description: Address ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phoneNumber:
+                  type: string
+                  example: 0123456789
+                  nullable: true
+                address:
+                  type: string
+                  example: 123 Bui Huu Nghia
+                  nullable: true
+                recipientName:
+                  type: string
+                  example: John Doe
+                  nullable: true
+                city:
+                  type: string
+                  example: Bien Hoa City
+                  nullable: true
+                district:
+                  type: string
+                  example: Dong Nai
+                  nullable: true
+      responses:
+        '200':
+          description: Address updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  address:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/address'
+                      - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '404':
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    delete:
+      tags:
+        - User Address
+      summary: Soft delete address by addressID
+      description: |
+        Soft delete the address by setting `deletedAt` to current datetime. <br>
+        If the pending order is associated with the address, the order will be permanently deleted. <br>
+        Deleted addresses cannot be recovered.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: addressID
+          in: path
+          description: Address ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Address deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '404':
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
   /admin/products:
     get:
       tags:
@@ -1539,6 +1828,12 @@ paths:
         - name: updatedAt
           in: query
           description: 'Filter by updatedAt. <br> - Support operators <br> + [lte]2024-01-01 <br> + [gte]2024-01-01 <br> + [between]2024-01-01,2022-01-01 <br>'
+          required: false
+          schema:
+            type: string
+        - name: deletedAt
+          in: query
+          description: 'Filter by deletedAt. <br> - Support operators <br> + [lte]2024-01-01 <br> + [gte]2024-01-01 <br> + [between]2024-01-01,2022-01-01 <br>'
           required: false
           schema:
             type: string
@@ -1620,11 +1915,13 @@ paths:
                             allOf:
                               - $ref: '#/components/schemas/variant'
                               - $ref: '#/components/schemas/timestamps'
+                              - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
                         categories:
                           $ref: '#/components/schemas/categoryNames'
                       allOf:
                         - $ref: '#/components/schemas/product'
                         - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
         '400':
           description: Invalid query parameters
           content:
@@ -1786,6 +2083,7 @@ paths:
                           allOf:
                             - $ref: '#/components/schemas/variant'
                             - $ref: '#/components/schemas/timestamps'
+                            - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
                           properties:
                             attributes:
                               $ref: '#/components/schemas/variantAttribute'
@@ -1794,6 +2092,7 @@ paths:
                     allOf:
                       - $ref: '#/components/schemas/product'
                       - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
         '401':
           description: 'Token error, not authenticated'
           content:
@@ -1822,7 +2121,7 @@ paths:
       tags:
         - Admin Products
       summary: Update a product
-      description: Updates a product with the given data. <br> Product name must be unique. <br>
+      description: Updates a product with the given data. <br> Product name must be unique. <br> Cannot update deleted products.
       security:
         - bearerAuth: []
       parameters:
@@ -1913,7 +2212,7 @@ paths:
       tags:
         - Admin Products
       summary: Delete a product
-      description: Deletes a product with the given ID. Deleting a product will also delete all its images and variants.
+      description: 'Soft deletes a product with the given ID. Set the `deletedAt` field to the current date and time. Deleting a product will also soft delete variants, but not images.'
       security:
         - bearerAuth: []
       parameters:
@@ -1994,6 +2293,7 @@ paths:
                         - $ref: '#/components/schemas/variant'
                         - $ref: '#/components/schemas/timestamps'
                         - $ref: '#/components/schemas/variantAttribute'
+                        - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
         '401':
           description: 'Token error, not authenticated'
           content:
@@ -2152,6 +2452,7 @@ paths:
                       - $ref: '#/components/schemas/variant'
                       - $ref: '#/components/schemas/timestamps'
                       - $ref: '#/components/schemas/variantAttribute'
+                      - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
         '401':
           description: 'Token error, not authenticated'
           content:
@@ -2180,7 +2481,7 @@ paths:
       tags:
         - Admin Products
       summary: Update a variant
-      description: Updates given fields of a variant with given data.
+      description: Updates given fields of a variant with given data. Cannot update deleted variants.
       security:
         - bearerAuth: []
       parameters:
@@ -2273,8 +2574,8 @@ paths:
     put:
       tags:
         - Admin Products
-      summary: Update a variant
-      description: 'Updates a variant with the given data. <br> If name is not provided, it will use the product name'
+      summary: Replace a variant
+      description: 'Replace a variant by a new variant with given data. <br> If name is not provided, it will use the product name Cannot replace deleted variants.'
       security:
         - bearerAuth: []
       parameters:
@@ -2316,8 +2617,6 @@ paths:
                 sku:
                   type: string
                 attributes:
-                  type: array
-                  nullable: true
                   items:
                     $ref: '#/components/schemas/variantAttribute'
       responses:
@@ -2371,7 +2670,7 @@ paths:
       tags:
         - Admin Products
       summary: Delete a variant
-      description: Deletes a variant with the given ID.
+      description: Soft deletes a variant with the given ID.
       security:
         - bearerAuth: []
       parameters:
@@ -3042,6 +3341,13 @@ paths:
           schema:
             type: string
             example: '[lte]2024-01-01'
+        - name: deletedAt
+          in: query
+          description: 'Filter by deletedAt. <br> - Support operators [lte], [gte], [between] <br> + [lte]2024-01-01 <br> + [gte]2024-01-01 <br> + [between]2024-01-01,2022-01-01 <br>'
+          required: false
+          schema:
+            type: string
+            example: '[lte]2024-01-01'
         - name: price
           in: query
           description: 'Filter by price. <br> - Support operators [lte], [gte], [between]<br> + [lte]1000 <br> + [gte]1000 <br> + [between]1000,2000 <br>'
@@ -3111,6 +3417,7 @@ paths:
                         - $ref: '#/components/schemas/variant'
                         - $ref: '#/components/schemas/timestamps'
                         - $ref: '#/components/schemas/variantAttribute'
+                        - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
         '400':
           description: Invalid query parameters
           content:
@@ -3168,6 +3475,12 @@ paths:
                       - $ref: '#/components/schemas/variant'
                       - $ref: '#/components/schemas/timestamps'
                       - $ref: '#/components/schemas/variantAttribute'
+                      - type: object
+                        properties:
+                          deletedAt:
+                            type: string
+                            format: date-time
+                            example: '2024-01-01T00:00:00.000Z'
         '401':
           description: 'Token error, not authenticated'
           content:
@@ -3771,21 +4084,18 @@ paths:
                 code:
                   type: string
                   example: 10OFF
-                  required: true
                 description:
                   type: string
                   example: 10% off
                 discountValue:
                   type: number
                   example: 10
-                  required: true
                 discountType:
                   type: string
                   enum:
                     - percentage
                     - fixed
                   example: percentage
-                  required: true
                 minimumOrderAmount:
                   type: number
                   example: 100
@@ -3799,11 +4109,11 @@ paths:
                     - single
                     - all
                   example: all
-                  required: true
                 endDate:
                   type: string
                   format: date-time
                   example: '2022-01-01T00:00:00Z'
+                  nullable: true
                 productIDs:
                   type: array
                   description: Product IDs that the coupon applies to
@@ -3812,6 +4122,7 @@ paths:
                   example:
                     - '1'
                     - '2'
+                  nullable: true
                 categories:
                   type: array
                   description: Category names that the coupon applies to
@@ -3820,6 +4131,7 @@ paths:
                   example:
                     - '1'
                     - '2'
+                  nullable: true
       responses:
         '201':
           description: Coupon created
@@ -5213,6 +5525,13 @@ paths:
           schema:
             type: string
             example: '[between]2021-01-01,2021-12-31'
+        - name: deletedAt
+          in: query
+          description: Filter by deletedAt
+          required: false
+          schema:
+            type: string
+            example: '[between]2021-01-01,2021-12-31'
         - name: sort
           in: query
           description: Sort by field
@@ -5240,6 +5559,7 @@ paths:
                       allOf:
                         - $ref: '#/components/schemas/user'
                         - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
         '400':
           description: Invalid query parameters
           content:
@@ -5427,6 +5747,196 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
+  /admin/orders:
+    get:
+      tags:
+        - Admin Orders
+      summary: Get all orders
+      description: |
+        Get all orders.
+        Support pagination, filtering, sorting.
+      parameters:
+        - name: page
+          in: query
+          description: Page to retrieve
+          required: false
+          schema:
+            type: integer
+        - name: size
+          in: query
+          description: Size each page
+          required: false
+          schema:
+            type: integer
+        - name: sort
+          in: query
+          description: Sort orders by one or more fields.
+          required: false
+          schema:
+            example: 'finalTotal,-createdAt'
+            oneOf:
+              - type: string
+              - type: array
+        - name: subTotal
+          in: query
+          description: 'Filter by subTotal <br> Support operators "[lte]", "[gte]", "[between]"'
+          required: false
+          schema:
+            type: string
+            example: '[lte]100'
+        - name: finalTotal
+          in: query
+          description: 'Filter by finalTotal <br> Support operators "[lte]", "[gte]", "[between]"'
+          required: false
+          schema:
+            type: string
+            example: '[gte]100'
+        - name: status
+          in: query
+          description: Filter by status
+          required: false
+          schema:
+            type: string
+            enum:
+              - pending
+              - processing
+              - shipping
+              - delivered
+            example: pending
+        - name: paymentMethod
+          in: query
+          description: Filter by paymentMethod
+          required: false
+          schema:
+            type: string
+            enum:
+              - cod
+              - momo
+              - credit card
+            example: cod
+        - name: createdAt
+          in: query
+          description: 'Filter by createdAt Support operators "[lte]", "[gte]", "[between]"'
+          required: false
+          schema:
+            type: string
+            example: '[lte]2021-01-01T00:00:00.000Z'
+        - name: updatedAt
+          in: query
+          description: 'Filter by updatedAt <br> Support operators "[lte]", "[gte]", "[between]"'
+          required: false
+          schema:
+            type: string
+            example: '[lte]2021-01-01T00:00:00.000Z'
+        - name: deletedAt
+          in: query
+          description: 'Filter by deletedAt <br> Support operators "[lte]", "[gte]", "[between]" <br> If you want to get only deleted orders, use "[lte]" with current date'
+          required: false
+          schema:
+            type: string
+            example: '[lte]2021-01-01T00:00:00.000Z'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Orders found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  orders:
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - $ref: '#/components/schemas/order'
+                        - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/admin/orders/{orderID}':
+    get:
+      tags:
+        - Admin Orders
+      summary: Get order by orderID
+      description: |
+        Get an order by orderID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orderID
+          in: path
+          description: ID of the order to get
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Order found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  order:
+                    type: object
+                    allOf:
+                      - $ref: '#/paths/~1cart/post/responses/200/content/application~1json/schema/properties/order'
+                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
 components:
   securitySchemes:
     bearerAuth:
@@ -5590,7 +6100,7 @@ components:
         url:
           type: string
           example: image.com/image.jpg
-        thumbnail:
+        altText:
           type: string
           nullable: true
         displayOrder:
@@ -5728,9 +6238,6 @@ components:
         role:
           type: string
           example: user
-        avatar:
-          type: string
-          example: 'https://example.com/avatar.jpg'
     address:
       type: object
       properties:

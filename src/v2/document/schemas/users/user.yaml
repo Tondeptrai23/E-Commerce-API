@@ -11,7 +11,4 @@ properties:
     example: "John Doe"
   role:
     type: string
-    example: "user"
-  avatar:
-    type: string
-    example: "https://example.com/avatar.jpg"  
+    example: "user" 

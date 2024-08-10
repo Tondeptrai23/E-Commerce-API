@@ -18,19 +18,16 @@ requestBody:
           code:
             type: string
             example: "10OFF"
-            required: true
           description:
             type: string
             example: "10% off"
           discountValue:
             type: number
             example: 10
-            required: true
           discountType:
             type: string
             enum: ["percentage", "fixed"]
             example: "percentage"
-            required: true
           minimumOrderAmount:
             type: number
             example: 100
@@ -42,23 +39,25 @@ requestBody:
             type: string
             enum: ["single", "all"]
             example: "all"
-            required: true
           endDate:
             type: string
             format: date-time
             example: "2022-01-01T00:00:00Z"
+            nullable: true
           productIDs:
             type: array
             description: Product IDs that the coupon applies to
             items:
               type: string
             example: ["1", "2"]
+            nullable: true
           categories:
             type: array
             description: Category names that the coupon applies to
             items:
               type: string
             example: ["1", "2"]
+            nullable: true
 responses:
   201:
     description: Coupon created

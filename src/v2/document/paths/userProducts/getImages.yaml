@@ -20,7 +20,7 @@ responses:
           type: object
           properties:
             success:
-              type: true
+              type: boolean
               example: true
             images:
               type: array

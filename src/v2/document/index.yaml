@@ -24,6 +24,9 @@ tags:
   - name: User Orders
     description: Endpoints for managing user orders.
 
+  - name: User Address
+    description: Endpoints for managing user addresses.
+
   - name: Admin Products
     description: Endpoints for managing product data, variants, images and categories.
 
@@ -39,6 +42,8 @@ tags:
   - name: Admin Attributes
     description: Endpoints for managing attributes.
 
+  - name: Admin Orders
+    description: Endpoints for managing orders.
 
 paths:
   # Authentication
@@ -105,6 +110,13 @@ paths:
 
   /orders/pending/coupons:
     $ref: ./paths/index.paths.yaml#/userPendingCoupon
+
+  # User Address
+  /address:
+    $ref: ./paths/index.paths.yaml#/userAddresses
+
+  /address/{addressID}:
+    $ref: ./paths/index.paths.yaml#/userAddress
 
   # Admin Products
   /admin/products:
@@ -190,6 +202,14 @@ paths:
 
   /admin/users/{userID}/cart:
     $ref: ./paths/index.paths.yaml#/adminUserCart
+
+  # Admin Orders
+
+  /admin/orders:
+    $ref: ./paths/index.paths.yaml#/adminOrders
+
+  /admin/orders/{orderID}:
+    $ref: ./paths/index.paths.yaml#/adminOrder
 
 components:
   securitySchemes:

@@ -1,0 +1,51 @@
+# GET /address/{addressID}:
+tags:
+  - User Address
+summary: Get address by addressID
+description: |
+  Get address by addressID
+  Only the owner can get the address
+security:
+  - bearerAuth: []
+parameters:
+  - name: addressID
+    in: path
+    description: Address ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+responses:
+  200:
+    description: Address found
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            address:
+              type: object
+              allOf:
+                - $ref: "../../schemas/users/address.yaml"
+                - $ref: "../../schemas/timestamps.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error401.yaml"
+  404:
+    description: Address not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml"

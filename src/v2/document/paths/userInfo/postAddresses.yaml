@@ -1,0 +1,64 @@
+# POST /address/{addressID}:
+tags:
+  - User Address
+summary: Add address
+description: |
+  Add address to the authenticated user
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          phoneNumber:
+            type: string
+            example: "0123456789"
+          recipientName:
+            type: string
+            example: "John Doe"
+          address:
+            type: string
+            example: "123 Bui Huu Nghia"
+          city:
+            type: string
+            example: "Bien Hoa City"
+          district:
+            type: string
+            example: "Dong Nai"
+responses:
+  200:
+    description: Address added
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            address:
+              type: object
+              allOf:
+                - $ref: "../../schemas/users/address.yaml"
+                - $ref: "../../schemas/timestamps.yaml"
+  400:
+    description: Validation Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error400.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error401.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml"

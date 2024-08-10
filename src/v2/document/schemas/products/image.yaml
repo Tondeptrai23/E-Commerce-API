@@ -6,7 +6,7 @@ properties:
   url:
     type: string
     example: "image.com/image.jpg"
-  thumbnail:
+  altText:
     type: string
     nullable: true
   displayOrder:

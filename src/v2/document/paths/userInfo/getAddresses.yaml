@@ -1,0 +1,38 @@
+# GET /address:
+tags:
+  - User Address
+summary: Get addresses
+description: |
+  Get all addresses of the authenticated user
+security:
+  - bearerAuth: []
+responses:
+  200:
+    description: Addresses found
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            addresses:
+              type: array
+              items:
+                type: object
+                allOf:
+                  - $ref: "../../schemas/users/address.yaml"
+                  - $ref: "../../schemas/timestamps.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error401.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml"

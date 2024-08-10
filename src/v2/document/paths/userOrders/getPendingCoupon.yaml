@@ -8,7 +8,7 @@ security:
   - bearerAuth: []
 responses:
   200:
-    description:
+    description: Recommended coupons found
     content:
       application/json:
         schema:
