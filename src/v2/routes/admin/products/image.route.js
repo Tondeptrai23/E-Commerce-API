@@ -1,5 +1,5 @@
 import { Router } from "express";
-import productImageController from "../../../controllers/products/productImage.controller.js";
+import productImageController from "../../../controllers/products/productImages.controller.js";
 import {
     verifyToken,
     isAdmin,

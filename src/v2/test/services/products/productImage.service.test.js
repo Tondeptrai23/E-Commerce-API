@@ -106,11 +106,24 @@ describe("ProductImageService", () => {
             const productID = "2";
             const imageID = "201";
 
+            const images = await productImageService.getProductImages(
+                productID
+            );
             await productImageService.deleteImage(productID, imageID);
 
+            // Check if the image is deleted
             await expect(
                 productImageService.getProductImage(productID, imageID)
             ).rejects.toThrow(ResourceNotFoundError);
+
+            // Check if the display order is updated
+            const updatedImages = await productImageService.getProductImages(
+                productID
+            );
+            expect(updatedImages.length).toBe(images.length - 1);
+            expect(updatedImages.every((image) => image.displayOrder > 0)).toBe(
+                true
+            );
         });
     });
 
@@ -140,40 +153,39 @@ describe("ProductImageService", () => {
     describe("setImagesOrder", () => {
         test("should throw ResourceNotFoundError if the product is not found", async () => {
             const productID = "7";
-            const imagesData = [
-                { imageID: "101", displayOrder: 1 },
-                { imageID: "102", displayOrder: 2 },
-                { imageID: "103", displayOrder: 3 },
-                { imageID: "104", displayOrder: 4 },
-            ];
+            const imagesData = ["102", "604", "101", "103"];
 
             await expect(
                 productImageService.setImagesOrder(productID, imagesData)
             ).rejects.toThrow(ResourceNotFoundError);
         });
 
-        test("should throw ResourceNotFoundError if any of the images is not found", async () => {
+        test("should throw ResourceNotFoundError and not update order if any of the images is not found", async () => {
             const productID = "1";
-            const imagesData = [
-                { imageID: "101", displayOrder: 1 },
-                { imageID: "601", displayOrder: 2 },
-                { imageID: "103", displayOrder: 3 },
-                { imageID: "104", displayOrder: 4 },
-            ];
+            const imagesData = ["102", "604", "101", "103"];
+
+            const productImages = await productImageService.getProductImages(
+                productID
+            );
 
             await expect(
                 productImageService.setImagesOrder(productID, imagesData)
             ).rejects.toThrow(ResourceNotFoundError);
+
+            const updatedImages = await productImageService.getProductImages(
+                productID
+            );
+
+            for (let i = 0; i < productImages.length; i++) {
+                expect(updatedImages[i].displayOrder).toBe(
+                    productImages[i].displayOrder
+                );
+            }
         });
 
         test("should update the display order of the images and return the updated images", async () => {
             const productID = "1";
-            const imagesData = [
-                { imageID: "101", displayOrder: 3 },
-                { imageID: "102", displayOrder: 4 },
-                { imageID: "103", displayOrder: 2 },
-                { imageID: "104", displayOrder: 1 },
-            ];
+            const imagesData = ["102", "104", "101", "103"];
 
             const updatedImages = await productImageService.setImagesOrder(
                 productID,
@@ -184,7 +196,7 @@ describe("ProductImageService", () => {
             expect(updatedImages.length).toBe(imagesData.length);
 
             for (let i = 0; i < updatedImages.length; i++) {
-                const { imageID, displayOrder } = imagesData[i];
+                const imageID = imagesData[i];
                 const updatedImage = updatedImages.find(
                     (image) => image.imageID === imageID
                 );
@@ -192,7 +204,7 @@ describe("ProductImageService", () => {
                 expect(updatedImage).toBeInstanceOf(ProductImage);
                 expect(updatedImage.productID).toBe(productID);
                 expect(updatedImage.imageID).toBe(imageID);
-                expect(updatedImage.displayOrder).toBe(displayOrder);
+                expect(updatedImage.displayOrder).toBe(i + 1);
             }
         });
     });

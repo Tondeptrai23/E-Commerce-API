@@ -6,7 +6,7 @@ describe("ImageSerializer", () => {
         const imageData = {
             imageID: "12345",
             url: "https://example.com/image.jpg",
-            thumbnail: "https://example.com/thumbnail.jpg",
+            altText: "https://example.com/altText.jpg",
             productID: "1",
             displayOrder: 1,
             createdAt: new Date(date),
@@ -18,7 +18,7 @@ describe("ImageSerializer", () => {
         expect(serializedData).toEqual({
             imageID: "12345",
             url: "https://example.com/image.jpg",
-            thumbnail: "https://example.com/thumbnail.jpg",
+            altText: "https://example.com/altText.jpg",
             productID: "1",
             displayOrder: 1,
         });
@@ -28,7 +28,7 @@ describe("ImageSerializer", () => {
         const imageData = {
             imageID: "12345",
             url: "https://example.com/image.jpg",
-            thumbnail: "https://example.com/thumbnail.jpg",
+            altText: "https://example.com/altText.jpg",
             productID: "1",
             displayOrder: 1,
             createdAt: new Date(date),
@@ -42,7 +42,7 @@ describe("ImageSerializer", () => {
         expect(serializedData).toEqual({
             imageID: "12345",
             url: "https://example.com/image.jpg",
-            thumbnail: "https://example.com/thumbnail.jpg",
+            altText: "https://example.com/altText.jpg",
             productID: "1",
             displayOrder: 1,
             createdAt: new Date(date).toISOString(),
@@ -55,7 +55,7 @@ describe("ImageSerializer", () => {
             {
                 imageID: "12345",
                 url: "https://example.com/image.jpg",
-                thumbnail: "https://example.com/thumbnail.jpg",
+                altText: "https://example.com/altText.jpg",
                 productID: "1",
                 displayOrder: 1,
                 createdAt: new Date(date),
@@ -64,7 +64,7 @@ describe("ImageSerializer", () => {
             {
                 imageID: "54321",
                 url: "https://example.com/image2.jpg",
-                thumbnail: "https://example.com/thumbnail2.jpg",
+                altText: "https://example.com/altText2.jpg",
                 productID: "1",
                 displayOrder: 2,
                 createdAt: new Date(date).toISOString(),
@@ -78,14 +78,14 @@ describe("ImageSerializer", () => {
             {
                 imageID: "12345",
                 url: "https://example.com/image.jpg",
-                thumbnail: "https://example.com/thumbnail.jpg",
+                altText: "https://example.com/altText.jpg",
                 productID: "1",
                 displayOrder: 1,
             },
             {
                 imageID: "54321",
                 url: "https://example.com/image2.jpg",
-                thumbnail: "https://example.com/thumbnail2.jpg",
+                altText: "https://example.com/altText2.jpg",
                 productID: "1",
                 displayOrder: 2,
             },
@@ -97,7 +97,7 @@ describe("ImageSerializer", () => {
         expect(serializedData).toEqual({
             imageID: null,
             url: null,
-            thumbnail: null,
+            altText: null,
             productID: null,
             displayOrder: null,
         });

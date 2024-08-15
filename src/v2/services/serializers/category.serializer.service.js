@@ -40,7 +40,7 @@ const CategorySerializer = new Entity({
         },
         function (obj, options) {
             if (options.includeTimestamps) {
-                return obj.createdAt;
+                return obj.updatedAt;
             }
             return undefined;
         },

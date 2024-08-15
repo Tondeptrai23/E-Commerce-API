@@ -15,6 +15,7 @@ export default class SortBuilder extends QueryToSequelizeConditionConverter {
     constructor(requestQuery) {
         super(requestQuery);
         this._map = {};
+        this._defaultSort = [];
     }
 
     /**
@@ -28,15 +29,16 @@ export default class SortBuilder extends QueryToSequelizeConditionConverter {
      */
     build = () => {
         const sortConditions = [];
-        if (!this._query || !this._query.sort) return sortConditions;
-        let query;
-        if (Array.isArray(this._query.sort)) {
-            query = this._query.sort.flat().join(",");
-        } else {
-            query = this._query.sort;
+        if (
+            !this._query ||
+            !this._query.sort ||
+            !Array.isArray(this._query.sort)
+        ) {
+            return sortConditions;
         }
+        let query = this._query.sort;
 
-        query.split(",").forEach((sortString) => {
+        query.forEach((sortString) => {
             if (sortString[0] === "-") {
                 const field = sortString.substring(1);
                 sortConditions.push([...this._mapping(field), "DESC"]);
@@ -46,6 +48,7 @@ export default class SortBuilder extends QueryToSequelizeConditionConverter {
                 sortConditions.push([...this._mapping(field), "ASC"]);
             }
         });
+        sortConditions.push(...this._defaultSort);
 
         return sortConditions;
     };

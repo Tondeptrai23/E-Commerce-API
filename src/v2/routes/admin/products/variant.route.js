@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import variantController from "../../../controllers/products/variant.controller.js";
+import variantController from "../../../controllers/products/variants.controller.js";
 import {
     verifyToken,
     isAdmin,
@@ -16,38 +16,61 @@ variantRoute.get(
     variantController.getProductVariants
 );
 
+variantRoute.get(
+    "/products/:productID/variants/:variantID",
+    verifyToken,
+    isAdmin,
+    variantController.getProductVariant
+);
+
 variantRoute.post(
     "/products/:productID/variants",
     validator.validateCreateVariants,
     validator.handleValidationErrors,
     verifyToken,
     isAdmin,
-    variantController.addProductVariant
+    variantController.addProductVariants
+);
+
+variantRoute.get(
+    "/variants",
+    validator.validateQueryGetVariant,
+    validator.handleValidationErrors,
+    verifyToken,
+    isAdmin,
+    variantController.getVariants
+);
+
+variantRoute.get(
+    "/variants/:variantID",
+    verifyToken,
+    isAdmin,
+    variantController.getVariant
 );
 
 variantRoute.put(
-    "/products/:productID/variants/:variantID",
+    "/variants/:variantID",
     validator.validatePutVariant,
     validator.handleValidationErrors,
     verifyToken,
     isAdmin,
-    variantController.putProductVariant
+    variantController.putVariant
 );
 
 variantRoute.patch(
-    "/products/:productID/variants/:variantID",
+    "/variants/:variantID",
     validator.validatePatchVariant,
     validator.handleValidationErrors,
     verifyToken,
     isAdmin,
-    variantController.patchProductVariant
+    variantController.patchVariant
 );
 
 variantRoute.delete(
-    "/products/:productID/variants/:variantID",
+    "/variants/:variantID",
     verifyToken,
     isAdmin,
-    variantController.deleteProductVariant
+    variantController.deleteVariant
 );
 
 export default variantRoute;

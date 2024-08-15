@@ -261,7 +261,7 @@ paths:
       tags:
         - User Products
       summary: Get all products
-      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> - Filtering by name, category, variant, and attributes. <br> - Sorting by one or more fields. <br> - Pagination by page and size. <br>'
+      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> - Filtering by name, category, variant, and attributes. <br> - Sorting by one or more fields. <br> - Pagination by page and size. <br> - Only one variant per product is returned, selected as the first variant matching all filter criteria when sorting variants by specified filters.'
       parameters:
         - name: page
           in: query
@@ -293,15 +293,16 @@ paths:
             properties:
               price:
                 pattern: '/^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/'
-                example: '[gte]100'
+                example: '[lte]100'
               discountPrice:
                 pattern: '/^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/'
-                example: 90
+                example: '[gte]30'
               sku:
-                type: string
+                pattern: '/^(\[like\])?([\w-]+)$/'
+                example: '[like]T'
               stock:
-                type: integer
-                example: 10
+                pattern: '/^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/'
+                example: '[gte]5'
         - name: category
           in: query
           description: Filter by category
@@ -316,13 +317,6 @@ paths:
             oneOf:
               - type: string
               - type: array
-        - name: oneVariant
-          in: query
-          description: Return only one variant of each product. Default is false
-          required: false
-          schema:
-            type: boolean
-            example: true
         - name: attributes
           in: query
           description: 'Filter by attributes. <br> - Only support exact matching. <br> - Support multiple attributes. <br> - For example, to find products that have red variant and size M or L, use "color=red&size=M,L" or "color=red&size=M&size=L". <br>'
@@ -1791,7 +1785,7 @@ paths:
       tags:
         - Admin Products
       summary: Retrieve all products
-      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> Admin-specific filters and sorting options are available, including product ID, creation date, and update date.'
+      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> Admin-specific filters and sorting options are available, including product ID, creation date, and update date. <br> Only one variant per product is returned, selected as the first variant matching all filter criteria when sorting variants by specified filters.'
       security:
         - bearerAuth: []
       parameters:
@@ -1871,13 +1865,6 @@ paths:
             oneOf:
               - type: string
               - type: array
-        - name: oneVariant
-          in: query
-          description: Return only one variant of each product
-          required: false
-          schema:
-            type: boolean
-            example: true
         - name: attributes
           in: query
           description: 'Filter products by attributes. <br> The `attributes` parameter is a dynamic object where keys represent attribute names and values represent desired attribute values.  <br> A product is included in the results if at least one of its variants matches all specified attributes.  <br> For example, `attributes={"color":"red","size":"M"}` will return products with a variant having both the color "red" and size "M".  <br> Note that `size="M,L"` is different from `size=["M","L"]`. <br> - The former filters for products with either size M or L, while the latter filters for products with both sizes (which is typically impossible).'
@@ -1915,13 +1902,13 @@ paths:
                             allOf:
                               - $ref: '#/components/schemas/variant'
                               - $ref: '#/components/schemas/timestamps'
-                              - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
+                              - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
                         categories:
                           $ref: '#/components/schemas/categoryNames'
                       allOf:
                         - $ref: '#/components/schemas/product'
                         - $ref: '#/components/schemas/timestamps'
-                        - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
+                        - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
         '400':
           description: Invalid query parameters
           content:
@@ -1969,9 +1956,32 @@ paths:
                   type: array
                   items:
                     type: object
-                    allOf:
-                      - $ref: '#/components/schemas/variant'
-                      - $ref: '#/components/schemas/variantAttribute'
+                    properties:
+                      name:
+                        type: string
+                        example: Red T-Shirt
+                        nullable: true
+                      price:
+                        type: number
+                        example: 100
+                      discountPrice:
+                        type: number
+                        example: 90
+                        nullable: true
+                      stock:
+                        type: integer
+                        example: 10
+                      sku:
+                        type: string
+                      imageIndex:
+                        type: number
+                        example: 0
+                      attributes:
+                        type: object
+                        description: Dynamic attributes of the product
+                        example:
+                          color: red
+                          size: M
                 categories:
                   $ref: '#/components/schemas/categoryNames'
                 images:
@@ -2083,7 +2093,7 @@ paths:
                           allOf:
                             - $ref: '#/components/schemas/variant'
                             - $ref: '#/components/schemas/timestamps'
-                            - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
+                            - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
                           properties:
                             attributes:
                               $ref: '#/components/schemas/variantAttribute'
@@ -2092,7 +2102,7 @@ paths:
                     allOf:
                       - $ref: '#/components/schemas/product'
                       - $ref: '#/components/schemas/timestamps'
-                      - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
+                      - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
         '401':
           description: 'Token error, not authenticated'
           content:
@@ -2212,7 +2222,7 @@ paths:
       tags:
         - Admin Products
       summary: Delete a product
-      description: 'Soft deletes a product with the given ID. Set the `deletedAt` field to the current date and time. Deleting a product will also soft delete variants, but not images.'
+      description: Soft deletes a product with the given ID. <br> Set the `deletedAt` field to the current date and time. <br> Deleting a product will also soft delete variants. <br>
       security:
         - bearerAuth: []
       parameters:
@@ -2293,7 +2303,7 @@ paths:
                         - $ref: '#/components/schemas/variant'
                         - $ref: '#/components/schemas/timestamps'
                         - $ref: '#/components/schemas/variantAttribute'
-                        - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
+                        - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
         '401':
           description: 'Token error, not authenticated'
           content:
@@ -2322,7 +2332,7 @@ paths:
       tags:
         - Admin Products
       summary: Create product variants
-      description: 'Creates multiple product variants for the specified product. <br> If variant''s name is not provided, it will use the product name'
+      description: 'Creates multiple product variants for the specified product. <br> If variant''s name is not provided, it will use the product name If image is provided, a new product image will be created and associated with the variant'
       security:
         - bearerAuth: []
       parameters:
@@ -2359,12 +2369,19 @@ paths:
                       stock:
                         type: integer
                         example: 10
+                      image:
+                        type: object
+                        properties:
+                          url:
+                            type: string
+                            example: image.com/image.jpg
+                          altText:
+                            type: string
+                            nullable: true
                       sku:
                         type: string
-                      attributes:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/variantAttribute'
+                    allOf:
+                      - $ref: '#/components/schemas/variantAttribute'
       responses:
         '201':
           description: Variant created
@@ -2401,7 +2418,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/error403'
         '404':
-          description: Product or variant not found
+          description: Product or variant or image not found
           content:
             application/json:
               schema:
@@ -2434,7 +2451,7 @@ paths:
           required: true
           schema:
             type: string
-            example: '1'
+            example: '101'
       responses:
         '200':
           description: Variant found
@@ -2452,253 +2469,7 @@ paths:
                       - $ref: '#/components/schemas/variant'
                       - $ref: '#/components/schemas/timestamps'
                       - $ref: '#/components/schemas/variantAttribute'
-                      - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
-        '401':
-          description: 'Token error, not authenticated'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error401'
-        '403':
-          description: Not an admin
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error403'
-        '404':
-          description: Product or variant not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error500'
-    patch:
-      tags:
-        - Admin Products
-      summary: Update a variant
-      description: Updates given fields of a variant with given data. Cannot update deleted variants.
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: productID
-          in: path
-          description: ID of the product to update a variant of
-          required: true
-          schema:
-            type: string
-            example: '1'
-        - name: variantID
-          in: path
-          description: ID of the variant to update
-          required: true
-          schema:
-            type: string
-            example: '1'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: Red T-Shirt
-                  nullable: true
-                price:
-                  type: number
-                  example: 100
-                  nullable: true
-                discountPrice:
-                  type: number
-                  example: 90
-                  nullable: true
-                stock:
-                  type: integer
-                  example: 10
-                  nullable: true
-                sku:
-                  type: string
-                  nullable: true
-      responses:
-        '200':
-          description: Variant updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  variant:
-                    type: object
-                    allOf:
-                      - $ref: '#/components/schemas/variant'
-                      - $ref: '#/components/schemas/timestamps'
-        '400':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error400'
-        '401':
-          description: 'Token error, not authenticated'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error401'
-        '403':
-          description: Not an admin
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error403'
-        '404':
-          description: Product or variant not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error500'
-    put:
-      tags:
-        - Admin Products
-      summary: Replace a variant
-      description: 'Replace a variant by a new variant with given data. <br> If name is not provided, it will use the product name Cannot replace deleted variants.'
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: productID
-          in: path
-          description: ID of the product to update a variant of
-          required: true
-          schema:
-            type: string
-            example: '1'
-        - name: variantID
-          in: path
-          description: ID of the variant to update
-          required: true
-          schema:
-            type: string
-            example: '1'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: Red T-Shirt
-                  nullable: true
-                price:
-                  type: number
-                  example: 100
-                discountPrice:
-                  type: number
-                  example: 90
-                  nullable: true
-                stock:
-                  type: integer
-                  example: 10
-                sku:
-                  type: string
-                attributes:
-                  items:
-                    $ref: '#/components/schemas/variantAttribute'
-      responses:
-        '200':
-          description: Variant updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  variant:
-                    type: object
-                    allOf:
-                      - $ref: '#/components/schemas/variant'
-                      - $ref: '#/components/schemas/timestamps'
-                      - $ref: '#/components/schemas/variantAttribute'
-        '400':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error400'
-        '401':
-          description: 'Token error, not authenticated'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error401'
-        '403':
-          description: Not an admin
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error403'
-        '404':
-          description: Product or variant not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error500'
-    delete:
-      tags:
-        - Admin Products
-      summary: Delete a variant
-      description: Soft deletes a variant with the given ID.
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: productID
-          in: path
-          description: ID of the product to delete a variant of
-          required: true
-          schema:
-            type: string
-            example: '1'
-        - name: variantID
-          in: path
-          description: ID of the variant to delete
-          required: true
-          schema:
-            type: string
-            example: '1'
-      responses:
-        '200':
-          description: Variant deleted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: string
-                    example: true
+                      - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
         '401':
           description: 'Token error, not authenticated'
           content:
@@ -2788,7 +2559,7 @@ paths:
         description: Image data to add
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               type: object
               properties:
@@ -2800,9 +2571,9 @@ paths:
                       url:
                         type: string
                         example: 'https://example.com/image.jpg'
-                      thumbnail:
+                      altText:
                         type: string
-                        example: 'https://example.com/image-thumbnail.jpg'
+                        example: A beautiful image
       responses:
         '200':
           description: Images added
@@ -2940,7 +2711,7 @@ paths:
           required: true
           schema:
             type: string
-            example: '1'
+            example: '101'
       requestBody:
         description: Image data to update
         required: true
@@ -2952,9 +2723,9 @@ paths:
                 url:
                   type: string
                   example: 'https://example.com/image.jpg'
-                thumbnail:
+                altText:
                   type: string
-                  example: 'https://example.com/image-thumbnail.jpg'
+                  example: A beautiful image
       responses:
         '200':
           description: Image updated
@@ -2999,7 +2770,7 @@ paths:
       tags:
         - Admin Products
       summary: Delete an image from a product
-      description: Delete an image from a product
+      description: Delete an image from a product. <br> Permanently deletes the image from the product (Even deleted product). <br> Display order of images will be updated. <br> Cannot delete the last image of a product.
       security:
         - bearerAuth: []
       parameters:
@@ -3016,7 +2787,7 @@ paths:
           required: true
           schema:
             type: string
-            example: '1'
+            example: '102'
       responses:
         '200':
           description: Image deleted
@@ -3131,7 +2902,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/categoryNames'
+              type: object
+              properties:
+                categories:
+                  $ref: '#/components/schemas/categoryNames'
       responses:
         '200':
           description: Category added
@@ -3196,7 +2970,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/categoryNames'
+              type: object
+              properties:
+                categories:
+                  $ref: '#/components/schemas/categoryNames'
       responses:
         '200':
           description: Categories updated
@@ -3417,7 +3194,7 @@ paths:
                         - $ref: '#/components/schemas/variant'
                         - $ref: '#/components/schemas/timestamps'
                         - $ref: '#/components/schemas/variantAttribute'
-                        - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
+                        - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
         '400':
           description: Invalid query parameters
           content:
@@ -3442,7 +3219,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
-  '/admin/{variantID}':
+  '/admin/variants/{variantID}':
     get:
       tags:
         - Admin Variants
@@ -3457,7 +3234,7 @@ paths:
           required: true
           schema:
             type: string
-            example: '1'
+            example: '101'
       responses:
         '200':
           description: Variant found
@@ -3475,12 +3252,243 @@ paths:
                       - $ref: '#/components/schemas/variant'
                       - $ref: '#/components/schemas/timestamps'
                       - $ref: '#/components/schemas/variantAttribute'
-                      - type: object
-                        properties:
-                          deletedAt:
-                            type: string
-                            format: date-time
-                            example: '2024-01-01T00:00:00.000Z'
+                      - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Variant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    patch:
+      tags:
+        - Admin Variants
+      summary: Update a variant
+      description: Updates given fields of a variant with given data. Cannot update deleted variants.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: variantID
+          in: path
+          description: ID of the variant to update
+          required: true
+          schema:
+            type: string
+            example: '101'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Red T-Shirt
+                  nullable: true
+                price:
+                  type: number
+                  example: 100
+                  nullable: true
+                discountPrice:
+                  type: number
+                  example: 90
+                  nullable: true
+                stock:
+                  type: integer
+                  example: 10
+                  nullable: true
+                sku:
+                  type: string
+                  nullable: true
+                imageID:
+                  type: string
+                  example: '101'
+                  nullable: true
+      responses:
+        '200':
+          description: Variant updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  variant:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/variant'
+                      - $ref: '#/components/schemas/timestamps'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Variant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    put:
+      tags:
+        - Admin Variants
+      summary: Replace a variant
+      description: 'Replace a variant by a new variant with given data. <br> If name is not provided, it will use the product name. <br> All variant attributes will be replaced (or removed if not provided). <br> Cannot replace deleted variants.'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: variantID
+          in: path
+          description: ID of the variant to update
+          required: true
+          schema:
+            type: string
+            example: '101'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Red T-Shirt
+                  nullable: true
+                price:
+                  type: number
+                  example: 100
+                discountPrice:
+                  type: number
+                  example: 90
+                  nullable: true
+                stock:
+                  type: integer
+                  example: 10
+                sku:
+                  type: string
+                imageID:
+                  type: string
+                  example: '101'
+                  nullable: true
+                attributes:
+                  type: object
+                  description: Dynamic attributes of the product
+                  example:
+                    color: red
+                    size: M
+      responses:
+        '200':
+          description: Variant updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  variant:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/variant'
+                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/variantAttribute'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Product or variant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+    delete:
+      tags:
+        - Admin Variants
+      summary: Delete a variant
+      description: Soft deletes a variant with the given ID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: variantID
+          in: path
+          description: ID of the variant to delete
+          required: true
+          schema:
+            type: string
+            example: '102'
+      responses:
+        '200':
+          description: Variant deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: true
         '401':
           description: 'Token error, not authenticated'
           content:
@@ -5559,7 +5567,7 @@ paths:
                       allOf:
                         - $ref: '#/components/schemas/user'
                         - $ref: '#/components/schemas/timestamps'
-                        - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
+                        - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
         '400':
           description: Invalid query parameters
           content:
@@ -5912,7 +5920,12 @@ paths:
                     allOf:
                       - $ref: '#/paths/~1cart/post/responses/200/content/application~1json/schema/properties/order'
                       - $ref: '#/components/schemas/timestamps'
-                      - $ref: '#/paths/~1admin~1%7BvariantID%7D/get/responses/200/content/application~1json/schema/properties/variant/allOf/3'
+                      - type: object
+                        properties:
+                          deletedAt:
+                            type: string
+                            format: date-time
+                            example: '2024-01-01T00:00:00.000Z'
         '401':
           description: 'Token error, not authenticated'
           content:

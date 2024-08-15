@@ -27,11 +27,9 @@ class AuthController {
 
             await res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    accessToken: accessToken,
-                    refreshToken: refreshToken,
-                    user: UserSerializer.parse(req.user),
-                },
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+                user: UserSerializer.parse(req.user),
             });
         } catch (err) {
             console.log(err);
@@ -80,9 +78,7 @@ class AuthController {
 
             res.status(StatusCodes.CREATED).json({
                 success: true,
-                data: {
-                    accessToken: accessToken,
-                },
+                accessToken: accessToken,
             });
         } catch (err) {
             console.log(err);
@@ -106,10 +102,8 @@ class AuthController {
 
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    accessToken: accessToken,
-                    refreshToken: refreshToken,
-                },
+                accessToken: accessToken,
+                refreshToken: refreshToken,
             });
         } catch (err) {
             console.log(err);

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import productCategoryController from "../../../controllers/products/productCategory.controller.js";
+import productCategoryController from "../../../controllers/products/productCategories.controller.js";
 import {
     verifyToken,
     isAdmin,

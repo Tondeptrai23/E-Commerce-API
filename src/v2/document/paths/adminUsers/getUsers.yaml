@@ -3,8 +3,9 @@ tags:
   - Admin Users
 summary: Get all users
 description: |
-  Get all users
-  Support filtering, sorting, and pagination
+  Get all users.
+  Support filtering, sorting, and pagination. <br>
+  If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
 security:
   - bearerAuth: []
 parameters:

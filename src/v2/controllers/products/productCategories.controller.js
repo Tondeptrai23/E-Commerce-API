@@ -23,9 +23,7 @@ class ProductCategory {
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    categories: serializedCategories,
-                },
+                categories: serializedCategories,
             });
         } catch (err) {
             console.log(err);
@@ -33,12 +31,22 @@ class ProductCategory {
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when get product categories",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when get product categories",
+                        },
+                    ],
                 });
             }
         }
@@ -64,9 +72,7 @@ class ProductCategory {
             // Response
             res.status(StatusCodes.CREATED).json({
                 success: true,
-                data: {
-                    product: serializedProduct,
-                },
+                product: serializedProduct,
             });
         } catch (err) {
             console.log(err);
@@ -74,12 +80,22 @@ class ProductCategory {
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when add a product category",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when add a product category",
+                        },
+                    ],
                 });
             }
         }
@@ -105,9 +121,7 @@ class ProductCategory {
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    product: serializedProduct,
-                },
+                product: serializedProduct,
             });
         } catch (err) {
             console.log(err);
@@ -115,12 +129,23 @@ class ProductCategory {
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when update a product category",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message:
+                                "Server error when update a product category",
+                        },
+                    ],
                 });
             }
         }
@@ -148,12 +173,23 @@ class ProductCategory {
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when delete a product category",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message:
+                                "Server error when delete a product category",
+                        },
+                    ],
                 });
             }
         }

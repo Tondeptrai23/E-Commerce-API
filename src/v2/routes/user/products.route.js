@@ -1,9 +1,9 @@
 import { Router } from "express";
 
 import productController from "../../controllers/products/products.controller.js";
-import variantController from "../../controllers/products/variant.controller.js";
-import productImageController from "../../controllers/products/productImage.controller.js";
-import productCategoryController from "../../controllers/products/productCategory.controller.js";
+import variantController from "../../controllers/products/variants.controller.js";
+import productImageController from "../../controllers/products/productImages.controller.js";
+import productCategoryController from "../../controllers/products/productCategories.controller.js";
 
 import validator from "../../middlewares/validators/index.validator.js";
 
@@ -11,7 +11,7 @@ const userProductRoute = Router();
 
 userProductRoute.get(
     "/",
-    validator.validateQueryGetProduct,
+    validator.validateQueryGetProductUser,
     validator.handleValidationErrors,
     productController.getProducts
 );

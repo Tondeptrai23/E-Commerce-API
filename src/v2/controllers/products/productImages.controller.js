@@ -16,16 +16,14 @@ class ProductImageController {
             );
 
             // Serialize data
-            const serializedImages = ImageSerializer.serialize(images, {
+            const serializedImages = ImageSerializer.parse(images, {
                 includeTimestamps: req.admin ? true : false,
             });
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    images: serializedImages,
-                },
+                images: serializedImages,
             });
         } catch (err) {
             console.log(err);
@@ -33,12 +31,22 @@ class ProductImageController {
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when get product images",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when get product images",
+                        },
+                    ],
                 });
             }
         }
@@ -57,30 +65,37 @@ class ProductImageController {
             );
 
             // Serialize data
-            const serializedImages = ImageSerializer.serialize(product.images, {
+            const serializedImages = ImageSerializer.parse(product.images, {
                 includeTimestamps: true,
             });
 
             // Response
-            const response = {
+            res.status(StatusCodes.CREATED).json({
                 success: true,
-                data: {
-                    images: serializedImages,
-                },
-            };
-            res.status(StatusCodes.CREATED).json(response);
+                images: serializedImages,
+            });
         } catch (err) {
             console.log(err);
 
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when add a product image",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when add product images",
+                        },
+                    ],
                 });
             }
         }
@@ -91,7 +106,7 @@ class ProductImageController {
             // Get request body
             const { productID } = req.params;
             const { imageID } = req.params;
-            const { url, thumbnail } = req.body;
+            const { url, altText } = req.body;
 
             // Call services
             const image = await productImageService.updateImage(
@@ -99,21 +114,19 @@ class ProductImageController {
                 imageID,
                 {
                     url,
-                    thumbnail,
+                    altText,
                 }
             );
 
             // Serialize data
-            const serializedImage = ImageSerializer.serialize(image, {
+            const serializedImage = ImageSerializer.parse(image, {
                 includeTimestamps: true,
             });
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    image: serializedImage,
-                },
+                image: serializedImage,
             });
         } catch (err) {
             console.log(err);
@@ -121,12 +134,22 @@ class ProductImageController {
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when update a product image",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when update a product image",
+                        },
+                    ],
                 });
             }
         }
@@ -145,19 +168,39 @@ class ProductImageController {
             );
 
             // Serialize data
-            const serializedImages = ImageSerializer.serialize(updatedImages, {
+            const serializedImages = ImageSerializer.parse(updatedImages, {
                 includeTimestamps: true,
             });
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    images: serializedImages,
-                },
+                images: serializedImages,
             });
         } catch (err) {
             console.log(err);
+
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when set images order",
+                        },
+                    ],
+                });
+            }
         }
     }
 
@@ -180,12 +223,22 @@ class ProductImageController {
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when delete a product image",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when delete a product image",
+                        },
+                    ],
                 });
             }
         }

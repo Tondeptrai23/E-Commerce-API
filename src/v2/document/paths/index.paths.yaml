@@ -34,17 +34,11 @@ adminProductVariants:
   get:
     $ref: "./adminProducts/variant/getVariants.yaml"
   post:
-    $ref: "./adminProducts/variant/postVariant.yaml"
+    $ref: "./adminProducts/variant/postVariants.yaml"
 
 adminProductVariant:
   get:
-    $ref: "./adminProducts/variant/getVariant.yaml"
-  patch:
-    $ref: "./adminProducts/variant/patchVariant.yaml"
-  put:
-    $ref: "./adminProducts/variant/putVariant.yaml"
-  delete:
-    $ref: "./adminProducts/variant/deleteVariant.yaml"  
+    $ref: "./adminProducts/variant/getVariant.yaml"   
 
 adminProductImages:
   get:
@@ -81,6 +75,12 @@ adminVariants:
 adminVariant:
   get:
     $ref: "./adminVariants/getVariant.yaml"
+  patch:
+    $ref: "./adminVariants/patchVariant.yaml"
+  put:
+    $ref: "./adminVariants/putVariant.yaml"
+  delete:
+    $ref: "./adminVariants/deleteVariant.yaml"
 
 # ADMIN CATEGORIES
 adminCategories:

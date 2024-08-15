@@ -7,7 +7,7 @@ import VariantAttributeValue from "../../models/products/variantAttributeValue.m
 import AttributeValue from "../../models/products/attributeValue.model.js";
 import Attribute from "../../models/products/attribute.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
-import { Op } from "sequelize";
+import { Model, Op } from "sequelize";
 import { db } from "../../models/index.model.js";
 import categoryService from "./category.service.js";
 import FilterBuilder from "../condition/filterBuilder.service.js";
@@ -22,41 +22,36 @@ class ProductService {
      * Support filtering by product, variant, category, and attribute
      *
      * @param {Object} query the query options to filter the products
+     * @param {Object} options the options to include deleted products
      * @returns {Promise<Product[]>} the products that match the given options
      *
      */
-    async getProducts(query) {
+    async getProducts(query, options = { includeDeleted: false }) {
         const conditions = await this.#buildConditions(query);
+        conditions.includeDeleted = options.includeDeleted;
 
-        // Retrieve all variants that match the attribute filter and the variant filter
-        const variants = await this.#filterVariant(conditions);
+        const satifiedIDs = await this.#filterProducts(conditions);
 
-        // Extract the productIDs and variantIDs of the variants
-        const { productIDs, variantIDs } = this.#extractProductAndVariantIds(
-            variants,
-            query.oneVariant === "true"
-        );
+        if (satifiedIDs.length === 0) {
+            return {
+                currentPage: 1,
+                totalPages: 1,
+                totalItems: 0,
+                products: [],
+            };
+        }
 
-        // Find all products that satisfy the given conditions
-        const { count, satisfiedIDs } = await this.#findSatisfiedProducts(
+        const CTE = this.#getCTEtoFilterVariant(conditions, satifiedIDs);
+        console.log(CTE);
+
+        const { count, productIDs, variantIDs } =
+            await this.#getSatisfiedProducts(conditions, CTE);
+
+        const result = await this.#fetchFilteredProducts(
             conditions,
-            variantIDs,
-            productIDs
-        );
-
-        // Fetch detailed product info by the satisfied productIDs
-        const products = await this.#fetchDetailedProducts(
-            conditions,
-            satisfiedIDs,
+            productIDs,
             variantIDs
         );
-
-        // If the query is to get only one variant of each product
-        if (query.oneVariant === "true") {
-            products.forEach((product) => {
-                product.dataValues.variants = [product.variants[0]];
-            });
-        }
 
         return {
             currentPage:
@@ -67,7 +62,7 @@ class ProductService {
                 count / conditions.paginationConditions.limit
             ),
             totalItems: count,
-            products: products,
+            products: result,
         };
     }
 
@@ -77,7 +72,12 @@ class ProductService {
      * @param {String} productID the product ID to be retrieved
      * @returns {Promise<Product | null>} the product with the given productID
      */
-    async getProduct(productID) {
+    async getProduct(
+        productID,
+        options = {
+            includeDeleted: false,
+        }
+    ) {
         const product = await Product.findOne({
             where: {
                 productID: productID,
@@ -91,17 +91,24 @@ class ProductService {
                 {
                     model: ProductImage,
                     as: "images",
+                    paranoid: !options.includeDeleted,
                 },
                 {
                     model: Variant,
                     as: "variants",
+                    paranoid: !options.includeDeleted,
                     include: [
                         {
                             model: AttributeValue,
                             as: "attributeValues",
+                            attributes: ["value"],
+                            through: {
+                                attributes: [],
+                            },
                             include: {
                                 model: Attribute,
                                 as: "attribute",
+                                attributes: ["name"],
                             },
                         },
                         {
@@ -111,9 +118,31 @@ class ProductService {
                     ],
                 },
             ],
+            paranoid: !options.includeDeleted,
         });
 
         return product;
+    }
+
+    /**
+     * Check if product name is already taken
+     *
+     * @param {String} name the product name to be checked
+     * @returns {Promise<Boolean>} true if the product name is already taken, false otherwise
+     */
+    async isProductNameTaken(name) {
+        if (!name) {
+            return false;
+        }
+
+        const product = await Product.findOne({
+            where: {
+                name: name,
+            },
+            paranoid: false,
+        });
+
+        return product !== null;
     }
 
     /**
@@ -154,7 +183,11 @@ class ProductService {
     }
 
     /**
-     * The following methods are private and used internally by the ProductService
+     *
+     *
+     * The following methods are private and used internally to get products
+     *
+     *
      */
 
     /**
@@ -166,6 +199,8 @@ class ProductService {
      */
     async #buildConditions(query) {
         const sortConditions = new ProductSortBuilder(query).build();
+        sortConditions.push("`variant`.`variantID` ASC"); // Default sorting by variantID
+
         const paginationConditions = new PaginationBuilder(query).build();
         // Filter building by query
         const productFilter = new FilterBuilder(query, "product").build();
@@ -195,7 +230,7 @@ class ProductService {
         );
 
         let attributeFilter = (
-            await AttributeFilterBuilder.create(query.attribute)
+            await AttributeFilterBuilder.create(query.attributes)
         ).build();
 
         return {
@@ -209,19 +244,78 @@ class ProductService {
     }
 
     /**
-     * Filter the variants that match the given variant filter and attribute filter
+     * Filter products based on their fields and categories
      *
-     * @param {Object[]} conditions.variantFilter the filter options to filter the variants
-     * @param {Object[]} conditions.attributeFilter the filter options to filter the attributes
-     * @returns {Promise<Variant[]>} the variants that match the given options
+     * @param {Object} conditions the conditions to filter the products
+     * @returns {Promise<String[]>} the product IDs that match the given conditions
      */
-    async #filterVariant(
-        conditions = { variantFilter: [], attributeFilter: [] }
+    async #filterProducts(conditions) {
+        const productIDs = await Product.findAll({
+            attributes: ["productID"],
+            include: {
+                model: Category,
+                through: { model: ProductCategory, attributes: [] },
+                as: "categories",
+                attributes: [],
+                where:
+                    conditions.categoryFilter.length !== 0
+                        ? {
+                              name: conditions.categoryFilter,
+                          }
+                        : undefined,
+            },
+            where: conditions.productFilter,
+            paranoid: !conditions.includeDeleted,
+        });
+
+        return productIDs.map((product) => product.productID);
+    }
+
+    /**
+     * Get the CTE to filter the variants
+     * Used internally by the getProducts method
+     *
+     * @param {Object} conditions the conditions to filter the variants
+     * @param {Array} productIDs the product IDs to filter the variants
+     * @returns {String} the CTE to filter the variants
+     */
+    #getCTEtoFilterVariant(
+        conditions = {
+            variantFilter: [],
+            attributeFilter: [],
+            includeDeleted: {},
+            sortConditions: [],
+        },
+        productIDs = []
     ) {
-        const variants = await Variant.findAll({
-            attributes: ["variantID", "productID"],
-            joinTableAttributes: [],
+        // Use queryInterface to generate the raw SQL query from the sequelize options
+        // Because sequelize does not support CTE
+        const options = {
+            attributes: [
+                "variantID",
+                "productID",
+                [
+                    db.literal(
+                        `ROW_NUMBER() OVER 
+                        (ORDER BY ${conditions.sortConditions.join(", ")})`
+                    ),
+                    "rowNumber",
+                ],
+                [
+                    db.literal(
+                        `ROW_NUMBER() OVER 
+                        (PARTITION BY \`variant\`.\`productID\` 
+                        ORDER BY ${conditions.sortConditions.join(", ")})`
+                    ),
+                    "partitionCount",
+                ],
+            ],
             include: [
+                {
+                    model: Product,
+                    as: "product",
+                    attributes: [],
+                },
                 {
                     model: AttributeValue,
                     as: "attributeValues",
@@ -230,7 +324,6 @@ class ProductService {
                         model: VariantAttributeValue,
                         attributes: [],
                     },
-
                     include: {
                         model: Attribute,
                         as: "attribute",
@@ -240,169 +333,123 @@ class ProductService {
             ],
             where: [
                 ...conditions.variantFilter,
-
-                // Filter by attribute values
-                ...(conditions.attributeFilter.length !== 0
-                    ? [
-                          {
-                              [Op.or]: [
-                                  ...conditions.attributeFilter.map(
-                                      (attribute) => {
-                                          return {
-                                              "$attributeValues.attribute.name$":
-                                                  attribute.name,
-                                              "$attributeValues.value$":
-                                                  attribute.value,
-                                          };
-                                      }
-                                  ),
-                              ],
-                          },
-                      ]
-                    : []),
+                ...conditions.attributeFilter.whereCondition,
+                {
+                    productID: {
+                        [Op.in]: productIDs,
+                    },
+                },
+                conditions.includeDeleted
+                    ? {}
+                    : {
+                          "$product.deletedAt$": null,
+                          "$variant.deletedAt$": null,
+                      },
             ],
             group: ["variantID", "productID"],
-            having: db.literal(
-                "COUNT(DISTINCT `attributeValues`.`valueID`) >= " +
-                    conditions.attributeFilter.length
-            ),
+            having: conditions.attributeFilter.havingCondition,
 
             raw: true,
-        });
+        };
 
-        return variants;
+        // Get the CTE
+        Model._validateIncludedElements.bind(Variant)(options);
+        const cte = db
+            .getQueryInterface()
+            .queryGenerator.selectQuery("variants", options, Variant)
+            .slice(0, -1);
+
+        return cte;
     }
 
     /**
-     * Extracts unique product IDs from a list of variants.
-     * If oneVariant is true, only one variant of each product is returned.
-     *
-     * @param {Array} variants - An array of variant objects.
-     * @param {Boolean} oneVariant - If true, only unique product IDs are returned.
-     * @returns {Object} An object containing unique product IDs and variant IDs.
-     */
-    #extractProductAndVariantIds(variants, oneVariant = false) {
-        let extractedData = {};
-        extractedData = variants.reduce(
-            (acc, variant) => {
-                if (
-                    !acc.productIDs.has(variant.productID) ||
-                    oneVariant === false
-                ) {
-                    acc.variantIDs.push(variant.variantID);
-                    acc.productIDs.add(variant.productID);
-                }
-                return acc;
-            },
-            { variantIDs: [], productIDs: new Set() }
-        );
-
-        extractedData.productIDs = [...extractedData.productIDs];
-        return extractedData;
-    }
-
-    /**
-     * Find all products that satisfy the given conditions
+     * Get the products that satisfy the given conditions
+     * Used internally by the getProducts method
      *
      * @param {Object} conditions the conditions to filter the products
-     * @param {Array} variantIDs the variant IDs to filter the products
-     * @param {Array} productIDs the product IDs to filter the products
-     * @returns {Object} the count of the satisfied products and their IDs
+     * @param {String} CTE the CTE to filter
+     * @returns {Promise<count: Number, productIDs: String[], variantIDs: String[]>} the products that match the given IDs
      */
-    async #findSatisfiedProducts(
-        conditions = {
-            categoryFilter: [],
-            productFilter: [],
-            paginationConditions: {},
-        },
-        variantIDs = [],
-        productIDs = []
-    ) {
-        const { count, rows } = await Product.findAndCountAll({
-            attributes: [
-                [db.literal("DISTINCT `product`.`productID`"), "productID"],
-            ],
-
-            include: [
+    async #getSatisfiedProducts(conditions, CTE) {
+        const count = (
+            await db.query(
+                `WITH CTE AS (${CTE})
+                SELECT COUNT(DISTINCT p.productID) AS count 
+                FROM products p JOIN CTE ON CTE.productID = p.productID`.trim(),
                 {
-                    model: Category,
-                    through: { model: ProductCategory, attributes: [] },
-                    as: "categories",
-                    attributes: [],
-                    where: {
-                        name:
-                            conditions.categoryFilter.length !== 0
-                                ? { [Op.in]: conditions.categoryFilter }
-                                : { [Op.ne]: null },
-                    },
-                },
+                    type: db.QueryTypes.SELECT,
+                    plain: true,
+                }
+            )
+        ).count;
 
-                {
-                    model: Variant,
-                    as: "variants",
-                    where: {
-                        variantID: { [Op.in]: variantIDs },
-                    },
-                    attributes: [],
-                },
-            ],
-            where: [
-                { productID: { [Op.in]: productIDs } },
-                ...conditions.productFilter,
-            ],
+        const result = await db.query(
+            `WITH CTE AS (${CTE})
+            SELECT v.productID, v.variantID
+            FROM variants v
+            JOIN CTE ON CTE.variantID = v.variantID AND CTE.partitionCount = 1
+            ORDER BY CTE.rowNumber
+            LIMIT ${conditions.paginationConditions.limit}
+            OFFSET ${conditions.paginationConditions.offset}`.trim(),
+            {
+                type: db.QueryTypes.SELECT,
+                nest: true,
+            }
+        );
 
-            ...conditions.paginationConditions,
-            subQuery: false,
-            raw: true,
-            distinct: true,
-        });
-        const satisfiedIDs = rows.map((row) => row.productID);
-        return { count, satisfiedIDs };
+        const { productIDs, variantIDs } = result.reduce(
+            (acc, { productID, variantID }) => {
+                acc.productIDs.push(productID);
+                acc.variantIDs.push(variantID);
+                return acc;
+            },
+            { productIDs: [], variantIDs: [] }
+        );
+
+        return { count, productIDs, variantIDs };
     }
 
     /**
-     * Fetch detailed product info by the satisfied productIDs
+     * Fetch details of the filtered products
      *
-     * @param {Object} conditions.sortConditions the sort conditions to sort the products
-     * @param {Array} satisfiedIDs the satisfied product IDs
-     * @param {Array} variantIDs the variant IDs to filter the products
-     * @returns {Promise<Product[]>} the products that match the given options
+     * @param {Object} conditions the conditions to filter the products
+     * @param {String[]} productIDs the product IDs to be fetched
+     * @param {String[]} variantIDs the variant IDs to be fetched
+     * @returns {Promise<Product[]>} the products that match the given IDs
      */
-    async #fetchDetailedProducts(
-        conditions = { sortConditions: [] },
-        satisfiedIDs = [],
-        variantIDs = []
-    ) {
-        // Getting detailed product info by the satisfied productIDs
-        const products = await Product.findAll({
+    async #fetchFilteredProducts(conditions, productIDs, variantIDs) {
+        let products = await Product.findAll({
+            where: {
+                productID: productIDs,
+            },
             include: [
                 {
                     model: Category,
+                    through: ProductCategory,
                     as: "categories",
                 },
                 {
                     model: Variant,
                     as: "variants",
+                    where: {
+                        variantID: variantIDs,
+                    },
                     include: {
                         model: ProductImage,
                         as: "image",
-                        required: false,
                     },
-                    where: {
-                        variantID: { [Op.in]: variantIDs },
-                    },
+                    paranoid: !conditions.includeDeleted,
                 },
             ],
-
-            where: {
-                productID: {
-                    [Op.in]: satisfiedIDs,
-                },
-            },
-            order: [...conditions.sortConditions],
+            paranoid: !conditions.includeDeleted,
         });
 
-        return products;
+        // Sort products based on productIDs
+        const newProducts = productIDs.map((productID) =>
+            products.find((product) => product.productID === productID)
+        );
+
+        return newProducts;
     }
 }
 

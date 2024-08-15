@@ -19,6 +19,8 @@ adminProductRoute.use(variantRoute);
 
 adminProductRoute.get(
     "/products",
+    validator.validateQueryGetProduct,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     productsController.getProducts
@@ -32,7 +34,7 @@ adminProductRoute.get(
 );
 
 adminProductRoute.post(
-    "/products/add",
+    "/products",
     validator.validateCreateProduct,
     validator.handleValidationErrors,
     verifyToken,

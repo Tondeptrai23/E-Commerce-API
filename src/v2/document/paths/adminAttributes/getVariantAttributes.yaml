@@ -3,8 +3,9 @@ tags:
   - Admin Attributes
 summary: Get variants which have the attribute
 description: |
-  Get variants which have the attributeID. 
-  Support pagination, sorting and filtering.
+  Get variants which have the attributeID. <br>
+  Support pagination, sorting and filtering. <br>
+  If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
 security:
   - bearerAuth: []
 parameters:
@@ -22,6 +23,7 @@ parameters:
     required: false
     schema:
       type: integer
+
   - name: size
     in: query
     description: Size each page

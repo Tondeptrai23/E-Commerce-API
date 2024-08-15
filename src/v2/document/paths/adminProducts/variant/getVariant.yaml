@@ -19,7 +19,7 @@ parameters:
     required: true
     schema:
       type: string
-      example: "1"
+      example: "101"
 responses:
   200:
     description: Variant found

@@ -48,29 +48,8 @@ class ProductBuilderService {
             },
 
             /**
-             * Set the variants for the product builder
-             *
-             * @param {Array<Object>} variants the variants info to be set
-             * @returns {Promise<Object>} this product builder object
-             */
-            async setVariants(variants) {
-                if (!variants) {
-                    return this;
-                }
-
-                this.variants = await Promise.all(
-                    variants.map(async (variant) => {
-                        return await variantService.createVariantForProduct(
-                            this.product,
-                            variant
-                        );
-                    })
-                );
-                return this;
-            },
-
-            /**
              * Set the categories for the product builder
+             * Should be called after setProductInfo
              *
              * @param {Array<String>} categories the array of category names to be set
              * @returns {Promise<Object>} this product builder object
@@ -94,6 +73,7 @@ class ProductBuilderService {
 
             /**
              * Set the images for the product builder
+             * Should be called after setProductInfo
              *
              * @param {Array<Object>} images the images to be set
              * @returns {Promise<Object>} this product builder object
@@ -104,12 +84,51 @@ class ProductBuilderService {
                 }
 
                 images = images.map((image) => {
-                    return { ...image, productID: this.product.productID };
+                    return {
+                        url: image.url,
+                        altText: image.altText,
+                        productID: this.product.productID,
+                    };
                 });
 
                 images = await ProductImage.bulkCreate(images);
 
                 this.images = images;
+                return this;
+            },
+
+            /**
+             * Set the variants for the product builder
+             * Shoudld be called after setImages and setProductInfo
+             *
+             * @param {Array<Object>} variants the variants info to be set
+             * @returns {Promise<Object>} this product builder object
+             */
+            async setVariants(variants) {
+                if (!variants) {
+                    return this;
+                }
+
+                this.variants = await Promise.all(
+                    variants.map(async (variant) => {
+                        const { imageIndex, ...rest } = variant;
+
+                        let newVariant =
+                            await variantService.createVariantForProduct(
+                                this.product,
+                                rest
+                            );
+
+                        if (this.images && this.images[imageIndex]) {
+                            newVariant = await newVariant.update({
+                                imageID: this.images[imageIndex].imageID,
+                            });
+                        }
+
+                        return newVariant;
+                    })
+                );
+
                 return this;
             },
 
@@ -148,9 +167,9 @@ class ProductBuilderService {
     async addProduct(productInfo, variants, categories, images) {
         let builder = await this.productBuilder();
         builder = await builder.setProductInfo(productInfo);
+        builder = await builder.setImages(images);
         builder = await builder.setVariants(variants);
         builder = await builder.setCategories(categories);
-        builder = await builder.setImages(images);
         return await builder.build();
     }
 
@@ -180,7 +199,23 @@ class ProductBuilderService {
      */
     async addVariants(productID, variants) {
         let builder = await this.productBuilder(productID);
-        builder = await builder.setVariants(variants);
+
+        // Preprocess
+        const { images, variants: newVariants } = variants.reduce(
+            (acc, variant) => {
+                if (variant.image) {
+                    acc.images.push(variant.image);
+                    variant.imageIndex = acc.images.length - 1;
+                    delete variant.image;
+                }
+                acc.variants.push(variant);
+                return acc;
+            },
+            { images: [], variants: [] }
+        );
+
+        builder = await builder.setImages(images);
+        builder = await builder.setVariants(newVariants);
         const product = await builder.build();
 
         return product;

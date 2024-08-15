@@ -2,35 +2,28 @@ import ProductSortBuilder from "../../../services/condition/productSortBuilder.s
 
 describe("ProductSortBuilder", () => {
     describe("build", () => {
-        test("should return an empty array if the query is empty", () => {
+        test("should return an array with default sorting if the query is empty", () => {
             const query = {};
             const sortBuilder = new ProductSortBuilder(query);
             const result = sortBuilder.build();
-            expect(result).toEqual([]);
+            expect(result).toEqual(["`product`.`createdAt` DESC"]);
         });
 
-        test("should return an empty array if the query does not contain a sort field", () => {
-            const query = { name: "test" };
-            const sortBuilder = new ProductSortBuilder(query);
-            const result = sortBuilder.build();
-            expect(result).toEqual([]);
-        });
-
-        test("should return an array of order conditions compatible for Sequelize sorting", () => {
+        test("should return an array with default sorting if the sort field is not array", () => {
             const query = { sort: "price" };
             const sortBuilder = new ProductSortBuilder(query);
             const result = sortBuilder.build();
-            expect(result).toEqual([["variants", "price", "ASC"]]);
+            expect(result).toEqual(["`product`.`createdAt` DESC"]);
         });
 
-        test("should return an array of order conditions compatible for Sequelize sorting with multiple fields", () => {
-            const query = { sort: ["price", "name"] };
+        test("should return an array of order conditions compatible for Sequelize sorting", () => {
+            const query = { sort: ["price"] };
             const sortBuilder = new ProductSortBuilder(query);
             const result = sortBuilder.build();
-            expect(result).toEqual([
-                ["variants", "price", "ASC"],
-                ["name", "ASC"],
-            ]);
+            expect(result).toEqual(
+                ["`variant`.`price` ASC"],
+                ["`product`.`createdAt` DESC"]
+            );
         });
 
         test("should return an array of order conditions compatible for Sequelize sorting with multiple fields and directions", () => {
@@ -38,32 +31,22 @@ describe("ProductSortBuilder", () => {
             const sortBuilder = new ProductSortBuilder(query);
             const result = sortBuilder.build();
             expect(result).toEqual([
-                ["variants", "price", "DESC"],
-                ["name", "ASC"],
+                "`variant`.`price` DESC",
+                "`product`.`name` ASC",
+                "`product`.`createdAt` DESC",
             ]);
         });
 
         test("should return an array of order conditions compatible for Sequelize sorting with multiple fields and directions", () => {
-            const query = { sort: ["-price", "-name", "createdAt,-stock"] };
+            const query = { sort: ["-price", "-name", "createdAt", "-stock"] };
             const sortBuilder = new ProductSortBuilder(query);
             const result = sortBuilder.build();
             expect(result).toEqual([
-                ["variants", "price", "DESC"],
-                ["name", "DESC"],
-                ["createdAt", "ASC"],
-                ["variants", "stock", "DESC"],
-            ]);
-        });
-
-        test("should return an array of order conditions compatible for Sequelize sorting with multiple fields and directions", () => {
-            const query = { sort: "price,-name,stock,-createdAt" };
-            const sortBuilder = new ProductSortBuilder(query);
-            const result = sortBuilder.build();
-            expect(result).toEqual([
-                ["variants", "price", "ASC"],
-                ["name", "DESC"],
-                ["variants", "stock", "ASC"],
-                ["createdAt", "DESC"],
+                "`variant`.`price` DESC",
+                "`product`.`name` DESC",
+                "`product`.`createdAt` ASC",
+                "`variant`.`stock` DESC",
+                "`product`.`createdAt` DESC",
             ]);
         });
     });

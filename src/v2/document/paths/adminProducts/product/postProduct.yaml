@@ -25,10 +25,32 @@ requestBody:
             type: array
             items:
               type: object
-              allOf:
-                - $ref: "../../../schemas/products/variant.yaml"
-                - $ref: "../../../schemas/products/variantAttribute.yaml"
-
+              properties:
+                name:
+                  type: string
+                  example: "Red T-Shirt"
+                  nullable: true
+                price:
+                  type: number
+                  example: 100
+                discountPrice:
+                  type: number
+                  example: 90
+                  nullable: true
+                stock:
+                  type: integer
+                  example: 10
+                sku:
+                  type: string
+                imageIndex:
+                  type: number
+                  example: 0
+                attributes:
+                  type: object
+                  description: Dynamic attributes of the product
+                  example:
+                    color: "red"
+                    size: "M"
           categories:
             $ref: "../../../schemas/products/categoryNames.yaml"
           images:

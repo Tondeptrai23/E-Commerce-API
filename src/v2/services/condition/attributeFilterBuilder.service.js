@@ -1,5 +1,7 @@
 import QueryToSequelizeConditionConverter from "./sequelizeConverter.service.js";
 import attributeService from "../products/attribute.service.js";
+import { Op } from "sequelize";
+import { db } from "../../models/index.model.js";
 
 /**
  * @summary A class to build filtering conditions for variants' attributes
@@ -36,11 +38,16 @@ export default class AttributeFilterBuilder extends QueryToSequelizeConditionCon
     /**
      * Convert Request.query to Sequelize-compatible condition object for querying the database
      *
-     * @returns {Array} Array of conditions
-     * Format: [{"attribute.name": [value1, value2]}, ...]
+     * @returns {Object} the Sequelize-compatible condition object
      */
     build = () => {
-        if (!this._query) return [];
+        if (!this._query)
+            return {
+                havingCondition: db.literal(
+                    "COUNT(DISTINCT `attributeValues`.`valueID`) >= 0"
+                ),
+                whereCondition: [],
+            };
 
         const conditions = [];
 
@@ -48,6 +55,7 @@ export default class AttributeFilterBuilder extends QueryToSequelizeConditionCon
             this.#allowFields.includes(field)
         );
 
+        // Turn fields into format: [{"attribute.name": [value1, value2]}, ...]
         fields.forEach((field) => {
             if (!this._query[field]) return;
 
@@ -62,6 +70,32 @@ export default class AttributeFilterBuilder extends QueryToSequelizeConditionCon
             conditions.push({ name: field, value: value });
         });
 
-        return conditions;
+        // Convert to Sequelize-compatible condition
+        const result = {
+            havingCondition: db.literal(
+                "COUNT(DISTINCT `attributeValues`.`valueID`) >= " +
+                    conditions.length
+            ),
+            whereCondition: [
+                ...(conditions.length !== 0
+                    ? [
+                          {
+                              [Op.or]: [
+                                  ...conditions.map((attribute) => {
+                                      return {
+                                          "$attributeValues.attribute.name$":
+                                              attribute.name,
+                                          "$attributeValues.value$":
+                                              attribute.value,
+                                      };
+                                  }),
+                              ],
+                          },
+                      ]
+                    : []),
+            ],
+        };
+
+        return result;
     };
 }

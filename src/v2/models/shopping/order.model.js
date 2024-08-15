@@ -10,10 +10,6 @@ Order.init(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        orderDate: {
-            type: DataTypes.DATEONLY,
-            defaultValue: DataTypes.NOW,
-        },
         status: {
             type: DataTypes.ENUM(
                 "pending",
@@ -46,6 +42,7 @@ Order.init(
     {
         sequelize,
         modelName: "order",
+        paranoid: true,
     }
 );
 

@@ -8,11 +8,11 @@ describe("validateCreateImages", () => {
                 images: [
                     {
                         url: "https://example.com",
-                        thumbnail: "https://example.com",
+                        altText: "https://example.com",
                     },
                     {
                         url: "https://example2.com",
-                        thumbnail: "https://example2.com",
+                        altText: "https://example2.com",
                     },
                 ],
             },
@@ -95,7 +95,7 @@ describe("validateCreateImages", () => {
             body: {
                 images: [
                     {
-                        thumbnail: "https://example.com",
+                        altText: "https://example.com",
                     },
                     {
                         url: "https://example2.com",
@@ -125,7 +125,7 @@ describe("validateCreateImages", () => {
                 images: [
                     {
                         url: 1,
-                        thumbnail: 2,
+                        altText: 2,
                     },
                 ],
             },
@@ -143,7 +143,7 @@ describe("validateCreateImages", () => {
                     msg: "URL should be a string",
                 }),
                 expect.objectContaining({
-                    msg: "Thumbnail should be a string",
+                    msg: "Alt text should be a string",
                 }),
             ])
         );
@@ -167,7 +167,7 @@ describe("validatePatchImage", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Id should not be provided",
+                    msg: "ID should not be provided",
                 }),
             ])
         );

@@ -9,12 +9,34 @@ const ProductSerializer = new Entity({
     },
     name: { type: "string" },
     description: { type: "string" },
+    variant: [
+        {
+            type: "object",
+        },
+        function (obj, options) {
+            if (!obj.variant) {
+                return undefined;
+            }
+            const variantOptions = {
+                ...options,
+                includeTimestamps: options.includeTimestampsForAll,
+            };
+            return VariantSerializer.parse(obj.variant, variantOptions);
+        },
+    ],
     variants: [
         {
             type: "object",
         },
         function (obj, options) {
-            return VariantSerializer.parse(obj.variants, options);
+            if (!obj.variants) {
+                return undefined;
+            }
+            const variantOptions = {
+                ...options,
+                includeTimestamps: options.includeTimestampsForAll,
+            };
+            return VariantSerializer.parse(obj.variants, variantOptions);
         },
     ],
     categories: [
@@ -30,9 +52,14 @@ const ProductSerializer = new Entity({
             type: "object",
         },
         function (obj, options) {
-            return obj.images.map((image) =>
-                ImageSerializer.parse(image, options)
-            );
+            if (!obj.images) {
+                return undefined;
+            }
+            const imageOptions = {
+                ...options,
+                includeTimestamps: options.includeTimestampsForAll,
+            };
+            return ImageSerializer.parse(obj.images, imageOptions);
         },
     ],
 
@@ -42,7 +69,7 @@ const ProductSerializer = new Entity({
             format: "iso",
         },
         function (obj, options) {
-            if (options.includeTimestamps) {
+            if (options.includeTimestamps || options.includeTimestampsForAll) {
                 return obj.createdAt;
             }
             return undefined;
@@ -54,8 +81,20 @@ const ProductSerializer = new Entity({
             format: "iso",
         },
         function (obj, options) {
-            if (options.includeTimestamps) {
+            if (options.includeTimestamps || options.includeTimestampsForAll) {
                 return obj.updatedAt;
+            }
+            return undefined;
+        },
+    ],
+    deletedAt: [
+        {
+            type: "date",
+            format: "iso",
+        },
+        function (obj, options) {
+            if (options.includeTimestamps || options.includeTimestampsForAll) {
+                return obj.deletedAt;
             }
             return undefined;
         },

@@ -19,7 +19,10 @@ requestBody:
   content:
     application/json:
       schema:
-        $ref: "../../../schemas/products/categoryNames.yaml"
+        type: object
+        properties:
+          categories:
+            $ref: "../../../schemas/products/categoryNames.yaml"
 responses:
   200:
     description: Category added

@@ -1,8 +1,14 @@
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 import {
     validateInteger,
     validateMinValue,
     validateNumber,
+    validateUnexpectedFields,
+    validateQueryNumber,
+    validateSortingQuery,
+    sanitizeSortingQuery,
+    stringRegex,
+    validateQueryInteger,
 } from "../utils.validator.js";
 
 const validateDiscountPrice = (value) => {
@@ -25,12 +31,23 @@ const validateCreateVariants = [
             return true;
         }),
 
+    body("variants.*.name")
+        .optional()
+        .isString()
+        .withMessage("Name should be a string"),
+
     // Validate variant price
     body("variants.*.price")
         .notEmpty()
         .withMessage("Price is required")
         .custom(validateNumber("Price"))
         .custom(validateMinValue("Price", 0)),
+
+    // Validate variant discount price
+    body("variants.*.discountPrice")
+        .optional()
+        .custom(validateNumber("Discount price"))
+        .custom(validateMinValue("Discount price", 0)),
 
     // Validate variant stock
     body("variants.*.stock")
@@ -46,20 +63,49 @@ const validateCreateVariants = [
         .isString()
         .withMessage("SKU should be a string"),
 
+    // Validate variant attributes
+    body("variants.*.attributes")
+        .optional()
+        .isObject()
+        .withMessage("Attributes should be an object"),
+
     // Validate variant image order
-    body("variants.*.imageID")
+    body("variants.*.imageIndex")
+        .optional()
+        .custom(validateInteger("Image index"))
+        .custom(validateMinValue("Image index", 0)),
+
+    body("variants.*.image")
+        .optional()
+        .isObject()
+        .withMessage("Image should be an object"),
+
+    body("variants.*.image.url")
         .optional()
         .isString()
-        .withMessage("ImageID should be a string"),
+        .withMessage("Image url should be a string"),
 
-    // Validate variant discount price
-    body("variants.*.discountPrice")
+    body("variants.*.image.altText")
         .optional()
-        .custom(validateNumber("Discount price"))
-        .custom(validateMinValue("Discount price", 0)),
+        .isString()
+        .withMessage("Alt text should be a string"),
 
     // Validate variant discount price compare to price
     body("variants.*").custom(validateDiscountPrice),
+
+    // Validate unexpected fields
+    body("variants.*").custom(
+        validateUnexpectedFields([
+            "name",
+            "price",
+            "stock",
+            "sku",
+            "imageIndex",
+            "discountPrice",
+            "attributes",
+            "image",
+        ])
+    ),
 ];
 
 const validatePatchVariant = [
@@ -85,9 +131,22 @@ const validatePatchVariant = [
         .custom(validateMinValue("Discount price", 0)),
 
     body("").custom(validateDiscountPrice),
+
+    body().custom(
+        validateUnexpectedFields([
+            "name",
+            "price",
+            "stock",
+            "sku",
+            "imageID",
+            "discountPrice",
+        ])
+    ),
 ];
 
 const validatePutVariant = [
+    body("name").optional().isString().withMessage("Name should be a string"),
+
     body("stock")
         .notEmpty()
         .withMessage("Stock is required")
@@ -116,7 +175,99 @@ const validatePutVariant = [
         .custom(validateNumber("Discount price"))
         .custom(validateMinValue("Discount price", 0)),
 
+    body("attributes")
+        .optional()
+        .isObject()
+        .withMessage("Attributes should be an object"),
+
     body().custom(validateDiscountPrice),
+
+    body().custom(
+        validateUnexpectedFields([
+            "name",
+            "stock",
+            "price",
+            "sku",
+            "imageID",
+            "discountPrice",
+            "attributes",
+        ])
+    ),
 ];
 
-export { validateCreateVariants, validatePutVariant, validatePatchVariant };
+const validateQueryGetVariant = [
+    query("page").optional().custom(validateQueryInteger("Page")),
+
+    query("size").optional().custom(validateQueryInteger("Size")),
+
+    query("sort")
+        .optional()
+        .customSanitizer(sanitizeSortingQuery)
+        .custom(
+            validateSortingQuery([
+                "productID",
+                "price",
+                "name",
+                "discountPrice",
+                "stock",
+                "createdAt",
+                "updatedAt",
+                "deletedAt",
+            ])
+        ),
+
+    query("variantID")
+        .optional()
+        .matches(stringRegex)
+        .withMessage(`VariantID should match regex ${stringRegex}`),
+
+    query("name")
+        .optional()
+        .matches(stringRegex)
+        .withMessage(`Name should match regex ${stringRegex}`),
+
+    query("price").optional().custom(validateQueryNumber("Price")),
+
+    query("discountPrice")
+        .optional()
+        .custom(validateQueryNumber("Discount price")),
+
+    query("stock").optional().custom(validateQueryNumber("Stock")),
+
+    query("sku")
+        .optional()
+        .matches(stringRegex)
+        .withMessage(`SKU should match regex ${stringRegex}`),
+
+    query("productID")
+        .optional()
+        .matches(stringRegex)
+        .withMessage(`ProductID should match regex ${stringRegex}`),
+
+    query("updatedAt")
+        .optional()
+        .isISO8601()
+        .withMessage("UpdatedAt should be a valid date"),
+
+    query("createdAt")
+        .optional()
+        .isISO8601()
+        .withMessage("CreatedAt should be a valid date"),
+
+    query("deletedAt")
+        .optional()
+        .isISO8601()
+        .withMessage("DeletedAt should be a valid date"),
+
+    query("attributes")
+        .optional()
+        .isObject()
+        .withMessage("Attributes should be an object"),
+];
+
+export {
+    validateCreateVariants,
+    validatePutVariant,
+    validatePatchVariant,
+    validateQueryGetVariant,
+};

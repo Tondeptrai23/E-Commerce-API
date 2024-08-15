@@ -3,7 +3,8 @@ tags:
   - Admin Variants
 summary: Get all variants
 description: Retrieves detailed information about all variants. <br>
-  Supports pagination, sorting, and filtering.
+  Supports pagination, sorting, and filtering. <br>
+  If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
 security:
   - bearerAuth: []
 parameters:

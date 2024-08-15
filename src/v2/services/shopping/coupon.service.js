@@ -52,164 +52,6 @@ class CouponService {
     }
 
     /**
-     * Build conditions for the query
-     *
-     * @param {Object} query The query to build conditions for
-     * @returns {Object} The conditions
-     */
-    async #buildCondition(query) {
-        const paginationCondition = new PaginationBuilder(query).build();
-
-        if (!query) {
-            return {
-                couponFilter: [],
-                productFilter: [],
-                categoryFilter: [],
-                sortingCondition: [],
-                paginationCondition,
-            };
-        }
-
-        const couponFilter = new FilterBuilder(query, "coupon").build();
-
-        const productFilter = new FilterBuilder(
-            query.product,
-            "product"
-        ).build();
-
-        const categoryFilter = flattenArray(
-            await Promise.all(
-                toArray(query.category).map(async (category) => {
-                    return (
-                        await categoryService.getDescendantCategoriesByName(
-                            category
-                        )
-                    ).map((category) => category.name);
-                })
-            )
-        );
-
-        const sortingCondition = new CouponSortBuilder(query).build();
-
-        return {
-            couponFilter,
-            productFilter,
-            categoryFilter,
-            sortingCondition,
-            paginationCondition,
-        };
-    }
-
-    /**
-     * Get product IDs based on the product filter
-     *
-     * @param {Object[]} productFilter The product filter
-     * @returns {Promise<String[]>} The list of product IDs
-     */
-    async #getProductIDs(productFilter) {
-        if (productFilter.length === 0) {
-            return null;
-        }
-
-        const productIDs = (
-            await Product.findAll({
-                where: [...productFilter],
-                attributes: ["productID"],
-            })
-        ).map((product) => product.productID);
-        return productIDs;
-    }
-
-    /**
-     * Find satisfied coupon IDs based on the conditions
-     *
-     * @param {Object[]} couponFilter The coupon filter
-     * @param {Object} promotionCondition The promotion condition
-     * @returns {Promise<Object>} The count and list of satisfied coupon IDs
-     */
-    async #findSatisfiedIDs(
-        couponFilter = [],
-        paginationCondition = {},
-        promotionCondition = {}
-    ) {
-        const { count, rows } = await Coupon.findAndCountAll({
-            distinct: true,
-            attributes: [
-                [db.literal("DISTINCT `coupon`.`couponID`"), "couponID"],
-            ],
-            where: [
-                ...couponFilter,
-                Object.keys(promotionCondition).length > 0
-                    ? {
-                          [Op.or]: promotionCondition,
-                      }
-                    : {},
-            ],
-            include: [
-                {
-                    model: Product,
-                    as: "products",
-                    attributes: [],
-                    through: {
-                        attributes: [],
-                    },
-                },
-                {
-                    model: Category,
-                    as: "categories",
-                    through: {
-                        attributes: [],
-                    },
-                    attributes: [],
-                },
-            ],
-            ...paginationCondition,
-            subQuery: false,
-            raw: true,
-        });
-
-        const satisfiedIDs = rows.map((row) => row.couponID);
-
-        return { count, satisfiedIDs };
-    }
-
-    /**
-     * Fetch detailed information of coupons by satisfied IDs
-     *
-     * @param {Object[]} sortingCondition The sorting condition
-     * @param {Object[]} satisfiedIDs The satisfied IDs
-     * @returns {Promise<Object>} The list of coupons and pagination info
-     */
-    async #fetchDetailedCoupons(sortingCondition = [], satisfiedIDs = []) {
-        const coupons = await Coupon.findAll({
-            where: {
-                couponID: satisfiedIDs,
-            },
-            include: [
-                {
-                    model: Product,
-                    as: "products",
-                    through: {
-                        attributes: [],
-                    },
-                    attributes: ["productID", "name"],
-                },
-                {
-                    model: Category,
-                    as: "categories",
-                    through: {
-                        attributes: [],
-                    },
-                    attributes: ["name"],
-                },
-            ],
-            order: sortingCondition,
-        });
-
-        return coupons;
-    }
-
-    /**
      * Get all coupons by query
      *
      * @param {Object} query The query to get
@@ -506,6 +348,173 @@ class CouponService {
                 };
             })
         );
+    }
+
+    /**
+     *
+     *
+     * The following methods are private methods that are used in getCoupons
+     *
+     *
+     *
+     */
+
+    /**
+     * Build conditions for the query
+     *
+     * @param {Object} query The query to build conditions for
+     * @returns {Object} The conditions
+     */
+    async #buildCondition(query) {
+        const paginationCondition = new PaginationBuilder(query).build();
+
+        if (!query) {
+            return {
+                couponFilter: [],
+                productFilter: [],
+                categoryFilter: [],
+                sortingCondition: [],
+                paginationCondition,
+            };
+        }
+
+        const couponFilter = new FilterBuilder(query, "coupon").build();
+
+        const productFilter = new FilterBuilder(
+            query.product,
+            "product"
+        ).build();
+
+        const categoryFilter = flattenArray(
+            await Promise.all(
+                toArray(query.category).map(async (category) => {
+                    return (
+                        await categoryService.getDescendantCategoriesByName(
+                            category
+                        )
+                    ).map((category) => category.name);
+                })
+            )
+        );
+
+        const sortingCondition = new CouponSortBuilder(query).build();
+
+        return {
+            couponFilter,
+            productFilter,
+            categoryFilter,
+            sortingCondition,
+            paginationCondition,
+        };
+    }
+
+    /**
+     * Get product IDs based on the product filter
+     *
+     * @param {Object[]} productFilter The product filter
+     * @returns {Promise<String[]>} The list of product IDs
+     */
+    async #getProductIDs(productFilter) {
+        if (productFilter.length === 0) {
+            return null;
+        }
+
+        const productIDs = (
+            await Product.findAll({
+                where: [...productFilter],
+                attributes: ["productID"],
+            })
+        ).map((product) => product.productID);
+        return productIDs;
+    }
+
+    /**
+     * Find satisfied coupon IDs based on the conditions
+     *
+     * @param {Object[]} couponFilter The coupon filter
+     * @param {Object} promotionCondition The promotion condition
+     * @returns {Promise<Object>} The count and list of satisfied coupon IDs
+     */
+    async #findSatisfiedIDs(
+        couponFilter = [],
+        paginationCondition = {},
+        promotionCondition = {}
+    ) {
+        const { count, rows } = await Coupon.findAndCountAll({
+            distinct: true,
+            attributes: [
+                [db.literal("DISTINCT `coupon`.`couponID`"), "couponID"],
+            ],
+            where: [
+                ...couponFilter,
+                Object.keys(promotionCondition).length > 0
+                    ? {
+                          [Op.or]: promotionCondition,
+                      }
+                    : {},
+            ],
+            include: [
+                {
+                    model: Product,
+                    as: "products",
+                    attributes: [],
+                    through: {
+                        attributes: [],
+                    },
+                },
+                {
+                    model: Category,
+                    as: "categories",
+                    through: {
+                        attributes: [],
+                    },
+                    attributes: [],
+                },
+            ],
+            ...paginationCondition,
+            subQuery: false,
+            raw: true,
+        });
+
+        const satisfiedIDs = rows.map((row) => row.couponID);
+
+        return { count, satisfiedIDs };
+    }
+
+    /**
+     * Fetch detailed information of coupons by satisfied IDs
+     *
+     * @param {Object[]} sortingCondition The sorting condition
+     * @param {Object[]} satisfiedIDs The satisfied IDs
+     * @returns {Promise<Object>} The list of coupons and pagination info
+     */
+    async #fetchDetailedCoupons(sortingCondition = [], satisfiedIDs = []) {
+        const coupons = await Coupon.findAll({
+            where: {
+                couponID: satisfiedIDs,
+            },
+            include: [
+                {
+                    model: Product,
+                    as: "products",
+                    through: {
+                        attributes: [],
+                    },
+                    attributes: ["productID", "name"],
+                },
+                {
+                    model: Category,
+                    as: "categories",
+                    through: {
+                        attributes: [],
+                    },
+                    attributes: ["name"],
+                },
+            ],
+            order: sortingCondition,
+        });
+
+        return coupons;
     }
 }
 

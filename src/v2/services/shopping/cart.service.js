@@ -8,6 +8,7 @@ import OrderItem from "../../models/shopping/orderItem.model.js";
 import { Op } from "sequelize";
 import ProductImage from "../../models/products/productImage.model.js";
 import Coupon from "../../models/shopping/coupon.model.js";
+import Product from "../../models/products/product.model.js";
 
 /**
  * Service class for managing the user's shopping cart.
@@ -53,11 +54,13 @@ class CartService {
                             "price",
                             "discountPrice",
                         ],
-                        include: {
-                            model: ProductImage,
-                            as: "image",
-                            attributes: ["url"],
-                        },
+                        include: [
+                            {
+                                model: ProductImage,
+                                as: "image",
+                                attributes: ["url"],
+                            },
+                        ],
                     },
                 ],
             })

@@ -5,61 +5,110 @@ import { BadRequestError, ResourceNotFoundError } from "../../utils/error.js";
 import AttributeValue from "../../models/products/attributeValue.model.js";
 import Attribute from "../../models/products/attribute.model.js";
 import ProductImage from "../../models/products/productImage.model.js";
+import VariantAttributeValue from "../../models/products/variantAttributeValue.model.js";
+import AttributeFilterBuilder from "../condition/attributeFilterBuilder.service.js";
+import FilterBuilder from "../condition/filterBuilder.service.js";
+import PaginationBuilder from "../condition/paginationBuilder.service.js";
+import VariantSortBuilder from "../condition/variantSortBuilder.service.js";
+import { db } from "../../models/index.model.js";
 
 class VariantService {
     /**
-     * Get a variant of a product
+     * Get all variants
      *
-     * @param {String} productID the product ID to be retrieved
-     * @param {String} variantID the variant ID to be retrieved
-     * @returns {Promise<Variant>} the variant of the product
-     * @throws {ResourceNotFoundError} if the product or variant is not found
+     * @param {Object} query the query to be used to filter the variants
+     * @param {Object} options the options to be used to filter the variants
+     * @returns {Promise<Variant[]>} the variants
+     * @throws {ResourceNotFoundError} if the variant is not found
      */
-    async getVariant(productID, variantID) {
-        const product = await Product.findByPk(productID, {
+    async getVariants(query, options = { includeDeleted: false }) {
+        const conditions = await this.#buildConditions(query);
+        conditions.includeDeleted = {
+            paranoid: !options.includeDeleted,
+        };
+
+        const { count, variantIDs } = await this.#filterVariant(conditions);
+
+        const variants = await this.#fetchDetailedVariant(
+            conditions,
+            variantIDs
+        );
+
+        return {
+            currentPage:
+                conditions.paginationConditions.offset /
+                    conditions.paginationConditions.limit +
+                1,
+            totalPages: Math.ceil(
+                count / conditions.paginationConditions.limit
+            ),
+            totalItems: count,
+            variants: variants,
+        };
+    }
+
+    /**
+     * Get a variant
+     *
+     * @param {String} variantID the variant ID to be retrieved
+     * @param {Object} options the options to be used to filter
+     * @returns {Promise<Variant>} the variant
+     * @throws {ResourceNotFoundError} if the variant is not found
+     */
+    async getVariant(
+        variantID,
+        options = {
+            includeDeleted: false,
+        }
+    ) {
+        const variant = await Variant.findByPk(variantID, {
             include: [
                 {
-                    model: Variant,
-                    as: "variants",
-                    where: {
-                        variantID: variantID,
-                    },
+                    model: AttributeValue,
+                    as: "attributeValues",
+                    attributes: ["value"],
+                    through: { attributes: [] },
                     include: {
-                        model: AttributeValue,
-                        as: "attributeValues",
-
-                        include: {
-                            model: Attribute,
-                            as: "attribute",
-                        },
+                        model: Attribute,
+                        as: "attribute",
+                        attributes: ["name"],
                     },
                 },
+                {
+                    model: ProductImage,
+                    as: "image",
+                    attributes: ["url"],
+                },
             ],
+            paranoid: !options.includeDeleted,
         });
 
-        if (!product) {
-            throw new ResourceNotFoundError("Product or Variant not found");
+        if (!variant) {
+            throw new ResourceNotFoundError("Variant not found");
         }
 
-        return product.variants[0];
+        return variant;
     }
 
     /**
      * Update a variant which is identified by productID and variantID
      *
-     * @param {String} productID the product ID to be updated
      * @param {String} variantID the variant ID to be updated
      * @param {Object} variantData the variant data to be updated
      * @returns {Promise<Variant>} the updated variant
-     * @throws {ResourceNotFoundError} if the product or variant is not found
+     * @throws {ResourceNotFoundError} if the variant or image is not found
      * @throws {BadRequestError} if the discount price is greater than price
      */
-    async updateVariant(productID, variantID, variantData) {
-        let variant = await this.getVariant(productID, variantID);
+    async updateVariant(variantID, variantData) {
+        let variant = await Variant.findByPk(variantID);
+
+        if (!variant) {
+            throw new ResourceNotFoundError("Variant not found");
+        }
 
         if (variantData.imageID) {
             const image = await ProductImage.findByPk(variantData.imageID);
-            if (!image || image.productID !== productID) {
+            if (!image || image.productID !== variant.productID) {
                 throw new ResourceNotFoundError("Image not found");
             }
         }
@@ -71,21 +120,36 @@ class VariantService {
                 );
             }
         }
+
         await variant.update(variantData);
         variant = await variant.reload();
 
+        // This calling service is not implemented yet
+        if (variantData.attributes) {
+            await VariantAttributeValue.destroy({
+                where: { variantID },
+            });
+            variant = await attributeService.addAttributesForVariant(
+                variant,
+                variantData.attributes
+            );
+        }
         return variant;
     }
 
     /**
      * Delete a variant with the given productID and variantID
      *
-     * @param {String} productID the product ID to be updated
      * @param {String} variantID the variant ID to be updated
      * @throws {ResourceNotFoundError} if the product or variant is not found
      */
-    async deleteVariant(productID, variantID) {
-        const variant = await this.getVariant(productID, variantID);
+    async deleteVariant(variantID) {
+        const variant = await Variant.findByPk(variantID);
+
+        if (!variant) {
+            throw new ResourceNotFoundError("Variant not found");
+        }
+
         await variant.destroy();
     }
 
@@ -93,24 +157,105 @@ class VariantService {
      * Get all variants of a product
      *
      * @param {String} productID the product ID to be retrieved
-     * @returns {Promise<Variant[]>} the variants of the product
+     * @param {Object} options the options to be used to filter
+     * @returns {Promise<{Variant[], Product}>} the variants of the product
      * @throws {ResourceNotFoundError} if the product is not found
      */
-    async getProductVariants(productID) {
+    async getProductVariants(productID, options = { includeDeleted: false }) {
         const product = await Product.findByPk(productID, {
             include: [
                 {
                     model: Variant,
                     as: "variants",
+                    paranoid: !options.includeDeleted,
+                    include: [
+                        {
+                            model: AttributeValue,
+                            as: "attributeValues",
+                            attributes: ["value"],
+                            through: { attributes: [] },
+                            include: {
+                                model: Attribute,
+                                as: "attribute",
+                                attributes: ["name"],
+                            },
+                        },
+                        {
+                            model: ProductImage,
+                            as: "image",
+                            attributes: ["url"],
+                        },
+                    ],
                 },
             ],
+            paranoid: !options.includeDeleted,
         });
+
         if (!product) {
             throw new ResourceNotFoundError("Product not found");
         }
 
-        const variants = product.variants;
-        return variants;
+        return product.variants;
+    }
+
+    /**
+     * Get a variant of a product
+     *
+     * @param {String} productID the product ID to be retrieved
+     * @param {String} variantID the variant ID to be retrieved
+     * @param {Object} options the options to be used to filter
+     * @returns {Promise<Variant>} the variant of the product
+     * @throws {ResourceNotFoundError} if the product or variant is not found
+     */
+    async getProductVariant(
+        productID,
+        variantID,
+        options = {
+            includeDeleted: false,
+        }
+    ) {
+        const product = await Product.findByPk(productID, {
+            include: [
+                {
+                    model: Variant,
+                    as: "variants",
+                    required: false,
+                    paranoid: !options.includeDeleted,
+                    where: {
+                        variantID: variantID,
+                    },
+                    include: [
+                        {
+                            model: AttributeValue,
+                            as: "attributeValues",
+                            attributes: ["value"],
+                            through: { attributes: [] },
+                            include: {
+                                model: Attribute,
+                                as: "attribute",
+                                attributes: ["name"],
+                            },
+                        },
+                        {
+                            model: ProductImage,
+                            as: "image",
+                            attributes: ["url"],
+                        },
+                    ],
+                },
+            ],
+            paranoid: !options.includeDeleted,
+        });
+
+        if (!product) {
+            throw new ResourceNotFoundError("Product not found");
+        }
+
+        if (!product.variants || product.variants.length === 0) {
+            throw new ResourceNotFoundError("Variant not found");
+        }
+
+        return product.variants[0];
     }
 
     /**
@@ -133,6 +278,121 @@ class VariantService {
         }
 
         return variant;
+    }
+
+    /**
+     * The following methods are private and used internally to get the variants
+     */
+
+    /**
+     * Build conditions for filtering variants (used by getVariants)
+     *
+     * @param {Object} query the query to be used to filter the variants
+     * @returns {Array} the conditions for filtering variants
+     */
+    async #buildConditions(query) {
+        const sortConditions = new VariantSortBuilder(query).build();
+        const paginationConditions = new PaginationBuilder(query).build();
+
+        // Filter
+        const variantFilter = new FilterBuilder(query, "variant").build();
+
+        let attributeFilter = (
+            await AttributeFilterBuilder.create(query.attributes)
+        ).build();
+
+        return {
+            sortConditions,
+            paginationConditions,
+            variantFilter,
+            attributeFilter,
+        };
+    }
+
+    /**
+     * Filter the variants based on the conditions (used by getVariants)
+     *
+     * @param {Object} conditions the conditions to be used to filter the variants
+     * @returns {Promise<{count: Number, variantIDs: String[]}>} the total items and variant IDs
+     */
+    async #filterVariant(
+        conditions = {
+            variantFilter: [],
+            paginationConditions: {},
+            attributeFilter: {},
+            includeDeleted: {},
+        }
+    ) {
+        let { count, rows } = await Variant.findAndCountAll({
+            attributes: ["variantID"],
+            include: [
+                {
+                    model: AttributeValue,
+                    as: "attributeValues",
+                    attributes: [],
+                    through: {
+                        model: VariantAttributeValue,
+                        attributes: [],
+                    },
+                    include: {
+                        model: Attribute,
+                        as: "attribute",
+                        attributes: [],
+                    },
+                },
+            ],
+            where: [
+                ...conditions.variantFilter,
+                ...conditions.attributeFilter.whereCondition,
+            ],
+            group: ["variantID"],
+            having: conditions.attributeFilter.havingCondition,
+            order: [...conditions.sortConditions],
+            ...conditions.paginationConditions,
+            ...conditions.includeDeleted,
+            raw: true,
+            subQuery: false,
+            distinct: true,
+        });
+        count = count.reduce((acc, row) => acc + row.count, 0);
+        const variantIDs = rows.map((row) => row.variantID);
+
+        return { count, variantIDs };
+    }
+
+    /**
+     * Fetch the detailed variants based on the conditions (used by getVariants)
+     *
+     * @param {Object} conditions the conditions to be used to filter the variants
+     * @param {String[]} variantIDs the variant IDs to be fetched
+     * @returns {Promise<Variant[]>} the detailed variants
+     */
+    async #fetchDetailedVariant(conditions, variantIDs) {
+        const variants = await Variant.findAll({
+            where: { variantID: variantIDs },
+            include: [
+                {
+                    model: AttributeValue,
+                    as: "attributeValues",
+                    attributes: ["value"],
+                    through: { attributes: [] },
+                    include: {
+                        model: Attribute,
+                        as: "attribute",
+                        attributes: ["name"],
+                    },
+                },
+                {
+                    model: ProductImage,
+                    as: "image",
+                    attributes: ["url"],
+                },
+            ],
+            ...conditions.includeDeleted,
+            order: [...conditions.sortConditions],
+        });
+
+        return variants;
     }
 }
 

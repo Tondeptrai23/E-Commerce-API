@@ -29,6 +29,7 @@ const validator = {
     validateCreateProduct: productValidator.validateCreateProduct,
     validatePatchProduct: productValidator.validatePatchProduct,
     validateQueryGetProduct: productValidator.validateQueryGetProduct,
+    validateQueryGetProductUser: productValidator.validateQueryGetProductUser,
 
     validateAddCategoriesForProduct:
         categoryValidator.validateAddCategoriesForProduct,
@@ -36,6 +37,7 @@ const validator = {
     validateCreateVariants: variantValidator.validateCreateVariants,
     validatePutVariant: variantValidator.validatePutVariant,
     validatePatchVariant: variantValidator.validatePatchVariant,
+    validateQueryGetVariant: variantValidator.validateQueryGetVariant,
 
     validateCreateImages: imageValidator.validateCreateImages,
     validatePatchImage: imageValidator.validatePatchImage,

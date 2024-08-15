@@ -10,6 +10,9 @@ import tokenService from "../../services/auth/token.service.js";
 
 const verifyToken = async (req, res, next) => {
     try {
+        if (!req.header("Authorization")) {
+            throw new UnauthorizedError("Token not found");
+        }
         let token = req.header("Authorization").replace("Bearer ", "");
         if (!token) {
             throw new UnauthorizedError("Token not found");

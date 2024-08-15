@@ -19,7 +19,7 @@ parameters:
     required: true
     schema:
       type: string
-      example: "1"
+      example: "101"
 requestBody:
   description: Image data to update
   required: true
@@ -31,9 +31,9 @@ requestBody:
           url:
             type: string
             example: "https://example.com/image.jpg"
-          thumbnail:
+          altText:
             type: string
-            example: "https://example.com/image-thumbnail.jpg"
+            example: "A beautiful image"
 responses:
   200:
     description: Image updated

@@ -4,6 +4,7 @@ tags:
 summary: Create product variants
 description: Creates multiple product variants for the specified product. <br>
   If variant's name is not provided, it will use the product name
+  If image is provided, a new product image will be created and associated with the variant
 security:
   - bearerAuth: []
 parameters:
@@ -40,12 +41,19 @@ requestBody:
                 stock:
                   type: integer
                   example: 10
+                image:
+                  type: object
+                  properties:
+                    url:
+                      type: string
+                      example: "image.com/image.jpg"
+                    altText:
+                      type: string
+                      nullable: true
                 sku:
                   type: string
-                attributes:
-                  type: array
-                  items:
-                    $ref: "../../../schemas/products/variantAttribute.yaml"
+              allOf:
+                - $ref: "../../../schemas/products/variantAttribute.yaml"
 responses:
   201:
     description: Variant created
@@ -85,7 +93,7 @@ responses:
           $ref: "../../../schemas/error/error403.yaml"
 
   404:
-    description: Product or variant not found
+    description: Product or variant or image not found
     content:
       application/json:
         schema:

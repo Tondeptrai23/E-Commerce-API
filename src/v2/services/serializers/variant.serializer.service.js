@@ -5,21 +5,35 @@ const VariantSerializer = new Entity({
         type: "string",
         required: true,
     },
+
+    name: {
+        type: "string",
+    },
+
     price: {
         type: "number",
     },
+
     discountPrice: {
         type: "number",
     },
+
     stock: {
         type: "number",
     },
+
     sku: {
         type: "string",
     },
+
     productID: {
         type: "string",
     },
+
+    imageID: {
+        type: "string",
+    },
+
     image: [
         {
             type: "string",
@@ -28,6 +42,7 @@ const VariantSerializer = new Entity({
             return obj.image.url;
         },
     ],
+
     attributes: [
         {
             type: "object",
@@ -54,6 +69,7 @@ const VariantSerializer = new Entity({
             return undefined;
         },
     ],
+
     updatedAt: [
         {
             type: "date",
@@ -61,7 +77,20 @@ const VariantSerializer = new Entity({
         },
         function (obj, options) {
             if (options.includeTimestamps) {
-                return obj.createdAt;
+                return obj.updatedAt;
+            }
+            return undefined;
+        },
+    ],
+
+    deletedAt: [
+        {
+            type: "date",
+            format: "iso",
+        },
+        function (obj, options) {
+            if (options.includeTimestamps) {
+                return obj.deletedAt;
             }
             return undefined;
         },

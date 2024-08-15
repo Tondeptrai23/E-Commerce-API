@@ -164,6 +164,12 @@ const seedAddress = async () => {
 const seedProduct = async () => {
     await Product.bulkCreate([
         {
+            productID: 0,
+            name: "Pleated Mini Skirt",
+            description: "A pleated mini skirt for a cute and playful outfit",
+            deletedAt: new Date("2024-06-01"),
+        },
+        {
             productID: 1,
             name: "Crew Neck Short Sleeve T-Shirt",
             description:
@@ -318,6 +324,16 @@ const seedProductImage = async () => {
 
 const seedVariant = async () => {
     await Variant.bulkCreate([
+        {
+            variantID: 100,
+            price: 10.0,
+            stock: 15,
+            sku: "TSHIRT1-S-BLACK",
+            imageID: 102,
+            productID: 1,
+            discountPrice: 8.0,
+            deletedAt: new Date("2024-06-01"),
+        },
         {
             variantID: 101,
             price: 10.0,

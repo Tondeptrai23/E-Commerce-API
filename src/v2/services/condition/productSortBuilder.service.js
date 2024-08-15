@@ -11,13 +11,41 @@ export default class ProductSortBuilder extends SortBuilder {
     constructor(requestQuery) {
         super(requestQuery);
         this._map = {
-            name: ["name"],
-            createdAt: ["createdAt"],
-            updatedAt: ["updatedAt"],
+            productID: "`product`.`productID`",
+            name: "`product`.`name`",
+            createdAt: "`product`.`createdAt`",
+            updatedAt: "`product`.`updatedAt`",
 
-            price: ["variants", "price"],
-            discountPrice: ["variants", "discountPrice"],
-            stock: ["variants", "stock"],
+            price: "`variant`.`price`",
+            discountPrice: "`variant`.`discountPrice`",
+            stock: "`variant`.`stock`",
         };
+        this._defaultSort = "`product`.`createdAt` DESC";
     }
+
+    build = () => {
+        const sortConditions = [];
+        if (
+            !this._query ||
+            !this._query.sort ||
+            !Array.isArray(this._query.sort)
+        ) {
+            return sortConditions;
+        }
+        let query = this._query.sort;
+
+        query.forEach((sortString) => {
+            if (sortString[0] === "-") {
+                const field = sortString.substring(1);
+                sortConditions.push(this._mapping(field) + " DESC");
+                return;
+            } else {
+                const field = sortString;
+                sortConditions.push(this._mapping(field) + " ASC");
+            }
+        });
+        sortConditions.push(this._defaultSort);
+
+        return sortConditions;
+    };
 }

@@ -124,7 +124,7 @@ describe("CouponService", () => {
         //Sorting coupons
         test("Get all coupons with sorting", async () => {
             const { coupons } = await couponService.getCoupons({
-                sort: "discountValue",
+                sort: ["discountValue"],
             });
 
             expect(coupons).toBeDefined();
@@ -139,7 +139,7 @@ describe("CouponService", () => {
 
         test("Get all coupons with sorting 2", async () => {
             const { coupons } = await couponService.getCoupons({
-                sort: "-discountValue",
+                sort: ["-discountValue", "createdAt"],
             });
 
             expect(coupons).toBeDefined();
@@ -147,7 +147,9 @@ describe("CouponService", () => {
             expect(coupons.length).toBeGreaterThan(0);
 
             const sortedCoupons = [...coupons].sort(
-                (a, b) => b.discountValue - a.discountValue
+                (a, b) =>
+                    b.discountValue - a.discountValue ||
+                    a.createdAt - b.createdAt
             );
             expect(coupons).toEqual(sortedCoupons);
         });
@@ -156,7 +158,7 @@ describe("CouponService", () => {
         test("Get all coupons with filtering and sorting", async () => {
             const { coupons } = await couponService.getCoupons({
                 discountType: "percentage",
-                sort: "discountValue",
+                sort: ["discountValue"],
             });
 
             expect(coupons).toBeDefined();
@@ -220,7 +222,7 @@ describe("CouponService", () => {
             const { coupons, currentPage, totalPages, totalItems } =
                 await couponService.getCoupons({
                     discountType: "percentage",
-                    sort: "discountValue",
+                    sort: ["discountValue"],
                     page: 1,
                     size: 2,
                 });

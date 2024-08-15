@@ -3,7 +3,8 @@ tags:
   - Admin Attributes
 summary: Retrieve attributes
 description: Retrieves a list of available attributes, including their values. <br>
-  Supports pagination, filtering, and sorting.
+  Supports pagination, filtering, and sorting. <br>
+  If `sort` is not provided, the default sort is by `attributeID` in ascending order. <br>
 security:
   - bearerAuth: []
 parameters:

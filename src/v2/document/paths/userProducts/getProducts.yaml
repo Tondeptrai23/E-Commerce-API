@@ -6,6 +6,8 @@ description: Retrieves a list of all products with optional filtering, sorting, 
   - Filtering by name, category, variant, and attributes. <br>
   - Sorting by one or more fields. <br>
   - Pagination by page and size. <br>
+  - Only one variant per product is returned, selected as the first variant matching all filter criteria when sorting variants by specified filters. <br>
+  - If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
 parameters:
   - name: page
     in: query
@@ -41,15 +43,16 @@ parameters:
       properties:
         price:
           pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
-          example: "[gte]100"
+          example: "[lte]100"
         discountPrice:
           pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
-          example: 90.0
+          example: "[gte]30"
         sku:
-          type: string
+          pattern: /^(\[like\])?([\w-]+)$/
+          example: "[like]T"
         stock:
-          type: integer
-          example: 10
+          pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
+          example: "[gte]5"
 
   - name: category
     in: query
@@ -70,14 +73,6 @@ parameters:
       oneOf:
         - type: string
         - type: array
-
-  - name: oneVariant
-    in: query
-    description: Return only one variant of each product. Default is false
-    required: false
-    schema:
-      type: boolean
-      example: true
 
   - name: attributes
     in: query

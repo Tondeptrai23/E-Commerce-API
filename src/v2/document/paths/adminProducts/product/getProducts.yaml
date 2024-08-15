@@ -3,7 +3,9 @@ tags:
   - Admin Products
 summary: Retrieve all products
 description: Retrieves a list of all products with optional filtering, sorting, and pagination. <br>
-  Admin-specific filters and sorting options are available, including product ID, creation date, and update date.
+  Admin-specific filters and sorting options are available, including product ID, creation date, and update date. <br>
+  Only one variant per product is returned, selected as the first variant matching all filter criteria when sorting variants by specified filters.
+  If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
 security:
   - bearerAuth: []
 parameters:
@@ -109,14 +111,6 @@ parameters:
       oneOf:
         - type: string
         - type: array
-
-  - name: oneVariant
-    in: query
-    description: Return only one variant of each product
-    required: false
-    schema:
-      type: boolean
-      example: true
 
   - name: attributes
     in: query

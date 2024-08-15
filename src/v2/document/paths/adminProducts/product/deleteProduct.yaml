@@ -2,9 +2,9 @@
 tags:
   - Admin Products
 summary: Delete a product
-description: Soft deletes a product with the given ID.
-  Set the `deletedAt` field to the current date and time.
-  Deleting a product will also soft delete variants, but not images.
+description: Soft deletes a product with the given ID. <br>
+  Set the `deletedAt` field to the current date and time. <br>
+  Deleting a product will also soft delete variants. <br>
 security:
   - bearerAuth: []
 parameters:

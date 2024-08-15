@@ -153,7 +153,7 @@ paths:
   /admin/variants:
     $ref: ./paths/index.paths.yaml#/adminVariants
 
-  /admin/{variantID}:
+  /admin/variants/{variantID}:
     $ref: ./paths/index.paths.yaml#/adminVariant
 
   # Admin Categories

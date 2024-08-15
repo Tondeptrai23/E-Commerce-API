@@ -1,5 +1,9 @@
 import { body } from "express-validator";
-import { validateInteger, validateMinValue } from "../utils.validator.js";
+import {
+    validateInteger,
+    validateMinValue,
+    validateUnexpectedFields,
+} from "../utils.validator.js";
 
 const validateCreateImages = [
     body("images")
@@ -14,29 +18,29 @@ const validateCreateImages = [
             return true;
         }),
 
-    // Validate image url
     body("images.*.url")
         .notEmpty()
         .withMessage("URL is required")
         .isString()
         .withMessage("URL should be a string"),
 
-    // Validate thumbnail
-    body("images.*.thumbnail")
+    body("images.*.altText")
         .optional()
         .isString()
-        .withMessage("Thumbnail should be a string"),
+        .withMessage("Alt text should be a string"),
+
+    body("images.*").custom(validateUnexpectedFields(["url", "altText"])),
 ];
 
 const validatePatchImage = [
-    body("imageID").not().exists().withMessage("Id should not be provided"),
+    body("imageID").not().exists().withMessage("ID should not be provided"),
 
     body("url").optional().isString().withMessage("URL should be a string"),
 
-    body("thumbnail")
+    body("images.*.altText")
         .optional()
         .isString()
-        .withMessage("Thumbnail should be a string"),
+        .withMessage("Alt text should be a string"),
 
     body("displayOrder")
         .not()

@@ -1,37 +1,44 @@
 import { StatusCodes } from "http-status-codes";
 import productService from "../../services/products/product.service.js";
-import { ResourceNotFoundError } from "../../utils/error.js";
+import { ConflictError, ResourceNotFoundError } from "../../utils/error.js";
 import productBuilderService from "../../services/products/productBuilder.service.js";
 import ProductSerializer from "../../services/serializers/product.serializer.service.js";
 
 class ProductController {
     async getProducts(req, res) {
         try {
+            const isAdmin = req.admin ? true : false;
+
             // Call services
             let { currentPage, totalPages, totalItems, products } =
-                await productService.getProducts(req.query);
+                await productService.getProducts(req.query, {
+                    includeDeleted: isAdmin,
+                });
 
             // Serialize data
             const serializedProducts = ProductSerializer.parse(products, {
-                includeTimestamps: req.admin ? true : false,
+                includeTimestamps: isAdmin,
+                includeTimestampsForAll: isAdmin,
             });
 
             // Response
-            let response = {
+            res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    currentPage: currentPage,
-                    totalPages: totalPages,
-                    totalItems: totalItems,
-                    products: serializedProducts,
-                },
-            };
-            res.status(StatusCodes.OK).json(response);
+                currentPage: currentPage,
+                totalPages: totalPages,
+                totalItems: totalItems,
+                products: serializedProducts,
+            });
         } catch (err) {
             console.log(err);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Server error when get products",
+                errors: [
+                    {
+                        error: "ServerError",
+                        message: "Server error when get products",
+                    },
+                ],
             });
         }
     }
@@ -40,9 +47,12 @@ class ProductController {
         try {
             // Get query parameters
             const { productID } = req.params;
+            const isAdmin = req.admin ? true : false;
 
             // Call services
-            let product = await productService.getProduct(productID);
+            let product = await productService.getProduct(productID, {
+                includeDeleted: isAdmin,
+            });
 
             if (product === null) {
                 throw new ResourceNotFoundError("Product not found");
@@ -50,29 +60,37 @@ class ProductController {
 
             // Serialize data
             const serializedProduct = ProductSerializer.parse(product, {
-                includeTimestamps: req.admin ? true : false,
+                includeTimestamps: isAdmin,
+                includeTimestampsForAll: isAdmin,
             });
 
             // Response
-            let response = {
+            res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    product: serializedProduct,
-                },
-            };
-            res.status(StatusCodes.OK).json(response);
+                product: serializedProduct,
+            });
         } catch (err) {
             console.log(err);
 
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when get product",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when get a product",
+                        },
+                    ],
                 });
             }
         }
@@ -83,6 +101,15 @@ class ProductController {
             const { variants, categories, images, ...productInfo } = req.body;
 
             // Call services
+            // Check if product name is taken
+            const isTaken = await productService.isProductNameTaken(
+                productInfo.name
+            );
+            if (isTaken) {
+                throw new ConflictError("Product name is taken");
+            }
+
+            // Add product
             const product = await productBuilderService.addProduct(
                 productInfo,
                 variants,
@@ -93,22 +120,38 @@ class ProductController {
             // Serialize data
             const serializedProduct = ProductSerializer.parse(product, {
                 includeTimestamps: true,
+                includeTimestampsForAll: false,
             });
 
             // Response
             res.status(StatusCodes.CREATED).json({
                 success: true,
-                data: {
-                    product: serializedProduct,
-                },
+                product: serializedProduct,
             });
         } catch (err) {
             console.log(err);
             //
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                error: "Server error when add a product",
-            });
+            if (err instanceof ConflictError) {
+                res.status(StatusCodes.CONFLICT).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "ConflictError",
+                            message: err.message,
+                        },
+                    ],
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when add a product",
+                        },
+                    ],
+                });
+            }
         }
     }
 
@@ -119,14 +162,17 @@ class ProductController {
             const { name, description } = req.body;
 
             // Call services
-            let product = await productService.updateProduct(productID, {
+            // Check if product name is taken
+            const isTaken = await productService.isProductNameTaken(name);
+            if (isTaken) {
+                throw new ConflictError("Product name is taken");
+            }
+
+            // Update product
+            const product = await productService.updateProduct(productID, {
                 name,
                 description,
             });
-
-            if (product === null) {
-                throw new ResourceNotFoundError("Product not found");
-            }
 
             // Serialize data
             const serializedProduct = ProductSerializer.parse(product, {
@@ -136,9 +182,7 @@ class ProductController {
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    product: serializedProduct,
-                },
+                product: serializedProduct,
             });
         } catch (err) {
             console.log(err);
@@ -146,12 +190,32 @@ class ProductController {
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
+                });
+            } else if (err instanceof ConflictError) {
+                res.status(StatusCodes.CONFLICT).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "ConflictError",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when update a product",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when update a product",
+                        },
+                    ],
                 });
             }
         }
@@ -175,12 +239,22 @@ class ProductController {
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when delete a product",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when delete a product",
+                        },
+                    ],
                 });
             }
         }

@@ -4,7 +4,9 @@ tags:
 summary: Get all orders
 description: |
   Get all orders.
-  Support pagination, filtering, sorting.
+  Support pagination, filtering, sorting. <br>
+  If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
+  
 parameters:
   - name: page
     in: query

@@ -2,7 +2,10 @@
 tags:
   - Admin Products
 summary: Delete an image from a product
-description: Delete an image from a product
+description: Delete an image from a product. <br>
+  Permanently deletes the image from the product (Even deleted product). <br>
+  Display order of images will be updated. <br>
+  Cannot delete the last image of a product.
 security:
   - bearerAuth: []
 parameters:
@@ -19,7 +22,7 @@ parameters:
     required: true
     schema:
       type: string
-      example: "1"
+      example: "102"
 responses:
   200:
     description: Image deleted

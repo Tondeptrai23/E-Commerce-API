@@ -22,10 +22,23 @@ export default class PaginationBuilder extends QueryToSequelizeConditionConverte
             return { limit: DEFAULT_SIZE, offset: DEFAULT_OFFSET };
         const { page, size } = this._query;
 
-        const limit = size === undefined ? DEFAULT_SIZE : parseInt(size);
-        const offset =
-            page === undefined ? DEFAULT_OFFSET : (parseInt(page) - 1) * limit;
+        if (!page && !size)
+            return { limit: DEFAULT_SIZE, offset: DEFAULT_OFFSET };
 
-        return { limit, offset };
+        if (!page) {
+            return { limit: parseInt(size), offset: DEFAULT_OFFSET };
+        }
+
+        if (!size) {
+            return {
+                limit: DEFAULT_SIZE,
+                offset: (parseInt(page) - 1) * DEFAULT_SIZE,
+            };
+        }
+
+        return {
+            limit: parseInt(size),
+            offset: (parseInt(page) - 1) * parseInt(size),
+        };
     };
 }

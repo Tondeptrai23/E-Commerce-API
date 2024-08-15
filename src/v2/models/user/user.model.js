@@ -22,9 +22,6 @@ User.init(
         name: {
             type: DataTypes.STRING,
         },
-        avatar: {
-            type: DataTypes.STRING,
-        },
         refreshToken: {
             type: DataTypes.STRING,
         },
@@ -36,6 +33,7 @@ User.init(
     {
         sequelize,
         modelName: "user",
+        paranoid: true,
     }
 );
 

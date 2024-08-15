@@ -30,11 +30,19 @@ class AttributeService {
     /**
      * Add attributes for variant
      *
-     * @param {String} variant the variant ID to be added attributes
+     * @param {Variant} variant the variant to be added attributes
      * @param {Object[]} attributes the attributes to be added
      * @returns {Promise<Variant>} the variant with the added attributes
      */
     async addAttributesForVariant(variant, attributes) {
+        if (variant instanceof Variant === false) {
+            return variant;
+        }
+
+        if (!attributes || Object.keys(attributes).length === 0) {
+            return variant;
+        }
+
         const variantAttributes = (
             await Promise.all(
                 Object.entries(attributes).map(async ([name, value]) => {
@@ -61,7 +69,7 @@ class AttributeService {
             )
         ).filter((attribute) => attribute !== null);
 
-        variant.dataValues.attributeValues = variantAttributes;
+        variant.attributeValues = variantAttributes;
         return variant;
     }
 }

@@ -14,7 +14,7 @@ ProductImage.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        thumbnail: {
+        altText: {
             type: DataTypes.STRING,
             allowNull: true,
         },
@@ -27,6 +27,7 @@ ProductImage.init(
         sequelize,
         modelName: "productImage",
         tableName: "product_images",
+        paranoid: true,
     }
 );
 
@@ -41,6 +42,15 @@ ProductImage.beforeBulkCreate(async (productImages) => {
         image.displayOrder = 1 + currentMaxOrder ?? 0;
         currentMaxOrder++;
     }
+});
+
+ProductImage.beforeCreate(async (productImage) => {
+    let currentMaxOrder = await ProductImage.max("displayOrder", {
+        where: {
+            productID: productImage.productID,
+        },
+    });
+    productImage.displayOrder = 1 + currentMaxOrder ?? 0;
 });
 
 export default ProductImage;

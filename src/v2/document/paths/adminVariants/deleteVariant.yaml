@@ -1,25 +1,18 @@
-# DELETE /admin/products/{productID}/variants/{variantID}
+# DELETE /admin/variants/{variantID}
 tags:
-  - Admin Products 
+  - Admin Variants
 summary: Delete a variant
 description: Soft deletes a variant with the given ID.
 security:
   - bearerAuth: []
 parameters:
-  - name: productID
-    in: path
-    description: ID of the product to delete a variant of
-    required: true
-    schema:
-      type: string
-      example: "1"
   - name: variantID
     in: path
     description: ID of the variant to delete
     required: true
     schema:
       type: string
-      example: "1"
+      example: "102"
 responses:
   200:
     description: Variant deleted
@@ -31,30 +24,31 @@ responses:
             success:
               type: string
               example: true
+
   401:
     description: Token error, not authenticated
     content:
       application/json:
         schema:
-          $ref: "../../../schemas/error/error401.yaml"
+          $ref: "../../schemas/error/error401.yaml"
 
   403:
     description: Not an admin
     content:
       application/json:
         schema:
-          $ref: "../../../schemas/error/error403.yaml"  
+          $ref: "../../schemas/error/error403.yaml"  
 
   404:
-    description: Product or variant not found
+    description: Variant not found
     content:
       application/json:
         schema:
-          $ref: "../../../schemas/error/error404.yaml"
+          $ref: "../../schemas/error/error404.yaml"
 
   500:
     description: Internal Server Error
     content:
       application/json:
         schema:
-          $ref: "../../../schemas/error/error500.yaml" 
+          $ref: "../../schemas/error/error500.yaml" 

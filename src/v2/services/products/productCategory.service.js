@@ -4,7 +4,6 @@ import Category from "../../models/products/category.model.js";
 import ProductCategory from "../../models/products/productCategory.model.js";
 import productBuilderService from "./productBuilder.service.js";
 import categoryService from "./category.service.js";
-import { flattenArray } from "../../utils/utils.js";
 
 class ProductCategoryService {
     /**
@@ -35,7 +34,10 @@ class ProductCategoryService {
         const product = await Product.findByPk(productID, {
             include: {
                 model: Category,
-                through: ProductCategory,
+                through: {
+                    model: ProductCategory,
+                    attributes: [],
+                },
                 as: "categories",
                 where: {
                     name: categoryName,
@@ -44,7 +46,11 @@ class ProductCategoryService {
         });
 
         if (!product) {
-            throw new ResourceNotFoundError("Product or Category not found");
+            throw new ResourceNotFoundError("Product not found");
+        }
+
+        if (product.categories.length === 0) {
+            throw new ResourceNotFoundError("Category not found");
         }
 
         await product.removeCategory(product.categories[0]);
@@ -65,7 +71,10 @@ class ProductCategoryService {
             include: [
                 {
                     model: Category,
-                    through: ProductCategory,
+                    through: {
+                        model: ProductCategory,
+                        attributes: [],
+                    },
                     as: "categories",
                 },
             ],
@@ -105,6 +114,11 @@ class ProductCategoryService {
         const products = await Product.findAll({
             include: {
                 model: Category,
+                through: {
+                    model: ProductCategory,
+                    attributes: [],
+                },
+
                 as: "categories",
                 where: {
                     categoryID: categories.map(

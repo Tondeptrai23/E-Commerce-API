@@ -30,11 +30,16 @@ ShippingAddress.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        isDefault: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
     },
     {
         sequelize,
         modelName: "shippingAddress",
         tableName: "shipping_address",
+        paranoid: true,
     }
 );
 

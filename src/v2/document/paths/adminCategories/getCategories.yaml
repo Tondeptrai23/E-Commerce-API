@@ -6,6 +6,7 @@ description: |
   Get all categories. <br>
   Support pagination by page and size. <br>
   Support partial matching filtering by name, parentID, parentName. <br>
+  If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
 security:
   - bearerAuth: []
 parameters:

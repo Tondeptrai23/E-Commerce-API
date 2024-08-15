@@ -4,6 +4,7 @@ tags:
 summary: Retrieve coupons
 description: Retrieves a list of coupons with optional filtering, sorting, and pagination. 
   The `product` and `category` filters support an OR logic, meaning coupons matching either criteria will be included in the results.
+  If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
 security:
   - bearerAuth: []
 parameters:

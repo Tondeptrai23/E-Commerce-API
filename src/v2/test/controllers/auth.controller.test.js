@@ -60,11 +60,11 @@ describe("authController.signin", () => {
                 expect(responseStatus).toEqual(200);
                 return this;
             },
-            json({ success, data }) {
+            json({ success, accessToken, refreshToken, user }) {
                 expect(success).toEqual(true);
-                expect(data.accessToken).toEqual("token");
-                expect(data.refreshToken).toEqual("refresh_token");
-                expect(data.user.userID).toEqual("1");
+                expect(accessToken).toEqual("token");
+                expect(refreshToken).toEqual("refresh_token");
+                expect(user.userID).toEqual("1");
             },
         };
 
@@ -135,9 +135,9 @@ describe("authController.refresh", () => {
                 expect(responseStatus).toEqual(201);
                 return this;
             },
-            json({ success, data }) {
+            json({ success, accessToken }) {
                 expect(success).toEqual(true);
-                expect(data.accessToken).toEqual("new_access_token");
+                expect(accessToken).toEqual("new_access_token");
             },
         };
 
@@ -170,10 +170,10 @@ describe("authController.resetRefreshToken", () => {
                 expect(responseStatus).toEqual(200);
                 return this;
             },
-            json({ success, data }) {
+            json({ success, refreshToken, accessToken }) {
                 expect(success).toEqual(true);
-                expect(data.refreshToken).toEqual("new_refresh_token");
-                expect(data.accessToken).toEqual("new_access_token");
+                expect(refreshToken).toEqual("new_refresh_token");
+                expect(accessToken).toEqual("new_access_token");
             },
         };
 

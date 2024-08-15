@@ -12,7 +12,7 @@ const product = {
     images: [
         {
             imageID: "1",
-            thumbnail: "http://example.com/image.jpg",
+            altText: "http://example.com/image.jpg",
             url: "http://example.com/image.jpg",
             displayOrder: 1,
             productID: "1",
@@ -25,6 +25,7 @@ const product = {
         {
             variantID: "1",
             productID: "1",
+            name: "Product",
             price: 100,
             stock: 10,
             sku: "SKU",
@@ -32,6 +33,17 @@ const product = {
             createdAt: new Date(date),
             updatedAt: new Date(date),
             extraField: "Extra Field",
+            imageID: "1",
+            image: {
+                imageID: "1",
+                altText: "http://example.com/image.jpg",
+                url: "http://example.com/image.jpg",
+                displayOrder: 1,
+                productID: "1",
+                updatedAt: new Date(date),
+                createdAt: new Date(date),
+                extraField: "Extra Field",
+            },
             attributeValues: [
                 {
                     attributeValueID: "1",
@@ -83,7 +95,7 @@ describe("ProductSerializer", () => {
                 images: [
                     expect.objectContaining({
                         imageID: "1",
-                        thumbnail: "http://example.com/image.jpg",
+                        altText: "http://example.com/image.jpg",
                         url: "http://example.com/image.jpg",
                         displayOrder: 1,
                         productID: "1",
@@ -93,7 +105,10 @@ describe("ProductSerializer", () => {
                     expect.objectContaining({
                         variantID: "1",
                         productID: "1",
+                        imageID: "1",
                         price: 100,
+                        discountPrice: 90,
+                        image: "http://example.com/image.jpg",
                         stock: 10,
                         sku: "SKU",
                         attributes: {
@@ -122,27 +137,74 @@ describe("ProductSerializer", () => {
                 images: [
                     expect.objectContaining({
                         imageID: "1",
-                        thumbnail: "http://example.com/image.jpg",
+                        altText: "http://example.com/image.jpg",
                         url: "http://example.com/image.jpg",
                         displayOrder: 1,
                         productID: "1",
-                        updatedAt: new Date(date).toISOString(),
-                        createdAt: new Date(date).toISOString(),
                     }),
                 ],
                 variants: [
                     expect.objectContaining({
                         variantID: "1",
                         productID: "1",
+                        imageID: "1",
+                        name: "Product",
                         price: 100,
                         stock: 10,
                         sku: "SKU",
+                        discountPrice: 90,
+                        image: "http://example.com/image.jpg",
                         attributes: {
                             color: "Red",
                             size: "M",
                         },
+                    }),
+                ],
+                categories: ["Category"],
+            })
+        );
+    });
+
+    test("should serialize product object with includeTimestampsForAll flag", () => {
+        const serializedProduct = ProductSerializer.parse(product, {
+            includeTimestampsForAll: true,
+        });
+
+        expect(serializedProduct).toEqual(
+            expect.objectContaining({
+                productID: "1",
+                name: "Product",
+                description: "Description",
+                createdAt: new Date(date).toISOString(),
+                updatedAt: new Date(date).toISOString(),
+                images: [
+                    expect.objectContaining({
+                        imageID: "1",
+                        altText: "http://example.com/image.jpg",
+                        url: "http://example.com/image.jpg",
+                        displayOrder: 1,
+                        productID: "1",
                         createdAt: new Date(date).toISOString(),
                         updatedAt: new Date(date).toISOString(),
+                    }),
+                ],
+                variants: [
+                    expect.objectContaining({
+                        variantID: "1",
+                        productID: "1",
+                        imageID: "1",
+                        name: "Product",
+                        price: 100,
+                        stock: 10,
+                        sku: "SKU",
+                        discountPrice: 90,
+                        image: "http://example.com/image.jpg",
+                        createdAt: new Date(date).toISOString(),
+                        updatedAt: new Date(date).toISOString(),
+                        attributes: {
+                            color: "Red",
+                            size: "M",
+                        },
                     }),
                 ],
                 categories: ["Category"],
