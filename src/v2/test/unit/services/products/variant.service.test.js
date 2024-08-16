@@ -29,7 +29,9 @@ describe("Variant Service", () => {
 
         test("should return all variants with includeDeleted option", async () => {
             const { variants } = await variantService.getVariants(
-                {},
+                {
+                    size: 100,
+                },
                 {
                     includeDeleted: true,
                 }

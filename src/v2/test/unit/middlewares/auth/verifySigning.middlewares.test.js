@@ -25,9 +25,11 @@ describe("verifySigning.checkEmailExistsForSignIn", () => {
                 return this;
             },
 
-            json({ success, error }) {
+            json({ success, errors }) {
                 expect(success).toEqual(false);
-                expect(error).toEqual("Email not found");
+                expect(errors).toHaveLength(1);
+                expect(errors[0].error).toEqual("NotFound");
+                expect(errors[0].message).toEqual("Email not found");
             },
         };
         const next = jest.fn();
@@ -57,9 +59,11 @@ describe("verifySigning.checkEmailNotExistsForSignUp", () => {
                 return this;
             },
 
-            json({ success, error }) {
+            json({ success, errors }) {
                 expect(success).toEqual(false);
-                expect(error).toEqual(
+                expect(errors).toHaveLength(1);
+                expect(errors[0].error).toEqual("Conflict");
+                expect(errors[0].message).toEqual(
                     "Email already exists! Cannot create account"
                 );
             },

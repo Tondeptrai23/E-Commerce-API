@@ -15,16 +15,25 @@ const checkEmailExistsForSignIn = async (req, res, next) => {
         req.user = user;
         next();
     } catch (err) {
-        console.log(err);
         if (err instanceof ResourceNotFoundError) {
             res.status(StatusCodes.NOT_FOUND).json({
                 success: false,
-                error: err.message,
+                errors: [
+                    {
+                        error: "NotFound",
+                        message: err.message,
+                    },
+                ],
             });
         } else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in verifying email",
+                errors: [
+                    {
+                        error: "ServerError",
+                        message: "Error in verifying email",
+                    },
+                ],
             });
         }
     }
@@ -43,16 +52,25 @@ const checkEmailNotExistsForSignUp = async (req, res, next) => {
         }
         next();
     } catch (err) {
-        console.log(err);
         if (err instanceof ConflictError) {
             res.status(StatusCodes.CONFLICT).json({
                 success: false,
-                error: err.message,
+                errors: [
+                    {
+                        error: "Conflict",
+                        message: err.message,
+                    },
+                ],
             });
         } else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in verifying email",
+                errors: [
+                    {
+                        error: "ServerError",
+                        message: "Error in verifying email",
+                    },
+                ],
             });
         }
     }

@@ -32,17 +32,25 @@ class AuthController {
                 user: UserSerializer.parse(req.user),
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof BadRequestError) {
                 res.status(StatusCodes.BAD_REQUEST).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "BadRequest",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Error in signing in",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Error in signing in",
+                        },
+                    ],
                 });
             }
         }
@@ -61,11 +69,14 @@ class AuthController {
                 success: true,
             });
         } catch (err) {
-            console.log(err);
-
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in signing up",
+                errors: [
+                    {
+                        error: "ServerError",
+                        message: "Error in signing up",
+                    },
+                ],
             });
         }
     }
@@ -81,11 +92,14 @@ class AuthController {
                 accessToken: accessToken,
             });
         } catch (err) {
-            console.log(err);
-
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in refreshing access token",
+                errors: [
+                    {
+                        error: "ServerError",
+                        message: "Error in refreshing token",
+                    },
+                ],
             });
         }
     }
@@ -106,11 +120,14 @@ class AuthController {
                 refreshToken: refreshToken,
             });
         } catch (err) {
-            console.log(err);
-
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in reseting refresh token",
+                errors: [
+                    {
+                        error: "ServerError",
+                        message: "Error in resetting token",
+                    },
+                ],
             });
         }
     }

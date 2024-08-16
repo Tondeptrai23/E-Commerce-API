@@ -42,7 +42,10 @@ Variant.init(
 // Hook to automatically set the variant name based on the product name
 Variant.beforeCreate(async (variant) => {
     if (!variant.name) {
-        const productName = await Product.findByPk(variant.productID);
+        const productName = await Product.findByPk(variant.productID, {
+            paranoid: false,
+            attributes: ["name"],
+        });
         variant.name = productName.name;
     }
 });
@@ -50,7 +53,10 @@ Variant.beforeCreate(async (variant) => {
 Variant.beforeBulkCreate(async (variants) => {
     for (const variant of variants) {
         if (!variant.name) {
-            const productName = await Product.findByPk(variant.productID);
+            const productName = await Product.findByPk(variant.productID, {
+                paranoid: false,
+                attributes: ["name"],
+            });
             variant.name = productName.name;
         }
     }
@@ -58,7 +64,10 @@ Variant.beforeBulkCreate(async (variants) => {
 
 Variant.beforeUpdate(async (variant) => {
     if (!variant.name) {
-        const productName = await Product.findByPk(variant.productID);
+        const productName = await Product.findByPk(variant.productID, {
+            paranoid: false,
+            attributes: ["name"],
+        });
         variant.name = productName.name;
     }
 });

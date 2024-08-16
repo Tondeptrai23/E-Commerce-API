@@ -167,7 +167,6 @@ const seedProduct = async () => {
             productID: 0,
             name: "Pleated Mini Skirt",
             description: "A pleated mini skirt for a cute and playful outfit",
-            deletedAt: new Date("2024-06-01"),
         },
         {
             productID: 1,
@@ -204,6 +203,12 @@ const seedProduct = async () => {
                 "A stylish v-neck short sleeve t-shirt for a trendy look",
         },
     ]);
+
+    await Product.destroy({
+        where: {
+            productID: 0,
+        },
+    });
 };
 
 const seedProductCategory = async () => {
@@ -323,6 +328,23 @@ const seedProductImage = async () => {
 };
 
 const seedVariant = async () => {
+    await Variant.bulkCreate([
+        {
+            variantID: "000",
+            price: 50.0,
+            stock: 10,
+            sku: "SKIRT0-S-BLACK",
+            productID: "0",
+        },
+        {
+            variantID: "001",
+            price: 50.0,
+            stock: 10,
+            sku: "SKIRT0-S-WHITE",
+            productID: "0",
+        },
+    ]);
+
     await Variant.bulkCreate([
         {
             variantID: 100,

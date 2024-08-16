@@ -61,9 +61,9 @@ requestBody:
                 url:
                   type: string
                   example: "https://example.com/image.jpg"
-                thumbnail:
+                altText:
                   type: string
-                  example: "https://example.com/image-thumbnail.jpg"
+                  example: "Red T-Shirt"
                   
 responses:
     201:

@@ -10,7 +10,7 @@ properties:
       properties:
         code:
           type: string
-          example: "ConflictError"
+          example: "Conflict"
         message:  
           type: string
           example: "Something already exists"

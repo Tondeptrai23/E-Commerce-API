@@ -39,9 +39,11 @@ describe("authJwt.verifyToken", () => {
                 return this;
             },
 
-            json({ success, error }) {
+            json({ success, errors }) {
                 expect(success).toEqual(false);
-                expect(error).toEqual("Token not found");
+                expect(errors).toHaveLength(1);
+                expect(errors[0].error).toEqual("Unauthorized");
+                expect(errors[0].message).toEqual("Token not found");
             },
         };
         const next = jest.fn();
@@ -55,9 +57,11 @@ describe("authJwt.verifyToken", () => {
 
     test("Should deny access if token is invalid", async () => {
         const res = {
-            json({ success, error }) {
+            json({ success, errors }) {
                 expect(success).toEqual(false);
-                expect(error).toEqual("Token invalid");
+                expect(errors).toHaveLength(1);
+                expect(errors[0].error).toEqual("TokenInvalid");
+                expect(errors[0].message).toEqual("Token invalid");
             },
             status(responseStatus) {
                 expect(responseStatus).toEqual(401);
@@ -83,9 +87,11 @@ describe("authJwt.verifyToken", () => {
 
     test("should deny access if token is expired", async () => {
         const res = {
-            json({ success, error }) {
+            json({ success, errors }) {
                 expect(success).toEqual(false);
-                expect(error).toEqual("Token expired");
+                expect(errors).toHaveLength(1);
+                expect(errors[0].error).toEqual("TokenExpired");
+                expect(errors[0].message).toEqual("Token expired");
             },
             status(responseStatus) {
                 expect(responseStatus).toEqual(401);
@@ -142,9 +148,11 @@ describe("authJwt.verifyRefreshToken", () => {
                 return this;
             },
 
-            json({ success, error }) {
+            json({ success, errors }) {
                 expect(success).toEqual(false);
-                expect(error).toEqual("Token not found");
+                expect(errors).toHaveLength(1);
+                expect(errors[0].error).toEqual("Unauthorized");
+                expect(errors[0].message).toEqual("Token not found");
             },
         };
         const next = jest.fn();
@@ -157,9 +165,11 @@ describe("authJwt.verifyRefreshToken", () => {
 
     test("should deny access if refresh token is invalid", async () => {
         const res = {
-            json({ success, error }) {
+            json({ success, errors }) {
                 expect(success).toEqual(false);
-                expect(error).toEqual("Token invalid");
+                expect(errors).toHaveLength(1);
+                expect(errors[0].error).toEqual("TokenInvalid");
+                expect(errors[0].message).toEqual("Token invalid");
             },
             status(responseStatus) {
                 expect(responseStatus).toEqual(401);
@@ -213,9 +223,11 @@ describe("authJwt.isAdmin", () => {
                 return this;
             },
 
-            json({ success, error }) {
+            json({ success, errors }) {
                 expect(success).toEqual(false);
-                expect(error).toEqual(
+                expect(errors).toHaveLength(1);
+                expect(errors[0].error).toEqual("Forbidden");
+                expect(errors[0].message).toEqual(
                     "Not an admin. Cannot retrieve administrative data"
                 );
             },

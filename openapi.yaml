@@ -108,7 +108,7 @@ paths:
                       properties:
                         code:
                           type: string
-                          example: ConflictError
+                          example: Conflict
                         message:
                           type: string
                           example: Something already exists
@@ -261,7 +261,7 @@ paths:
       tags:
         - User Products
       summary: Get all products
-      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> - Filtering by name, category, variant, and attributes. <br> - Sorting by one or more fields. <br> - Pagination by page and size. <br> - Only one variant per product is returned, selected as the first variant matching all filter criteria when sorting variants by specified filters.'
+      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> - Filtering by name, category, variant, and attributes. <br> - Sorting by one or more fields. <br> - Pagination by page and size. <br> - Only one variant per product is returned, selected as the first variant matching all filter criteria when sorting variants by specified filters. <br> - If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>'
       parameters:
         - name: page
           in: query
@@ -1785,7 +1785,7 @@ paths:
       tags:
         - Admin Products
       summary: Retrieve all products
-      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> Admin-specific filters and sorting options are available, including product ID, creation date, and update date. <br> Only one variant per product is returned, selected as the first variant matching all filter criteria when sorting variants by specified filters.'
+      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> Admin-specific filters and sorting options are available, including product ID, creation date, and update date. <br> Only one variant per product is returned, selected as the first variant matching all filter criteria when sorting variants by specified filters. If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>'
       security:
         - bearerAuth: []
       parameters:
@@ -1992,9 +1992,9 @@ paths:
                       url:
                         type: string
                         example: 'https://example.com/image.jpg'
-                      thumbnail:
+                      altText:
                         type: string
-                        example: 'https://example.com/image-thumbnail.jpg'
+                        example: Red T-Shirt
       responses:
         '201':
           description: Product created
@@ -3080,7 +3080,7 @@ paths:
       tags:
         - Admin Variants
       summary: Get all variants
-      description: 'Retrieves detailed information about all variants. <br> Supports pagination, sorting, and filtering.'
+      description: 'Retrieves detailed information about all variants. <br> Supports pagination, sorting, and filtering. <br> If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>'
       security:
         - bearerAuth: []
       parameters:
@@ -3522,6 +3522,7 @@ paths:
         Get all categories. <br>
         Support pagination by page and size. <br>
         Support partial matching filtering by name, parentID, parentName. <br>
+        If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
       security:
         - bearerAuth: []
       parameters:
@@ -3884,7 +3885,7 @@ paths:
       tags:
         - Admin Coupons
       summary: Retrieve coupons
-      description: 'Retrieves a list of coupons with optional filtering, sorting, and pagination. The `product` and `category` filters support an OR logic, meaning coupons matching either criteria will be included in the results.'
+      description: 'Retrieves a list of coupons with optional filtering, sorting, and pagination. The `product` and `category` filters support an OR logic, meaning coupons matching either criteria will be included in the results. If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>'
       security:
         - bearerAuth: []
       parameters:
@@ -4563,7 +4564,7 @@ paths:
       tags:
         - Admin Attributes
       summary: Retrieve attributes
-      description: 'Retrieves a list of available attributes, including their values. <br> Supports pagination, filtering, and sorting.'
+      description: 'Retrieves a list of available attributes, including their values. <br> Supports pagination, filtering, and sorting. <br> If `sort` is not provided, the default sort is by `attributeID` in ascending order. <br>'
       security:
         - bearerAuth: []
       parameters:
@@ -5361,8 +5362,9 @@ paths:
         - Admin Attributes
       summary: Get variants which have the attribute
       description: |
-        Get variants which have the attributeID. 
-        Support pagination, sorting and filtering.
+        Get variants which have the attributeID. <br>
+        Support pagination, sorting and filtering. <br>
+        If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
       security:
         - bearerAuth: []
       parameters:
@@ -5476,8 +5478,9 @@ paths:
         - Admin Users
       summary: Get all users
       description: |
-        Get all users
-        Support filtering, sorting, and pagination
+        Get all users.
+        Support filtering, sorting, and pagination. <br>
+        If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
       security:
         - bearerAuth: []
       parameters:
@@ -5762,7 +5765,8 @@ paths:
       summary: Get all orders
       description: |
         Get all orders.
-        Support pagination, filtering, sorting.
+        Support pagination, filtering, sorting. <br>
+        If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
       parameters:
         - name: page
           in: query

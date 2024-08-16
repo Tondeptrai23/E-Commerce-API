@@ -101,9 +101,11 @@ describe("authController.signin", () => {
                 expect(responseStatus).toEqual(400);
                 return this;
             },
-            json({ success, error }) {
+            json({ success, errors }) {
                 expect(success).toEqual(false);
-                expect(error).toEqual("Wrong email/password");
+                expect(errors).toHaveLength(1);
+                expect(errors[0].error).toEqual("BadRequest");
+                expect(errors[0].message).toEqual("Wrong email/password");
             },
         };
 

@@ -26,27 +26,45 @@ const verifyToken = async (req, res, next) => {
         }
         next();
     } catch (err) {
-        console.log(err);
-
         if (err instanceof jwt.TokenExpiredError) {
             res.status(StatusCodes.UNAUTHORIZED).json({
                 success: false,
-                error: "Token expired",
+                errors: [
+                    {
+                        error: "TokenExpired",
+                        message: "Token expired",
+                    },
+                ],
             });
         } else if (err instanceof jwt.JsonWebTokenError) {
             res.status(StatusCodes.UNAUTHORIZED).json({
                 success: false,
-                error: "Token invalid",
+                errors: [
+                    {
+                        error: "TokenInvalid",
+                        message: "Token invalid",
+                    },
+                ],
             });
         } else if (err instanceof UnauthorizedError) {
             res.status(StatusCodes.UNAUTHORIZED).json({
                 success: false,
-                error: err.message,
+                errors: [
+                    {
+                        error: "Unauthorized",
+                        message: err.message,
+                    },
+                ],
             });
         } else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in verifying token",
+                errors: [
+                    {
+                        error: "ServerError",
+                        message: "Error in verifying token",
+                    },
+                ],
             });
         }
     }
@@ -63,17 +81,25 @@ const verifyRefreshToken = async (req, res, next) => {
 
         next();
     } catch (err) {
-        console.log(err);
-
         if (err instanceof jwt.TokenExpiredError) {
             res.status(StatusCodes.UNAUTHORIZED).json({
                 success: false,
-                error: "Token expired",
+                errors: [
+                    {
+                        error: "TokenExpired",
+                        message: "Token expired",
+                    },
+                ],
             });
         } else if (err instanceof jwt.JsonWebTokenError) {
             res.status(StatusCodes.UNAUTHORIZED).json({
                 success: false,
-                error: "Token invalid",
+                errors: [
+                    {
+                        error: "TokenInvalid",
+                        message: "Token invalid",
+                    },
+                ],
             });
         } else if (
             err instanceof UnauthorizedError ||
@@ -81,12 +107,22 @@ const verifyRefreshToken = async (req, res, next) => {
         ) {
             res.status(StatusCodes.UNAUTHORIZED).json({
                 success: false,
-                error: err.message,
+                errors: [
+                    {
+                        error: "Unauthorized",
+                        message: err.message,
+                    },
+                ],
             });
         } else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in verifying token",
+                errors: [
+                    {
+                        error: "ServerError",
+                        message: "Error in verifying token",
+                    },
+                ],
             });
         }
     }
@@ -107,16 +143,25 @@ const isAdmin = async (req, res, next) => {
 
         next();
     } catch (err) {
-        console.log(err);
         if (err instanceof ForbiddenError) {
             res.status(StatusCodes.FORBIDDEN).json({
                 success: false,
-                error: err.message,
+                errors: [
+                    {
+                        error: "Forbidden",
+                        message: err.message,
+                    },
+                ],
             });
         } else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Error in verifying role",
+                errors: [
+                    {
+                        error: "ServerError",
+                        message: "Error in verifying token",
+                    },
+                ],
             });
         }
     }
