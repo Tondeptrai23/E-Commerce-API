@@ -30,7 +30,7 @@ export default class ProductSortBuilder extends SortBuilder {
             !this._query.sort ||
             !Array.isArray(this._query.sort)
         ) {
-            return sortConditions;
+            return [this._defaultSort];
         }
         let query = this._query.sort;
 

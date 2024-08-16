@@ -42,7 +42,6 @@ class ProductService {
         }
 
         const CTE = this.#getCTEtoFilterVariant(conditions, satifiedIDs);
-        console.log(CTE);
 
         const { count, productIDs, variantIDs } =
             await this.#getSatisfiedProducts(conditions, CTE);

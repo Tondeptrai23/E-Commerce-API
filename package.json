@@ -4,7 +4,9 @@
   "description": "E-Commerce API",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --verbose",
+    "test:integration": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --verbose --testPathPattern=src/v2/test/integration",
+    "test:unit": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --verbose --testPathPattern=src/v2/test/unit",
+    "test": "npm run test:unit && npm run test:integration",
     "start": "npm run build:swagger && nodemon src/v2/server.js",
     "build:swagger": "swagger-cli bundle src/v2/document/index.yaml --outfile openapi.yaml --type yaml"
   },

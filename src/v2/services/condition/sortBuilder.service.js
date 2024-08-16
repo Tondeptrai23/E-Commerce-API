@@ -34,7 +34,7 @@ export default class SortBuilder extends QueryToSequelizeConditionConverter {
             !this._query.sort ||
             !Array.isArray(this._query.sort)
         ) {
-            return sortConditions;
+            return this._defaultSort;
         }
         let query = this._query.sort;
 
@@ -48,6 +48,7 @@ export default class SortBuilder extends QueryToSequelizeConditionConverter {
                 sortConditions.push([...this._mapping(field), "ASC"]);
             }
         });
+
         sortConditions.push(...this._defaultSort);
 
         return sortConditions;
