@@ -16,7 +16,10 @@ beforeAll(async () => {
 describe("Variant Service", () => {
     describe("getVariants", () => {
         test("should return all variants", async () => {
-            const { variants } = await variantService.getVariants({}, {});
+            const { variants } = await variantService.getVariants(
+                { productID: "1" },
+                {}
+            );
 
             expect(variants).toBeInstanceOf(Array);
             expect(variants.length).toBeGreaterThan(0);
@@ -311,7 +314,7 @@ describe("Variant Service", () => {
         });
 
         test("should throw ResourceNotFoundError if the variant is not found", async () => {
-            const variantID = "001";
+            const variantID = "999";
             const variantData = { price: 2000 };
 
             await expect(
