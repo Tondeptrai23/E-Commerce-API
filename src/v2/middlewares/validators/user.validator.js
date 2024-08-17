@@ -21,12 +21,6 @@ const validateRegisterUser = [
         .isAlphanumeric()
         .withMessage("Name should be an alphanumeric string"),
 
-    body("role")
-        .notEmpty()
-        .withMessage("Role is required")
-        .isIn(["user", "admin"])
-        .withMessage("Role should be valid"),
-
     body("avatar")
         .optional()
         .isURL()

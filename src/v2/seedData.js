@@ -107,6 +107,7 @@ const seedUser = async () => {
             userID: 4,
             email: "admin@gmail.com",
             password: "adminpassword",
+            name: "Admin",
             role: "admin",
         },
     ];

@@ -8,7 +8,9 @@ import {
     assertTokenInvalid,
 } from "../utils.integration.js";
 
-// Set up
+/**
+ * Set up
+ */
 let accessToken = "";
 let accessTokenUser = "";
 beforeAll(async () => {
@@ -29,6 +31,9 @@ beforeAll(async () => {
     accessTokenUser = resUser.body.accessToken;
 });
 
+/**
+ * Tests
+ */
 describe("DELETE /api/v2/admin/products/:productID", () => {
     it("should delete a product", async () => {
         const res = await request(app)

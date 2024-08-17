@@ -10,7 +10,7 @@ class TokenService {
      * Signs a refresh token with the given payload.
      *
      * @param {Object} payload - The payload to be signed.
-     * @returns {Promise<string>} The signed refresh token.
+     * @returns {Promise<String>} The signed refresh token.
      * @private
      */
     async #signRefreshToken(payload) {
@@ -27,8 +27,8 @@ class TokenService {
      * Creates a new refresh token for the given user.
      * And stores the hashed token in the database.
      *
-     * @param {Object} user - The user object.
-     * @returns {Promise<string>} The new refresh token.
+     * @param {User} user - The user model instance.
+     * @returns {Promise<tring>} The new refresh token.
      */
     async createRefreshToken(user) {
         const newToken = await this.#signRefreshToken({ id: user.userID });
@@ -44,7 +44,7 @@ class TokenService {
      * Signs a token with the given payload.
      *
      * @param {Object} payload - The payload to be signed.
-     * @returns {Promise<string>} The signed token.
+     * @returns {Promise<String>} The signed token.
      */
     async signToken(payload) {
         const token = await jwt.sign(payload, jwt.SECRET_KEY, {
@@ -59,7 +59,7 @@ class TokenService {
     /**
      * Decodes a token and returns the decoded payload.
      *
-     * @param {string} token - The token to be decoded.
+     * @param {String} token - The token to be decoded.
      * @returns {Promise<Object>} The decoded payload.
      */
     async decodeToken(token) {
@@ -74,7 +74,7 @@ class TokenService {
      * Decodes a refresh token and returns the decoded payload.
      * Also checks if the token is valid.
      *
-     * @param {string} token - The refresh token to be decoded.
+     * @param {String} token - The refresh token to be decoded.
      * @returns {Promise<User>} The user object in the payload.
      * @throws {JsonWebTokenError} If the token is invalid.
      * @throws {ResourceNotFoundError} If the user is not found.

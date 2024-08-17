@@ -10,6 +10,9 @@ import {
     assertTokenNotProvided,
 } from "../utils.integration.js";
 
+/**
+ * Set up
+ */
 let accessToken = "";
 let accessTokenUser = "";
 beforeAll(async () => {
@@ -30,6 +33,9 @@ beforeAll(async () => {
     accessTokenUser = resUser.body.accessToken;
 });
 
+/**
+ * Tests
+ */
 describe("GET /admin/products", () => {
     it("should return a list of products", async () => {
         const res = await request(app)

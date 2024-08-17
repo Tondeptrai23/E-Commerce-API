@@ -16,6 +16,9 @@ requestBody:
           password:
             type: string
             example: "password"
+          name:
+            type: string
+            example: "User Name"
 
 responses:
   201:
@@ -30,7 +33,7 @@ responses:
               example: true
 
   409:
-    description: Email already exists
+    description: Email or name already exists
     content:
       application/json:
         schema:

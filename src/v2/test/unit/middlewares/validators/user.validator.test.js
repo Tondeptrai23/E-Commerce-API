@@ -8,7 +8,6 @@ describe("validateRegisterUser", () => {
                 email: "example@gmail.com",
                 password: "password",
                 name: "example",
-                role: "user",
             },
         };
 
@@ -27,7 +26,6 @@ describe("validateRegisterUser", () => {
             body: {
                 email: "example@gmail.com",
                 password: "password",
-                role: "admin",
             },
         };
         for (const validationChain of validator.validateRegisterUser) {
@@ -46,7 +44,6 @@ describe("validateRegisterUser", () => {
             body: {
                 password: "password",
                 name: "example",
-                role: "user",
             },
         };
         for (const validationChain of validator.validateRegisterUser) {
@@ -64,7 +61,6 @@ describe("validateRegisterUser", () => {
                 email: "example",
                 password: "password",
                 name: "example",
-                role: "user",
             },
         };
         for (const validationChain of validator.validateRegisterUser) {
@@ -83,7 +79,6 @@ describe("validateRegisterUser", () => {
             body: {
                 email: "example@gmail.com",
                 name: "example",
-                role: "user",
             },
         };
         for (const validationChain of validator.validateRegisterUser) {
@@ -102,7 +97,6 @@ describe("validateRegisterUser", () => {
                 email: "example@gmail.com",
                 password: "pass",
                 name: "example",
-                role: "user",
             },
         };
         for (const validationChain of validator.validateRegisterUser) {
@@ -117,43 +111,6 @@ describe("validateRegisterUser", () => {
         );
     });
 
-    // Test for role
-
-    test("should return error if role is missing", async () => {
-        const req = {
-            body: {
-                email: "example@gmail.com",
-                password: "password",
-                name: "example",
-            },
-        };
-        for (const validationChain of validator.validateRegisterUser) {
-            await validationChain.run(req);
-        }
-        const errors = validationResult(req);
-
-        expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()[0].msg).toEqual("Role is required");
-    });
-
-    test("should return error if the role is not valid", async () => {
-        const req = {
-            body: {
-                email: "example@gmail.com",
-                password: "password",
-                name: "example",
-                role: "moderator",
-            },
-        };
-        for (const validationChain of validator.validateRegisterUser) {
-            await validationChain.run(req);
-        }
-        const errors = validationResult(req);
-
-        expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()[0].msg).toEqual("Role should be valid");
-    });
-
     // Test for avatar
     test("should return error if avatar is invalid", async () => {
         const req = {
@@ -161,7 +118,6 @@ describe("validateRegisterUser", () => {
                 email: "example@gmail.com",
                 password: "password",
                 name: "example",
-                role: "user",
                 avatar: "example",
             },
         };

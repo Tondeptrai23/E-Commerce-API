@@ -82,7 +82,7 @@ describe("authController.signin", () => {
         );
     });
 
-    test("should return a 400 response for incorrect password", async () => {
+    test("should return a 401 response for incorrect password", async () => {
         // Arrange
         const req = {
             user: await User.findOne({ where: { userID: "1" } }),
@@ -98,13 +98,13 @@ describe("authController.signin", () => {
 
         const res = {
             status(responseStatus) {
-                expect(responseStatus).toEqual(400);
+                expect(responseStatus).toEqual(401);
                 return this;
             },
             json({ success, errors }) {
                 expect(success).toEqual(false);
                 expect(errors).toHaveLength(1);
-                expect(errors[0].error).toEqual("BadRequest");
+                expect(errors[0].error).toEqual("Unauthorized");
                 expect(errors[0].message).toEqual("Wrong email/password");
             },
         };

@@ -2,7 +2,7 @@ import { StatusCodes } from "http-status-codes";
 
 import userService from "../../services/auth/user.service.js";
 import tokenService from "../../services/auth/token.service.js";
-import { BadRequestError } from "../../utils/error.js";
+import { ConflictError, UnauthorizedError } from "../../utils/error.js";
 import UserSerializer from "../../services/serializers/user.serializer.service.js";
 
 class AuthController {
@@ -14,7 +14,7 @@ class AuthController {
             );
 
             if (!isCorrectPassword) {
-                throw new BadRequestError("Wrong email/password");
+                throw new UnauthorizedError("Wrong email/password");
             }
 
             const accessToken = await tokenService.signToken({
@@ -32,12 +32,12 @@ class AuthController {
                 user: UserSerializer.parse(req.user),
             });
         } catch (err) {
-            if (err instanceof BadRequestError) {
-                res.status(StatusCodes.BAD_REQUEST).json({
+            if (err instanceof UnauthorizedError) {
+                res.status(StatusCodes.UNAUTHORIZED).json({
                     success: false,
                     errors: [
                         {
-                            error: "BadRequest",
+                            error: "Unauthorized",
                             message: err.message,
                         },
                     ],
@@ -61,7 +61,7 @@ class AuthController {
             const userInfo = {
                 email: req.body.email,
                 password: req.body.password,
-                role: req.body.role,
+                name: req.body.name,
             };
 
             await userService.createNewAccount(userInfo);
@@ -69,15 +69,27 @@ class AuthController {
                 success: true,
             });
         } catch (err) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Error in signing up",
-                    },
-                ],
-            });
+            if (err instanceof ConflictError) {
+                res.status(StatusCodes.CONFLICT).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "Conflict",
+                            message: err.message,
+                        },
+                    ],
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Error in signing up",
+                        },
+                    ],
+                });
+            }
         }
     }
 

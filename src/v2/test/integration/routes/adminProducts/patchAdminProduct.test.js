@@ -8,7 +8,9 @@ import {
     assertTokenNotProvided,
 } from "../utils.integration.js";
 
-// Setup
+/**
+ * Set up
+ */
 let accessToken = "";
 let accessTokenUser = "";
 beforeAll(async () => {
@@ -29,6 +31,9 @@ beforeAll(async () => {
     accessTokenUser = resUser.body.accessToken;
 });
 
+/**
+ * Tests
+ */
 describe("PATCH /admin/products/:productID", () => {
     it("should update a product", async () => {
         const res = await request(app)

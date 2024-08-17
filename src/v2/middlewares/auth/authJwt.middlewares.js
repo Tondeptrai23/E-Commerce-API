@@ -7,12 +7,14 @@ import {
     ResourceNotFoundError,
 } from "../../utils/error.js";
 import tokenService from "../../services/auth/token.service.js";
+import userService from "../../services/auth/user.service.js";
 
 const verifyToken = async (req, res, next) => {
     try {
         if (!req.header("Authorization")) {
             throw new UnauthorizedError("Token not found");
         }
+
         let token = req.header("Authorization").replace("Bearer ", "");
         if (!token) {
             throw new UnauthorizedError("Token not found");
@@ -167,4 +169,41 @@ const isAdmin = async (req, res, next) => {
     }
 };
 
-export { verifyToken, verifyRefreshToken, isAdmin };
+const checkEmailExistsForSignIn = async (req, res, next) => {
+    try {
+        const { user, isExisted } = await userService.isUserExisted(
+            req.body.email
+        );
+
+        if (!isExisted) {
+            throw new ResourceNotFoundError("Email not found");
+        }
+
+        req.user = user;
+        next();
+    } catch (err) {
+        if (err instanceof ResourceNotFoundError) {
+            res.status(StatusCodes.NOT_FOUND).json({
+                success: false,
+                errors: [
+                    {
+                        error: "NotFound",
+                        message: err.message,
+                    },
+                ],
+            });
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                success: false,
+                errors: [
+                    {
+                        error: "ServerError",
+                        message: "Error in verifying email",
+                    },
+                ],
+            });
+        }
+    }
+};
+
+export { verifyToken, verifyRefreshToken, isAdmin, checkEmailExistsForSignIn };

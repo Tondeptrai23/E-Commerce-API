@@ -1,6 +1,7 @@
 import userService from "../../../../services/auth/user.service.js";
 import seedData from "../../../../seedData.js";
 import User from "../../../../models/user/user.model.js";
+import { ConflictError } from "../../../../utils/error.js";
 
 beforeAll(async () => {
     await seedData();
@@ -22,16 +23,28 @@ describe("User Service", () => {
             expect(createdUser.name).toBe(userInfo.name);
         });
 
-        test("should return null if the email is existed", async () => {
+        test("should throw ConflictError if the email is existed", async () => {
             const userInfo = {
                 email: "user1@gmail.com",
                 password: "password123",
                 name: "Existing User",
             };
 
-            const createdUser = await userService.createNewAccount(userInfo);
+            await expect(
+                userService.createNewAccount(userInfo)
+            ).rejects.toThrow(ConflictError);
+        });
 
-            expect(createdUser).toBeNull();
+        test("should throw ConflictError if the name is taken", async () => {
+            const userInfo = {
+                email: "admin123456@gmail.com",
+                password: "password123",
+                name: "Admin",
+            };
+
+            await expect(
+                userService.createNewAccount(userInfo)
+            ).rejects.toThrow(ConflictError);
         });
     });
 
@@ -67,6 +80,22 @@ describe("User Service", () => {
 
             expect(user).toBeNull();
             expect(isExisted).toBe(false);
+        });
+    });
+
+    describe("userService.isUsernameTaken", () => {
+        test("should return true if the name is taken", async () => {
+            const name = "Admin";
+            const isTaken = await userService.isUsernameTaken(name);
+
+            expect(isTaken).toBe(true);
+        });
+
+        test("should return false if the name is not taken", async () => {
+            const name = "Nonexistent User";
+            const isTaken = await userService.isUsernameTaken(name);
+
+            expect(isTaken).toBe(false);
         });
     });
 
@@ -145,7 +174,7 @@ describe("User Service", () => {
             expect(quantity).toBeGreaterThan(0);
         });
 
-        // test("should return users based on the query", async () => {
+        // test("should return users sed on the query", async () => {
         //     const query = {
         //         name: "John Doe",
         //     };

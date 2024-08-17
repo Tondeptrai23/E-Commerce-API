@@ -52,12 +52,12 @@ responses:
                   example: "https://example.com/avatar.jpg"
                   nullable: true
 
-  409:
+  401:
     description: Email or password incorrect
     content:
       application/json:
         schema:
-          $ref: "../../schemas/error/error409.yaml"
+          $ref: "../../schemas/error/error401.yaml"
 
   404:
     description: User not found

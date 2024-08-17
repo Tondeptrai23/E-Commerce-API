@@ -239,3 +239,37 @@ describe("authJwt.isAdmin", () => {
         expect(next).not.toHaveBeenCalled();
     });
 });
+
+describe("authJwt.checkEmailExistsForSignIn", () => {
+    test("should call next() if email exists", async () => {
+        const req = { body: { email: "user1@gmail.com" } };
+        const res = {};
+        const next = jest.fn();
+
+        await authJwt.checkEmailExistsForSignIn(req, res, next);
+
+        expect(next).toHaveBeenCalled();
+    });
+
+    test("should return 404 if email does not exist", async () => {
+        const req = { body: { email: "nonexistent@example.com" } };
+        const res = {
+            status(responseStatus) {
+                expect(responseStatus).toEqual(404);
+                return this;
+            },
+
+            json({ success, errors }) {
+                expect(success).toEqual(false);
+                expect(errors).toHaveLength(1);
+                expect(errors[0].error).toEqual("NotFound");
+                expect(errors[0].message).toEqual("Email not found");
+            },
+        };
+        const next = jest.fn();
+
+        await authJwt.checkEmailExistsForSignIn(req, res, next);
+
+        expect(next).not.toHaveBeenCalled();
+    });
+});

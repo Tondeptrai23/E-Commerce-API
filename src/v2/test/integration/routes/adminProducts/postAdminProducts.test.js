@@ -8,6 +8,9 @@ import {
     assertTokenInvalid,
 } from "../utils.integration.js";
 
+/**
+ * Set up
+ */
 let accessToken = "";
 let accessTokenUser = "";
 beforeAll(async () => {
@@ -28,6 +31,9 @@ beforeAll(async () => {
     accessTokenUser = resUser.body.accessToken;
 });
 
+/**
+ * Tests
+ */
 describe("POST /admin/products", () => {
     it("should create a product", async () => {
         const res = await request(app)
