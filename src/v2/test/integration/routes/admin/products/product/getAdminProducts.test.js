@@ -1,14 +1,14 @@
 import request from "supertest";
 import { StatusCodes } from "http-status-codes";
-import app from "../../../../app.js";
-import variantService from "../../../../services/products/variant.service.js";
-import VariantSerializer from "../../../../services/serializers/variant.serializer.service.js";
-import seedData from "../../../../seedData.js";
+import app from "../../../../../../app.js";
+import variantService from "../../../../../../services/products/variant.service.js";
+import VariantSerializer from "../../../../../../services/serializers/variant.serializer.service.js";
+import seedData from "../../../../../../seedData.js";
 import {
     assertNotAnAdmin,
     assertTokenInvalid,
     assertTokenNotProvided,
-} from "../utils.integration.js";
+} from "../../../utils.integration.js";
 
 /**
  * Set up

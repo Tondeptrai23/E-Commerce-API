@@ -33,6 +33,8 @@ const validator = {
 
     validateAddCategoriesForProduct:
         categoryValidator.validateAddCategoriesForProduct,
+    validatePutCategoriesForProduct:
+        categoryValidator.validatePutCategoriesForProduct,
 
     validateCreateVariants: variantValidator.validateCreateVariants,
     validatePutVariant: variantValidator.validatePutVariant,

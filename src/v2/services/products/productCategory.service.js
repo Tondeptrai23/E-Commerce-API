@@ -38,6 +38,7 @@ class ProductCategoryService {
                     model: ProductCategory,
                     attributes: [],
                 },
+                required: false,
                 as: "categories",
                 where: {
                     name: categoryName,

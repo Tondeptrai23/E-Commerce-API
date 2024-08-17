@@ -85,33 +85,18 @@ paths:
                         type: string
                         example: 'https://example.com/avatar.jpg'
                         nullable: true
+        '401':
+          description: Email or password incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
         '404':
           description: User not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error404'
-        '409':
-          description: Email or password incorrect
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: string
-                          example: Conflict
-                        message:
-                          type: string
-                          example: Something already exists
         '500':
           description: Internal Server Error
           content:
@@ -137,6 +122,9 @@ paths:
                 password:
                   type: string
                   example: password
+                name:
+                  type: string
+                  example: User Name
       responses:
         '201':
           description: Sign up successful
@@ -155,11 +143,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/error400'
         '409':
-          description: Email already exists
+          description: Email or name already exists
           content:
             application/json:
               schema:
-                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          example: Conflict
+                        message:
+                          type: string
+                          example: Something already exists
         '500':
           description: Internal Server Error
           content:
@@ -1267,7 +1270,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+                $ref: '#/paths/~1auth~1signup/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal Server Error
           content:
@@ -2049,7 +2052,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+                $ref: '#/paths/~1auth~1signup/post/responses/409/content/application~1json/schema'
         '500':
           description: Server error
           content:
@@ -2211,7 +2214,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+                $ref: '#/paths/~1auth~1signup/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal Server Error
           content:
@@ -3682,7 +3685,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+                $ref: '#/paths/~1auth~1signup/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal Server Error
           content:
@@ -3824,7 +3827,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+                $ref: '#/paths/~1auth~1signup/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal Server Error
           content:
@@ -4194,7 +4197,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+                $ref: '#/paths/~1auth~1signup/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal Server Error
           content:
@@ -4742,7 +4745,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+                $ref: '#/paths/~1auth~1signup/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal Server Error
           content:
@@ -5055,7 +5058,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+                $ref: '#/paths/~1auth~1signup/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal Server Error
           content:
@@ -5111,7 +5114,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+                $ref: '#/paths/~1auth~1signup/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal Server Error
           content:
@@ -5198,7 +5201,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+                $ref: '#/paths/~1auth~1signup/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal server error
           content:
@@ -5286,7 +5289,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+                $ref: '#/paths/~1auth~1signup/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal server error
           content:
@@ -5349,7 +5352,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/paths/~1auth~1signin/post/responses/409/content/application~1json/schema'
+                $ref: '#/paths/~1auth~1signup/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal Server Error
           content:

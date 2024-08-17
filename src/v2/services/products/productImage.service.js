@@ -16,13 +16,19 @@ class ProductImageService {
             include: {
                 model: ProductImage,
                 as: "images",
+                required: false,
                 where: {
                     imageID: imageID,
                 },
             },
         });
+
         if (!product) {
-            throw new ResourceNotFoundError("Product or Image not found");
+            throw new ResourceNotFoundError("Product not found");
+        }
+
+        if (!product.images || product.images.length === 0) {
+            throw new ResourceNotFoundError("Image not found");
         }
 
         return product.images[0];
@@ -90,7 +96,7 @@ class ProductImageService {
      * @returns {Promise<ProductImage[]>} the images of the product
      * @throws {ResourceNotFoundError} if the product is not found
      */
-    async getProductImages(productID) {
+    async getProductImages(productID, options = { includeDeleted: false }) {
         const product = await Product.findByPk(productID, {
             include: [
                 {
@@ -98,6 +104,7 @@ class ProductImageService {
                     as: "images",
                 },
             ],
+            paranoid: !options.includeDeleted,
         });
         if (!product) {
             throw new ResourceNotFoundError("Product not found");
@@ -117,11 +124,7 @@ class ProductImageService {
      *
      */
     async setImagesOrder(productID, imageIDs) {
-        const oldImages = await ProductImage.findAll({
-            where: {
-                productID: productID,
-            },
-        });
+        const oldImages = await this.getProductImages(productID);
 
         const size = imageIDs ? imageIDs.length : 0;
 

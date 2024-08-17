@@ -29,4 +29,26 @@ const validateAddCategoriesForProduct = [
     }),
 ];
 
-export { validateAddCategoriesForProduct };
+const validatePutCategoriesForProduct = [
+    body("categories")
+        .notEmpty()
+        .isArray()
+        .withMessage("Categories should be an array"),
+
+    body("categories.*").isString().withMessage("Category should be a string"),
+
+    body("categories").custom(async (value) => {
+        if (!value) {
+            return;
+        }
+        const categories = await categoryService.getCategoryNames();
+
+        for (const category of value) {
+            if (!categories.includes(category)) {
+                throw new Error("Category does not exist");
+            }
+        }
+    }),
+];
+
+export { validateAddCategoriesForProduct, validatePutCategoriesForProduct };

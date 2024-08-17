@@ -1,12 +1,12 @@
 import request from "supertest";
 import { StatusCodes } from "http-status-codes";
-import app from "../../../../app.js";
-import seedData from "../../../../seedData.js";
+import app from "../../../../../../app.js";
+import seedData from "../../../../../../seedData.js";
 import {
     assertNotAnAdmin,
     assertTokenNotProvided,
     assertTokenInvalid,
-} from "../utils.integration.js";
+} from "../../../utils.integration.js";
 
 /**
  * Set up
@@ -132,6 +132,12 @@ describe("POST /admin/products", () => {
                 expect.objectContaining({
                     imageID: expect.any(String),
                     url: "https://example.com/image.jpg",
+                    displayOrder: 1,
+                }),
+                expect.objectContaining({
+                    imageID: expect.any(String),
+                    url: "https://example.com/image2.jpg",
+                    displayOrder: 2,
                 }),
             ])
         );
@@ -249,6 +255,7 @@ describe("POST /admin/products", () => {
                 expect.objectContaining({
                     imageID: expect.any(String),
                     url: "https://example.com/image.jpg",
+                    displayOrder: 1,
                 }),
             ])
         );

@@ -26,7 +26,7 @@ productCategoryRoute.post(
 
 productCategoryRoute.put(
     "/products/:productID/categories",
-    validator.validateAddCategoriesForProduct,
+    validator.validatePutCategoriesForProduct,
     validator.handleValidationErrors,
     verifyToken,
     isAdmin,

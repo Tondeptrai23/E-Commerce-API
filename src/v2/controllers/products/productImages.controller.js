@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { ResourceNotFoundError } from "../../utils/error.js";
+import { ResourceNotFoundError, BadRequestError } from "../../utils/error.js";
 import productImageService from "../../services/products/productImage.service.js";
 import productBuilderService from "../../services/products/productBuilder.service.js";
 import ImageSerializer from "../../services/serializers/image.serializer.service.js";
@@ -9,15 +9,19 @@ class ProductImageController {
         try {
             // Get request body
             const { productID } = req.params;
+            const isAdmin = req.admin ? true : false;
 
             // Call services
             const images = await productImageService.getProductImages(
-                productID
+                productID,
+                {
+                    includeDeleted: isAdmin,
+                }
             );
 
             // Serialize data
             const serializedImages = ImageSerializer.parse(images, {
-                includeTimestamps: req.admin ? true : false,
+                includeTimestamps: isAdmin,
             });
 
             // Response
@@ -226,6 +230,16 @@ class ProductImageController {
                     errors: [
                         {
                             error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
+                });
+            } else if (err instanceof BadRequestError) {
+                res.status(StatusCodes.BAD_REQUEST).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "BadRequest",
                             message: err.message,
                         },
                     ],

@@ -1,12 +1,12 @@
 import request from "supertest";
 import { StatusCodes } from "http-status-codes";
-import app from "../../../../app.js";
-import seedData from "../../../../seedData.js";
+import app from "../../../../../../app.js";
+import seedData from "../../../../../../seedData.js";
 import {
     assertNotAnAdmin,
     assertTokenNotProvided,
     assertTokenInvalid,
-} from "../utils.integration.js";
+} from "../../../utils.integration.js";
 
 /**
  * Set up
