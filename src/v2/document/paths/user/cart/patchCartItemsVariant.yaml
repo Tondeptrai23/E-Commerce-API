@@ -1,0 +1,73 @@
+# PATCH /cart/items/{variantID}:
+tags:
+  - User Cart
+summary: Update item in cart
+description: |
+  Update item in cart 
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: variantID
+    required: true
+    description: VariantID in cart that the user wants to update.
+    schema:
+      type: string
+      example: "1"
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        description: Quantity of the variantID that the user wants to update.
+        type: object
+        properties:
+          quantity:
+            type: number
+            example: 1
+responses:
+  200:
+    description: Item updated in cart
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            cartItem:
+              type: object
+              allOf:
+                - $ref: "../../../schemas/products/variant.yaml"
+              properties:
+                quantity:
+                  type: number
+                  example: 1
+                totalPrice:
+                  type: number
+                  example: 90
+  400:
+    description: Invalid request parameters
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error400.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  404:
+    description: Cart item not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal server error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

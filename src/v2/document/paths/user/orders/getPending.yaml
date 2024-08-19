@@ -1,0 +1,45 @@
+# GET /orders/pending
+tags:
+  - User Orders
+summary: Retrieve the user's pending order
+description: Retrieves the user's active pending order. <br>
+  A user can only have one pending order at a time for buying items, applying coupons, and checking out.
+security:
+  - bearerAuth: []
+responses:
+  200:
+    description: Pending order found
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            order:
+              type: object
+              properties:
+                shippingAddress:
+                  $ref: "../../../schemas/users/address.yaml"
+              allOf:
+                - $ref: "../../../schemas/shopping/associatedOrder.yaml"
+
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  404:
+    description: Pending order not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

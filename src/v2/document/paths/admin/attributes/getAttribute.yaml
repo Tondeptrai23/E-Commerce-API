@@ -1,0 +1,68 @@
+# GET /admin/attributes/{attributeID}:
+tags:
+  - Admin Attributes
+summary: Retrieve attribute details
+description: Retrieves detailed information about a specific attribute based on its ID.
+security:
+  - bearerAuth: []
+parameters:
+  - name: attributeID
+    in: path
+    description: Attribute ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+responses:
+  200:
+    description: Attributes retrieved
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            attribute:
+              type: object
+              properties:
+                attributeID:
+                  type: string
+                  example: "1"
+                name:
+                  type: string
+                  example: "color"
+                values:
+                  type: array
+                  items:
+                    type: object
+                    allOf:
+                      - $ref: "../../../schemas/products/value.yaml"
+                      - $ref: "../../../schemas/timestamps.yaml"
+              allOf:
+                - $ref: "../../../schemas/timestamps.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
+  404:
+    description: Attribute Not Found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

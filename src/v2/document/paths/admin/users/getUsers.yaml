@@ -1,0 +1,128 @@
+# GET /admin/users:
+tags:
+  - Admin Users
+summary: Get all users
+description: |
+  Get all users.
+  Support filtering, sorting, and pagination. <br>
+  If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
+security:
+  - bearerAuth: []
+parameters:
+  - name: page
+    in: query
+    description: Page to retrieve
+    required: false
+    schema:
+      type: integer
+      example: 1
+      
+  - name: size
+    in: query
+    description: Size each page
+    required: false
+    schema:
+      type: integer
+      example: 10
+
+  - name: email
+    in: query
+    description: Filter by email
+    required: false
+    schema:
+      type: string
+      example: "[like]gmail.com"
+
+  - name: name
+    in: query
+    description: Filter by name
+    required: false
+    schema:
+      type: string
+      example: "[like]John"
+
+  - name: role
+    in: query
+    description: Filter by role
+    required: false
+    schema:
+      type: string
+      enum: ["user", "admin"]
+      example: "user"
+
+  - name: createdAt
+    in: query
+    description: Filter by createdAt
+    required: false
+    schema:
+      type: string
+      example: "[between]2021-01-01,2021-12-31"
+      
+  - name: updatedAt
+    in: query
+    description: Filter by updatedAt
+    required: false
+    schema:
+      type: string
+      example: "[between]2021-01-01,2021-12-31"
+
+  - name: deletedAt
+    in: query
+    description: Filter by deletedAt
+    required: false
+    schema:
+      type: string
+      example: "[between]2021-01-01,2021-12-31"
+
+  - name: sort
+    in: query
+    description: Sort by field
+    required: false
+    schema:
+      type: string
+      example: "-createdAt,name"
+responses:
+  200:
+    description: Get all users successful
+    content:
+      application/json:
+        schema:
+          type: object
+          allOf:
+            - $ref: "../../../schemas/pagination.yaml"
+          properties:
+            success:
+              type: boolean
+              example: true
+            users:
+              type: array
+              items:
+                type: object
+                allOf:
+                  - $ref: "../../../schemas/users/user.yaml"
+                  - $ref: "../../../schemas/timestamps.yaml"
+                  - $ref: "../../../schemas/deleteTimestamps.yaml"
+  400:
+    description: Invalid query parameters
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error400.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

@@ -1,0 +1,72 @@
+# PATCH /admin/products/{productID}/images
+tags:
+  - Admin Products
+summary: Reorder product images
+description: Reorders the images associated with a product. <br>
+  The request body should contain an array of image IDs specifying the desired display order. <br>
+  Images not included in the array will be moved to the end of the list.
+security:
+  - bearerAuth: []
+parameters:
+  - name: productID
+    in: path
+    description: ID of the product to reorder images of
+    required: true
+    schema:
+      type: string
+      example: "1"
+requestBody:
+  description: Image data to reorder
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          images:
+            type: array
+            items:
+              type: string
+            example: ["1", "2", "3"]
+responses:
+  200:
+    description: Images reordered
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            images:
+              type: array
+              items:
+                type: object
+                allOf:
+                  - $ref: "../../../../schemas/products/image.yaml"
+                  - $ref: "../../../../schemas/timestamps.yaml"
+  401:
+    description: Token error, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error403.yaml"
+  404:
+    description: Product not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error500.yaml"

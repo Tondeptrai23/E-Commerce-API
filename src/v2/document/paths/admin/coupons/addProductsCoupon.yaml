@@ -1,0 +1,86 @@
+# POST /admin/coupons/{couponID}/products
+tags:
+  - Admin Coupons
+summary: Add products to a coupon by couponID
+description: Add products to a coupon by couponID.
+security:
+  - bearerAuth: []
+parameters:
+  - name: couponID
+    in: path
+    description: Coupon ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+      
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          productIDs:
+            type: array
+            items:
+              type: string
+            example: ["1", "2"]
+responses:
+  200:
+    description: Products added to coupon
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            coupon:
+              type: object
+              properties:
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      productID:
+                        type: string
+                        example: "1"
+                      name:
+                        type: string
+                        example: "Product 1"
+              allOf:
+                - $ref: "../../../schemas/shopping/coupon.yaml"
+                - $ref: "../../../schemas/timestamps.yaml"
+  400:
+    description: Invalid request parameters
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error400.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
+  404:
+    description: Coupon not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

@@ -18,263 +18,263 @@ resetToken:
 # ADMIN PRODUCTS
 adminProducts:
   get:
-    $ref: "./adminProducts/product/getProducts.yaml"
+    $ref: "./admin/products/product/getProducts.yaml"
   post:
-    $ref: "./adminProducts/product/postProduct.yaml"
+    $ref: "./admin/products/product/postProduct.yaml"
 
 adminProduct:
   get:
-    $ref: "./adminProducts/product/getProduct.yaml"
+    $ref: "./admin/products/product/getProduct.yaml"
   patch:
-    $ref: "./adminProducts/product/patchProduct.yaml"
+    $ref: "./admin/products/product/patchProduct.yaml"
   delete:
-    $ref: "./adminProducts/product/deleteProduct.yaml"
+    $ref: "./admin/products/product/deleteProduct.yaml"
 
 adminProductVariants:
   get:
-    $ref: "./adminProducts/variant/getVariants.yaml"
+    $ref: "./admin/products/variant/getVariants.yaml"
   post:
-    $ref: "./adminProducts/variant/postVariants.yaml"
+    $ref: "./admin/products/variant/postVariants.yaml"
 
 adminProductVariant:
   get:
-    $ref: "./adminProducts/variant/getVariant.yaml"   
+    $ref: "./admin/products/variant/getVariant.yaml"   
 
 adminProductImages:
   get:
-    $ref: "./adminProducts/image/getImages.yaml"
+    $ref: "./admin/products/image/getImages.yaml"
   post:
-    $ref: "./adminProducts/image/postImages.yaml"
+    $ref: "./admin/products/image/postImages.yaml"
   patch:
-    $ref: "./adminProducts/image/patchImages.yaml"
+    $ref: "./admin/products/image/patchImages.yaml"
 
 adminProductImage:
   patch:
-    $ref: "./adminProducts/image/patchImage.yaml"
+    $ref: "./admin/products/image/patchImage.yaml"
   delete:
-    $ref: "./adminProducts/image/deleteImage.yaml"
+    $ref: "./admin/products/image/deleteImage.yaml"
 
 adminProductCategories:
   get:
-    $ref: "./adminProducts/category/getCategories.yaml"
+    $ref: "./admin/products/category/getCategories.yaml"
   post:
-    $ref: "./adminProducts/category/postCategories.yaml"
+    $ref: "./admin/products/category/postCategories.yaml"
   put:
-    $ref: "./adminProducts/category/putCategories.yaml"
+    $ref: "./admin/products/category/putCategories.yaml"
 
 adminProductCategory:
   delete:
-    $ref: "./adminProducts/category/deleteCategory.yaml"
+    $ref: "./admin/products/category/deleteCategory.yaml"
 
 # ADMIN VARIANTS
 
 adminVariants:
   get:
-    $ref: "./adminVariants/getVariants.yaml"
+    $ref: "./admin/variants/getVariants.yaml"
 
 adminVariant:
   get:
-    $ref: "./adminVariants/getVariant.yaml"
+    $ref: "./admin/variants/getVariant.yaml"
   patch:
-    $ref: "./adminVariants/patchVariant.yaml"
+    $ref: "./admin/variants/patchVariant.yaml"
   put:
-    $ref: "./adminVariants/putVariant.yaml"
+    $ref: "./admin/variants/putVariant.yaml"
   delete:
-    $ref: "./adminVariants/deleteVariant.yaml"
+    $ref: "./admin/variants/deleteVariant.yaml"
 
 # ADMIN CATEGORIES
 adminCategories:
   get:
-    $ref: "./adminCategories/getCategories.yaml"
+    $ref: "./admin/categories/getCategories.yaml"
   post:
-    $ref: "./adminCategories/postCategories.yaml"
+    $ref: "./admin/categories/postCategories.yaml"
 
 adminCategory:
   get:
-    $ref: "./adminCategories/getCategory.yaml"
+    $ref: "./admin/categories/getCategory.yaml"
   put:
-    $ref: "./adminCategories/putCategory.yaml"
+    $ref: "./admin/categories/putCategory.yaml"
   delete:
-    $ref: "./adminCategories/deleteCategory.yaml"
+    $ref: "./admin/categories/deleteCategory.yaml"
 
 # ADMIN COUPONS
 adminCoupons:
   get:
-    $ref: "./adminCoupons/getCoupons.yaml"
+    $ref: "./admin/coupons/getCoupons.yaml"
   post:
-    $ref: "./adminCoupons/postCoupons.yaml"
+    $ref: "./admin/coupons/postCoupons.yaml"
 
 adminCoupon:
   get:
-    $ref: "./adminCoupons/getCoupon.yaml"
+    $ref: "./admin/coupons/getCoupon.yaml"
   patch:
-    $ref: "./adminCoupons/patchCoupon.yaml"
+    $ref: "./admin/coupons/patchCoupon.yaml"
   delete:
-    $ref: "./adminCoupons/deleteCoupon.yaml"
+    $ref: "./admin/coupons/deleteCoupon.yaml"
 
 adminCouponProducts:
   post:
-    $ref: "./adminCoupons/addProductsCoupon.yaml"
+    $ref: "./admin/coupons/addProductsCoupon.yaml"
 
 adminCouponCategories:
   post:
-    $ref: "./adminCoupons/addCategoriesCoupon.yaml"
+    $ref: "./admin/coupons/addCategoriesCoupon.yaml"
 
 # ADMIN ATTRIBUTES
 
 adminAttributes:
   get:
-    $ref: "./adminAttributes/getAttributes.yaml"
+    $ref: "./admin/attributes/getAttributes.yaml"
   post:
-    $ref: "./adminAttributes/postAttributes.yaml"
+    $ref: "./admin/attributes/postAttributes.yaml"
 
 adminAttribute:
   get:
-    $ref: "./adminAttributes/getAttribute.yaml"
+    $ref: "./admin/attributes/getAttribute.yaml"
   patch:
-    $ref: "./adminAttributes/patchAttribute.yaml"
+    $ref: "./admin/attributes/patchAttribute.yaml"
   put:
-    $ref: "./adminAttributes/putAttribute.yaml"
+    $ref: "./admin/attributes/putAttribute.yaml"
   post:
-    $ref: "./adminAttributes/postAttribute.yaml"
+    $ref: "./admin/attributes/postAttribute.yaml"
   delete:
-    $ref: "./adminAttributes/deleteAttribute.yaml"
+    $ref: "./admin/attributes/deleteAttribute.yaml"
 
 adminAttributeValues:
   patch:
-    $ref: "./adminAttributes/patchAttributeValues.yaml"
+    $ref: "./admin/attributes/patchAttributeValues.yaml"
   put:
-    $ref: "./adminAttributes/putAttributeValues.yaml"
+    $ref: "./admin/attributes/putAttributeValues.yaml"
   delete:
-    $ref: "./adminAttributes/deleteAttributeValues.yaml"
+    $ref: "./admin/attributes/deleteAttributeValues.yaml"
 
 adminAttributeVariants:
   get:
-    $ref: "./adminAttributes/getVariantAttributes.yaml"
+    $ref: "./admin/attributes/getVariantAttributes.yaml"
 
 # ADMIN USERS
 
 adminUsers:
   get:
-    $ref: "./adminUsers/getUsers.yaml"
+    $ref: "./admin/users/getUsers.yaml"
 
 adminUser:
   get:
-    $ref: "./adminUsers/getUser.yaml"
+    $ref: "./admin/users/getUser.yaml"
   delete:
-    $ref: "./adminUsers/deleteUser.yaml"
+    $ref: "./admin/users/deleteUser.yaml"
   
 adminUserCart:
   get:
-    $ref: "./adminUsers/getUserCart.yaml"
+    $ref: "./admin/users/getUserCart.yaml"
 
 # ADMIN ORDERS
 
 adminOrders:
   get:
-    $ref: "./adminOrders/getOrders.yaml"
+    $ref: "./admin/orders/getOrders.yaml"
 
 adminOrder:
   get:
-    $ref: "./adminOrders/getOrder.yaml"
+    $ref: "./admin/orders/getOrder.yaml"
 
 # USER PRODUCTS
 userProducts:
   get:
-    $ref: "./userProducts/getProducts.yaml"
+    $ref: "./user/products/getProducts.yaml"
 
 userProduct:
   get:
-    $ref: "./userProducts/getProduct.yaml"
+    $ref: "./user/products/getProduct.yaml"
 
 userProductVariants:
   get:
-    $ref: "./userProducts/getVariants.yaml"
+    $ref: "./user/products/getVariants.yaml"
 
 userProductImages:
   get:
-    $ref: "./userProducts/getImages.yaml"
+    $ref: "./user/products/getImages.yaml"
 
 userProductCategories:
   get:
-    $ref: "./userProducts/getProductCategories.yaml"
+    $ref: "./user/products/getProductCategories.yaml"
 
 # USER CATEGORIES
 
 userCategories:
   get:
-    $ref: "./userCategories/getCategories.yaml"
+    $ref: "./user/categories/getCategories.yaml"
 
 userCategory:
   get:
-    $ref: "./userCategories/getCategory.yaml"
+    $ref: "./user/categories/getCategory.yaml"
 
 userAscendantCategories:
   get:
-    $ref: "./userCategories/getAscendant.yaml"
+    $ref: "./user/categories/getAscendant.yaml"
 
 userDescendantCategories:
   get:
-    $ref: "./userCategories/getDescendant.yaml"
+    $ref: "./user/categories/getDescendant.yaml"
 
 # USER CART
 
 userCart:
   get:
-    $ref: "./userCart/getCart.yaml"
+    $ref: "./user/cart/getCart.yaml"
   post:
-    $ref: "./userCart/postCart.yaml"
+    $ref: "./user/cart/postCart.yaml"
   delete:
-    $ref: "./userCart/deleteCart.yaml"
+    $ref: "./user/cart/deleteCart.yaml"
 
 userCartItems:
   post:
-    $ref: "./userCart/postCartItems.yaml"
+    $ref: "./user/cart/postCartItems.yaml"
 
 userCartItemsVariant:
   patch:
-    $ref: "./userCart/patchCartItemsVariant.yaml"
+    $ref: "./user/cart/patchCartItemsVariant.yaml"
   delete:
-    $ref: "./userCart/deleteCartItemsVariant.yaml"
+    $ref: "./user/cart/deleteCartItemsVariant.yaml"
 
 # USER ORDER
 
 userOrders:
   get:
-    $ref: "./userOrders/getOrders.yaml"
+    $ref: "./user/orders/getOrders.yaml"
 
 userOrder:
   get:
-    $ref: "./userOrders/getOrder.yaml"
+    $ref: "./user/orders/getOrder.yaml"
   delete:
-    $ref: "./userOrders/deleteOrder.yaml"
+    $ref: "./user/orders/deleteOrder.yaml"
   
 userPendingOrder:
   get:
-    $ref: "./userOrders/getPending.yaml"
+    $ref: "./user/orders/getPending.yaml"
   post:
-    $ref: "./userOrders/postPending.yaml"
+    $ref: "./user/orders/postPending.yaml"
   patch:
-    $ref: "./userOrders/patchPending.yaml"
+    $ref: "./user/orders/patchPending.yaml"
   
 userPendingCoupon:
   get:
-    $ref: "./userOrders/getPendingCoupon.yaml"
+    $ref: "./user/orders/getPendingCoupon.yaml"
   post:
-    $ref: "./userOrders/postPendingCoupon.yaml"
+    $ref: "./user/orders/postPendingCoupon.yaml"
 
 # USER ADDRESS
 
 userAddresses:
   get:
-    $ref: "./userInfo/getAddresses.yaml"
+    $ref: "./user/info/getAddresses.yaml"
   post:
-    $ref: "./userInfo/postAddresses.yaml"
+    $ref: "./user/info/postAddresses.yaml"
 
 userAddress:
   get:
-    $ref: "./userInfo/getAddress.yaml"
+    $ref: "./user/info/getAddress.yaml"
   patch:
-    $ref: "./userInfo/patchAddress.yaml"
+    $ref: "./user/info/patchAddress.yaml"
   delete:
-    $ref: "./userInfo/deleteAddress.yaml"
+    $ref: "./user/info/deleteAddress.yaml"

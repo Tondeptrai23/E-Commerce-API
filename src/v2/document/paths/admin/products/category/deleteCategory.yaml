@@ -1,0 +1,57 @@
+# DELETE /admin/products/{productID}/categories/{categoryName}:
+tags:
+  - Admin Products
+summary: Delete a category from a product
+description: Delete a category from a product
+security:
+  - bearerAuth: []
+parameters:
+  - name: productID
+    in: path
+    description: ID of the product to delete a category from
+    required: true
+    schema:
+      type: string
+      example: "1"
+  - name: categoryName
+    in: path
+    description: Name of the category to delete
+    required: true
+    schema:
+      type: string
+      example: "shirts"
+responses:
+  200:
+    description: Category deleted
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+  401:
+    description: Token error, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error403.yaml"
+  404:
+    description: Product or category not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error404.yaml"
+  500:
+    description: Internal server error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error500.yaml"

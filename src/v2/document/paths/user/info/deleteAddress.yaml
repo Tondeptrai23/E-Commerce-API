@@ -1,0 +1,47 @@
+# DELETE /address/{addressID}:
+tags:
+  - User Address
+summary: Soft delete address by addressID
+description: |
+  Soft delete the address by setting `deletedAt` to current datetime. <br>
+  If the pending order is associated with the address, the order will be permanently deleted. <br>
+  Deleted addresses cannot be recovered.
+security:
+  - bearerAuth: []
+parameters:
+  - name: addressID
+    in: path
+    description: Address ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+responses:
+  200:
+    description: Address deleted
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  404:
+    description: Address not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

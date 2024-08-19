@@ -1,0 +1,107 @@
+# POST /admin/products/{productID}/variants
+tags:
+  - Admin Products
+summary: Create product variants
+description: Creates multiple product variants for the specified product. <br>
+  If variant's name is not provided, it will use the product name
+  If image is provided, a new product image will be created and associated with the variant
+security:
+  - bearerAuth: []
+parameters:
+  - name: productID
+    in: path
+    description: ID of the product to create variants for
+    required: true
+    schema:
+      type: string
+      example: "1"
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          variants:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Variant name"
+                  nullable: true
+                price:
+                  type: number
+                  example: 100
+                discountPrice:
+                  type: number
+                  example: 90
+                  nullable: true
+                stock:
+                  type: integer
+                  example: 10
+                image:
+                  type: object
+                  properties:
+                    url:
+                      type: string
+                      example: "image.com/image.jpg"
+                    altText:
+                      type: string
+                      nullable: true
+                sku:
+                  type: string
+              allOf:
+                - $ref: "../../../../schemas/products/variantAttribute.yaml"
+responses:
+  201:
+    description: Variant created
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            variant:
+              type: object
+              allOf:
+                - $ref: "../../../../schemas/products/variant.yaml"
+                - $ref: "../../../../schemas/timestamps.yaml"
+                - $ref: "../../../../schemas/products/variantAttribute.yaml"
+  400:
+    description: Validation Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error400.yaml"
+
+  401:
+    description: Token error, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error401.yaml"
+
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error403.yaml"
+
+  404:
+    description: Product or variant or image not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error404.yaml"
+
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error500.yaml"

@@ -1,0 +1,188 @@
+# GET /admin/products
+tags:
+  - Admin Products
+summary: Retrieve all products
+description: Retrieves a list of all products with optional filtering, sorting, and pagination. <br>
+  Admin-specific filters and sorting options are available, including product ID, creation date, and update date. <br>
+  Only one variant per product is returned, selected as the first variant matching all filter criteria when sorting variants by specified filters. <br>
+security:
+  - bearerAuth: []
+parameters:
+  - name: page
+    in: query
+    description: Page to retrieve
+    required: false
+    schema:
+      type: integer
+
+  - name: size
+    in: query
+    description: Size each page
+    required: false
+    schema:
+      type: integer
+
+  - name: productID
+    in: query
+    description: Filter by productID. <br> 
+      For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#query-string).
+    required: false
+    schema:
+      type: string
+      example: "[like]1"
+
+  - name: name
+    in: query
+    description: Filter by name. <br> 
+      For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#string-filtering).
+    required: false
+    schema:
+      type: string
+      example: "[like]T-shirt"
+
+  - name: createdAt
+    in: query
+    description: Filter by createdAt. <br> 
+      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#date-filtering).
+    required: false
+    schema:
+      type: string
+      example: "[gte]2024-01-01"
+
+  - name: updatedAt
+    in: query
+    description: Filter by updatedAt. <br> 
+      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#date-filtering).
+    required: false
+    schema:
+      type: string
+      example: "[gte]2024-01-01"
+
+  - name: deletedAt
+    in: query
+    description: Filter by deletedAt. <br>
+      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#date-filtering).
+    schema:
+      type: string
+      example: "[gte]2024-01-01"
+
+  - name: variant
+    in: query
+    style: deepObject
+    explode: true
+    description: Filter by variant's properties. <br>
+    required: false
+    schema:
+      type: object
+      properties:
+        price:
+          description: | 
+            [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#number-filtering) 
+          example: "[gte]50"
+        discountPrice:
+          description: | 
+            [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#number-filtering) 
+          example: "[lte]50"
+        sku:
+          description: | 
+            [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#string-filtering)
+          example: "SKU123"
+        stock:
+          description: | 
+            [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#number-filtering) 
+          example: "[gte]10"
+
+  - name: category
+    in: query
+    description: Filter by category
+    required: false
+    schema:
+      $ref: "../../../../schemas/products/categoryNames.yaml"
+
+  - name: sort
+    in: query
+    description: Sort products by one or more fields. <br>
+      For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#sorting).
+    required: false
+    example: "price,-stock"
+    schema:
+      oneOf:
+        - type: string
+        - type: array
+          items:
+            type: string
+
+  - name: attributes
+    in: query
+    description: Filter products by attributes. <br>
+      For more information, see the [Filter By Variant Attributes](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md##get-products-and-get-adminproducts-1).
+    required: false
+    style: deepObject
+    schema:
+      type: object
+      description: Dynamic attributes of the product
+      properties:
+        color:
+          example: "red"
+        size:
+          example: "M,L"
+
+responses:
+  200:
+    description: Successful operation
+    content:
+      application/json:
+        schema:
+          type: object
+          allOf:
+            - $ref: "../../../../schemas/pagination.yaml"
+          properties:
+            success:
+              type: boolean
+              example: true
+            products:
+              type: array
+              items:
+                type: object
+                properties:
+                  variants:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "../../../../schemas/products/variant.yaml"
+                        - $ref: "../../../../schemas/timestamps.yaml"
+                        - $ref: "../../../../schemas/deleteTimestamps.yaml"
+                  categories:
+                    $ref: "../../../../schemas/products/categoryNames.yaml"
+                allOf:
+                  - $ref: "../../../../schemas/products/product.yaml"
+                  - $ref: "../../../../schemas/timestamps.yaml"
+                  - $ref: "../../../../schemas/deleteTimestamps.yaml"
+
+  400:
+    description: Invalid query parameters
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error400.yaml"
+
+  401:
+    description: Token error, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error401.yaml"
+
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error403.yaml"  
+
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error500.yaml" 

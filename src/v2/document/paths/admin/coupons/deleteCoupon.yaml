@@ -1,0 +1,52 @@
+# DELETE /admin/coupons/{couponID}
+tags:
+  - Admin Coupons
+summary: Disable coupon
+description: Soft deletes a coupon by its ID. <br>
+  The coupon's `maxUsage` is set to 0, effectively disabling it. <br>
+  Can reactivate the coupon by updating the `maxUsage` to a positive number.
+security:
+  - bearerAuth: []
+parameters:
+  - name: couponID
+    in: path
+    description: Coupon ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+responses:
+  200:
+    description: Coupon deleted
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
+  404:
+    description: Coupon not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

@@ -1,0 +1,127 @@
+# GET /orders
+tags:
+  - User Orders
+summary: Get orders
+description: Get all orders belongs to user. <br>
+  - The orders will not be shown if it is marked as deleted. <br>
+  - Support pagination, filtering, and sorting. <br>
+  - Don't support filtering or sorting by nested fields. <br>
+security:
+  - bearerAuth: []
+parameters:
+  - name: page
+    in: query
+    description: Page to retrieve
+    required: false
+    schema:
+      type: integer
+      example: 1
+
+  - name: size
+    in: query
+    description: Size per page
+    required: false
+    schema:
+      type: integer
+      example: 10
+  
+  - name: sort
+    in: query
+    description: Sort orders by one or more fields. <br> 
+      - A comma-separated list of fields ("finalTotal,-createdAt"). <br> 
+      - A single field ("finalTotal"). <br> - An array of fields (["finalTotal", "-createdAt"]). <br>
+    required: false
+    schema:
+      type: string
+      example: "finalTotal,-createdAt"
+    
+  - name: status
+    in: query
+    description: Filter by status
+    required: false
+    schema:
+      type: string
+      example: "delivered"
+  
+  - name: paymentMethod
+    in: query
+    description: Filter by payment method
+    required: false
+    schema:
+      type: string
+      example: "COD"
+
+  - name: subTotal
+    in: query
+    description: Filter by subTotal. <br> 
+      - Support operators "[lte]100", "[gte]100", "[between]100,200"
+    required: false
+    schema:
+      type: string
+      example: "[gte]100"
+
+  - name: finalTotal
+    in: query
+    description: Filter by finalTotal. <br> 
+      - Support operators "[lte]100", "[gte]100", "[between]100,200"
+    required: false
+    schema:
+      type: string
+      example: "[gte]100"
+
+  - name: createdAt
+    in: query
+    description: Filter by createdAt. <br> 
+      - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2021-12-31"
+    required: false
+    schema:
+      type: string
+      example: "[gte]2021-01-01"
+
+  - name: updatedAt
+    in: query
+    description: Filter by updatedAt. <br> 
+      - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2021-12-31"
+    required: false
+    schema:
+      type: string
+      example: "[lte]2021-12-31"
+
+responses:
+  200:
+    description: Orders found
+    content:
+      application/json:
+        schema:
+          type: object
+          allOf:
+            - $ref: "../../../schemas/pagination.yaml"
+          properties:
+            success:
+              type: boolean
+              example: true
+            orders:
+              type: array
+              items:
+                allOf:
+                  - $ref: "../../../schemas/shopping/order.yaml"
+                  - $ref: "../../../schemas/timestamps.yaml"
+  400:
+    description: Invalid query parameters
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error400.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"
+

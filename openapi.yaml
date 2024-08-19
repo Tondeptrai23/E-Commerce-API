@@ -30,6 +30,9 @@ tags:
     description: Endpoints for managing attributes.
   - name: Admin Orders
     description: Endpoints for managing orders.
+externalDocs:
+  description: Detailed Query Parameters Documentation
+  url: 'https://github.com/Tondeptrai23/E-Commerce-API/blob/main/src/v2/document/docs/query.md'
 paths:
   /auth/signin:
     post:
@@ -280,7 +283,7 @@ paths:
             type: integer
         - name: name
           in: query
-          description: 'Filter by name. Support partial matching using "[like]name"'
+          description: 'Filter by name. Support partial matching using "[like]name" For more information, see [String Query](../../../docs/query.md#string-filtering)'
           required: false
           schema:
             type: string
@@ -1788,7 +1791,7 @@ paths:
       tags:
         - Admin Products
       summary: Retrieve all products
-      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> Admin-specific filters and sorting options are available, including product ID, creation date, and update date. <br> Only one variant per product is returned, selected as the first variant matching all filter criteria when sorting variants by specified filters. If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>'
+      description: 'Retrieves a list of all products with optional filtering, sorting, and pagination. <br> Admin-specific filters and sorting options are available, including product ID, creation date, and update date. <br> Only one variant per product is returned, selected as the first variant matching all filter criteria when sorting variants by specified filters. <br>'
       security:
         - bearerAuth: []
       parameters:
@@ -1806,54 +1809,63 @@ paths:
             type: integer
         - name: productID
           in: query
-          description: 'Filter by productID. <br> - Support partial matching using "[like]productID"'
+          description: 'Filter by productID. <br> For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#query-string).'
           required: false
           schema:
             type: string
+            example: '[like]1'
         - name: name
           in: query
-          description: 'Filter by name. <br> - Support partial matching using "[like]name"'
+          description: 'Filter by name. <br> For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#string-filtering).'
           required: false
           schema:
             type: string
+            example: '[like]T-shirt'
         - name: createdAt
           in: query
-          description: 'Filter by createdAt. <br> - Support operators <br> + [lte]2024-01-01 <br> + [gte]2024-01-01 <br> + [between]2024-01-01,2022-01-01 <br>'
+          description: 'Filter by createdAt. <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#date-filtering).'
           required: false
           schema:
             type: string
+            example: '[gte]2024-01-01'
         - name: updatedAt
           in: query
-          description: 'Filter by updatedAt. <br> - Support operators <br> + [lte]2024-01-01 <br> + [gte]2024-01-01 <br> + [between]2024-01-01,2022-01-01 <br>'
+          description: 'Filter by updatedAt. <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#date-filtering).'
           required: false
           schema:
             type: string
+            example: '[gte]2024-01-01'
         - name: deletedAt
           in: query
-          description: 'Filter by deletedAt. <br> - Support operators <br> + [lte]2024-01-01 <br> + [gte]2024-01-01 <br> + [between]2024-01-01,2022-01-01 <br>'
-          required: false
+          description: 'Filter by deletedAt. <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#date-filtering).'
           schema:
             type: string
+            example: '[gte]2024-01-01'
         - name: variant
           in: query
           style: deepObject
           explode: true
-          description: 'Filter by variant''s price and discountPrice. <br> - Support operators "[lte]100", "[gte]100", "[between]100,200"'
+          description: Filter by variant's properties. <br>
           required: false
           schema:
             type: object
             properties:
               price:
-                pattern: '/^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/'
-                example: '[gte]100'
+                description: |
+                  [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#number-filtering) 
+                example: '[gte]50'
               discountPrice:
-                pattern: '/^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/'
-                example: 90
+                description: |
+                  [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#number-filtering) 
+                example: '[lte]50'
               sku:
-                type: string
+                description: |
+                  [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#string-filtering)
+                example: SKU123
               stock:
-                type: integer
-                example: 10
+                description: |
+                  [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#number-filtering) 
+                example: '[gte]10'
         - name: category
           in: query
           description: Filter by category
@@ -1862,15 +1874,18 @@ paths:
             $ref: '#/components/schemas/categoryNames'
         - name: sort
           in: query
-          description: 'Sort products by one or more fields. <br> Specify fields in a comma-separated string ("price,-discountPrice"), as a single string ("price"), or as an array of strings (["price", "-discountPrice"]). <br> A leading ''-'' indicates descending order. Sorting is applied from left to right.'
+          description: 'Sort products by one or more fields. <br> For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#sorting).'
           required: false
+          example: 'price,-stock'
           schema:
             oneOf:
               - type: string
               - type: array
+                items:
+                  type: string
         - name: attributes
           in: query
-          description: 'Filter products by attributes. <br> The `attributes` parameter is a dynamic object where keys represent attribute names and values represent desired attribute values.  <br> A product is included in the results if at least one of its variants matches all specified attributes.  <br> For example, `attributes={"color":"red","size":"M"}` will return products with a variant having both the color "red" and size "M".  <br> Note that `size="M,L"` is different from `size=["M","L"]`. <br> - The former filters for products with either size M or L, while the latter filters for products with both sizes (which is typically impossible).'
+          description: 'Filter products by attributes. <br> For more information, see the [Filter By Variant Attributes](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md##get-products-and-get-adminproducts-1).'
           required: false
           style: deepObject
           schema:
@@ -3981,7 +3996,7 @@ paths:
             type: string
         - name: updatedAt
           in: query
-          description: 'Filter by updatedAt. <br> - Support operators <br> + [lte]2024-01-01 <br> + [gte]2024-01-01 <br> + [between]2024-01-01,2022-01-01 <br>'
+          description: Filter by updatedAt. <br>
           required: false
           schema:
             type: string
@@ -4000,9 +4015,6 @@ paths:
                 type: string
                 example: '[like]name'
               createdAt:
-                type: string
-                example: '[lte]2024-01-01'
-              updatedAt:
                 type: string
                 example: '[lte]2024-01-01'
         - name: category

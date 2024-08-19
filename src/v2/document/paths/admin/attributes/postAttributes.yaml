@@ -1,0 +1,78 @@
+# POST /admin/attributes
+tags:
+  - Admin Attributes
+summary: Create an attribute
+description: |
+  Create a new attribute with values. 
+  The attribute name must be unique. 
+  The values must be unique within the attribute. 
+  The values can be empty.
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+            example: "color"
+          values:
+            type: array
+            items:
+              type: string
+            example: ["red", "blue"]
+responses:
+  201:
+    description: Attribute created
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            attribute:
+              type: object
+              properties:
+                values:
+                  type: array
+                  items:
+                    type: string
+                  example: ["red", "blue"]
+              allOf:
+                - $ref: "../../../schemas/products/attribute.yaml"
+                - $ref: "../../../schemas/timestamps.yaml"
+  400:
+    description: Invalid request parameters
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error400.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
+  409:
+    description: Attribute name already exists
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error409.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

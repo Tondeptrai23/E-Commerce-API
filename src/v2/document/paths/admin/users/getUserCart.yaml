@@ -1,0 +1,52 @@
+# GET /admin/users/{userID}/cart:
+tags:
+  - Admin Users
+summary: Get user's cart
+description: |
+  Get user's cart
+security:
+  - bearerAuth: []
+parameters:
+  - name: userID
+    in: path
+    description: User ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+responses:
+  200:
+    description: Get user's cart successful
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            ## Add properties here
+  401:
+    description: Unauthorized
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
+  404:
+    description: User not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

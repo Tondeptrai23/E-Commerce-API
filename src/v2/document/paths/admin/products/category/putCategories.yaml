@@ -1,0 +1,69 @@
+# PUT /admin/products/{productID}/categories
+tags:
+  - Admin Products
+summary: Update product categories
+description: Replaces the entire set of categories associated with a product. <br>
+  Any existing categories will be removed, and the provided categories will be assigned.
+security:
+  - bearerAuth: []
+parameters:
+  - name: productID
+    in: path
+    description: ID of the product to update categories of
+    required: true
+    schema:
+      type: string
+      example: "1"
+requestBody:
+  description: Categories to update
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          categories:
+            $ref: "../../../../schemas/products/categoryNames.yaml"
+responses:
+  200:
+    description: Categories updated
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            product:            
+              type: object
+              properties:
+                categories:
+                  $ref: "../../../../schemas/products/categoryNames.yaml"
+              allOf:
+                - $ref: "../../../../schemas/products/product.yaml"
+                - $ref: "../../../../schemas/timestamps.yaml"
+  401:
+    description: Token error, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error403.yaml"
+  404:
+    description: Product not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error404.yaml"
+  500:
+    description: Internal server error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error500.yaml"

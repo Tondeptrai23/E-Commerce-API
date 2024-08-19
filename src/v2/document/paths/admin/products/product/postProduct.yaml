@@ -1,0 +1,133 @@
+# POST /admin/products
+tags:
+  - Admin Products
+summary: Create a product
+description: Creates a new product. <br>
+  The product name must be unique. <br>
+  The order of images in the request body determines their display order on the product. <br>
+  The product should have at least 1 variant. <br>
+  If variant's name is not provided, it will use the product name
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name: 
+            type: string
+            example: "T-Shirt"
+          description:
+            type: string
+          variants:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Red T-Shirt"
+                  nullable: true
+                price:
+                  type: number
+                  example: 100
+                discountPrice:
+                  type: number
+                  example: 90
+                  nullable: true
+                stock:
+                  type: integer
+                  example: 10
+                sku:
+                  type: string
+                imageIndex:
+                  type: number
+                  example: 0
+                attributes:
+                  type: object
+                  description: Dynamic attributes of the product
+                  example:
+                    color: "red"
+                    size: "M"
+          categories:
+            $ref: "../../../../schemas/products/categoryNames.yaml"
+          images:
+            type: array
+            items:
+              type: object
+              properties:
+                url:
+                  type: string
+                  example: "https://example.com/image.jpg"
+                altText:
+                  type: string
+                  example: "Red T-Shirt"
+                  
+responses:
+    201:
+      description: Product created
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: string
+                example: true
+              product:
+                type: object
+                properties:
+                  variants:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "../../../../schemas/products/variant.yaml"
+                        - $ref: "../../../../schemas/products/variantAttribute.yaml"
+                  images:
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - $ref: "../../../../schemas/products/image.yaml"
+                  categories:
+                    $ref: "../../../../schemas/products/categoryNames.yaml"
+                allOf:
+                  - $ref: "../../../../schemas/products/product.yaml"
+                  - $ref: "../../../../schemas/timestamps.yaml"
+                
+    400:
+      description: Validation Error
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../schemas/error/error400.yaml"
+    
+    401:
+      description: Token error, not authenticated
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../schemas/error/error401.yaml"
+
+    403:
+      description: Not an admin
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../schemas/error/error403.yaml"
+
+    409:
+      description: Product name already exists
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../schemas/error/error409.yaml"
+
+    500:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: "../../../../schemas/error/error500.yaml"

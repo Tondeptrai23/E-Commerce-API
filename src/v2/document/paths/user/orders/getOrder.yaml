@@ -1,0 +1,48 @@
+# GET /orders/{orderID}
+tags:
+  - User Orders
+summary: Get an order
+description: Get an order belongs to user by orderID. <br>
+  - The order will not be shown if it is marked as deleted. <br>
+security:
+  - bearerAuth: []
+parameters:
+  - name: orderID
+    in: path
+    description: Order ID
+    required: true
+    schema:
+      type: string
+    example: "1"
+responses:
+  200:
+    description: Order found
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            order:
+              $ref: "../../../schemas/shopping/associatedOrder.yaml"
+
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  404:
+    description: Order not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

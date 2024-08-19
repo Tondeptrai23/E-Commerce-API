@@ -1,0 +1,223 @@
+# GET /admin/coupons
+tags:
+  - Admin Coupons
+summary: Retrieve coupons
+description: Retrieves a list of coupons with optional filtering, sorting, and pagination. 
+  The `product` and `category` filters support an OR logic, meaning coupons matching either criteria will be included in the results.
+  If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
+security:
+  - bearerAuth: []
+parameters:
+  - name: page
+    in: query
+    description: Page to retrieve
+    required: false
+    schema:
+      type: integer
+
+  - name: size
+    in: query
+    description: Size each page
+    required: false
+    schema:
+      type: integer
+
+  - name: code
+    in: query
+    description: Filter by code. <br> 
+      - Support partial matching using "[like]code"
+    required: false
+    schema:
+      type: string
+      example: "[like]10OFF"
+
+  - name: discountValue
+    in: query
+    description: Filter by discountValue. <br> 
+      - Support operators "[lte]100", "[gte]100", "[between]100,200"
+    required: false
+    schema:
+      type: string
+      pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
+      example: "[gte]100"
+
+  - name: discountType
+    in: query
+    description: Filter by discountType. 
+    required: false
+    schema:
+      type: string
+      enum: ["percentage", "fixed"]
+      example: "percentage"
+
+  - name: target
+    in: query
+    description: Filter by target. 
+    required: false
+    schema:
+      type: string
+      enum: ["single", "all"]
+      example: "all"
+
+  - name: minimumOrderAmount
+    in: query
+    description: Filter by minimumOrderAmount. <br> 
+      - Support operators "[lte]100", "[gte]100", "[between]100,200"
+    required: false
+    schema:
+      type: string
+      pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
+      example: "[gte]100"
+
+  - name: timesUsed
+    in: query
+    description: Filter by timesUsed. <br> 
+      - Support operators "[lte]100", "[gte]100", "[between]100,200"
+    required: false
+    schema:
+      type: string
+      pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
+      example: "[gte]100"
+
+  - name: maxUsage
+    in: query
+    description: Filter by maxUsage. <br> 
+      - Support operators "[lte]100", "[gte]100", "[between]100,200"
+    required: false
+    schema:
+      type: string
+      pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
+      example: "[gte]100"
+
+  - name: startDate
+    in: query
+    description: Filter by startDate. <br> 
+      - Support operators <br> 
+      + [lte]2024-01-01 <br> 
+      + [gte]2024-01-01 <br> 
+      + [between]2024-01-01,2022-01-01 <br> 
+    required: false
+    schema:
+      type: string
+
+  - name: endDate
+    in: query
+    description: Filter by endDate. <br> 
+      - Support operators <br> 
+      + [lte]2024-01-01 <br> 
+      + [gte]2024-01-01 <br> 
+      + [between]2024-01-01,2022-01-01 <br> 
+    schema:
+      type: string
+
+  - name: createdAt
+    in: query
+    description: Filter by createdAt. <br> 
+      - Support operators <br> 
+      + [lte]2024-01-01 <br> 
+      + [gte]2024-01-01 <br> 
+      + [between]2024-01-01,2022-01-01 <br> 
+    schema:
+      type: string
+
+  - name: updatedAt
+    in: query
+    description: Filter by updatedAt. <br>
+    required: false
+    schema:
+      type: string
+
+  - name: product
+    in: query
+    style: deepObject
+    description: Filter by product's productID, name, createdAt, updatedAt. <br> 
+    required: false
+    schema:
+      type: object
+      properties:
+        productID:
+          type: string
+          example: "1"
+        name:
+          type: string
+          example: "[like]name" 
+        createdAt:
+          type: string
+          example: "[lte]2024-01-01"
+    
+  - name: category
+    in: query
+    description: Filter by category
+    required: false
+    schema:
+      $ref: "../../../schemas/products/categoryNames.yaml"  
+  
+  - name: sort
+    in: query
+    description: Sort by fields. <br> 
+      - Support multiple fields separated by comma <br> 
+      - Support descending order using "-" prefix <br>
+      - Don't support sorting by nested fields
+    required: false
+    schema:
+      type: string
+      example: "code,-discountValue"
+
+responses:
+  200:
+    description: Coupons retrieved
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            coupons:
+              type: array
+              items:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        productID:
+                          type: string
+                          example: "1"
+                        name:
+                          type: string
+                          example: "Product 1"
+                  categories:
+                    $ref: "../../../schemas/products/categoryNames.yaml"
+                allOf:
+                  - $ref: "../../../schemas/shopping/coupon.yaml"
+                  - $ref: "../../../schemas/timestamps.yaml"
+          allOf:
+            - $ref: "../../../schemas/pagination.yaml"
+  400:
+    description: Invalid query parameters
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error400.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
+  500:
+    description: Internal server error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

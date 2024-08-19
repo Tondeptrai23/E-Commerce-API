@@ -1,0 +1,142 @@
+# GET /products
+tags:
+  - User Products
+summary: Get all products
+description: Retrieves a list of all products with optional filtering, sorting, and pagination. <br>
+  - Filtering by name, category, variant, and attributes. <br>
+  - Sorting by one or more fields. <br>
+  - Pagination by page and size. <br>
+  - Only one variant per product is returned, selected as the first variant matching all filter criteria when sorting variants by specified filters. <br>
+  - If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
+parameters:
+  - name: page
+    in: query
+    description: Page to retrieve
+    required: false
+    schema:
+      type: integer
+
+  - name: size
+    in: query
+    description: Size each page
+    required: false
+    schema:
+      type: integer
+
+  - name: name
+    in: query
+    description: Filter by name. Support partial matching using "[like]name"
+      For more information, see [String Query](../../../docs/query.md#string-filtering)
+    required: false
+    schema:
+      type: string
+      pattern: /^(\[like\])?([\w-]+)$/
+
+  - name: variant
+    in: query
+    description: Filter by variant's price and discountPrice. <br> 
+        - Support operators "[lte]100", "[gte]100", "[between]100,200"
+    required: false
+    style: deepObject
+    explode: false
+    schema:
+      type: object
+      properties:
+        price:
+          pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
+          example: "[lte]100"
+        discountPrice:
+          pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
+          example: "[gte]30"
+        sku:
+          pattern: /^(\[like\])?([\w-]+)$/
+          example: "[like]T"
+        stock:
+          pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
+          example: "[gte]5"
+
+  - name: category
+    in: query
+    description: Filter by category
+    required: false
+    schema:
+      $ref: "../../../schemas/products/categoryNames.yaml"
+  
+  - name: sort
+    in: query
+    description: Sort products by one or more fields. <br> 
+      - A comma-separated list of fields ("price,-discountPrice"). <br> 
+      - A single field ("price"). <br> - An array of fields (["price", "-discountPrice"]). <br>
+      - A leading '-' indicates descending order. <br> 
+      - Sorting is applied from left to right
+    required: false
+    schema:
+      oneOf:
+        - type: string
+        - type: array
+
+  - name: attributes
+    in: query
+    description: Filter by attributes. <br>
+      - Only support exact matching. <br>
+      - Support multiple attributes. <br>
+      - For example, to find products that have red variant and size M or L, use "color=red&size=M,L"
+      or "color=red&size=M&size=L". <br>
+    required: false
+    style: deepObject
+    explode: false
+    schema:
+      type: object
+      description: Dynamic attributes of the product
+      properties:
+        color:
+          example: "red"
+        size:
+          example: "M,L"
+responses:
+    200:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              currentPage:
+                type: integer
+                example: 1
+              totalPages:
+                type: integer
+                example: 10
+              totalItems:
+                type: integer
+                example: 20
+              products:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    variants:
+                      type: array
+                      items:
+                        $ref: "../../../schemas/products/variant.yaml"
+                    categories:
+                      $ref: "../../../schemas/products/categoryNames.yaml"
+                  allOf:
+                    - $ref: "../../../schemas/products/product.yaml"
+
+    400:
+      description: Validation Error
+      content:
+        application/json:
+          schema:
+            $ref: "../../../schemas/error/error400.yaml"
+
+    500:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: "../../../schemas/error/error500.yaml"
