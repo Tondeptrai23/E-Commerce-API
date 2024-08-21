@@ -1,0 +1,60 @@
+import request from "supertest";
+import { StatusCodes } from "http-status-codes";
+import app from "../../../../../app.js";
+import seedData from "../../../../../seedData.js";
+
+/**
+ * Set up
+ */
+beforeAll(async () => {
+    // Seed data
+    await seedData();
+});
+
+/**
+ * Tests
+ */
+describe("GET /api/v2/products/:productID/images", () => {
+    it("Should return images of a product", async () => {
+        const res = await request(app).get("/api/v2/products/1/images");
+
+        expect(res.status).toBe(StatusCodes.OK);
+        expect(res.body).toEqual(
+            expect.objectContaining({
+                success: true,
+                images: expect.any(Array),
+            })
+        );
+
+        for (let i = 0; i < res.body.images.length; i++) {
+            const image = res.body.images[i];
+            expect(image).toEqual(
+                expect.objectContaining({
+                    imageID: expect.any(String),
+                    url: expect.any(String),
+                    altText: expect.toBeOneOf([null, expect.any(String)]),
+                    displayOrder: i + 1,
+                    productID: "1",
+                })
+            );
+            expect(image.createdAt).toBeUndefined();
+            expect(image.updatedAt).toBeUndefined();
+        }
+    });
+
+    it("Should return 404 if product does not exist", async () => {
+        const res = await request(app).get("/api/v2/products/999/images");
+
+        expect(res.status).toBe(StatusCodes.NOT_FOUND);
+        expect(res.body).toEqual({
+            success: false,
+            errors: expect.any(Array),
+        });
+        expect(res.body.errors[0]).toEqual(
+            expect.objectContaining({
+                error: "NotFound",
+                message: "Product not found",
+            })
+        );
+    });
+});
