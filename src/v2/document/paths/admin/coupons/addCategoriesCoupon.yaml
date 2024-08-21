@@ -24,7 +24,7 @@ requestBody:
           categories:
             $ref: "../../../schemas/products/categoryNames.yaml"
 responses:
-  200:
+  201:
     description: Categories added to coupon
     content:
       application/json:

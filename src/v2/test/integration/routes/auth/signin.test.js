@@ -63,7 +63,7 @@ describe("POST /api/v2/auth/signin", () => {
         expect(res.body).toHaveProperty("errors");
         expect(res.body.errors[0]).toEqual(
             expect.objectContaining({
-                msg: "Email is required",
+                message: "Email is required",
             })
         );
     });

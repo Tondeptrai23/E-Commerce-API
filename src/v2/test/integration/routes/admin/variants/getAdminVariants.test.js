@@ -64,7 +64,8 @@ describe("GET /admin/variants", () => {
     it("should return a list of variants even if they are deleted", async () => {
         const res = await request(app)
             .get("/api/v2/admin/variants")
-            .set("Authorization", `Bearer ${accessToken}`);
+            .set("Authorization", `Bearer ${accessToken}`)
+            .query({ size: 20 });
 
         expect(res.statusCode).toEqual(StatusCodes.OK);
         expect(res.body).toEqual(

@@ -116,9 +116,17 @@ adminCouponProducts:
   post:
     $ref: "./admin/coupons/addProductsCoupon.yaml"
 
+adminCouponProduct:
+  delete:
+    $ref: "./admin/coupons/deleteProductCoupon.yaml"
+
 adminCouponCategories:
   post:
     $ref: "./admin/coupons/addCategoriesCoupon.yaml"
+
+adminCouponCategory:
+  delete:
+    $ref: "./admin/coupons/deleteCategoryCoupon.yaml"
 
 # ADMIN ATTRIBUTES
 

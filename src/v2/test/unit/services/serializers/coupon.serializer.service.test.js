@@ -7,6 +7,7 @@ describe("Coupon Serializer", () => {
         const coupon = {
             couponID: "couponID",
             code: "CODE",
+            description: "description",
             discountType: "percentage",
             discountValue: 10,
             target: "all",
@@ -44,6 +45,7 @@ describe("Coupon Serializer", () => {
         expect(serializedCoupon).toEqual({
             couponID: "couponID",
             code: "CODE",
+            description: "description",
             discountType: "percentage",
             discountValue: 10,
             target: "all",
@@ -78,6 +80,7 @@ describe("Coupon Serializer", () => {
         expect(serializedCoupon).toEqual({
             couponID: "couponID",
             code: "CODE",
+            description: null,
             discountType: "percentage",
             discountValue: 10,
             target: "all",

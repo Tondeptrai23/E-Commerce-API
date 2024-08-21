@@ -19,6 +19,9 @@ Coupon.init(
             defaultValue: 0,
             allowNull: false,
         },
+        description: {
+            type: DataTypes.STRING,
+        },
         discountType: {
             type: DataTypes.ENUM("percentage", "fixed"),
             allowNull: false,

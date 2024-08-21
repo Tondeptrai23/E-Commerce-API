@@ -11,10 +11,16 @@ import * as couponValidator from "./shopping/coupon.validator.js";
 
 const handleValidationErrors = (req, res, next) => {
     const errors = validationResult(req);
+
+    const errorsArray = errors.array().map((error) => {
+        error.message = error.msg;
+        delete error.msg;
+        return error;
+    });
     if (!errors.isEmpty()) {
         return res.status(StatusCodes.BAD_REQUEST).json({
             success: false,
-            errors: errors.array(),
+            errors: errorsArray,
         });
     }
     next();
@@ -54,8 +60,10 @@ const validator = {
     validateFetchCart: cartValidator.validateFetchCart,
 
     validateCreateCoupon: couponValidator.validateCreateCoupon,
-    validatePutCoupon: couponValidator.validatePutCoupon,
     validatePatchCoupon: couponValidator.validatePatchCoupon,
+    validateAddCategoriesCoupon: couponValidator.validateAddCategoriesCoupon,
+    validateAddProductsCoupon: couponValidator.validateAddProductsCoupon,
+    validateQueryGetCoupon: couponValidator.validateQueryGetCoupon,
 };
 
 export default validator;

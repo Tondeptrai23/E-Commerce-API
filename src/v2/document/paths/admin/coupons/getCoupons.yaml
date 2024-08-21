@@ -25,7 +25,7 @@ parameters:
   - name: code
     in: query
     description: Filter by code. <br> 
-      - Support partial matching using "[like]code"
+      - For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).
     required: false
     schema:
       type: string
@@ -34,11 +34,9 @@ parameters:
   - name: discountValue
     in: query
     description: Filter by discountValue. <br> 
-      - Support operators "[lte]100", "[gte]100", "[between]100,200"
+      - For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).
     required: false
     schema:
-      type: string
-      pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
       example: "[gte]100"
 
   - name: discountType
@@ -62,67 +60,53 @@ parameters:
   - name: minimumOrderAmount
     in: query
     description: Filter by minimumOrderAmount. <br> 
-      - Support operators "[lte]100", "[gte]100", "[between]100,200"
+      - For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).
     required: false
     schema:
-      type: string
-      pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
       example: "[gte]100"
 
   - name: timesUsed
     in: query
     description: Filter by timesUsed. <br> 
-      - Support operators "[lte]100", "[gte]100", "[between]100,200"
+      - For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).
     required: false
     schema:
-      type: string
-      pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
       example: "[gte]100"
 
   - name: maxUsage
     in: query
     description: Filter by maxUsage. <br> 
-      - Support operators "[lte]100", "[gte]100", "[between]100,200"
+      - For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).
     required: false
     schema:
-      type: string
-      pattern: /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/
       example: "[gte]100"
 
   - name: startDate
     in: query
     description: Filter by startDate. <br> 
-      - Support operators <br> 
-      + [lte]2024-01-01 <br> 
-      + [gte]2024-01-01 <br> 
-      + [between]2024-01-01,2022-01-01 <br> 
+      - For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     required: false
     schema:
-      type: string
+      example: "[lte]2024-01-01"
 
   - name: endDate
     in: query
     description: Filter by endDate. <br> 
-      - Support operators <br> 
-      + [lte]2024-01-01 <br> 
-      + [gte]2024-01-01 <br> 
-      + [between]2024-01-01,2022-01-01 <br> 
+      - For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     schema:
-      type: string
+      example: "[gte]2024-01-01"
 
   - name: createdAt
     in: query
     description: Filter by createdAt. <br> 
-      - Support operators <br> 
-      + [lte]2024-01-01 <br> 
-      + [gte]2024-01-01 <br> 
-      + [between]2024-01-01,2022-01-01 <br> 
+      - For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     schema:
-      type: string
+      example: "[lte]2024-01-01"
 
   - name: updatedAt
     in: query
     description: Filter by updatedAt. <br>
+      - For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     required: false
     schema:
       type: string
@@ -136,13 +120,16 @@ parameters:
       type: object
       properties:
         productID:
-          type: string
+          description: | 
+            For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
           example: "1"
         name:
-          type: string
+          description: | 
+            For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
           example: "[like]name" 
         createdAt:
-          type: string
+          description: | 
+            For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering)
           example: "[lte]2024-01-01"
     
   - name: category
@@ -155,9 +142,7 @@ parameters:
   - name: sort
     in: query
     description: Sort by fields. <br> 
-      - Support multiple fields separated by comma <br> 
-      - Support descending order using "-" prefix <br>
-      - Don't support sorting by nested fields
+      - For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#sorting).
     required: false
     schema:
       type: string

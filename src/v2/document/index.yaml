@@ -179,8 +179,14 @@ paths:
   /admin/coupons/{couponID}/categories:
     $ref: ./paths/index.paths.yaml#/adminCouponCategories
 
+  /admin/coupons/{couponID}/categories/{categoryName}:
+    $ref: ./paths/index.paths.yaml#/adminCouponCategory
+
   /admin/coupons/{couponID}/products:
     $ref: ./paths/index.paths.yaml#/adminCouponProducts
+
+  /admin/coupons/{couponID}/products/{productID}:
+    $ref: ./paths/index.paths.yaml#/adminCouponProduct
 
   # Admin Attributes
 

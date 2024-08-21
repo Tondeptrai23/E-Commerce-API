@@ -27,7 +27,7 @@ requestBody:
               type: string
             example: ["1", "2"]
 responses:
-  200:
+  201:
     description: Products added to coupon
     content:
       application/json:

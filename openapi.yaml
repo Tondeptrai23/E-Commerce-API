@@ -1809,35 +1809,35 @@ paths:
             type: integer
         - name: productID
           in: query
-          description: 'Filter by productID. <br> For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#query-string).'
+          description: 'Filter by productID. <br> For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#query-string).'
           required: false
           schema:
             type: string
             example: '[like]1'
         - name: name
           in: query
-          description: 'Filter by name. <br> For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#string-filtering).'
+          description: 'Filter by name. <br> For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).'
           required: false
           schema:
             type: string
             example: '[like]T-shirt'
         - name: createdAt
           in: query
-          description: 'Filter by createdAt. <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#date-filtering).'
+          description: 'Filter by createdAt. <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
           required: false
           schema:
             type: string
             example: '[gte]2024-01-01'
         - name: updatedAt
           in: query
-          description: 'Filter by updatedAt. <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#date-filtering).'
+          description: 'Filter by updatedAt. <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
           required: false
           schema:
             type: string
             example: '[gte]2024-01-01'
         - name: deletedAt
           in: query
-          description: 'Filter by deletedAt. <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#date-filtering).'
+          description: 'Filter by deletedAt. <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
           schema:
             type: string
             example: '[gte]2024-01-01'
@@ -1852,19 +1852,19 @@ paths:
             properties:
               price:
                 description: |
-                  [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#number-filtering) 
+                  [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering) 
                 example: '[gte]50'
               discountPrice:
                 description: |
-                  [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#number-filtering) 
+                  [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering) 
                 example: '[lte]50'
               sku:
                 description: |
-                  [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#string-filtering)
+                  [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
                 example: SKU123
               stock:
                 description: |
-                  [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#number-filtering) 
+                  [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering) 
                 example: '[gte]10'
         - name: category
           in: query
@@ -1874,7 +1874,7 @@ paths:
             $ref: '#/components/schemas/categoryNames'
         - name: sort
           in: query
-          description: 'Sort products by one or more fields. <br> For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#sorting).'
+          description: 'Sort products by one or more fields. <br> For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#sorting).'
           required: false
           example: 'price,-stock'
           schema:
@@ -1885,7 +1885,7 @@ paths:
                   type: string
         - name: attributes
           in: query
-          description: 'Filter products by attributes. <br> For more information, see the [Filter By Variant Attributes](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md##get-products-and-get-adminproducts-1).'
+          description: 'Filter products by attributes. <br> For more information, see the [Filter By Variant Attributes](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md##get-products-and-get-adminproducts-1).'
           required: false
           style: deepObject
           schema:
@@ -3921,18 +3921,16 @@ paths:
             type: integer
         - name: code
           in: query
-          description: 'Filter by code. <br> - Support partial matching using "[like]code"'
+          description: 'Filter by code. <br> - For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).'
           required: false
           schema:
             type: string
             example: '[like]10OFF'
         - name: discountValue
           in: query
-          description: 'Filter by discountValue. <br> - Support operators "[lte]100", "[gte]100", "[between]100,200"'
+          description: 'Filter by discountValue. <br> - For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).'
           required: false
           schema:
-            type: string
-            pattern: '/^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/'
             example: '[gte]100'
         - name: discountType
           in: query
@@ -3956,47 +3954,41 @@ paths:
             example: all
         - name: minimumOrderAmount
           in: query
-          description: 'Filter by minimumOrderAmount. <br> - Support operators "[lte]100", "[gte]100", "[between]100,200"'
+          description: 'Filter by minimumOrderAmount. <br> - For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).'
           required: false
           schema:
-            type: string
-            pattern: '/^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/'
             example: '[gte]100'
         - name: timesUsed
           in: query
-          description: 'Filter by timesUsed. <br> - Support operators "[lte]100", "[gte]100", "[between]100,200"'
+          description: 'Filter by timesUsed. <br> - For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).'
           required: false
           schema:
-            type: string
-            pattern: '/^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/'
             example: '[gte]100'
         - name: maxUsage
           in: query
-          description: 'Filter by maxUsage. <br> - Support operators "[lte]100", "[gte]100", "[between]100,200"'
+          description: 'Filter by maxUsage. <br> - For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).'
           required: false
           schema:
-            type: string
-            pattern: '/^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/'
             example: '[gte]100'
         - name: startDate
           in: query
-          description: 'Filter by startDate. <br> - Support operators <br> + [lte]2024-01-01 <br> + [gte]2024-01-01 <br> + [between]2024-01-01,2022-01-01 <br>'
+          description: 'Filter by startDate. <br> - For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
           required: false
           schema:
-            type: string
+            example: '[lte]2024-01-01'
         - name: endDate
           in: query
-          description: 'Filter by endDate. <br> - Support operators <br> + [lte]2024-01-01 <br> + [gte]2024-01-01 <br> + [between]2024-01-01,2022-01-01 <br>'
+          description: 'Filter by endDate. <br> - For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
           schema:
-            type: string
+            example: '[gte]2024-01-01'
         - name: createdAt
           in: query
-          description: 'Filter by createdAt. <br> - Support operators <br> + [lte]2024-01-01 <br> + [gte]2024-01-01 <br> + [between]2024-01-01,2022-01-01 <br>'
+          description: 'Filter by createdAt. <br> - For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
           schema:
-            type: string
+            example: '[lte]2024-01-01'
         - name: updatedAt
           in: query
-          description: Filter by updatedAt. <br>
+          description: 'Filter by updatedAt. <br> - For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
           required: false
           schema:
             type: string
@@ -4009,13 +4001,16 @@ paths:
             type: object
             properties:
               productID:
-                type: string
+                description: |
+                  For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
                 example: '1'
               name:
-                type: string
+                description: |
+                  For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
                 example: '[like]name'
               createdAt:
-                type: string
+                description: |
+                  For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering)
                 example: '[lte]2024-01-01'
         - name: category
           in: query
@@ -4025,7 +4020,7 @@ paths:
             $ref: '#/components/schemas/categoryNames'
         - name: sort
           in: query
-          description: Sort by fields. <br> - Support multiple fields separated by comma <br> - Support descending order using "-" prefix <br> - Don't support sorting by nested fields
+          description: 'Sort by fields. <br> - For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#sorting).'
           required: false
           schema:
             type: string
@@ -4444,7 +4439,7 @@ paths:
                 categories:
                   $ref: '#/components/schemas/categoryNames'
       responses:
-        '200':
+        '201':
           description: Categories added to coupon
           content:
             application/json:
@@ -4486,6 +4481,64 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
+  '/admin/coupons/{couponID}/categories/{categoryName}':
+    delete:
+      tags:
+        - Admin Coupons
+      summary: Delete a category from a coupon
+      description: Delete a category from a coupon by couponID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: couponID
+          in: path
+          description: Coupon ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+        - name: categoryName
+          in: path
+          description: Category Name
+          required: true
+          schema:
+            type: string
+            example: tops
+      responses:
+        '200':
+          description: Category deleted from coupon
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Category not found in coupon
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
   '/admin/coupons/{couponID}/products':
     post:
       tags:
@@ -4517,7 +4570,7 @@ paths:
                     - '1'
                     - '2'
       responses:
-        '200':
+        '201':
           description: Products added to coupon
           content:
             application/json:
@@ -4570,6 +4623,64 @@ paths:
                 $ref: '#/components/schemas/error404'
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/admin/coupons/{couponID}/products/{productID}':
+    delete:
+      tags:
+        - Admin Coupons
+      summary: Delete a product from a coupon
+      description: Delete a product from a coupon by couponID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: couponID
+          in: path
+          description: Coupon ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+        - name: productID
+          in: path
+          description: Product ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Product deleted from coupon
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Category not found in coupon
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal server error
           content:
             application/json:
               schema:

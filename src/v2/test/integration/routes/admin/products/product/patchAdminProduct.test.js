@@ -143,7 +143,7 @@ describe("PATCH /admin/products/:productID", () => {
                 success: false,
                 errors: expect.arrayContaining([
                     expect.objectContaining({
-                        msg: "Name should be a string",
+                        message: "Name should be a string",
                     }),
                 ]),
             })

@@ -1,10 +1,14 @@
 import { toArray } from "../../utils/utils.js";
-import { Op, Sequelize } from "sequelize";
+import { Op, Sequelize, Model } from "sequelize";
 import Category from "../../models/products/category.model.js";
 import Product from "../../models/products/product.model.js";
 import Coupon from "../../models/shopping/coupon.model.js";
 import Order from "../../models/shopping/order.model.js";
-import { ResourceNotFoundError } from "../../utils/error.js";
+import {
+    ConflictError,
+    ResourceNotFoundError,
+    BadRequestError,
+} from "../../utils/error.js";
 import productCategoryService from "../products/productCategory.service.js";
 import { flattenArray } from "../../utils/utils.js";
 import Variant from "../../models/products/variant.model.js";
@@ -13,6 +17,8 @@ import categoryService from "../products/category.service.js";
 import CouponSortBuilder from "../condition/couponSortBuilder.service.js";
 import PaginationBuilder from "../condition/paginationBuilder.service.js";
 import { db } from "../../models/index.model.js";
+import ProductCoupon from "../../models/shopping/productCoupon.model.js";
+import CategoryCoupon from "../../models/shopping/categoryCoupon.model.js";
 
 class CouponService {
     /**
@@ -20,8 +26,13 @@ class CouponService {
      *
      * @param {Object} couponData The coupon data to be created
      * @returns {Promise<Coupon>} The created coupon
+     * @throws {ConflictError} If the coupon code already exists
      */
     async createCoupon(couponData) {
+        if (await this.isCouponExists(couponData.code)) {
+            throw new ConflictError("Coupon code already exists");
+        }
+
         const coupon = await Coupon.create(couponData);
 
         if (couponData.categories) {
@@ -33,7 +44,7 @@ class CouponService {
                 },
             });
             await coupon.setCategories(categories);
-            coupon.dataValues.categories = categories;
+            coupon.categories = categories;
         }
 
         if (couponData.products) {
@@ -45,10 +56,26 @@ class CouponService {
                 },
             });
             await coupon.setProducts(products);
-            coupon.dataValues.products = products;
+            coupon.products = products;
         }
 
         return coupon;
+    }
+
+    /**
+     * Check if a coupon exists
+     *
+     * @param {String} code The code of the coupon to check
+     * @returns {Promise<Boolean>} True if the coupon exists, false otherwise
+     */
+    async isCouponExists(code) {
+        const coupon = await Coupon.findOne({
+            where: {
+                code,
+            },
+        });
+
+        return coupon ? true : false;
     }
 
     /**
@@ -69,17 +96,16 @@ class CouponService {
         if (conditions.categoryFilter.length > 0) {
             promotionCondition["$categories.name$"] = conditions.categoryFilter;
         }
+        conditions.promotionCondition = promotionCondition;
+
+        const CTE = this.#getCTEtoFilterCoupons(conditions);
 
         const { count, satisfiedIDs } = await this.#findSatisfiedIDs(
-            conditions.couponFilter,
             conditions.paginationCondition,
-            promotionCondition
+            CTE
         );
 
-        const coupons = await this.#fetchDetailedCoupons(
-            conditions.sortingCondition,
-            satisfiedIDs
-        );
+        const coupons = await this.#fetchDetailedCoupons(satisfiedIDs);
 
         return {
             currentPage:
@@ -104,24 +130,7 @@ class CouponService {
      */
     async getCoupon(couponID) {
         const coupon = await Coupon.findByPk(couponID, {
-            include: [
-                {
-                    model: Product,
-                    as: "products",
-                    through: {
-                        attributes: [],
-                    },
-                    attributes: ["productID", "name"],
-                },
-                {
-                    model: Category,
-                    as: "categories",
-                    through: {
-                        attributes: [],
-                    },
-                    attributes: ["name"],
-                },
-            ],
+            include: getIncludeOptions(),
         });
 
         if (!coupon) {
@@ -133,36 +142,56 @@ class CouponService {
 
     /**
      * Update a coupon
+     * `maxUsage` is set to 0 to disable the coupon, or null to be used unlimited times
      *
      * @param {String} couponID The id of the coupon to be updated
      * @param {Object} couponData The updated coupon data
      * @returns {Promise<Coupon>} The updated coupon
      * @throws {ResourceNotFoundError} If the coupon is not found
+     * @throws {BadRequestError} If the start date is after the end date or the minimum order amount is invalid
      */
     async updateCoupon(couponID, couponData) {
-        const coupon = await Coupon.findByPk(couponID);
+        let coupon = await Coupon.findByPk(couponID);
 
         if (!coupon) {
             throw new ResourceNotFoundError("Coupon not found");
         }
 
-        return await coupon.update(couponData);
+        coupon = coupon.set(couponData);
+
+        if (coupon.startDate > coupon.endDate) {
+            throw new BadRequestError("Start date should be before end date");
+        }
+
+        if (
+            coupon.discountType === "percentage" &&
+            coupon.minimumOrderAmount > 100
+        ) {
+            throw new BadRequestError(
+                "Minimum order amount should be less than 100 for percentage discount"
+            );
+        }
+
+        return await coupon.save();
     }
 
     /**
-     * Delete a coupon
+     * Disable a coupon by setting maxUsage to 0
+     * This will prevent the coupon from being used
      *
-     * @param {String} couponID The id of the coupon to be deleted
+     * @param {String} couponID The id of the coupon to be disabled
      * @throws {ResourceNotFoundError} If the coupon is not found
      */
-    async deleteCoupon(couponID) {
+    async disableCoupon(couponID) {
         const coupon = await Coupon.findByPk(couponID);
 
         if (!coupon) {
             throw new ResourceNotFoundError("Coupon not found");
         }
 
-        await coupon.destroy();
+        await coupon.update({
+            maxUsage: 0,
+        });
     }
 
     /**
@@ -351,6 +380,163 @@ class CouponService {
     }
 
     /**
+     * Add categories to a coupon
+     *
+     * @param {String} couponID The id of the coupon to add categories to
+     * @param {String[]} categories The categories to add
+     * @returns {Promise<Coupon>} The updated coupon
+     * @throws {ResourceNotFoundError} If the coupon is not found
+     */
+    async addCategoriesToCoupon(couponID, categories) {
+        const coupon = await Coupon.findByPk(couponID);
+
+        if (!coupon) {
+            throw new ResourceNotFoundError("Coupon not found");
+        }
+
+        const foundCategories = await Category.findAll({
+            where: {
+                name: {
+                    [Op.in]: categories,
+                },
+            },
+        });
+
+        await coupon.setCategories(foundCategories);
+
+        return await Coupon.findByPk(couponID, {
+            include: [
+                {
+                    model: Category,
+                    as: "categories",
+                    through: {
+                        attributes: [],
+                    },
+                    attributes: ["name"],
+                },
+            ],
+        });
+    }
+
+    /**
+     * Add products to a coupon
+     *
+     * @param {String} couponID The id of the coupon to add products to
+     * @param {String[]} productIDs The products to add
+     * @returns {Promise<Coupon>} The updated coupon
+     */
+    async addProductsToCoupon(couponID, productIDs) {
+        const coupon = await Coupon.findByPk(couponID);
+
+        if (!coupon) {
+            throw new ResourceNotFoundError("Coupon not found");
+        }
+
+        const foundProducts = await Product.findAll({
+            where: {
+                productID: {
+                    [Op.in]: productIDs,
+                },
+            },
+        });
+
+        await coupon.setProducts(foundProducts);
+
+        return await Coupon.findByPk(couponID, {
+            include: [
+                {
+                    model: Product,
+                    as: "products",
+                    through: {
+                        attributes: [],
+                    },
+                    attributes: ["productID", "name"],
+                },
+            ],
+        });
+    }
+
+    /**
+     * Delete a product from a coupon
+     *
+     * @param {String} couponID The id of the coupon to delete the product from
+     * @param {String} productID The id of the product to delete
+     * @returns {Promise<void>} The promise
+     * @throws {ResourceNotFoundError} If the coupon is not found or the product is not found
+     */
+    async deleteProductFromCoupon(couponID, productID) {
+        const coupon = await Coupon.findByPk(couponID, {
+            include: {
+                required: false,
+                model: Product,
+                as: "products",
+                through: {
+                    attributes: [],
+                },
+                attributes: ["productID"],
+                where: {
+                    productID: productID,
+                },
+            },
+        });
+
+        if (!coupon) {
+            throw new ResourceNotFoundError("Coupon not found");
+        }
+
+        if (!coupon.products || coupon.products.length === 0) {
+            throw new ResourceNotFoundError("Product not found");
+        }
+
+        await ProductCoupon.destroy({
+            where: {
+                couponID: couponID,
+                productID: productID,
+            },
+        });
+    }
+
+    /**
+     * Delete a category from a coupon
+     *
+     * @param {String} couponID the id of the coupon to delete the category from
+     * @param {String} categoryName  the name of the category to delete
+     * @returns {Promise<void>} The promise
+     * @throws {ResourceNotFoundError} If the coupon is not found or the category is not found
+     */
+    async deleteCategoryFromCoupon(couponID, categoryName) {
+        const coupon = await Coupon.findByPk(couponID, {
+            include: {
+                required: false,
+                model: Category,
+                as: "categories",
+                through: {
+                    attributes: [],
+                },
+                attributes: ["categoryID"],
+                where: {
+                    name: categoryName,
+                },
+            },
+        });
+
+        if (!coupon) {
+            throw new ResourceNotFoundError("Coupon not found");
+        }
+
+        if (!coupon.categories || coupon.categories.length === 0) {
+            throw new ResourceNotFoundError("Category not found");
+        }
+
+        await CategoryCoupon.destroy({
+            where: {
+                couponID: couponID,
+                categoryID: coupon.categories[0].categoryID,
+            },
+        });
+    }
+
+    /**
      *
      *
      * The following methods are private methods that are used in getCoupons
@@ -429,27 +615,31 @@ class CouponService {
     }
 
     /**
-     * Find satisfied coupon IDs based on the conditions
+     * Get the CTE to filter coupons based on the conditions
+     * Used internally by the getCoupons method
      *
-     * @param {Object[]} couponFilter The coupon filter
-     * @param {Object} promotionCondition The promotion condition
-     * @returns {Promise<Object>} The count and list of satisfied coupon IDs
+     * Use queryInterface to generate the raw SQL query from the sequelize options
+     * Because sequelize does not support CTE
+     *
+     * @param {Object} condtitions The conditions to filter coupons
+     * @returns {String} The CTE to filter coupons
      */
-    async #findSatisfiedIDs(
-        couponFilter = [],
-        paginationCondition = {},
-        promotionCondition = {}
-    ) {
-        const { count, rows } = await Coupon.findAndCountAll({
-            distinct: true,
+    #getCTEtoFilterCoupons(condtitions) {
+        const options = {
             attributes: [
-                [db.literal("DISTINCT `coupon`.`couponID`"), "couponID"],
+                "couponID",
+                [
+                    db.literal(
+                        "ROW_NUMBER() OVER(PARTITION BY `coupon`.`couponID`)"
+                    ),
+                    "rowNumber",
+                ],
             ],
             where: [
-                ...couponFilter,
-                Object.keys(promotionCondition).length > 0
+                ...condtitions.couponFilter,
+                Object.keys(condtitions.promotionCondition).length > 0
                     ? {
-                          [Op.or]: promotionCondition,
+                          [Op.or]: condtitions.promotionCondition,
                       }
                     : {},
             ],
@@ -471,14 +661,54 @@ class CouponService {
                     attributes: [],
                 },
             ],
-            ...paginationCondition,
-            subQuery: false,
-            raw: true,
-        });
+            order: [...condtitions.sortingCondition],
+        };
 
-        const satisfiedIDs = rows.map((row) => row.couponID);
+        Model._validateIncludedElements.bind(Coupon)(options);
+        const cte = db
+            .getQueryInterface()
+            .queryGenerator.selectQuery("coupons", options, Coupon)
+            .slice(0, -1);
 
-        return { count, satisfiedIDs };
+        return cte;
+    }
+
+    /**
+     * Find satisfied coupon IDs based on the conditions
+     *
+     * @param {Object} paginationCondition The pagination condition
+     * @param {String} CTE The CTE to filter coupons
+     * @returns {Promise<count: Number, satisfiedIDs: String[]>} The count and satisfied IDs
+     */
+    async #findSatisfiedIDs(paginationCondition, CTE) {
+        const count = (
+            await db.query(
+                `WITH CTE AS (${CTE}) 
+            SELECT COUNT(DISTINCT couponID) AS count 
+            FROM CTE`,
+                {
+                    type: db.QueryTypes.SELECT,
+                    plain: true,
+                }
+            )
+        ).count;
+
+        const couponIDs = await db.query(
+            `WITH CTE AS (${CTE}) 
+            SELECT couponID 
+            FROM CTE
+            WHERE rowNumber = 1
+            LIMIT ${paginationCondition.limit}
+            OFFSET ${paginationCondition.offset}`.trim(),
+            {
+                type: db.QueryTypes.SELECT,
+            }
+        );
+
+        return {
+            count: count,
+            satisfiedIDs: couponIDs.map((coupon) => coupon.couponID),
+        };
     }
 
     /**
@@ -488,33 +718,20 @@ class CouponService {
      * @param {Object[]} satisfiedIDs The satisfied IDs
      * @returns {Promise<Object>} The list of coupons and pagination info
      */
-    async #fetchDetailedCoupons(sortingCondition = [], satisfiedIDs = []) {
+    async #fetchDetailedCoupons(satisfiedIDs = []) {
         const coupons = await Coupon.findAll({
             where: {
                 couponID: satisfiedIDs,
             },
-            include: [
-                {
-                    model: Product,
-                    as: "products",
-                    through: {
-                        attributes: [],
-                    },
-                    attributes: ["productID", "name"],
-                },
-                {
-                    model: Category,
-                    as: "categories",
-                    through: {
-                        attributes: [],
-                    },
-                    attributes: ["name"],
-                },
-            ],
-            order: sortingCondition,
+            include: getIncludeOptions(),
         });
 
-        return coupons;
+        // Sort the coupons based on the satisfied IDs
+        const sortedCoupons = satisfiedIDs.map((couponID) =>
+            coupons.find((coupon) => coupon.couponID === couponID)
+        );
+
+        return sortedCoupons;
     }
 }
 
@@ -548,10 +765,18 @@ const getIncludeOptions = () => {
         {
             model: Product,
             as: "products",
+            through: {
+                attributes: [],
+            },
+            attributes: ["productID", "name"],
         },
         {
             model: Category,
             as: "categories",
+            through: {
+                attributes: [],
+            },
+            attributes: ["name"],
         },
     ];
 };

@@ -25,7 +25,7 @@ parameters:
   - name: productID
     in: query
     description: Filter by productID. <br> 
-      For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#query-string).
+      For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#query-string).
     required: false
     schema:
       type: string
@@ -34,7 +34,7 @@ parameters:
   - name: name
     in: query
     description: Filter by name. <br> 
-      For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#string-filtering).
+      For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).
     required: false
     schema:
       type: string
@@ -43,7 +43,7 @@ parameters:
   - name: createdAt
     in: query
     description: Filter by createdAt. <br> 
-      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#date-filtering).
+      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     required: false
     schema:
       type: string
@@ -52,7 +52,7 @@ parameters:
   - name: updatedAt
     in: query
     description: Filter by updatedAt. <br> 
-      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#date-filtering).
+      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     required: false
     schema:
       type: string
@@ -61,7 +61,7 @@ parameters:
   - name: deletedAt
     in: query
     description: Filter by deletedAt. <br>
-      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#date-filtering).
+      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     schema:
       type: string
       example: "[gte]2024-01-01"
@@ -77,19 +77,19 @@ parameters:
       properties:
         price:
           description: | 
-            [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#number-filtering) 
+            [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering) 
           example: "[gte]50"
         discountPrice:
           description: | 
-            [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#number-filtering) 
+            [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering) 
           example: "[lte]50"
         sku:
           description: | 
-            [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#string-filtering)
+            [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
           example: "SKU123"
         stock:
           description: | 
-            [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#number-filtering) 
+            [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering) 
           example: "[gte]10"
 
   - name: category
@@ -102,7 +102,7 @@ parameters:
   - name: sort
     in: query
     description: Sort products by one or more fields. <br>
-      For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md#sorting).
+      For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#sorting).
     required: false
     example: "price,-stock"
     schema:
@@ -115,7 +115,7 @@ parameters:
   - name: attributes
     in: query
     description: Filter products by attributes. <br>
-      For more information, see the [Filter By Variant Attributes](http://github.com/Tondeptrai23/e-commerce-api/blob/main/docs/query.md##get-products-and-get-adminproducts-1).
+      For more information, see the [Filter By Variant Attributes](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md##get-products-and-get-adminproducts-1).
     required: false
     style: deepObject
     schema:

@@ -9,6 +9,8 @@ import {
     validateSortingQuery,
     validateUnexpectedFields,
     validateQueryInteger,
+    validateQueryString,
+    validateQueryDate,
 } from "../utils.validator.js";
 
 const validateCreateProduct = [
@@ -49,17 +51,18 @@ const validateCreateProduct = [
 ];
 
 const validatePatchProduct = [
-    body("productID").not().exists().withMessage("ID should not be provided"),
-
     body("name").optional().isString().withMessage("Name should be a string"),
 
     body("description")
         .optional()
         .isString()
         .withMessage("Description should be a string"),
+
+    body().custom(validateUnexpectedFields(["name", "description"])),
 ];
 
 const validateQueryGetProductUser = [
+    // Validate query parameters
     query("page").optional().custom(validateQueryInteger("Page")),
 
     query("size").optional().custom(validateQueryInteger("Size")),
@@ -71,10 +74,7 @@ const validateQueryGetProductUser = [
             validateSortingQuery(["price", "name", "discountPrice", "stock"])
         ),
 
-    query("name")
-        .optional()
-        .matches(stringRegex)
-        .withMessage(`Name should match regex ${stringRegex}`),
+    query("name").optional().custom(validateQueryString("Name")),
 
     query("variant")
         .optional()
@@ -93,10 +93,7 @@ const validateQueryGetProductUser = [
         .optional()
         .custom(validateQueryNumber("Variant stock")),
 
-    query("variant.sku")
-        .optional()
-        .matches(stringRegex)
-        .withMessage(`Variant SKU should match regex ${stringRegex}`),
+    query("variant.sku").optional().custom(validateQueryString("Variant SKU")),
 
     query("category")
         .optional()
@@ -112,9 +109,46 @@ const validateQueryGetProductUser = [
         .optional()
         .isObject()
         .withMessage("Attributes should be an object"),
+
+    // Sanitize unexpected fields
+    query().customSanitizer((value) => {
+        if (!value) return value;
+        const allowedFields = [
+            "page",
+            "size",
+            "sort",
+            "name",
+            "variant",
+            "category",
+            "attributes",
+        ];
+
+        return Object.fromEntries(
+            Object.entries(value).filter(([key]) => allowedFields.includes(key))
+        );
+    }),
+
+    query("variant").customSanitizer((value) => {
+        if (!value) return value;
+
+        const allowedFields = [
+            "page",
+            "size",
+            "sort",
+            "name",
+            "variant",
+            "category",
+            "attributes",
+        ];
+
+        return Object.fromEntries(
+            Object.entries(value).filter(([key]) => allowedFields.includes(key))
+        );
+    }),
 ];
 
 const validateQueryGetProduct = [
+    // Validate query parameters
     query("page").optional().custom(validateQueryInteger("Page")),
 
     query("size").optional().custom(validateQueryInteger("Size")),
@@ -135,30 +169,15 @@ const validateQueryGetProduct = [
             ])
         ),
 
-    query("productID")
-        .optional()
-        .matches(stringRegex)
-        .withMessage(`ID should match regex ${stringRegex}`),
+    query("productID").optional().custom(validateQueryString("ProductID")),
 
-    query("name")
-        .optional()
-        .matches(stringRegex)
-        .withMessage(`Name should match regex ${stringRegex}`),
+    query("name").optional().custom(validateQueryString("Name")),
 
-    query("updatedAt")
-        .optional()
-        .isISO8601()
-        .withMessage("UpdatedAt should be a valid date"),
+    query("updatedAt").optional().custom(validateQueryDate("UpdatedAt")),
 
-    query("createdAt")
-        .optional()
-        .isISO8601()
-        .withMessage("CreatedAt should be a valid date"),
+    query("createdAt").optional().custom(validateQueryDate("CreatedAt")),
 
-    query("deletedAt")
-        .optional()
-        .isISO8601()
-        .withMessage("DeletedAt should be a valid date"),
+    query("deletedAt").optional().custom(validateQueryDate("DeletedAt")),
 
     query("variant")
         .optional()
@@ -177,10 +196,7 @@ const validateQueryGetProduct = [
         .optional()
         .custom(validateQueryNumber("Variant stock")),
 
-    query("variant.sku")
-        .optional()
-        .matches(stringRegex)
-        .withMessage(`Variant SKU should match regex ${stringRegex}`),
+    query("variant.sku").optional().custom(validateQueryString("Variant SKU")),
 
     query("category")
         .optional()
@@ -196,6 +212,39 @@ const validateQueryGetProduct = [
         .optional()
         .isObject()
         .withMessage("Attributes should be an object"),
+
+    // Sanitize unexpected fields
+    query().customSanitizer((value) => {
+        if (!value) return value;
+
+        const allowedFields = [
+            "page",
+            "size",
+            "sort",
+            "productID",
+            "name",
+            "updatedAt",
+            "createdAt",
+            "deletedAt",
+            "variant",
+            "category",
+            "attributes",
+        ];
+
+        return Object.fromEntries(
+            Object.entries(value).filter(([key]) => allowedFields.includes(key))
+        );
+    }),
+
+    query("variant").customSanitizer((value) => {
+        if (!value) return value;
+
+        const allowedFields = ["price", "discountPrice", "stock", "sku"];
+
+        return Object.fromEntries(
+            Object.entries(value).filter(([key]) => allowedFields.includes(key))
+        );
+    }),
 ];
 
 export {

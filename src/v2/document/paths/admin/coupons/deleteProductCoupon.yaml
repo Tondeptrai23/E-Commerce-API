@@ -1,0 +1,58 @@
+# DELETE /admin/coupons/{couponID}/products/{productID}
+tags:
+  - Admin Coupons
+summary: Delete a product from a coupon
+description: Delete a product from a coupon by couponID.
+security:
+  - bearerAuth: []
+parameters:
+  - name: couponID
+    in: path
+    description: Coupon ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+  - name: productID
+    in: path
+    description: Product ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+
+responses:
+  200:
+    description: Product deleted from coupon
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
+  404:
+    description: Category not found in coupon
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal server error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

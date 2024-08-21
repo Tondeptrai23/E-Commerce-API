@@ -212,7 +212,7 @@ describe("validateCreateProduct", () => {
                         altText: 123,
                     },
                 ],
-                categories: ["invalid"],
+                categories: [123],
             },
         };
 
@@ -247,7 +247,7 @@ describe("validateCreateProduct", () => {
                     msg: "Alt text should be a string",
                 }),
                 expect.objectContaining({
-                    msg: "Category does not exist",
+                    msg: "Category should be a string",
                 }),
             ])
         );
@@ -323,7 +323,7 @@ describe("validatePatchProduct", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "ID should not be provided",
+                    msg: "Unexpected fields: productID",
                 }),
                 expect.objectContaining({
                     msg: "Name should be a string",
@@ -343,19 +343,27 @@ describe("validateQueryGetProductUser", () => {
                 page: "1",
                 size: "10",
                 sort: "price",
-                productID: "1",
-                name: "example",
+                name: ["[like]example", "test"],
                 variant: {
                     price: "100",
                     discountPrice: "[lte]90",
                     stock: "[gte]100",
                     sku: "example",
+
+                    // Ignore unexpected fields
+                    variantID: "1",
+                    createdAt: "2024-01-01T00:00:00.000Z",
                 },
                 category: ["tops", "male"],
                 attributes: {
                     color: "red",
                     size: "medium",
                 },
+                // Ignore unexpected fields
+                productID: "1",
+                createdAt: "2024-01-01T00:00:00.000Z",
+                updatedAt: "2024-01-01T00:00:00.000Z",
+                deletedAt: "2024-01-01T00:00:00.000Z",
             },
         };
 
@@ -393,7 +401,7 @@ describe("validateQueryGetProductUser", () => {
                     msg: "Size should be a positive integer",
                 }),
                 expect.objectContaining({
-                    msg: `Name should match regex ${stringRegex}`,
+                    msg: "Name should have valid string format",
                 }),
                 expect.objectContaining({
                     msg: "Invalid sort field: createdAt",
@@ -432,7 +440,7 @@ describe("validateQueryGetProductUser", () => {
                     msg: "Variant discount price should have valid number format",
                 }),
                 expect.objectContaining({
-                    msg: `Variant SKU should match regex ${stringRegex}`,
+                    msg: "Variant SKU should be a string or an array of string",
                 }),
             ])
         );
@@ -483,15 +491,23 @@ describe("validateQueryGetProduct", () => {
                     discountPrice: "[lte]90",
                     stock: "[gte]100",
                     sku: "example",
+
+                    // Ignore unexpected fields
+                    variantID: "1",
+                    createdAt: "2024-01-01T00:00:00.000Z",
                 },
                 category: ["tops", "male"],
                 attributes: {
                     color: "red",
                     size: "medium",
                 },
-                createdAt: "2021-01-01T00:00:00.000Z",
-                updatedAt: "2021-01-01T00:00:00.000Z",
-                deletedAt: "2021-01-01T00:00:00.000Z",
+                createdAt: "2024-01-01",
+                updatedAt: "2024-01-01",
+                deletedAt: "2024-01-01",
+
+                // Ignore unexpected fields
+                unexpectedField: "unexpected",
+                unexpectedField2: "unexpected",
             },
         };
 
@@ -507,9 +523,9 @@ describe("validateQueryGetProduct", () => {
         const req = {
             query: {
                 productID: "[keli]invalid",
-                name: "[keli]test",
+                name: ["[keli]test"],
                 createdAt: "invalid",
-                updatedAt: "invalid",
+                updatedAt: ["invalid"],
                 deletedAt: "invalid",
                 sort: "invalid",
             },
@@ -524,19 +540,19 @@ describe("validateQueryGetProduct", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: `Name should match regex ${stringRegex}`,
+                    msg: "ProductID should have valid string format",
                 }),
                 expect.objectContaining({
-                    msg: `ID should match regex ${stringRegex}`,
+                    msg: "Name array should contain valid string formats",
                 }),
                 expect.objectContaining({
-                    msg: "CreatedAt should be a valid date",
+                    msg: "CreatedAt should have valid date format ([operator]YYYY-MM-DD)",
                 }),
                 expect.objectContaining({
-                    msg: "UpdatedAt should be a valid date",
+                    msg: "UpdatedAt array should contain valid date formats ([operator]YYYY-MM-DD)",
                 }),
                 expect.objectContaining({
-                    msg: "DeletedAt should be a valid date",
+                    msg: "DeletedAt should have valid date format ([operator]YYYY-MM-DD)",
                 }),
                 expect.objectContaining({
                     msg: "Invalid sort field: invalid",
@@ -575,7 +591,7 @@ describe("validateQueryGetProduct", () => {
                     msg: "Variant discount price should have valid number format",
                 }),
                 expect.objectContaining({
-                    msg: `Variant SKU should match regex ${stringRegex}`,
+                    msg: "Variant SKU should be a string or an array of string",
                 }),
             ])
         );

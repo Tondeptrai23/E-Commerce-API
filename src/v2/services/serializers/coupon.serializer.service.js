@@ -21,6 +21,9 @@ const CouponSerializer = new Entity({
         type: "string",
         required: true,
     },
+    description: {
+        type: "string",
+    },
     minimumOrderAmount: {
         type: "number",
     },

@@ -384,7 +384,7 @@ describe("POST /admin/products/:productID/variants", () => {
                 success: false,
                 errors: expect.arrayContaining([
                     expect.objectContaining({
-                        msg: "Price is required",
+                        message: "Price is required",
                     }),
                 ]),
             })

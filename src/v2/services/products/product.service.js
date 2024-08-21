@@ -274,6 +274,9 @@ class ProductService {
      * Get the CTE to filter the variants
      * Used internally by the getProducts method
      *
+     * Use queryInterface to generate the raw SQL query from the sequelize options
+     * Because sequelize does not support CTE
+     *
      * @param {Object} conditions the conditions to filter the variants
      * @param {Array} productIDs the product IDs to filter the variants
      * @returns {String} the CTE to filter the variants
@@ -287,8 +290,6 @@ class ProductService {
         },
         productIDs = []
     ) {
-        // Use queryInterface to generate the raw SQL query from the sequelize options
-        // Because sequelize does not support CTE
         const options = {
             attributes: [
                 "variantID",
@@ -396,6 +397,7 @@ class ProductService {
             }
         );
 
+        // Extract productIDs and variantIDs from the result
         const { productIDs, variantIDs } = result.reduce(
             (acc, { productID, variantID }) => {
                 acc.productIDs.push(productID);
@@ -444,11 +446,11 @@ class ProductService {
         });
 
         // Sort products based on productIDs
-        const newProducts = productIDs.map((productID) =>
+        const sortedProducts = productIDs.map((productID) =>
             products.find((product) => product.productID === productID)
         );
 
-        return newProducts;
+        return sortedProducts;
     }
 }
 

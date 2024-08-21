@@ -970,6 +970,28 @@ const seedCoupon = async () => {
             startDate: new Date("2024-06-01"),
             endDate: new Date("2024-08-31"),
         },
+        {
+            couponID: 10,
+            code: "WINTER10",
+            discountType: "percentage",
+            discountValue: 10,
+            target: "all",
+            timesUsed: 0,
+            maxUsage: 50,
+            startDate: new Date("2024-06-01"),
+            endDate: new Date("2024-08-31"),
+        },
+        {
+            couponID: 11,
+            code: "SALE20",
+            discountType: "percentage",
+            discountValue: 20,
+            target: "all",
+            timesUsed: 0,
+            maxUsage: 30,
+            startDate: new Date("2024-06-01"),
+            endDate: new Date("2024-06-30"),
+        },
     ]);
 };
 
@@ -980,6 +1002,8 @@ const seedCategoryCoupon = async () => {
         { couponID: 6, categoryID: 3 },
         { couponID: 7, categoryID: 9 },
         { couponID: 8, categoryID: 11 },
+        { couponID: 10, categoryID: 6 },
+        { couponID: 11, categoryID: 7 },
     ]);
 };
 
@@ -1003,6 +1027,18 @@ const seedProductCoupon = async () => {
         {
             couponID: 9,
             productID: 4,
+        },
+        {
+            couponID: 10,
+            productID: 1,
+        },
+        {
+            couponID: 10,
+            productID: 3,
+        },
+        {
+            couponID: 11,
+            productID: 6,
         },
     ]);
 };

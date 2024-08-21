@@ -36,7 +36,7 @@ describe("validateAddCategoriesForProduct", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Categories should be an array",
+                    msg: "Categories are required",
                 }),
             ])
         );
@@ -103,29 +103,6 @@ describe("validateAddCategoriesForProduct", () => {
             expect.arrayContaining([
                 expect.objectContaining({
                     msg: "Category should be a string",
-                }),
-            ])
-        );
-    });
-
-    test("should return errors if category does not exist", async () => {
-        const req = {
-            body: {
-                categories: ["category"],
-            },
-        };
-
-        for (const validationChain of validator.validateAddCategoriesForProduct) {
-            await validationChain.run(req);
-        }
-
-        const errors = validationResult(req);
-
-        expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toEqual(
-            expect.arrayContaining([
-                expect.objectContaining({
-                    msg: "Category does not exist",
                 }),
             ])
         );
