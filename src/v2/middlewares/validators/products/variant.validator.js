@@ -9,6 +9,8 @@ import {
     sanitizeSortingQuery,
     stringRegex,
     validateQueryInteger,
+    validateQueryString,
+    validateQueryDate,
 } from "../utils.validator.js";
 
 const validateDiscountPrice = (value) => {
@@ -216,15 +218,9 @@ const validateQueryGetVariant = [
             ])
         ),
 
-    query("variantID")
-        .optional()
-        .matches(stringRegex)
-        .withMessage(`VariantID should match regex ${stringRegex}`),
+    query("variantID").optional().custom(validateQueryString("VariantID")),
 
-    query("name")
-        .optional()
-        .matches(stringRegex)
-        .withMessage(`Name should match regex ${stringRegex}`),
+    query("name").optional().custom(validateQueryString("Name")),
 
     query("price").optional().custom(validateQueryNumber("Price")),
 
@@ -234,30 +230,15 @@ const validateQueryGetVariant = [
 
     query("stock").optional().custom(validateQueryNumber("Stock")),
 
-    query("sku")
-        .optional()
-        .matches(stringRegex)
-        .withMessage(`SKU should match regex ${stringRegex}`),
+    query("sku").optional().custom(validateQueryString("SKU")),
 
-    query("productID")
-        .optional()
-        .matches(stringRegex)
-        .withMessage(`ProductID should match regex ${stringRegex}`),
+    query("productID").optional().custom(validateQueryString("ProductID")),
 
-    query("updatedAt")
-        .optional()
-        .isISO8601()
-        .withMessage("UpdatedAt should be a valid date"),
+    query("updatedAt").optional().custom(validateQueryDate("UpdatedAt")),
 
-    query("createdAt")
-        .optional()
-        .isISO8601()
-        .withMessage("CreatedAt should be a valid date"),
+    query("createdAt").optional().custom(validateQueryDate("CreatedAt")),
 
-    query("deletedAt")
-        .optional()
-        .isISO8601()
-        .withMessage("DeletedAt should be a valid date"),
+    query("deletedAt").optional().custom(validateQueryDate("DeletedAt")),
 
     query("attributes")
         .optional()

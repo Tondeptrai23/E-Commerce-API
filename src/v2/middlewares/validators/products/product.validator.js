@@ -131,15 +131,7 @@ const validateQueryGetProductUser = [
     query("variant").customSanitizer((value) => {
         if (!value) return value;
 
-        const allowedFields = [
-            "page",
-            "size",
-            "sort",
-            "name",
-            "variant",
-            "category",
-            "attributes",
-        ];
+        const allowedFields = ["price", "discountPrice", "stock", "sku"];
 
         return Object.fromEntries(
             Object.entries(value).filter(([key]) => allowedFields.includes(key))

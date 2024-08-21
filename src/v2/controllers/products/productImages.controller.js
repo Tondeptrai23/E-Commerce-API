@@ -30,8 +30,6 @@ class ProductImageController {
                 images: serializedImages,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
@@ -43,6 +41,7 @@ class ProductImageController {
                     ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
                     errors: [
@@ -79,8 +78,6 @@ class ProductImageController {
                 images: serializedImages,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
@@ -92,6 +89,7 @@ class ProductImageController {
                     ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
                     errors: [
@@ -133,8 +131,6 @@ class ProductImageController {
                 image: serializedImage,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
@@ -146,6 +142,7 @@ class ProductImageController {
                     ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
                     errors: [
@@ -182,8 +179,6 @@ class ProductImageController {
                 images: serializedImages,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
@@ -195,6 +190,7 @@ class ProductImageController {
                     ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
                     errors: [
@@ -222,8 +218,6 @@ class ProductImageController {
                 success: true,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
@@ -245,6 +239,7 @@ class ProductImageController {
                     ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
                     errors: [

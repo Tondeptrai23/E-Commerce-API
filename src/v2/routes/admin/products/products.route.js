@@ -9,13 +9,13 @@ import validator from "../../../middlewares/validators/index.validator.js";
 
 import productCategoryRoute from "./productCategory.route.js";
 import productImageRoute from "./image.route.js";
-import variantRoute from "./variant.route.js";
+import productVariantRoute from "./productVariant.route.js";
 
 const adminProductRoute = Router();
 
 adminProductRoute.use(productCategoryRoute);
 adminProductRoute.use(productImageRoute);
-adminProductRoute.use(variantRoute);
+adminProductRoute.use(productVariantRoute);
 
 adminProductRoute.get(
     "/products",

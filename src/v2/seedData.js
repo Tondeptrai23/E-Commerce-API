@@ -168,40 +168,47 @@ const seedProduct = async () => {
             productID: 0,
             name: "Pleated Mini Skirt",
             description: "A pleated mini skirt for a cute and playful outfit",
+            createdAt: new Date("2024-06-01"),
         },
         {
             productID: 1,
             name: "Crew Neck Short Sleeve T-Shirt",
             description:
                 "A simple crew neck short sleeve t-shirt for everyday wear",
+            createdAt: new Date("2024-07-01"),
         },
         {
             productID: 2,
             name: "Denim Shorts",
             description: "Comfortable denim shorts for a casual summer look",
+            createdAt: new Date("2024-08-01"),
         },
         {
             productID: 3,
             name: "Floral Print Skirt",
             description: "A beautiful floral print skirt for a feminine touch",
+            createdAt: new Date("2024-09-01"),
         },
         {
             productID: 4,
             name: "Cargo Shorts",
             description:
                 "Versatile cargo shorts for a casual and functional outfit",
+            createdAt: new Date("2024-7-15"),
         },
         {
             productID: 5,
             name: "Ruffled Blouse",
             description:
                 "A feminine ruffled blouse for an elegant and chic style",
+            createdAt: new Date("2024-07-01"),
         },
         {
             productID: 6,
             name: "V-Neck Short Sleeve T-Shirt",
             description:
                 "A stylish v-neck short sleeve t-shirt for a trendy look",
+            createdAt: new Date("2024-08-10"),
         },
     ]);
 

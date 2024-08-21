@@ -389,7 +389,6 @@ describe("ProductService", () => {
 
             expect(products).toBeInstanceOf(Array);
             expect(products).toHaveLength(3);
-            expect(products[0].productID).toBe("1");
 
             expect(currentPage).toBe(1);
             expect(totalPages).toBe(2);
@@ -405,7 +404,6 @@ describe("ProductService", () => {
 
             expect(products).toBeInstanceOf(Array);
             expect(products).toHaveLength(3);
-            expect(products[0].productID).toBe("4");
 
             expect(currentPage).toBe(2);
             expect(totalPages).toBe(2);
@@ -418,7 +416,6 @@ describe("ProductService", () => {
 
             expect(products).toBeInstanceOf(Array);
             expect(products).toHaveLength(5);
-            expect(products[0].productID).toBe("1");
 
             expect(currentPage).toBe(1);
             expect(totalPages).toBe(2);

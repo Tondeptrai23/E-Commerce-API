@@ -553,7 +553,7 @@ describe("validateQueryGetVariant", () => {
         const req = {
             query: {
                 page: "1",
-                limit: "10",
+                size: "10",
                 sort: "price,-discountPrice",
                 name: "example",
                 price: "100",
@@ -561,9 +561,9 @@ describe("validateQueryGetVariant", () => {
                 stock: "100",
                 sku: "example",
                 productID: "123",
-                updatedAt: "2024-01-01T00:00:00.000Z",
-                createdAt: "2024-01-01T00:00:00.000Z",
-                deletedAt: "2024-01-01T00:00:00.000Z",
+                updatedAt: "2024-01-01",
+                createdAt: "2024-01-01",
+                deletedAt: "2024-01-01",
                 attributes: {
                     color: "red",
                     size: "M",
@@ -582,7 +582,7 @@ describe("validateQueryGetVariant", () => {
     test("should return errors if fields are invalid", async () => {
         const req = {
             query: {
-                variantID: "[invalid]invalid",
+                variantID: ["[invalid]invalid"],
                 page: "invalid",
                 size: "invalid",
                 sort: "invalid",
@@ -590,11 +590,11 @@ describe("validateQueryGetVariant", () => {
                 price: "invalid",
                 discountPrice: "invalid",
                 stock: "invalid",
-                sku: "[invalid]invalid",
+                sku: ["valid", "[invalid]invalid"],
                 productID: "[invalid]invalid",
                 updatedAt: "invalid",
-                createdAt: "invalid",
-                deletedAt: "invalid",
+                createdAt: ["01-01-2024"],
+                deletedAt: "2024-01-01T00:00:00.000Z",
                 attributes: "invalid",
             },
         };
@@ -604,6 +604,7 @@ describe("validateQueryGetVariant", () => {
         }
         const errors = validationResult(req);
 
+        console.log(errors.array().map((error) => error.msg));
         expect(errors.isEmpty()).toBe(false);
         expect(errors.array()).toEqual(
             expect.arrayContaining([
@@ -617,10 +618,10 @@ describe("validateQueryGetVariant", () => {
                     msg: "Invalid sort field: invalid",
                 }),
                 expect.objectContaining({
-                    msg: `VariantID should match regex ${stringRegex}`,
+                    msg: "Name should have valid string format",
                 }),
                 expect.objectContaining({
-                    msg: `Name should match regex ${stringRegex}`,
+                    msg: "VariantID array should contain valid string formats",
                 }),
                 expect.objectContaining({
                     msg: "Price should have valid number format",
@@ -632,19 +633,19 @@ describe("validateQueryGetVariant", () => {
                     msg: "Stock should have valid number format",
                 }),
                 expect.objectContaining({
-                    msg: `SKU should match regex ${stringRegex}`,
+                    msg: "SKU array should contain valid string formats",
                 }),
                 expect.objectContaining({
-                    msg: `ProductID should match regex ${stringRegex}`,
+                    msg: "ProductID should have valid string format",
                 }),
                 expect.objectContaining({
-                    msg: "UpdatedAt should be a valid date",
+                    msg: "UpdatedAt should have valid date format ([operator]YYYY-MM-DD)",
                 }),
                 expect.objectContaining({
-                    msg: "CreatedAt should be a valid date",
+                    msg: "CreatedAt array should contain valid date formats ([operator]YYYY-MM-DD)",
                 }),
                 expect.objectContaining({
-                    msg: "DeletedAt should be a valid date",
+                    msg: "DeletedAt should have valid date format ([operator]YYYY-MM-DD)",
                 }),
                 expect.objectContaining({
                     msg: "Attributes should be an object",

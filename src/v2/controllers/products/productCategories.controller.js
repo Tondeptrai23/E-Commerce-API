@@ -26,8 +26,6 @@ class ProductCategory {
                 categories: serializedCategories,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
@@ -39,6 +37,7 @@ class ProductCategory {
                     ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
                     errors: [
@@ -75,8 +74,6 @@ class ProductCategory {
                 product: serializedProduct,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
@@ -88,6 +85,7 @@ class ProductCategory {
                     ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
                     errors: [
@@ -124,8 +122,6 @@ class ProductCategory {
                 product: serializedProduct,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
@@ -137,6 +133,7 @@ class ProductCategory {
                     ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
                     errors: [
@@ -168,8 +165,6 @@ class ProductCategory {
                 success: true,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
@@ -181,6 +176,7 @@ class ProductCategory {
                     ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
                     errors: [
