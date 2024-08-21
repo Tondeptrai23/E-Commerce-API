@@ -465,6 +465,14 @@ const seedVariant = async () => {
 
     await Variant.bulkCreate([
         {
+            variantID: 300,
+            price: 30.0,
+            stock: 27,
+            sku: "SKIRT3-DELETED",
+            productID: 3,
+            deletedAt: new Date("2024-06-01"),
+        },
+        {
             variantID: 301,
             price: 30.0,
             stock: 27,
@@ -521,6 +529,14 @@ const seedVariant = async () => {
     ]);
 
     await Variant.bulkCreate([
+        {
+            variantID: 400,
+            price: 50.0,
+            stock: 13,
+            sku: "SHORT4-DELETED",
+            productID: 4,
+            deletedAt: new Date("2024-06-01"),
+        },
         {
             variantID: 401,
             price: 50.0,

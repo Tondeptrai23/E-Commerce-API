@@ -13,6 +13,7 @@ const variant = {
     discountPrice: 90,
     createdAt: new Date(date),
     updatedAt: new Date(date),
+    deletedAt: new Date(date),
     extraField: "Extra Field",
     image: {
         imageID: "1",
@@ -97,6 +98,7 @@ describe("VariantSerializer", () => {
                 },
                 createdAt: new Date(date).toISOString(),
                 updatedAt: new Date(date).toISOString(),
+                deletedAt: new Date(date).toISOString(),
             })
         );
     });

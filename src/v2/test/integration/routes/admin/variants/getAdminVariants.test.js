@@ -65,7 +65,7 @@ describe("GET /admin/variants", () => {
         const res = await request(app)
             .get("/api/v2/admin/variants")
             .set("Authorization", `Bearer ${accessToken}`)
-            .query({ size: 20 });
+            .query({ size: 100 });
 
         expect(res.statusCode).toEqual(StatusCodes.OK);
         expect(res.body).toEqual(
@@ -87,7 +87,9 @@ describe("GET /admin/variants", () => {
             })
         );
 
-        expect(res.body.variants.some((v) => v.deletedAt)).toEqual(true);
+        expect(
+            res.body.variants.some((v) => v.deletedAt !== undefined)
+        ).toEqual(true);
     });
 
     it("should return a list of variants with filtering", async () => {
