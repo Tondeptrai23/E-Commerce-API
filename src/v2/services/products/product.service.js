@@ -10,9 +10,10 @@ import { ResourceNotFoundError } from "../../utils/error.js";
 import { Model, Op } from "sequelize";
 import { db } from "../../models/index.model.js";
 import categoryService from "./category.service.js";
-import FilterBuilder from "../condition/filterBuilder.service.js";
-import AttributeFilterBuilder from "../condition/attributeFilterBuilder.service.js";
-import ProductSortBuilder from "../condition/productSortBuilder.service.js";
+import ProductFilterBuilder from "../condition/filter/productFilterBuilder.service.js";
+import VariantFilterBuilder from "../condition/filter/variantFilterBuilder.service.js";
+import AttributeFilterBuilder from "../condition/filter/attributeFilterBuilder.service.js";
+import ProductSortBuilder from "../condition/sort/productSortBuilder.service.js";
 import PaginationBuilder from "../condition/paginationBuilder.service.js";
 import { flattenArray, toArray } from "../../utils/utils.js";
 
@@ -202,11 +203,8 @@ class ProductService {
 
         const paginationConditions = new PaginationBuilder(query).build();
         // Filter building by query
-        const productFilter = new FilterBuilder(query, "product").build();
-        const variantFilter = new FilterBuilder(
-            query.variant,
-            "variant"
-        ).build();
+        const productFilter = new ProductFilterBuilder(query).build();
+        const variantFilter = new VariantFilterBuilder(query.variant).build();
 
         // Retrieve all descendant categories of the given categories
         const categoryFilter = flattenArray(

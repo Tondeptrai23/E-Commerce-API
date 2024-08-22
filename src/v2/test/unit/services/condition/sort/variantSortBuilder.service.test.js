@@ -1,52 +1,52 @@
-import CouponSortBuilder from "../../../../services/condition/couponSortBuilder.service.js";
+import VariantSortBuilder from "../../../../../services/condition/sort/variantSortBuilder.service.js";
 
-describe("CouponSortBuilder", () => {
-    test("should return an array with default sorting if the query is empty", () => {
+describe("VariantSortBuilder", () => {
+    test("should return an array with default sort if the query is empty", () => {
         const query = {};
-        const sortBuilder = new CouponSortBuilder(query);
+        const sortBuilder = new VariantSortBuilder(query);
         const result = sortBuilder.build();
         expect(result).toEqual([["createdAt", "DESC"]]);
     });
 
-    test("should return an array with default sorting if the sort field is not array", () => {
-        const query = { sort: "discountValue" };
-        const sortBuilder = new CouponSortBuilder(query);
+    test("should return an array with default sort if the sort field is not array", () => {
+        const query = { sort: "price" };
+        const sortBuilder = new VariantSortBuilder(query);
         const result = sortBuilder.build();
         expect(result).toEqual([["createdAt", "DESC"]]);
     });
 
     test("should return an array of order conditions compatible for Sequelize sorting", () => {
-        const query = { sort: ["discountValue"] };
-        const sortBuilder = new CouponSortBuilder(query);
+        const query = { sort: ["price"] };
+        const sortBuilder = new VariantSortBuilder(query);
         const result = sortBuilder.build();
         expect(result).toEqual([
-            ["discountValue", "ASC"],
+            ["price", "ASC"],
             ["createdAt", "DESC"],
         ]);
     });
 
     test("should return an array of order conditions compatible for Sequelize sorting with multiple fields and directions", () => {
-        const query = { sort: ["-discountValue", "timesUsed"] };
-        const sortBuilder = new CouponSortBuilder(query);
+        const query = { sort: ["-price", "stock"] };
+        const sortBuilder = new VariantSortBuilder(query);
         const result = sortBuilder.build();
         expect(result).toEqual([
-            ["discountValue", "DESC"],
-            ["timesUsed", "ASC"],
+            ["price", "DESC"],
+            ["stock", "ASC"],
             ["createdAt", "DESC"],
         ]);
     });
 
     test("should return an array of order conditions compatible for Sequelize sorting with multiple fields and directions", () => {
         const query = {
-            sort: ["-discountValue", "-timesUsed", "createdAt", "-endDate"],
+            sort: ["-price", "-stock", "createdAt", "-productID"],
         };
-        const sortBuilder = new CouponSortBuilder(query);
+        const sortBuilder = new VariantSortBuilder(query);
         const result = sortBuilder.build();
         expect(result).toEqual([
-            ["discountValue", "DESC"],
-            ["timesUsed", "DESC"],
+            ["price", "DESC"],
+            ["stock", "DESC"],
             ["createdAt", "ASC"],
-            ["endDate", "DESC"],
+            ["productID", "DESC"],
             ["createdAt", "DESC"],
         ]);
     });

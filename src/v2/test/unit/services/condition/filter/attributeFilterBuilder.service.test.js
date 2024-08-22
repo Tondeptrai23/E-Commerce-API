@@ -1,7 +1,7 @@
-import AttributeFilterBuilder from "../../../../services/condition/attributeFilterBuilder.service.js";
-import attributeService from "../../../../services/products/attribute.service.js";
+import AttributeFilterBuilder from "../../../../../services/condition/filter/attributeFilterBuilder.service.js";
+import attributeService from "../../../../../services/products/attribute.service.js";
 import { jest } from "@jest/globals";
-import { db } from "../../../../models/index.model.js";
+import { db } from "../../../../../models/index.model.js";
 import { Op } from "sequelize";
 
 describe("AttributeFilterBuilder", () => {

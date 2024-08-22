@@ -12,13 +12,14 @@ import {
 import productCategoryService from "../products/productCategory.service.js";
 import { flattenArray } from "../../utils/utils.js";
 import Variant from "../../models/products/variant.model.js";
-import FilterBuilder from "../condition/filterBuilder.service.js";
+import CouponFilterBuilder from "../condition/filter/couponFilterBuilder.service.js";
 import categoryService from "../products/category.service.js";
-import CouponSortBuilder from "../condition/couponSortBuilder.service.js";
+import CouponSortBuilder from "../condition/sort/couponSortBuilder.service.js";
 import PaginationBuilder from "../condition/paginationBuilder.service.js";
 import { db } from "../../models/index.model.js";
 import ProductCoupon from "../../models/shopping/productCoupon.model.js";
 import CategoryCoupon from "../../models/shopping/categoryCoupon.model.js";
+import ProductFilterBuilder from "../condition/filter/productFilterBuilder.service.js";
 
 class CouponService {
     /**
@@ -564,12 +565,8 @@ class CouponService {
             };
         }
 
-        const couponFilter = new FilterBuilder(query, "coupon").build();
-
-        const productFilter = new FilterBuilder(
-            query.product,
-            "product"
-        ).build();
+        const couponFilter = new CouponFilterBuilder(query).build();
+        const productFilter = new ProductFilterBuilder(query.product).build();
 
         const categoryFilter = flattenArray(
             await Promise.all(

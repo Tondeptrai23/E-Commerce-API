@@ -120,15 +120,15 @@ parameters:
       type: object
       properties:
         productID:
-          description: | 
+          description: |
             For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
           example: "1"
         name:
-          description: | 
+          description: |
             For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
           example: "[like]name" 
         createdAt:
-          description: | 
+          description: |
             For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering)
           example: "[lte]2024-01-01"
     
@@ -141,8 +141,10 @@ parameters:
   
   - name: sort
     in: query
-    description: Sort by fields. <br> 
-      - For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#sorting).
+    description: |
+      Sort by fields. <br>
+      Support fields: `couponID`, `code`, `discountValue`, `discountType`, `target`, `minimumOrderAmount`, `timesUsed`, `maxUsage`, `startDate`, `endDate`, `createdAt`, `updatedAt`. <br>
+      For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#sorting).
     required: false
     schema:
       type: string

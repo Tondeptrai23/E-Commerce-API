@@ -1,70 +1,26 @@
-import QueryToSequelizeConditionConverter from "./sequelizeConverter.service.js";
+import QueryToSequelizeConditionConverter from "../sequelizeConverter.service.js";
 import { Op } from "sequelize";
 
 /**
  * @summary A class to build filtering conditions from a request query
- * to retrieve products
+ * to retrieve resources
  *
  * @description
  * This class is used to build filtering conditions from a request query
- * to retrieve products from a Sequelize magic method.
+ * to retrieve resources from a Sequelize magic method.
  *
- * @example
- * const filterConditions = new FilterBuilder(query, "product").build();
+ * This class is meant to be extended by other classes to build filtering
+ * conditions for specific resources.
  *
  */
 export default class FilterBuilder extends QueryToSequelizeConditionConverter {
-    #allowFields = [];
-    #comparisonOperators = {};
+    _allowFields = [];
+    _comparisonOperators = {};
 
-    constructor(requestQuery, modelName) {
+    constructor(requestQuery) {
         super(requestQuery);
 
-        const fieldMappings = {
-            product: [
-                "productID",
-                "name",
-                "updatedAt",
-                "createdAt",
-                "deletedAt",
-            ],
-            category: ["name"],
-            user: ["name", "email"],
-            variant: [
-                "variantID",
-                "name",
-                "price",
-                "discountPrice",
-                "stock",
-                "sku",
-                "createdAt",
-                "updatedAt",
-                "deletedAt",
-                "productID",
-            ],
-            order: [
-                "status",
-                "orderDate",
-                "message",
-                "subTotal",
-                "finalTotal",
-                "paymentMethod",
-            ],
-            coupon: [
-                "code",
-                "discountType",
-                "discountValue",
-                "target",
-                "minimumOrderAmount",
-                "timesUsed",
-                "maxUsage",
-                "startDate",
-                "endDate",
-            ],
-        };
-
-        this.#allowFields = fieldMappings[modelName];
-        this.#comparisonOperators = {
+        this._comparisonOperators = {
             "[lte]": Op.lte,
             "[gte]": Op.gte,
             "[between]": Op.between,
@@ -84,7 +40,7 @@ export default class FilterBuilder extends QueryToSequelizeConditionConverter {
         const conditions = [];
 
         const fields = Object.keys(this._query).filter((field) =>
-            this.#allowFields.includes(field)
+            this._allowFields.includes(field)
         );
 
         fields.forEach((field) => {
@@ -105,7 +61,7 @@ export default class FilterBuilder extends QueryToSequelizeConditionConverter {
                     return;
                 }
 
-                Object.entries(this.#comparisonOperators).forEach(
+                Object.entries(this._comparisonOperators).forEach(
                     ([comparator, operator]) => {
                         if (!value.startsWith(comparator)) return;
 

@@ -4,6 +4,19 @@ tags:
 summary: Get all categories
 description: |
   Get all categories.
+parameters: 
+  - name: page
+    in: query
+    description: The page number
+    required: false
+    schema:
+      example: 1
+  - name: size
+    in: query
+    description: The number of categories per page
+    required: false
+    schema:
+      example: 10
 responses:
   200:
     description: Categories found
@@ -11,6 +24,8 @@ responses:
       application/json:
         schema:
           type: object
+          allOf:
+            - $ref: '../../../schemas/pagination.yaml'
           properties:
             success: 
               type: boolean
@@ -19,6 +34,12 @@ responses:
               type: array
               items:
                 $ref: '../../../schemas/products/category.yaml'
+  400:
+    description: Bad Request
+    content:
+      application/json:
+        schema:
+          $ref: '../../../schemas/error/error400.yaml'
   500:
     description: Internal Server Error
     content:

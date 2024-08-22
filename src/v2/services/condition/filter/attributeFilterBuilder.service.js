@@ -1,7 +1,7 @@
-import QueryToSequelizeConditionConverter from "./sequelizeConverter.service.js";
-import attributeService from "../products/attribute.service.js";
+import QueryToSequelizeConditionConverter from "../sequelizeConverter.service.js";
+import attributeService from "../../products/attribute.service.js";
 import { Op } from "sequelize";
-import { db } from "../../models/index.model.js";
+import { db } from "../../../models/index.model.js";
 
 /**
  * @summary A class to build filtering conditions for variants' attributes

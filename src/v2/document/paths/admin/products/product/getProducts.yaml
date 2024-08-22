@@ -76,19 +76,19 @@ parameters:
       type: object
       properties:
         price:
-          description: | 
+          description: |
             [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering) 
           example: "[gte]50"
         discountPrice:
-          description: | 
+          description: |
             [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering) 
           example: "[lte]50"
         sku:
-          description: | 
+          description: |
             [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
           example: "SKU123"
         stock:
-          description: | 
+          description: |
             [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering) 
           example: "[gte]10"
 
@@ -101,7 +101,9 @@ parameters:
 
   - name: sort
     in: query
-    description: Sort products by one or more fields. <br>
+    description: |
+      Sort products by one or more fields. <br>
+      Support fields: `productID`, `name`, `price`, `discountPrice`, `stock`, `createdAt`, `updatedAt`, `deletedAt`. <br>
       For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#sorting).
     required: false
     example: "price,-stock"

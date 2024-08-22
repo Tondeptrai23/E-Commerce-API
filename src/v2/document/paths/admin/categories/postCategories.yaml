@@ -60,6 +60,12 @@ responses:
       application/json:
         schema:
           $ref: '../../../schemas/error/error403.yaml'
+  404:
+    description: Parent category not found
+    content:
+      application/json:
+        schema:
+          $ref: '../../../schemas/error/error404.yaml'  
   409:
     description: Category already exists
     content:

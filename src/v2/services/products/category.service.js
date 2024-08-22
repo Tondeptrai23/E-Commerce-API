@@ -1,6 +1,7 @@
 import Category from "../../models/products/category.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import { Op } from "sequelize";
+import PaginationBuilder from "../condition/paginationBuilder.service.js";
 
 class CategoryService {
     /**
@@ -10,9 +11,22 @@ class CategoryService {
      * @returns {Promise<Category[]>} the categories that match the given options
      */
     async getCategories(query) {
-        const categories = await Category.findAll({});
+        const conditions = this.#buildConditions(query);
 
-        return categories;
+        return await Category.findAll({
+            ...conditions.paginationConditions,
+        });
+    }
+
+    /**
+     * Build the conditions for the query
+     */
+    #buildConditions(query) {
+        const paginationConditions = new PaginationBuilder(query).build();
+
+        return {
+            paginationConditions,
+        };
     }
 
     /**

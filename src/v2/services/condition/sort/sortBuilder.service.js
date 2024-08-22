@@ -1,4 +1,4 @@
-import QueryToSequelizeConditionConverter from "./sequelizeConverter.service.js";
+import QueryToSequelizeConditionConverter from "../sequelizeConverter.service.js";
 
 /**
  * @summary A Base class to build sorting conditions from a request query

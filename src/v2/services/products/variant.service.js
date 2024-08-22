@@ -6,10 +6,10 @@ import AttributeValue from "../../models/products/attributeValue.model.js";
 import Attribute from "../../models/products/attribute.model.js";
 import ProductImage from "../../models/products/productImage.model.js";
 import VariantAttributeValue from "../../models/products/variantAttributeValue.model.js";
-import AttributeFilterBuilder from "../condition/attributeFilterBuilder.service.js";
-import FilterBuilder from "../condition/filterBuilder.service.js";
+import AttributeFilterBuilder from "../condition/filter/attributeFilterBuilder.service.js";
 import PaginationBuilder from "../condition/paginationBuilder.service.js";
-import VariantSortBuilder from "../condition/variantSortBuilder.service.js";
+import VariantSortBuilder from "../condition/sort/variantSortBuilder.service.js";
+import variantFilterBuilder from "../condition/filter/variantFilterBuilder.service.js";
 import { db } from "../../models/index.model.js";
 
 class VariantService {
@@ -295,7 +295,7 @@ class VariantService {
         const paginationConditions = new PaginationBuilder(query).build();
 
         // Filter
-        const variantFilter = new FilterBuilder(query, "variant").build();
+        const variantFilter = new variantFilterBuilder(query).build();
 
         let attributeFilter = (
             await AttributeFilterBuilder.create(query.attributes)

@@ -27,56 +27,48 @@ parameters:
   - name: name
     in: query
     description: Filter by name. <br>
-      - Support partial matching using "[like]name"
+      For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).
     required: false
     schema:
-      type: string
-      pattern: /^(\[like\])?([\w-]+)$/
+      example: "[like]Category"
 
   - name: parentID
     in: query
-    description: Filter by parentID
+    description: Filter by parentID.
+      For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).
     required: false
     schema:
-      type: string
+      example: "1"
   
   - name: parentName
     in: query
     description: Filter by parentName. <br>
-      - Support partial matching using "[like]parentName"
+      For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).
     required: false
     schema:
-      type: string
-      pattern: /^(\[like\])?([\w-]+)$/
+      example: "[like]Parent"
 
   - name: createdAt
     in: query
     description: Filter by createdAt. <br> 
-      - Support operators <br> 
-      + [lte]2024-01-01 <br> 
-      + [gte]2024-01-01 <br> 
-      + [between]2024-01-01,2022-01-01 <br> 
+      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     required: false
     schema:
-      type: string
+      example: "[gte]2024-01-01"
 
   - name: updatedAt
     in: query
     description: Filter by updatedAt. <br> 
-      - Support operators <br> 
-      + [lte]2024-01-01 <br> 
-      + [gte]2024-01-01 <br> 
-      + [between]2024-01-01,2022-01-01 <br> 
+      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     schema:
-      type: string
+      example: "[gte]2024-01-01"
 
   - name: sort
     in: query
-    description: Sort categories by one or more fields. <br> 
-      - A comma-separated list of fields ("name,-createdAt"). <br> 
-      - A single field ("name"). <br> - An array of fields (["name", "-createdAt"]). <br>
-      - A leading '-' indicates descending order. <br> 
-      - Sorting is applied from left to right
+    description: |
+      Sort categories by one or more fields. <br>
+      Supported fields: `categoryID`, `name`, `parentID`, `createdAt`, `updatedAt`. <br>
+      For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#sorting).
     required: false
     schema:
       oneOf:

@@ -1,4 +1,4 @@
-import ProductSortBuilder from "../../../../services/condition/productSortBuilder.service.js";
+import ProductSortBuilder from "../../../../../services/condition/sort/productSortBuilder.service.js";
 
 describe("ProductSortBuilder", () => {
     describe("build", () => {

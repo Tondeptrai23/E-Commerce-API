@@ -27,98 +27,71 @@ parameters:
   - name: productID
     in: query
     description: Filter by productID. <br> 
-      - Support partial matching using "[like]productID"
+      For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).
     required: false
     schema:
-      type: string
+      example: "productID"
 
   - name: createdAt
     in: query
-    description: Filter by createdAt. <br> 
-      - Support operators <br> 
-      + [lte]2024-01-01 <br> 
-      + [gte]2024-01-01 <br> 
-      + [between]2024-01-01,2022-01-01 <br> 
+    description: Filter by createdAt. <br>
+      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     required: false
     schema:
-      type: string
       example: "[gte]2024-01-01"
 
   - name: updatedAt
     in: query
-    description: Filter by updatedAt. <br> 
-      - Support operators [lte], [gte], [between] <br> 
-      + [lte]2024-01-01 <br> 
-      + [gte]2024-01-01 <br> 
-      + [between]2024-01-01,2022-01-01 <br> 
+    description: Filter by updatedAt. <br>
+      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     required: false
     schema:
-      type: string
       example: "[lte]2024-01-01"
 
   - name: deletedAt
     in: query
     description: Filter by deletedAt. <br> 
-      - Support operators [lte], [gte], [between] <br> 
-      + [lte]2024-01-01 <br> 
-      + [gte]2024-01-01 <br> 
-      + [between]2024-01-01,2022-01-01 <br> 
+      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     required: false
     schema:
-      type: string
       example: "[lte]2024-01-01"
 
   - name: price
     in: query
     description: Filter by price. <br>
-      - Support operators [lte], [gte], [between]<br>
-      + [lte]1000 <br>
-      + [gte]1000 <br>
-      + [between]1000,2000 <br>
+      For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).
     required: false
     schema:
-      type: string
       example: "[lte]1000"
 
   - name: discountPrice
     in: query
     description: Filter by discountPrice. <br>
-      - Support operators [lte], [gte], [between]<br>
-      + [lte]1000 <br>
-      + [gte]1000 <br>
-      + [between]1000,2000 <br>
+      For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).
     required: false
     schema:
-      type: string
       example: "[lte]1000"
 
   - name: sku
     in: query
     description: Filter by sku. <br>
-      - Support partial matching using "[like]sku"
+      For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).
     required: false
     schema:
-      type: string
+      example: "[like]SKU"
 
   - name: stock
     in: query
     description: Filter by stock. <br>
-      - Support operators [lte], [gte], [between]<br>
-      + [lte]1000 <br>
-      + [gte]1000 <br>
-      + [between]1000,2000 <br>
+      For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).
     required: false
     schema:
-      type: string
       example: "[lte]1000"
 
   - name: attributes
     in: query
     description: Filter variants by attributes. <br>
-      The `attributes` parameter is a dynamic object where keys represent attribute names and values represent desired attribute values.  <br>
-      For example, `attributes={"color":"red","size":"M"}` will return a variant having both the color "red" and size "M".  <br>
-      Note that `size="M,L"` is different from `size=["M","L"]`. <br>
-        - The former filters for variants with either size M or L, while the latter filters for variants with both sizes (which is typically impossible).
+      For more information, see the [Filter By Variant Attributes](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md##get-products-and-get-adminproducts-1).
     required: false
     style: deepObject
     schema:
@@ -132,9 +105,10 @@ parameters:
 
   - name: sort
     in: query
-    description: Sort variants by one or more fields. <br> 
-      Specify fields in a comma-separated string ("price,-discountPrice"), as a single string ("price"), or as an array of strings (["price", "-discountPrice"]). <br>
-      A leading '-' indicates descending order. Sorting is applied from left to right.
+    description: |
+      Sort variants by one or more fields. <br>
+      Support fields: `variantID`, `productID`, `name`, `price`, `discountPrice`, `stock`, `createdAt`, `updatedAt`, `deletedAt`. <br>
+      For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#sorting).
     required: false
     schema:
       oneOf:
