@@ -4,7 +4,6 @@ import { validateCreateImages } from "./image.validator.js";
 import { validateAddCategoriesForProduct } from "./category.validator.js";
 import {
     validateQueryNumber,
-    stringRegex,
     sanitizeSortingQuery,
     validateSortingQuery,
     validateUnexpectedFields,

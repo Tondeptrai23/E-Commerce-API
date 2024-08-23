@@ -1,9 +1,9 @@
-const stringRegex = /^(\[like\])?([\w-]+)$/;
+const stringRegex = /^(\[(like|ne)\])?([\w-]+)$/;
 
-const numberRegex = /^(?:\[(lte|gte)\]\d+|\[between]\d+,\d+|\d+)$/;
+const numberRegex = /^(?:\[(lte|gte|lt|gt|ne)\]\d+|\[between]\d+,\d+|\d+)$/;
 
 const dateRegex =
-    /^(?:\[(lte|gte)\](\d{4}-\d{2}-\d{2})|\[between\](\d{4}-\d{2}-\d{2}),(\d{4}-\d{2}-\d{2})|(\d{4}-\d{2}-\d{2}))$/;
+    /^(?:\[(lte|gte|lt|gt|ne)\](\d{4}-\d{2}-\d{2})|\[between\](\d{4}-\d{2}-\d{2}),(\d{4}-\d{2}-\d{2})|(\d{4}-\d{2}-\d{2}))$/;
 
 const validateMinValue = (fieldName, minValue) => {
     return (value) => {

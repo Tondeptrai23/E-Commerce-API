@@ -554,7 +554,17 @@ describe("validateQueryGetVariant", () => {
             query: {
                 page: "1",
                 size: "10",
-                sort: "price,-discountPrice",
+                sort: [
+                    "variantID",
+                    "name",
+                    "price",
+                    "discountPrice",
+                    "stock",
+                    "productID",
+                    "updatedAt",
+                    "createdAt",
+                    "deletedAt",
+                ],
                 name: "example",
                 price: "100",
                 discountPrice: "90",
@@ -604,7 +614,6 @@ describe("validateQueryGetVariant", () => {
         }
         const errors = validationResult(req);
 
-        console.log(errors.array().map((error) => error.msg));
         expect(errors.isEmpty()).toBe(false);
         expect(errors.array()).toEqual(
             expect.arrayContaining([

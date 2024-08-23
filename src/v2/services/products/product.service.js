@@ -212,7 +212,7 @@ class ProductService {
                 toArray(query.category).map(async (category) => {
                     try {
                         const categoryNames = (
-                            await categoryService.getDescendantCategoriesByName(
+                            await categoryService.getDescendantCategories(
                                 category
                             )
                         ).map((category) => category.name);

@@ -1,30 +1,39 @@
 import categoryService from "../../services/products/category.service.js";
 import CategorySerializer from "../../services/serializers/category.serializer.service.js";
 import { StatusCodes } from "http-status-codes";
-import { ResourceNotFoundError } from "../../utils/error.js";
+import { ConflictError, ResourceNotFoundError } from "../../utils/error.js";
 
 class CategoryController {
     async getCategories(req, res) {
         try {
             // Get query params
-            const categories = await categoryService.getCategories(req.query);
+            const { categories, currentPage, totalPages, totalItems } =
+                await categoryService.getCategories(req.query);
 
             // Serialize categories
-            const serializedCategories = CategorySerializer.parse(categories);
+            const serializedCategories = CategorySerializer.parse(categories, {
+                includeTimestamps: req.admin ? true : false,
+            });
 
             // Return serialized categories
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    categories: serializedCategories,
-                },
+                currentPage: currentPage,
+                totalPages: totalPages,
+                totalItems: totalItems,
+                categories: serializedCategories,
             });
         } catch (err) {
             console.log(err);
 
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Server error in getting categories",
+                errors: [
+                    {
+                        error: "ServerError",
+                        message: "Server error in getting categories",
+                    },
+                ],
             });
         }
     }
@@ -38,6 +47,9 @@ class CategoryController {
             const categories = await categoryService.getAscendantCategories(
                 categoryName
             );
+            if (categories.length === 0) {
+                throw new ResourceNotFoundError("Category not found");
+            }
 
             // Serialize categories
             const serializedCategories = CategorySerializer.parse(categories);
@@ -45,22 +57,30 @@ class CategoryController {
             // Return serialized categories
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    categories: serializedCategories,
-                },
+                categories: serializedCategories,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 return res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error in getting categories",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message:
+                                "Server error in getting ascendant categories",
+                        },
+                    ],
                 });
             }
         }
@@ -72,10 +92,13 @@ class CategoryController {
             const categoryName = req.params.name;
 
             // Get descendant categories
-            const categories =
-                await categoryService.getDescendantCategoriesByName(
-                    categoryName
-                );
+            const categories = await categoryService.getDescendantCategories(
+                categoryName
+            );
+
+            if (categories.length === 0) {
+                throw new ResourceNotFoundError("Category not found");
+            }
 
             // Serialize categories
             const serializedCategories = CategorySerializer.parse(categories);
@@ -83,22 +106,30 @@ class CategoryController {
             // Return serialized categories
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    categories: serializedCategories,
-                },
+                categories: serializedCategories,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error in getting categories",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message:
+                                "Server error in getting descendant categories",
+                        },
+                    ],
                 });
             }
         }
@@ -106,34 +137,43 @@ class CategoryController {
 
     async getCategory(req, res) {
         try {
-            // Get category ID
+            // Get data
             const categoryName = req.params.name;
 
             // Get category
             const category = await categoryService.getCategory(categoryName);
 
             // Serialize category
-            const serializedCategory = CategorySerializer.parse(category);
+            const serializedCategory = CategorySerializer.parse(category, {
+                includeTimestamps: req.admin ? true : false,
+            });
 
             // Return serialized category
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    category: serializedCategory,
-                },
+                category: serializedCategory,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 return res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error in getting category",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error in getting category",
+                        },
+                    ],
                 });
             }
         }
@@ -143,6 +183,12 @@ class CategoryController {
         try {
             // Get category data
             const { name, description, parent } = req.body;
+
+            // Check if category's name is taken
+            const isTaken = await categoryService.isCategoryNameTaken(name);
+            if (isTaken) {
+                throw new ConflictError("Category already exists");
+            }
 
             // Create category
             const category = await categoryService.createCategory({
@@ -159,22 +205,39 @@ class CategoryController {
             // Return serialized category
             res.status(StatusCodes.CREATED).json({
                 success: true,
-                data: {
-                    category: serializedCategory,
-                },
+                category: serializedCategory,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
+                });
+            } else if (err instanceof ConflictError) {
+                res.status(StatusCodes.CONFLICT).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "Conflict",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error in adding category",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error in creating category",
+                        },
+                    ],
                 });
             }
         }
@@ -187,6 +250,14 @@ class CategoryController {
 
             // Get category data
             const { name, description = null, parent = null } = req.body;
+
+            // Check if category's name is taken
+            if (name !== categoryName) {
+                const isTaken = await categoryService.isCategoryNameTaken(name);
+                if (isTaken) {
+                    throw new ConflictError("Category already exists");
+                }
+            }
 
             // Update category
             const category = await categoryService.updateCategory(
@@ -206,22 +277,39 @@ class CategoryController {
             // Return serialized category
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    category: serializedCategory,
-                },
+                category: serializedCategory,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
-                return res.status(StatusCodes.NOT_FOUND).json({
+                res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
+                });
+            } else if (err instanceof ConflictError) {
+                res.status(StatusCodes.CONFLICT).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "Conflict",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error in updating category",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error in updating category",
+                        },
+                    ],
                 });
             }
         }
@@ -240,17 +328,26 @@ class CategoryController {
                 success: true,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error in deleting category",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error in deleting category",
+                        },
+                    ],
                 });
             }
         }

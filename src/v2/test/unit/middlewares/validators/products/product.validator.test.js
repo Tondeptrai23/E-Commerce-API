@@ -342,7 +342,7 @@ describe("validateQueryGetProductUser", () => {
             query: {
                 page: "1",
                 size: "10",
-                sort: "price",
+                sort: ["price", "name", "stock", "discountPrice"],
                 name: ["[like]example", "test"],
                 variant: {
                     price: "100",
@@ -483,7 +483,16 @@ describe("validateQueryGetProduct", () => {
             query: {
                 page: "1",
                 size: "10",
-                sort: "price",
+                sort: [
+                    "productID",
+                    "price",
+                    "name",
+                    "stock",
+                    "discountPrice",
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt",
+                ],
                 productID: "1",
                 name: "example",
                 variant: {

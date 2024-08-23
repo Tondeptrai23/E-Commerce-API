@@ -20,11 +20,15 @@ export default class FilterBuilder extends QueryToSequelizeConditionConverter {
     constructor(requestQuery) {
         super(requestQuery);
 
+        this._allowFields = requestQuery ? Object.keys(requestQuery) : [];
         this._comparisonOperators = {
             "[lte]": Op.lte,
             "[gte]": Op.gte,
             "[between]": Op.between,
             "[like]": Op.like,
+            "[ne]": Op.ne,
+            "[lt]": Op.lt,
+            "[gt]": Op.gt,
         };
     }
 

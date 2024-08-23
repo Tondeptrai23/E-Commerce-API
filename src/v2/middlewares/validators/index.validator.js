@@ -41,6 +41,11 @@ const validator = {
         categoryValidator.validateAddCategoriesForProduct,
     validatePutCategoriesForProduct:
         categoryValidator.validatePutCategoriesForProduct,
+    validateAddCategory: categoryValidator.validateAddCategory,
+    validatePutCategory: categoryValidator.validatePutCategory,
+    validateQueryGetCategory: categoryValidator.validateQueryGetCategoryAdmin,
+    validateQueryGetCategoryUser:
+        categoryValidator.validateQueryGetCategoryUser,
 
     validateCreateVariants: variantValidator.validateCreateVariants,
     validatePutVariant: variantValidator.validatePutVariant,

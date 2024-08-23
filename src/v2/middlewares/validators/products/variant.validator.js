@@ -207,6 +207,7 @@ const validateQueryGetVariant = [
         .customSanitizer(sanitizeSortingQuery)
         .custom(
             validateSortingQuery([
+                "variantID",
                 "productID",
                 "price",
                 "name",

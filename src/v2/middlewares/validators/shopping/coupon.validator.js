@@ -6,7 +6,6 @@ import {
     validateUnexpectedFields,
     sanitizeSortingQuery,
     validateSortingQuery,
-    stringRegex,
     validateQueryNumber,
     validateQueryInteger,
     validateQueryString,
@@ -232,19 +231,17 @@ const validateQueryGetCoupon = [
         .customSanitizer(sanitizeSortingQuery)
         .custom(
             validateSortingQuery([
+                "couponID",
                 "code",
                 "discountType",
                 "discountValue",
                 "target",
-                "description",
                 "minimumOrderAmount",
                 "maxUsage",
                 "startDate",
                 "endDate",
                 "createdAt",
                 "updatedAt",
-                "product",
-                "category",
             ])
         ),
 

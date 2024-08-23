@@ -2,8 +2,6 @@ import request from "supertest";
 import { StatusCodes } from "http-status-codes";
 import app from "../../../../../app.js";
 import seedData from "../../../../../seedData.js";
-import variantService from "../../../../../services/products/variant.service.js";
-import VariantSerializer from "../../../../../services/serializers/variant.serializer.service.js";
 
 /**
  * Set up

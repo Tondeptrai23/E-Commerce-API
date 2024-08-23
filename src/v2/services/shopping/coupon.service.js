@@ -572,9 +572,7 @@ class CouponService {
             await Promise.all(
                 toArray(query.category).map(async (category) => {
                     return (
-                        await categoryService.getDescendantCategoriesByName(
-                            category
-                        )
+                        await categoryService.getDescendantCategories(category)
                     ).map((category) => category.name);
                 })
             )
