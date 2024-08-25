@@ -7,12 +7,81 @@ beforeAll(async () => {
     await seedData();
 }, 15000);
 
-describe("CategoryService", () => {
+describe("Category Service", () => {
     describe("CategoryService.getCategories", () => {
         test("should return an array of categories", async () => {
-            const categories = await categoryService.getCategories({});
+            const { categories, totalPages, currentPage, totalItems } =
+                await categoryService.getCategories({});
             expect(categories).toBeInstanceOf(Array);
             expect(categories[0]).toBeInstanceOf(Category);
+            expect(totalPages).toBeGreaterThan(0);
+            expect(currentPage).toBe(1);
+            expect(totalItems).toBeGreaterThan(0);
+        });
+
+        test("should return an array of categories with pagination", async () => {
+            const { categories, totalPages, currentPage, totalItems } =
+                await categoryService.getCategories({ page: "1", size: "5" });
+            expect(categories).toBeInstanceOf(Array);
+            expect(categories).toHaveLength(5);
+            expect(categories[0]).toBeInstanceOf(Category);
+            expect(totalPages).toBeGreaterThan(0);
+            expect(currentPage).toBe(1);
+            expect(totalItems).toBeGreaterThan(0);
+
+            const { categories: categories2, currentPage: currentPage2 } =
+                await categoryService.getCategories({ page: "2", size: "5" });
+            expect(categories2).toBeInstanceOf(Array);
+            expect(categories2.length).toBeLessThanOrEqual(5);
+            expect(categories2[0]).toBeInstanceOf(Category);
+            expect(currentPage2).toBe(2);
+        });
+
+        test("should return an array of categories with sorting", async () => {
+            const { categories, totalPages, currentPage, totalItems } =
+                await categoryService.getCategories({ sort: ["name"] });
+            expect(categories).toBeInstanceOf(Array);
+            expect(totalPages).toBeGreaterThan(0);
+            expect(currentPage).toBe(1);
+            expect(totalItems).toBeGreaterThan(0);
+
+            for (let i = 0; i < categories.length - 1; i++) {
+                expect(categories[i].name <= categories[i + 1].name).toBe(true);
+            }
+
+            const { categories: categories2 } =
+                await categoryService.getCategories({
+                    sort: ["name"],
+                    page: "2",
+                });
+            expect(categories2).toBeInstanceOf(Array);
+            expect(categories2[0].name > categories[4].name).toBe(true);
+            for (let i = 0; i < categories2.length - 1; i++) {
+                expect(categories2[i].name <= categories2[i + 1].name).toBe(
+                    true
+                );
+            }
+        });
+
+        test("should return an array of categories with filtering", async () => {
+            const { categories, totalPages, currentPage, totalItems } =
+                await categoryService.getCategories({ name: "tops" });
+            expect(categories).toBeInstanceOf(Array);
+            expect(categories).toHaveLength(1);
+            expect(categories[0]).toBeInstanceOf(Category);
+            expect(categories[0].name).toBe("tops");
+            expect(totalPages).toBe(1);
+            expect(currentPage).toBe(1);
+            expect(totalItems).toBe(1);
+        });
+
+        test("should return an empty array if no categories match the filter", async () => {
+            const { categories, totalPages, currentPage, totalItems } =
+                await categoryService.getCategories({ name: "nonexistent" });
+            expect(categories).toEqual([]);
+            expect(totalPages).toBe(0);
+            expect(currentPage).toBe(1);
+            expect(totalItems).toBe(0);
         });
     });
 
@@ -93,18 +162,10 @@ describe("CategoryService", () => {
             );
         });
 
-        test("should return an empty array if the category does not exist", async () => {
-            const categories = await categoryService.getDescendantCategories(
-                "nonexistent"
-            );
-            expect(categories).toEqual([]);
-        });
-    });
-
-    describe("CategoryService.getDescendantCategoriesByName", () => {
         test("should return an array of categories if the category exists", async () => {
-            const categories =
-                await categoryService.getDescendantCategoriesByName("bottoms");
+            const categories = await categoryService.getDescendantCategories(
+                "bottoms"
+            );
             expect(categories).toBeInstanceOf(Array);
 
             expect(categories).toEqual(
@@ -124,7 +185,7 @@ describe("CategoryService", () => {
 
         test("should throw an error if the category does not exist", async () => {
             await expect(
-                categoryService.getDescendantCategoriesByName("nonexistent")
+                categoryService.getDescendantCategories("nonexistent")
             ).rejects.toThrow(ResourceNotFoundError);
         });
     });

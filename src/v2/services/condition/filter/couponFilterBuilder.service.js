@@ -11,6 +11,7 @@ export default class CouponFilterBuilder extends FilterBuilder {
     constructor(requestQuery) {
         super(requestQuery);
         this._allowFields = [
+            "couponID",
             "code",
             "discountType",
             "discountValue",

@@ -108,34 +108,6 @@ const validateQueryGetProductUser = [
         .optional()
         .isObject()
         .withMessage("Attributes should be an object"),
-
-    // Sanitize unexpected fields
-    query().customSanitizer((value) => {
-        if (!value) return value;
-        const allowedFields = [
-            "page",
-            "size",
-            "sort",
-            "name",
-            "variant",
-            "category",
-            "attributes",
-        ];
-
-        return Object.fromEntries(
-            Object.entries(value).filter(([key]) => allowedFields.includes(key))
-        );
-    }),
-
-    query("variant").customSanitizer((value) => {
-        if (!value) return value;
-
-        const allowedFields = ["price", "discountPrice", "stock", "sku"];
-
-        return Object.fromEntries(
-            Object.entries(value).filter(([key]) => allowedFields.includes(key))
-        );
-    }),
 ];
 
 const validateQueryGetProduct = [
@@ -203,39 +175,6 @@ const validateQueryGetProduct = [
         .optional()
         .isObject()
         .withMessage("Attributes should be an object"),
-
-    // Sanitize unexpected fields
-    query().customSanitizer((value) => {
-        if (!value) return value;
-
-        const allowedFields = [
-            "page",
-            "size",
-            "sort",
-            "productID",
-            "name",
-            "updatedAt",
-            "createdAt",
-            "deletedAt",
-            "variant",
-            "category",
-            "attributes",
-        ];
-
-        return Object.fromEntries(
-            Object.entries(value).filter(([key]) => allowedFields.includes(key))
-        );
-    }),
-
-    query("variant").customSanitizer((value) => {
-        if (!value) return value;
-
-        const allowedFields = ["price", "discountPrice", "stock", "sku"];
-
-        return Object.fromEntries(
-            Object.entries(value).filter(([key]) => allowedFields.includes(key))
-        );
-    }),
 ];
 
 export {

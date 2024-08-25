@@ -46,7 +46,12 @@ const seedAttribute = async () => {
     await Attribute.bulkCreate([
         { attributeID: 1, name: "size" },
         { attributeID: 2, name: "color" },
+
+        // Additional attributes for testing attribute filtering
         { attributeID: 3, name: "material" },
+        { attributeID: 4, name: "pattern" },
+        { attributeID: 5, name: "fit" },
+        { attributeID: 6, name: "style" },
     ]);
 };
 
@@ -60,6 +65,17 @@ const seedAttributeValue = async () => {
         { valueID: 5, value: "white", attributeID: 2 },
         { valueID: 6, value: "blue", attributeID: 2 },
         { valueID: 7, value: "red", attributeID: 2 },
+
+        // Additional attribute values for testing attribute filtering
+        { valueID: 8, value: "cotton", attributeID: 3 },
+        { valueID: 9, value: "polyester", attributeID: 3 },
+        { valueID: 10, value: "floral", attributeID: 4 },
+        { valueID: 11, value: "striped", attributeID: 4 },
+        { valueID: 12, value: "loose", attributeID: 5 },
+        { valueID: 13, value: "fitted", attributeID: 5 },
+        { valueID: 14, value: "casual", attributeID: 6 },
+        { valueID: 15, value: "formal", attributeID: 6 },
+        { valueID: 16, value: "v-neck", attributeID: 6 },
     ]);
 };
 

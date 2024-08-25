@@ -245,6 +245,8 @@ const validateQueryGetCoupon = [
             ])
         ),
 
+    query("couponID").optional().custom(validateQueryString("Coupon ID")),
+
     query("code").optional().custom(validateQueryString("Code")),
 
     query("discountType")
@@ -260,8 +262,6 @@ const validateQueryGetCoupon = [
         .optional()
         .isIn(["all", "single"])
         .withMessage("Target should be valid"),
-
-    query("description").optional().custom(validateQueryString("Description")),
 
     query("minimumOrderAmount")
         .optional()
@@ -309,43 +309,6 @@ const validateQueryGetCoupon = [
 
             return true;
         }),
-
-    // Sanitize unexpected parameters (ignore them)
-    query().customSanitizer((value) => {
-        if (!value) return value;
-
-        const allowedFields = [
-            "page",
-            "size",
-            "sort",
-            "code",
-            "discountType",
-            "discountValue",
-            "target",
-            "description",
-            "minimumOrderAmount",
-            "maxUsage",
-            "startDate",
-            "endDate",
-            "createdAt",
-            "updatedAt",
-            "product",
-            "category",
-        ];
-
-        return Object.fromEntries(
-            Object.entries(value).filter(([key]) => allowedFields.includes(key))
-        );
-    }),
-
-    query("product").customSanitizer((value) => {
-        if (!value) return value;
-
-        const allowedFields = ["name", "productID", "createdAt"];
-        return Object.fromEntries(
-            Object.entries(value).filter(([key]) => allowedFields.includes(key))
-        );
-    }),
 ];
 
 export {

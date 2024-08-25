@@ -8,6 +8,7 @@ import * as imageValidator from "./products/image.validator.js";
 import * as orderValidator from "./shopping/order.validator.js";
 import * as cartValidator from "./shopping/cart.validator.js";
 import * as couponValidator from "./shopping/coupon.validator.js";
+import * as attributeValidator from "./products/attribute.validator.js";
 
 const handleValidationErrors = (req, res, next) => {
     const errors = validationResult(req);
@@ -69,6 +70,8 @@ const validator = {
     validateAddCategoriesCoupon: couponValidator.validateAddCategoriesCoupon,
     validateAddProductsCoupon: couponValidator.validateAddProductsCoupon,
     validateQueryGetCoupon: couponValidator.validateQueryGetCoupon,
+
+    validateQueryGetAttribute: attributeValidator.validateQueryGetAttribute,
 };
 
 export default validator;

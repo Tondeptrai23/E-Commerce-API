@@ -12,7 +12,7 @@ import { db } from "../../models/index.model.js";
 import categoryService from "./category.service.js";
 import ProductFilterBuilder from "../condition/filter/productFilterBuilder.service.js";
 import VariantFilterBuilder from "../condition/filter/variantFilterBuilder.service.js";
-import AttributeFilterBuilder from "../condition/filter/attributeFilterBuilder.service.js";
+import AttributeVariantFilterBuilder from "../condition/filter/attributeVariantFilterBuilder.service.js";
 import ProductSortBuilder from "../condition/sort/productSortBuilder.service.js";
 import PaginationBuilder from "../condition/paginationBuilder.service.js";
 import { flattenArray, toArray } from "../../utils/utils.js";
@@ -227,7 +227,7 @@ class ProductService {
         );
 
         let attributeFilter = (
-            await AttributeFilterBuilder.create(query.attributes)
+            await AttributeVariantFilterBuilder.create(query.attributes)
         ).build();
 
         return {

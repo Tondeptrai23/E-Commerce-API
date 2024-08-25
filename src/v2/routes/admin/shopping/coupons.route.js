@@ -1,11 +1,11 @@
 import { Router } from "express";
 
-import couponController from "../../controllers/shopping/coupons.controller.js";
+import couponController from "../../../controllers/shopping/coupons.controller.js";
 import {
     verifyToken,
     isAdmin,
-} from "../../middlewares/auth/authJwt.middlewares.js";
-import validator from "../../middlewares/validators/index.validator.js";
+} from "../../../middlewares/auth/authJwt.middlewares.js";
+import validator from "../../../middlewares/validators/index.validator.js";
 
 const adminCouponRoute = Router();
 

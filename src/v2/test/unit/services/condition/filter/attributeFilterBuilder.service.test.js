@@ -1,103 +1,65 @@
 import AttributeFilterBuilder from "../../../../../services/condition/filter/attributeFilterBuilder.service.js";
-import attributeService from "../../../../../services/products/attribute.service.js";
-import { jest } from "@jest/globals";
-import { db } from "../../../../../models/index.model.js";
 import { Op } from "sequelize";
 
 describe("AttributeFilterBuilder", () => {
-    describe("create", () => {
-        test("should return an instance of AttributeFilterBuilder", async () => {
-            const query = { color: "red" };
-            const getAttributes = jest
-                .spyOn(attributeService, "getAttributes")
-                .mockResolvedValueOnce([
-                    { name: "color" },
-                    { name: "size" },
-                    { name: "brand" },
-                ]);
-
-            const attributeFilterBuilder = await AttributeFilterBuilder.create(
-                query
-            );
-            expect(attributeFilterBuilder).toBeInstanceOf(
-                AttributeFilterBuilder
-            );
-            expect(getAttributes).toHaveBeenCalled();
-        });
+    test("should return an empty array if the query is empty", () => {
+        const query = {};
+        const filterBuilder = new AttributeFilterBuilder(query);
+        const result = filterBuilder.build();
+        expect(result).toEqual([]);
     });
 
-    describe("build", () => {
-        test("should return an empty array if the query is empty", async () => {
-            const query = {};
-            const attributeFilterBuilder = new AttributeFilterBuilder(query, [
-                "color",
-                "size",
-                "brand",
-            ]);
-            const result = attributeFilterBuilder.build();
-            expect(result.havingCondition).toEqual(
-                db.literal("COUNT(DISTINCT `attributeValues`.`valueID`) >= 0")
-            );
-            expect(result.whereCondition).toEqual([]);
-        });
-
-        test("should return an array of equal fields", async () => {
-            const query = { color: "red", size: "M" };
-            const attributeFilterBuilder = new AttributeFilterBuilder(query, [
-                "color",
-                "size",
-                "brand",
-            ]);
-            const result = attributeFilterBuilder.build();
-            expect(result.havingCondition).toEqual(
-                db.literal("COUNT(DISTINCT `attributeValues`.`valueID`) >= 2")
-            );
-            expect(result.whereCondition).toEqual([
+    test("should return an array of equal fields", () => {
+        const query = {
+            name: "iPhone",
+            attributeID: ["123456", "789012"],
+        };
+        const filterBuilder = new AttributeFilterBuilder(query);
+        const result = filterBuilder.build();
+        expect(result).toEqual(
+            expect.arrayContaining([
+                { name: ["iPhone"] },
                 {
-                    [Op.or]: [
-                        {
-                            "$attributeValues.attribute.name$": "color",
-                            "$attributeValues.value$": ["red"],
-                        },
-                        {
-                            "$attributeValues.attribute.name$": "size",
-                            "$attributeValues.value$": ["M"],
-                        },
-                    ],
+                    attributeID: ["123456", "789012"],
                 },
-            ]);
-        });
+            ])
+        );
+    });
 
-        test("should return an array of fields with multiple values", async () => {
-            const query = { color: ["red", "blue"], size: "M", brand: "nike" };
-            const attributeFilterBuilder = new AttributeFilterBuilder(query, [
-                "color",
-                "size",
-                "brand",
-            ]);
-            const result = attributeFilterBuilder.build();
+    test("should return an array of fields with comparison operators", () => {
+        const query = {
+            updatedAt: "[lte]2024-12-31",
+            createdAt: "[gte]2024-01-01",
+        };
+        const filterBuilder = new AttributeFilterBuilder(query);
+        const result = filterBuilder.build();
+        expect(result).toEqual(
+            expect.arrayContaining([
+                { updatedAt: { [Op.lte]: "2024-12-31" } },
+                { createdAt: { [Op.gte]: "2024-01-01" } },
+            ])
+        );
+    });
 
-            expect(result.havingCondition).toEqual(
-                db.literal("COUNT(DISTINCT `attributeValues`.`valueID`) >= 3")
-            );
-            expect(result.whereCondition).toEqual([
-                {
-                    [Op.or]: [
-                        {
-                            "$attributeValues.attribute.name$": "color",
-                            "$attributeValues.value$": ["red", "blue"],
-                        },
-                        {
-                            "$attributeValues.attribute.name$": "size",
-                            "$attributeValues.value$": ["M"],
-                        },
-                        {
-                            "$attributeValues.attribute.name$": "brand",
-                            "$attributeValues.value$": ["nike"],
-                        },
-                    ],
-                },
-            ]);
-        });
+    test("should return an array of fields with multiple comparison operators", () => {
+        const query = {
+            attributeID: ["123456", "789012"],
+            name: ["[like]iPhone", "Samsung"],
+            updatedAt: "[lte]2024-12-31",
+            createdAt: ["[gte]2024-01-01", "[lte]2024-12-31"],
+            extraFields: "extra",
+        };
+        const filterBuilder = new AttributeFilterBuilder(query);
+        const result = filterBuilder.build();
+        expect(result).toEqual(
+            expect.arrayContaining([
+                { attributeID: ["123456", "789012"] },
+                { name: { [Op.like]: "%iPhone%" } },
+                { name: ["Samsung"] },
+                { updatedAt: { [Op.lte]: "2024-12-31" } },
+                { createdAt: { [Op.gte]: "2024-01-01" } },
+                { createdAt: { [Op.lte]: "2024-12-31" } },
+            ])
+        );
     });
 });

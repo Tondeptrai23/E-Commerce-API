@@ -493,13 +493,13 @@ describe("validateQueryGetCoupon", () => {
     test("should return errors if fields are invalid types", async () => {
         const req = {
             query: {
+                couponID: "[keli]123",
                 page: "abc",
                 size: "abc",
                 sort: "123",
                 discountType: "123",
                 discountValue: "[etg]abc",
                 target: "123",
-                description: "[keli]123",
                 minimumOrderAmount: ["123", "[lte]aaa"],
                 maxUsage: "[etg]123",
                 startDate: "abc",
@@ -543,7 +543,7 @@ describe("validateQueryGetCoupon", () => {
                     msg: "Target should be valid",
                 }),
                 expect.objectContaining({
-                    msg: "Description should have valid string format",
+                    msg: "Coupon ID should have valid string format",
                 }),
                 expect.objectContaining({
                     msg: "Minimum order amount array should contain valid number formats",

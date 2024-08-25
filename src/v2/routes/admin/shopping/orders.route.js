@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import orderController from "../../controllers/shopping/orders.controller.js";
+import orderController from "../../../controllers/shopping/orders.controller.js";
 
 const adminOrderRoute = Router();
 

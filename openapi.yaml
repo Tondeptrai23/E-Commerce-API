@@ -4741,38 +4741,36 @@ paths:
             type: integer
         - name: name
           in: query
-          description: 'Filter by name. <br> - Support partial matching using "[like]name"'
+          description: 'Filter by name. <br> For more information, see [String Query](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).'
           required: false
           schema:
-            type: string
             example: '[like]color'
         - name: values
           in: query
-          description: 'Filter by values. <br> - Support partial matching using "[like]value" - Support multiple values using comma "," <br> - Attributes with any of the values will be included'
+          description: 'Filter by values. <br> For more information, see [String Query](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).'
           required: false
           schema:
-            type: string
             example: '[like]red,[like]M'
         - name: createdAt
           in: query
-          description: 'Filter by createdAt. <br> - Support operators ([lte], [gte], [between]) <br>'
+          description: 'Filter by createdAt. <br> For more information, see [Date Query](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
           required: false
           schema:
-            type: string
             example: '[gte]2022-01-01'
         - name: updatedAt
           in: query
-          description: 'Filter by updatedAt. <br> - Support operators ([lte], [gte], [between]) <br>'
+          description: 'Filter by updatedAt. <br> For more information, see [Date Query](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
           required: false
           schema:
-            type: string
             example: '[gte]2022-01-01'
         - name: sort
           in: query
-          description: 'Sort by attributeID, name, or type. <br> - Support multiple sorting using comma ",". <br> - Support descending order using "-" prefix <br> - Dont support sorting by nested fields'
+          description: |
+            Sort by multiple fields. <br>
+            Support fields: `attributeID`, `name`, `createdAt`, `updatedAt`. <br>
+            For more information, see [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#sorting)
           required: false
           schema:
-            type: string
             example: 'attributeID,-createdAt'
       responses:
         '200':

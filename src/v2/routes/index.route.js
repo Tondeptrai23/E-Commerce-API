@@ -1,13 +1,14 @@
 import { Router } from "express";
 
 import authRoute from "./auth.route.js";
-import adminCartRoute from "./admin/cart.route.js";
-import adminOrderRoute from "./admin/orders.route.js";
+import adminCartRoute from "./admin/shopping/cart.route.js";
+import adminOrderRoute from "./admin/shopping/orders.route.js";
 import adminProductRoute from "./admin/products/products.route.js";
 import adminUserRoute from "./admin/users.route.js";
-import adminCategoryRoute from "./admin/categories.route.js";
-import adminCouponRoute from "./admin/coupons.route.js";
-import adminVariantRoute from "./admin/variants.route.js";
+import adminCategoryRoute from "./admin/products/categories.route.js";
+import adminCouponRoute from "./admin/shopping/coupons.route.js";
+import adminVariantRoute from "./admin/products/variants.route.js";
+import adminAttributeRoute from "./admin/products/attributes.route.js";
 
 import userCartRoute from "./user/cart.route.js";
 import userOrderRoute from "./user/orders.route.js";
@@ -30,5 +31,6 @@ router.use("/admin", adminUserRoute);
 router.use("/admin", adminCategoryRoute);
 router.use("/admin", adminCouponRoute);
 router.use("/admin", adminVariantRoute);
+router.use("/admin", adminAttributeRoute);
 
 export { router };

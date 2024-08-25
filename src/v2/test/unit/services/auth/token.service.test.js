@@ -134,7 +134,6 @@ describe("Token Service", () => {
                 await new Promise((resolve) => setTimeout(resolve, 1000));
                 await tokenService.decodeRefreshToken(expiredToken);
             } catch (err) {
-                console.log(err);
                 expect(err).toBeInstanceOf(jwt.TokenExpiredError);
             }
         });
