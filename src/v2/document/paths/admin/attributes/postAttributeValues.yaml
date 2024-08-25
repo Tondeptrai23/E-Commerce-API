@@ -1,0 +1,84 @@
+# POST /admin/attributes/{attributeID}/values:
+tags:
+  - Admin Attribute Values
+summary: Add values to an attribute
+description: |
+  Add values to an attribute. 
+  The values must be unique within the attribute. 
+security:
+  - bearerAuth: []
+parameters:
+  - name: attributeID
+    in: path
+    description: Attribute ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+      
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          values:
+            type: array
+            items:
+              type: string
+            example: ["red", "blue"]
+responses:
+  200:
+    description: Values added to attribute
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            values:
+              type: array
+              items:
+                type: object
+                allOf:
+                  - $ref: "../../../schemas/products/value.yaml"
+                  - $ref: "../../../schemas/timestamps.yaml"
+  400:
+    description: Invalid request parameters
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error400.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
+  404:
+    description: Attribute not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  409:
+    description: Attribute value already exists
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error409.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

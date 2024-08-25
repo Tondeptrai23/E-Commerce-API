@@ -1,9 +1,8 @@
-# DELETE /admin/attributes/{attributeID}/values/{valueID}
+# GET /admin/attributes/{attributeID}/values/{valueID}:
 tags:
-  - Admin Attributes
-summary: Delete attribute value
-description: Deletes a specific attribute value. 
-  This action will remove the value from the attribute and any associated product variants.
+  - Admin Attribute Values
+summary: Get attribute value
+description: Retrieves an attribute value by ID.
 security:
   - bearerAuth: []
 parameters:
@@ -14,6 +13,7 @@ parameters:
     schema:
       type: string
       example: "1"
+
   - name: valueID
     in: path
     description: Value ID
@@ -23,7 +23,7 @@ parameters:
       example: "1"
 responses:
   200:
-    description: Attribute value deleted
+    description: Attribute value retrieved
     content:
       application/json:
         schema:
@@ -32,6 +32,11 @@ responses:
             success:
               type: boolean
               example: true
+            value:
+              type: object
+              allOf:
+                - $ref: "../../../schemas/products/value.yaml"
+                - $ref: "../../../schemas/timestamps.yaml"
   401:
     description: Token invalid, not authenticated
     content:
@@ -45,20 +50,14 @@ responses:
         schema:
           $ref: "../../../schemas/error/error403.yaml"
   404:
-    description: Attribute Value Not Found
+    description: Value Not Found
     content:
       application/json:
         schema:
           $ref: "../../../schemas/error/error404.yaml"
-  409:
-    description: Attribute Value in Use
-    content:
-      application/json:
-        schema:
-          $ref: "../../../schemas/error/error409.yaml"
   500:
     description: Internal Server Error
     content:
       application/json:
         schema:
-          $ref: "../../../schemas/error/error500.yaml"
+          $ref: "../../../schemas/error/error500.yaml" 

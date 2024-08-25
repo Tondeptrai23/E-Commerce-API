@@ -1,14 +1,24 @@
 import AttributeValue from "../../models/products/attributeValue.model.js";
-import Variant from "../../models/products/variant.model.js";
 import Attribute from "../../models/products/attribute.model.js";
 import { ConflictError, ResourceNotFoundError } from "../../utils/error.js";
-import VariantAttributeValue from "../../models/products/variantAttributeValue.model.js";
 import FilterBuilder from "../condition/filter/filterBuilder.service.js";
 import PaginationBuilder from "../condition/paginationBuilder.service.js";
 import AttributeFilterBuilder from "../condition/filter/attributeFilterBuilder.service.js";
 import AttributeSortBuilder from "../condition/sort/attributeSortBuilder.service.js";
 
 class AttributeService {
+    /**
+     * Get all attribute names
+     *
+     * @returns {Promise<String[]>} the list of attribute names
+     */
+    async getAttributeNames() {
+        const attributes = await Attribute.findAll({
+            attributes: ["name"],
+        });
+        return attributes.map((attribute) => attribute.name);
+    }
+
     /**
      * Get all attributes with values
      *
@@ -26,6 +36,7 @@ class AttributeService {
             include: {
                 model: AttributeValue,
                 as: "values",
+                attributes: ["value"],
             },
             order: [...conditions.sortConditions],
         });
@@ -88,7 +99,7 @@ class AttributeService {
      * @param {String[]} values the attribute's values
      * @returns {Promise<Attribute>} the created attribute
      */
-    async createAttribute(name, values) {
+    async createAttribute(name, values = []) {
         const isNameTaken = await this.isAttributeNameTaken(name);
         if (isNameTaken) {
             throw new ConflictError("Attribute name is taken");
@@ -197,215 +208,6 @@ class AttributeService {
     }
 
     /**
-     * Check if attribute value is taken
-     *
-     * @param {String} attributeID the attribute's ID
-     * @param {String} value the attribute value
-     * @returns {Promise<Boolean>} true if the value is taken, false otherwise
-     */
-    async isAttributeValueTaken(attributeID, value) {
-        const attributeValue = await AttributeValue.findOne({
-            where: {
-                attributeID: attributeID,
-                value: value,
-            },
-        });
-
-        return attributeValue ? true : false;
-    }
-
-    /**
-     * Add attribute value
-     *
-     * @param {String} attributeID the attribute's ID
-     * @param {String} value the attribute value
-     * @returns {Promise<AttributeValue>} the created attribute value
-     */
-    async addAttributeValue(attributeID, value) {
-        const attribute = await Attribute.findByPk(attributeID);
-        if (!attribute) {
-            throw new ResourceNotFoundError("Attribute not found");
-        }
-
-        // Check if value is taken
-        const isValueTaken = await this.isAttributeValueTaken(
-            attributeID,
-            value
-        );
-        if (isValueTaken) {
-            throw new ConflictError("Attribute value is taken");
-        }
-
-        const attributeValue = await AttributeValue.create({
-            value: value,
-            attributeID: attributeID,
-        });
-
-        return attributeValue;
-    }
-
-    /**
-     * Rename attribute value
-     *
-     * @param {String} attributeValueID the attribute value's ID
-     * @param {String} value the new value
-     * @returns {Promise<AttributeValue>} the renamed attribute value
-     */
-    async renameAttributeValue(attributeValueID, value) {
-        const attributeValue = await AttributeValue.findByPk(attributeValueID);
-        if (!attributeValue) {
-            throw new ResourceNotFoundError("Attribute value not found");
-        }
-
-        // Check if value is the same
-        if (attributeValue.value === value) {
-            return attributeValue;
-        }
-
-        // Check if value is taken
-        const isValueTaken = await this.isAttributeValueTaken(
-            attributeValue.attributeID,
-            value
-        );
-        if (isValueTaken) {
-            throw new ConflictError("Attribute value is taken");
-        }
-
-        attributeValue.value = value;
-        await attributeValue.save();
-
-        return attributeValue;
-    }
-
-    /**
-     * Replace attribute value
-     *
-     * @param {String} attributeValueID the attribute value's ID
-     * @param {String} value the new value
-     * @returns {Promise<AttributeValue>} the replaced attribute value
-     */
-    async replaceAttributeValue(attributeValueID, value) {
-        const attributeValue = await AttributeValue.findByPk(attributeValueID);
-        if (!attributeValue) {
-            throw new ResourceNotFoundError("Attribute value not found");
-        }
-
-        // Delete variant attribute values
-        await VariantAttributeValue.destroy({
-            where: {
-                attributeValueID: attributeValueID,
-            },
-        });
-
-        // Rename
-        if (attributeValue.value !== value) {
-            const isValueTaken = await this.isAttributeValueTaken(
-                attributeValue.attributeID,
-                value
-            );
-            if (isValueTaken) {
-                throw new ConflictError("Attribute value is taken");
-            }
-            attributeValue.value = value;
-            await attributeValue.save();
-        }
-
-        return attributeValue;
-    }
-
-    /**
-     * Delete attribute value
-     *
-     * @param {String} attributeValueID the attribute value's ID
-     */
-    async deleteAttributeValue(attributeValueID) {
-        const attributeValue = await AttributeValue.findByPk(attributeValueID);
-        if (!attributeValue) {
-            throw new ResourceNotFoundError("Attribute value not found");
-        }
-
-        await attributeValue.destroy();
-    }
-
-    /**
-     * Get variants that have the attribute
-     *
-     * @param {String} attributeID the attribute's ID
-     * @returns {Promise<Variant[]>} the list of variants
-     */
-    async getVariantsWithAttribute(attributeID) {
-        const variants = await Variant.findAll({
-            include: {
-                model: AttributeValue,
-                as: "attributeValues",
-                where: {
-                    attributeID: attributeID,
-                },
-            },
-        });
-        return variants;
-    }
-
-    /**
-     * Get all attribute names
-     *
-     * @returns {Promise<String[]>} the list of attribute names
-     */
-    async getAttributeNames() {
-        const attributes = await Attribute.findAll({
-            attributes: ["name"],
-        });
-        return attributes.map((attribute) => attribute.name);
-    }
-
-    /**
-     * Add attributes for variant
-     *
-     * @param {Variant} variant the variant to be added attributes
-     * @param {Object[]} attributes the attributes to be added
-     * @returns {Promise<Variant>} the variant with the added attributes
-     */
-    async addAttributesForVariant(variant, attributes) {
-        if (variant instanceof Variant === false) {
-            return variant;
-        }
-
-        if (!attributes || Object.keys(attributes).length === 0) {
-            return variant;
-        }
-
-        const variantAttributes = (
-            await Promise.all(
-                Object.entries(attributes).map(async ([name, value]) => {
-                    const attributeValue = await AttributeValue.findOne({
-                        where: {
-                            value: value,
-                        },
-                        include: {
-                            model: Attribute,
-                            as: "attribute",
-                            attributes: ["name"],
-                            where: {
-                                name: name,
-                            },
-                        },
-                    });
-
-                    if (!attributeValue) {
-                        return null;
-                    }
-                    await variant.addAttributeValue(attributeValue);
-
-                    return attributeValue;
-                })
-            )
-        ).filter((attribute) => attribute !== null);
-
-        variant.attributeValues = variantAttributes;
-        return variant;
-    }
-
-    /**
      *
      * The following methods are used for the getAttributes methods
      *
@@ -420,7 +222,7 @@ class AttributeService {
     #buildConditions(query) {
         const attributeFilter = new AttributeFilterBuilder(query).build();
         const attributeValueFilter = new FilterBuilder({
-            value: query.values,
+            value: query ? query.values : undefined,
         }).build();
 
         const paginationConditions = new PaginationBuilder(query).build();

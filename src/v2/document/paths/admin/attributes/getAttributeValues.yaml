@@ -1,22 +1,13 @@
-# GET /admin/attributes/{attributeID}/variants:
+# GET /admin/attributes/values:
 tags:
-  - Admin Attributes
-summary: Get variants which have the attribute
-description: |
-  Get variants which have the attributeID. <br>
+  - Admin Attribute Values
+summary: Get attribute values
+description: Retrieves a list of all attribute values. <br>
   Support pagination, sorting and filtering. <br>
-  If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
+  If `sort` is not provided, the default sort is by `createdAt` in descending order.
 security:
   - bearerAuth: []
 parameters:
-  - name: attributeID
-    in: path
-    description: Attribute ID
-    required: true
-    schema:
-      type: string
-      example: "1"
-
   - name: page
     in: query
     description: Page to retrieve
@@ -31,50 +22,66 @@ parameters:
     schema:
       type: integer
 
-  - name: price
+  - name: valueID
     in: query
-    description: Filter by variants' price. 
-      For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).
+    description: Filter by valueID. <br> 
+      For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#query-string).
     required: false
     schema:
-      example: "[gte]100"
+      example: "[like]1"
+  
+  - name: value
+    in: query
+    description: Filter by value. <br> 
+      For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#query-string).
+    required: false
+    schema:
+      example: "[like]value"
 
-  - name: stock
+  - name: attributeID
     in: query
-    description: Filter by variants' stock. <br> 
-      For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).
+    description: Filter by attributeID. <br> 
+      For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#query-string).
     required: false
     schema:
-      example: "[lte]100"
+      example: "[like]1"
+
+  - name: attributeName
+    in: query
+    description: Filter by attribute name. <br> 
+      For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#query-string).
+    required: false
+    schema:
+      example: "[like]attribute"
 
   - name: createdAt
     in: query
-    description: Filter by variants' created time. <br> 
+    description: Filter by created time. <br> 
       For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     required: false
     schema:
-      example: "[gte]2022-01-01"
+      example: "[gte]2024-01-01"
 
   - name: updatedAt
     in: query
-    description: Filter by variants' updated time. <br> 
+    description: Filter by updated time. <br> 
       For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     required: false
     schema:
-      example: "[gte]2022-01-01"
+      example: "[gte]2024-01-01"
 
   - name: sort
     in: query
-    description: |
-      Sort by variants' fields. <br>
-      Support fields:`variantID`, `productID`, `price`, `stock`, `createdAt`, `updatedAt`. <br>
-      For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#sorting).
     required: false
+    description: |
+      Sort by attribute values' fields. <br> 
+      Support fields: `valueID`, `attributeID`, `value`, `createdAt`, `updatedAt`. <br>
+      For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#sorting).
     schema:
-      example: "price,-createdAt"
+      example: "value,-attributeID"
 responses:
   200:
-    description: Variants found
+    description: Attribute values found
     content:
       application/json:
         schema:
@@ -83,16 +90,15 @@ responses:
             success:
               type: boolean
               example: true
-            variants:
+            values:
               type: array
               items:
                 type: object
                 allOf:
-                  - $ref: "../../../schemas/products/variant.yaml"
+                  - $ref: "../../../schemas/products/value.yaml"
                   - $ref: "../../../schemas/timestamps.yaml"
-                  - $ref: "../../../schemas/products/variantAttribute.yaml"
-          allOf:
-            - $ref: "../../../schemas/pagination.yaml"
+            pagination:
+              $ref: "../../../schemas/pagination.yaml"
   400:
     description: Invalid request parameters
     content:
@@ -111,15 +117,9 @@ responses:
       application/json:
         schema:
           $ref: "../../../schemas/error/error403.yaml"
-  404:
-    description: Attribute Not Found
-    content:
-      application/json:
-        schema:
-          $ref: "../../../schemas/error/error404.yaml"
   500:
     description: Internal Server Error
     content:
       application/json:
         schema:
-          $ref: "../../../schemas/error/error500.yaml"
+          $ref: "../../../schemas/error/error500.yaml"  

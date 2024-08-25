@@ -1,10 +1,9 @@
-# PATCH /admin/attributes/{attributeID}/values/{valueID}
+# DELETE /admin/attributes/{attributeID}/values/{valueID}
 tags:
-  - Admin Attributes
-summary: Update attribute value
-description: |
-  Updates the name of an attribute value. <br>
-  The value must be unique within the attribute. <br>
+  - Admin Attribute Values
+summary: Delete attribute value
+description: Deletes a specific attribute value. 
+  This action will remove the value from the attribute and any associated product variants.
 security:
   - bearerAuth: []
 parameters:
@@ -22,19 +21,9 @@ parameters:
     schema:
       type: string
       example: "1"
-requestBody:
-  required: true
-  content:
-    application/json:
-      schema:
-        type: object
-        properties:
-          value:
-            type: string
-            example: "red"
 responses:
   200:
-    description: Value updated
+    description: Attribute value deleted
     content:
       application/json:
         schema:
@@ -43,17 +32,6 @@ responses:
             success:
               type: boolean
               example: true
-            value:
-              type: object
-              allOf:
-                - $ref: "../../../schemas/products/value.yaml"
-                - $ref: "../../../schemas/timestamps.yaml"
-  400:
-    description: Invalid request parameters
-    content:
-      application/json:
-        schema:
-          $ref: "../../../schemas/error/error400.yaml"
   401:
     description: Token invalid, not authenticated
     content:
@@ -67,20 +45,20 @@ responses:
         schema:
           $ref: "../../../schemas/error/error403.yaml"
   404:
-    description: Attribute or value not found
+    description: Attribute Value Not Found
     content:
       application/json:
         schema:
           $ref: "../../../schemas/error/error404.yaml"
   409:
-    description: Value already exists
+    description: Attribute Value in Use
     content:
       application/json:
         schema:
           $ref: "../../../schemas/error/error409.yaml"
   500:
-    description: Internal server error
+    description: Internal Server Error
     content:
       application/json:
         schema:
-          $ref: "../../../schemas/error/error500.yaml" 
+          $ref: "../../../schemas/error/error500.yaml"

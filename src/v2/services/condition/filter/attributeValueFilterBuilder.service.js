@@ -5,14 +5,20 @@ import FilterBuilder from "./filterBuilder.service.js";
  *
  * @description
  * This class is used to build filtering conditions from a request query
- * to retrieve attributes.
+ * to retrieve attributes values.
  *
  * @example
  * const attributeValueFilter = new AttributeValueFilterBuilder(query).build();
  */
-export default class AttributeFilterBuilder extends FilterBuilder {
+export default class AttributeValueFilterBuilder extends FilterBuilder {
     constructor(requestQuery) {
         super(requestQuery);
-        this._allowFields = ["attributeID", "name", "createdAt", "updatedAt"];
+        this._allowFields = [
+            "attributeID",
+            "valueID",
+            "value",
+            "createdAt",
+            "updatedAt",
+        ];
     }
 }

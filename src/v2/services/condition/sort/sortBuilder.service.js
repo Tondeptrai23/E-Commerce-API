@@ -62,6 +62,6 @@ export default class SortBuilder extends QueryToSequelizeConditionConverter {
      * @returns {Object[]} the mapping of the field names in the request query to the field names in the database
      */
     _mapping(name) {
-        return this._map[name];
+        return this._map[name] ? this._map[name] : [];
     }
 }

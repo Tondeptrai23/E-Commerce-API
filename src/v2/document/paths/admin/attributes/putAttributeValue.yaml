@@ -1,6 +1,6 @@
 # PUT /admin/attributes/{attributeID}/values/{valueID}
 tags:
-  - Admin Attributes
+  - Admin Attribute Values
 summary: Replace an attribute value
 description: |
   Replace an attribute value by the new value. <br>

@@ -9,6 +9,7 @@ import adminCategoryRoute from "./admin/products/categories.route.js";
 import adminCouponRoute from "./admin/shopping/coupons.route.js";
 import adminVariantRoute from "./admin/products/variants.route.js";
 import adminAttributeRoute from "./admin/products/attributes.route.js";
+import adminAttributeValueRoute from "./admin/products/attributeValues.route.js";
 
 import userCartRoute from "./user/cart.route.js";
 import userOrderRoute from "./user/orders.route.js";
@@ -32,5 +33,6 @@ router.use("/admin", adminCategoryRoute);
 router.use("/admin", adminCouponRoute);
 router.use("/admin", adminVariantRoute);
 router.use("/admin", adminAttributeRoute);
+router.use("/admin", adminAttributeValueRoute);
 
 export { router };

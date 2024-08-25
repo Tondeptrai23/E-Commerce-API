@@ -1,17 +1,26 @@
-# GET /admin/attributes/{attributeID}/variants:
+# GET /admin/attributes/{attributeID}/values/{valueID}/variants:
 tags:
-  - Admin Attributes
-summary: Get variants which have the attribute
+  - Admin Attribute Values
+summary: Get variants which have the attribute value
 description: |
-  Get variants which have the attributeID. <br>
+  Get variants which have the valueID. <br>
   Support pagination, sorting and filtering. <br>
   If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
+  If you want to filter variants by multiple attribute values, you can use the [Admin Variants](#/Admin%20Variants/get_admin_variants) endpoint. <br>
 security:
   - bearerAuth: []
 parameters:
   - name: attributeID
     in: path
     description: Attribute ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+
+  - name: valueID
+    in: path
+    description: Value ID
     required: true
     schema:
       type: string

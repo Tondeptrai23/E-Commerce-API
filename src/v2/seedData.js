@@ -781,30 +781,39 @@ const seedVariantAttributeValues = async () => {
         // Product 1
         { variantID: 101, valueID: 1 },
         { variantID: 101, valueID: 4 },
+        { variantID: 101, valueID: 8 },
 
         { variantID: 102, valueID: 1 },
         { variantID: 102, valueID: 5 },
+        { variantID: 102, valueID: 8 },
 
         { variantID: 103, valueID: 1 },
         { variantID: 103, valueID: 6 },
+        { variantID: 103, valueID: 9 },
 
         { variantID: 104, valueID: 2 },
         { variantID: 104, valueID: 4 },
+        { variantID: 104, valueID: 8 },
 
         { variantID: 105, valueID: 2 },
         { variantID: 105, valueID: 5 },
+        { variantID: 105, valueID: 8 },
 
         { variantID: 106, valueID: 2 },
         { variantID: 106, valueID: 6 },
+        { variantID: 106, valueID: 9 },
 
         { variantID: 107, valueID: 3 },
         { variantID: 107, valueID: 4 },
+        { variantID: 107, valueID: 8 },
 
         { variantID: 108, valueID: 3 },
         { variantID: 108, valueID: 5 },
+        { variantID: 108, valueID: 8 },
 
         { variantID: 109, valueID: 3 },
         { variantID: 109, valueID: 6 },
+        { variantID: 109, valueID: 9 },
 
         // Product 2
         { variantID: 201, valueID: 1 },

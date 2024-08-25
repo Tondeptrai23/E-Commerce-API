@@ -42,6 +42,9 @@ tags:
   - name: Admin Attributes
     description: Endpoints for managing attributes.
 
+  - name: Admin Attribute Values
+    description: Endpoints for managing attribute values.
+
   - name: Admin Orders
     description: Endpoints for managing orders.
 
@@ -196,11 +199,22 @@ paths:
   /admin/attributes/{attributeID}:
     $ref: ./paths/index.paths.yaml#/adminAttribute
 
-  /admin/attributes/{attributeID}/values/{valueID}:
-    $ref: ./paths/index.paths.yaml#/adminAttributeValues
-
   /admin/attributes/{attributeID}/variants:
     $ref: ./paths/index.paths.yaml#/adminAttributeVariants
+
+
+  # Admin Attribute Values:
+  /admin/attributes/values:
+    $ref: ./paths/index.paths.yaml#/adminValues
+
+  /admin/attributes/{attributeID}/values:
+    $ref: ./paths/index.paths.yaml#/adminAttributeValues
+
+  /admin/attributes/{attributeID}/values/{valueID}:
+    $ref: ./paths/index.paths.yaml#/adminAttributeValue
+
+  /admin/attributes/{attributeID}/values/{valueID}/variants:
+    $ref: ./paths/index.paths.yaml#/adminAttributeValueVariants
     
   # Admin Users
 

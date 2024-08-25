@@ -119,7 +119,9 @@ These query parameters can be applied to any route. However, some routes have ad
 
 -   Filter by Attributes: `?attributes[color]=red&attributes[size]=M&attributes[size]=L`
 
-    -   Filters products based on their variants' attributes. This will return products with at least one variant that matches the `color` red and the `size` M or L. An OR condition applies to the same attribute (e.g., `M` or `L`), while an AND condition applies across different attributes (e.g., `color` and `size`).
+    -   Filters variants based on their variants' attributes. This will return variants with at least one variant that matches the `color` red and the `size` M or L. An OR condition applies to the same attribute (e.g., `M` or `L`), while an AND condition applies across different attributes (e.g., `color` and `size`).
+
+    -   This feature is suitable for filtering variants based on multiple attributes values. If you want to filter variants based on a single attribute ("color" or "size"), or a single attribute value ("red" or "M"), you should use the `GET /admin/attributes/:attributeID/variants` or `GET /admin/attributes/:attributeID/values/:valueID/variants` routes (also support filtering, pagination, sorting by variants' fields).
 
 #### _GET /products and GET /admin/products_
 
@@ -138,7 +140,7 @@ These query parameters can be applied to any route. However, some routes have ad
 
 -   Filter by Variant Attributes: `?attributes[color]=red&attributes[size]=M&attributes[size]=L`
 
-    -   The same as `Filter by Attributes` in the [GET /admin/variants](#get-adminvariants) section.
+    -   The same as `Filter by Attributes` in the [GET /admin/variants](#get-adminvariants) section. But this will return products instead of variants.
 
 #### _GET /admin/coupons_
 
@@ -149,3 +151,9 @@ These query parameters can be applied to any route. However, some routes have ad
 -   Filter by Supported Categories: `?categories=tops`
 
     -   Filters coupons based on the name of the supported categories. This will return all coupons that apply to products in the `tops` category, including products in subcategories.
+
+#### _GET /admin/attributes_
+
+-   Filter by Values: `?values=[like]L`
+
+    -   Filters attributes based on the values. This will return all attributes with any values containing `L` or `l`.

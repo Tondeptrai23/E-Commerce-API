@@ -1,6 +1,5 @@
 import Product from "../../models/products/product.model.js";
 import Variant from "../../models/products/variant.model.js";
-import attributeService from "./attribute.service.js";
 import { BadRequestError, ResourceNotFoundError } from "../../utils/error.js";
 import AttributeValue from "../../models/products/attributeValue.model.js";
 import Attribute from "../../models/products/attribute.model.js";
@@ -10,7 +9,7 @@ import AttributeVariantFilterBuilder from "../condition/filter/attributeVariantF
 import PaginationBuilder from "../condition/paginationBuilder.service.js";
 import VariantSortBuilder from "../condition/sort/variantSortBuilder.service.js";
 import variantFilterBuilder from "../condition/filter/variantFilterBuilder.service.js";
-import { db } from "../../models/index.model.js";
+import variantAttributeService from "./variantAttribute.service.js";
 
 class VariantService {
     /**
@@ -129,7 +128,7 @@ class VariantService {
             await VariantAttributeValue.destroy({
                 where: { variantID },
             });
-            variant = await attributeService.addAttributesForVariant(
+            variant = await variantAttributeService.addAttributesForVariant(
                 variant,
                 variantData.attributes
             );
@@ -271,7 +270,7 @@ class VariantService {
         let variant = await product.createVariant(restData);
 
         if (attributes) {
-            variant = await attributeService.addAttributesForVariant(
+            variant = await variantAttributeService.addAttributesForVariant(
                 variant,
                 attributes
             );

@@ -5,6 +5,8 @@ summary: Get all variants
 description: Retrieves detailed information about all variants. <br>
   Supports pagination, sorting, and filtering. <br>
   If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
+  If you want to filter variant by 1 attribute, you can use the [Admin Attributes](#/Admin%20Attributes/get_admin_attributes__attributeID__variants) endpoint. <br>
+  If you want to filter variant by 1 attribute values, you can use the [Admin Attributes](#/Admin%20Attributes/get_admin_attributes__attributeID__values__valueID__variants) endpoint. <br>
 security:
   - bearerAuth: []
 parameters:

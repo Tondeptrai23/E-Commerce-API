@@ -136,6 +136,10 @@ adminAttributes:
   post:
     $ref: "./admin/attributes/postAttributes.yaml"
 
+adminValues:
+  get:
+    $ref: "./admin/attributes/getAttributeValues.yaml"
+
 adminAttribute:
   get:
     $ref: "./admin/attributes/getAttribute.yaml"
@@ -143,22 +147,30 @@ adminAttribute:
     $ref: "./admin/attributes/patchAttribute.yaml"
   put:
     $ref: "./admin/attributes/putAttribute.yaml"
-  post:
-    $ref: "./admin/attributes/postAttribute.yaml"
   delete:
     $ref: "./admin/attributes/deleteAttribute.yaml"
 
 adminAttributeValues:
+  post:
+    $ref: "./admin/attributes/postAttributeValues.yaml"
+
+adminAttributeValue:
+  get:
+    $ref: "./admin/attributes/getAttributeValue.yaml"
   patch:
-    $ref: "./admin/attributes/patchAttributeValues.yaml"
+    $ref: "./admin/attributes/patchAttributeValue.yaml"
   put:
-    $ref: "./admin/attributes/putAttributeValues.yaml"
+    $ref: "./admin/attributes/putAttributeValue.yaml"
   delete:
-    $ref: "./admin/attributes/deleteAttributeValues.yaml"
+    $ref: "./admin/attributes/deleteAttributeValue.yaml"
 
 adminAttributeVariants:
   get:
     $ref: "./admin/attributes/getVariantAttributes.yaml"
+
+adminAttributeValueVariants:
+  get:
+    $ref: "./admin/attributes/getVariantAttributeValues.yaml"
 
 # ADMIN USERS
 

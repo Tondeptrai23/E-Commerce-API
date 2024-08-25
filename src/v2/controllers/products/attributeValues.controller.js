@@ -1,24 +1,14 @@
+import attributeValueService from "../../services/products/attributeValue.service.js";
 import { StatusCodes } from "http-status-codes";
-import { ConflictError, ResourceNotFoundError } from "../../utils/error.js";
-import attributeService from "../../services/products/attribute.service.js";
+import { ResourceNotFoundError, ConflictError } from "../../utils/error.js";
 import variantAttributeService from "../../services/products/variantAttribute.service.js";
-import VariantSerializer from "../../services/serializers/variant.serializer.service.js";
 
-class AttributeController {
-    async getAttributes(req, res) {
+class AttributeValuesController {
+    async getAttributeValues(req, res) {
         try {
-            // Get attributes
-            const { attributes, currentPage, totalPages, totalItems } =
-                await attributeService.getAttributes(req.query);
-
-            // Serialize
-            const serializedAttributes = attributes.map((attribute) => {
-                let { values, ...rest } = JSON.parse(JSON.stringify(attribute));
-                return {
-                    ...rest,
-                    values: values.map((value) => value.value),
-                };
-            });
+            // Get attribute values
+            const { attributeValues, totalItems, totalPages, currentPage } =
+                await attributeValueService.getAttributeValues(req.query);
 
             // Send response
             res.status(StatusCodes.OK).send({
@@ -26,7 +16,7 @@ class AttributeController {
                 currentPage: currentPage,
                 totalPages: totalPages,
                 totalItems: totalItems,
-                attributes: serializedAttributes,
+                attributeValues: attributeValues,
             });
         } catch (err) {
             console.log(err);
@@ -36,25 +26,30 @@ class AttributeController {
                 errors: [
                     {
                         error: "ServerError",
-                        message: "Server error when getting attributes",
+                        message: "Server error when getting attribute values",
                     },
                 ],
             });
         }
     }
 
-    async getAttribute(req, res) {
+    async createAttributeValue(req, res) {
         try {
-            // Get attribute ID
-            const attributeID = req.params.attributeID;
+            // Get params
+            const { attributeID } = req.params;
+            const { value } = req.body;
 
-            // Get attribute
-            const attribute = await attributeService.getAttribute(attributeID);
+            // Create attribute value
+            const attributeValue =
+                await attributeValueService.addAttributeValue(
+                    attributeID,
+                    value
+                );
 
             // Send response
             res.status(StatusCodes.OK).send({
                 success: true,
-                attribute: attribute,
+                attributeValue: attributeValue,
             });
         } catch (err) {
             console.log(err);
@@ -69,46 +64,13 @@ class AttributeController {
                         },
                     ],
                 });
-            } else {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when getting attribute",
-                        },
-                    ],
-                });
-            }
-        }
-    }
-
-    async createAttribute(req, res) {
-        try {
-            // Get params
-            const { name, values } = req.params;
-
-            // Create attribute
-            const attribute = await attributeService.createAttribute(
-                name,
-                values
-            );
-
-            // Send response
-            res.status(StatusCodes.OK).send({
-                success: true,
-                attribute: attribute,
-            });
-        } catch (err) {
-            console.log(err);
-
-            if (err instanceof ConflictError) {
+            } else if (StatusCodes.CONFLICT) {
                 return res.status(StatusCodes.CONFLICT).send({
                     success: false,
                     errors: [
                         {
                             error: "Conflict",
-                            message: "Attribute name is taken",
+                            message: "Attribute value is taken",
                         },
                     ],
                 });
@@ -118,7 +80,8 @@ class AttributeController {
                     errors: [
                         {
                             error: "ServerError",
-                            message: "Server error when creating attribute",
+                            message:
+                                "Server error when creating attribute value",
                         },
                     ],
                 });
@@ -126,22 +89,23 @@ class AttributeController {
         }
     }
 
-    async renameAttribute(req, res) {
+    async renameAttributeValue(req, res) {
         try {
             // Get params
-            const { attributeID } = req.params;
-            const { name } = req.body;
+            const { attributeValueID } = req.params;
+            const { value } = req.body;
 
-            // Rename attribute
-            const attribute = await attributeService.renameAttribute(
-                attributeID,
-                name
-            );
+            // Rename attribute value
+            const attributeValue =
+                await attributeValueService.renameAttributeValue(
+                    attributeValueID,
+                    value
+                );
 
             // Send response
             res.status(StatusCodes.OK).send({
                 success: true,
-                attribute: attribute,
+                attributeValue: attributeValue,
             });
         } catch (err) {
             console.log(err);
@@ -162,7 +126,7 @@ class AttributeController {
                     errors: [
                         {
                             error: "Conflict",
-                            message: "Attribute name is taken",
+                            message: "Attribute value is taken",
                         },
                     ],
                 });
@@ -172,7 +136,8 @@ class AttributeController {
                     errors: [
                         {
                             error: "ServerError",
-                            message: "Server error when renaming attribute",
+                            message:
+                                "Server error when renaming attribute value",
                         },
                     ],
                 });
@@ -180,23 +145,23 @@ class AttributeController {
         }
     }
 
-    async replaceAttribute(req, res) {
+    async replaceAttributeValue(req, res) {
         try {
             // Get params
-            const { attributeID } = req.params;
-            const { name, values } = req.body;
+            const { attributeValueID } = req.params;
+            const { value } = req.body;
 
-            // Replace attribute
-            const attribute = await attributeService.replaceAttribute(
-                attributeID,
-                name,
-                values
-            );
+            // Replace attribute value
+            const attributeValue =
+                await attributeValueService.replaceAttributeValue(
+                    attributeValueID,
+                    value
+                );
 
             // Send response
             res.status(StatusCodes.OK).send({
                 success: true,
-                attribute: attribute,
+                attributeValue: attributeValue,
             });
         } catch (err) {
             console.log(err);
@@ -217,7 +182,8 @@ class AttributeController {
                     errors: [
                         {
                             error: "ServerError",
-                            message: "Server error when replacing attribute",
+                            message:
+                                "Server error when replacing attribute value",
                         },
                     ],
                 });
@@ -225,13 +191,13 @@ class AttributeController {
         }
     }
 
-    async deleteAttribute(req, res) {
+    async deleteAttributeValue(req, res) {
         try {
             // Get params
-            const { attributeID } = req.params;
+            const { attributeValueID } = req.params;
 
-            // Delete attribute
-            await attributeService.deleteAttribute(attributeID);
+            // Delete attribute value
+            await attributeValueService.deleteAttributeValue(attributeValueID);
 
             // Send response
             res.status(StatusCodes.OK).send({
@@ -256,7 +222,8 @@ class AttributeController {
                     errors: [
                         {
                             error: "ServerError",
-                            message: "Server error when deleting attribute",
+                            message:
+                                "Server error when deleting attribute value",
                         },
                     ],
                 });
@@ -264,15 +231,16 @@ class AttributeController {
         }
     }
 
-    async getAttributeVariants(req, res) {
+    async getAttributeValueVariants(req, res) {
         try {
-            // Get attribute ID
-            const { attributeID } = req.params;
+            // Get attribute value ID
+            const { attributeID, valueID } = req.params;
 
-            // Get attribute variants
+            // Get attribute value variants
             const { variants, totalItems, totalPages, currentPage } =
                 await variantAttributeService.getVariantsByAttributeValue(
                     attributeID,
+                    valueID,
                     req.query
                 );
 
@@ -297,7 +265,8 @@ class AttributeController {
                 errors: [
                     {
                         error: "ServerError",
-                        message: "Server error when getting attribute variants",
+                        message:
+                            "Server error when getting attribute value variants",
                     },
                 ],
             });
@@ -305,4 +274,4 @@ class AttributeController {
     }
 }
 
-export default new AttributeController();
+export default new AttributeValuesController();

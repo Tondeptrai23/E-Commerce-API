@@ -1,10 +1,10 @@
-# POST /admin/attributes/{attributeID}
+# PATCH /admin/attributes/{attributeID}/values/{valueID}
 tags:
-  - Admin Attributes
-summary: Add values to an attribute
+  - Admin Attribute Values
+summary: Update attribute value
 description: |
-  Add values to an attribute. 
-  The values must be unique within the attribute. 
+  Updates the name of an attribute value. <br>
+  The value must be unique within the attribute. <br>
 security:
   - bearerAuth: []
 parameters:
@@ -15,7 +15,13 @@ parameters:
     schema:
       type: string
       example: "1"
-      
+  - name: valueID
+    in: path
+    description: Value ID
+    required: true
+    schema:
+      type: string
+      example: "1"
 requestBody:
   required: true
   content:
@@ -23,14 +29,12 @@ requestBody:
       schema:
         type: object
         properties:
-          values:
-            type: array
-            items:
-              type: string
-            example: ["red", "blue"]
+          value:
+            type: string
+            example: "red"
 responses:
   200:
-    description: Values added to attribute
+    description: Value updated
     content:
       application/json:
         schema:
@@ -39,13 +43,11 @@ responses:
             success:
               type: boolean
               example: true
-            values:
-              type: array
-              items:
-                type: object
-                allOf:
-                  - $ref: "../../../schemas/products/value.yaml"
-                  - $ref: "../../../schemas/timestamps.yaml"
+            value:
+              type: object
+              allOf:
+                - $ref: "../../../schemas/products/value.yaml"
+                - $ref: "../../../schemas/timestamps.yaml"
   400:
     description: Invalid request parameters
     content:
@@ -65,20 +67,20 @@ responses:
         schema:
           $ref: "../../../schemas/error/error403.yaml"
   404:
-    description: Attribute not found
+    description: Attribute or value not found
     content:
       application/json:
         schema:
           $ref: "../../../schemas/error/error404.yaml"
   409:
-    description: Attribute value already exists
+    description: Value already exists
     content:
       application/json:
         schema:
           $ref: "../../../schemas/error/error409.yaml"
   500:
-    description: Internal Server Error
+    description: Internal server error
     content:
       application/json:
         schema:
-          $ref: "../../../schemas/error/error500.yaml"
+          $ref: "../../../schemas/error/error500.yaml" 
