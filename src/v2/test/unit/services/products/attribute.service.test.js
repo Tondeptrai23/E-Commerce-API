@@ -121,6 +121,7 @@ describe("Attribute Service", () => {
         test("should return attributes with filtering", async () => {
             const { attributes } = await attributeService.getAttributes({
                 name: "color",
+                size: "20",
             });
 
             for (const attribute of attributes) {
@@ -131,6 +132,7 @@ describe("Attribute Service", () => {
         test("should return attributes with filtering 2", async () => {
             const { attributes } = await attributeService.getAttributes({
                 name: "[like]s",
+                size: "20",
             });
 
             for (const attribute of attributes) {
@@ -141,6 +143,7 @@ describe("Attribute Service", () => {
         test("should return attributes with filtering 3", async () => {
             const { attributes } = await attributeService.getAttributes({
                 values: "[like]s",
+                size: "20",
             });
 
             for (const attribute of attributes) {
@@ -160,6 +163,7 @@ describe("Attribute Service", () => {
         test("should return attributes with filtering 4", async () => {
             const { attributes } = await attributeService.getAttributes({
                 values: "red",
+                size: "20",
             });
 
             for (const attribute of attributes) {

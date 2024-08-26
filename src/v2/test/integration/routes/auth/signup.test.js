@@ -21,6 +21,9 @@ describe("POST /api/v2/auth/signup", () => {
             success: true,
         });
 
+        // Delay
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
         // Check if user is created
         const res2 = await request(app).post("/api/v2/auth/signin").send({
             email: "user999@gmail.com",

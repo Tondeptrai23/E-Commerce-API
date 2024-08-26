@@ -73,6 +73,7 @@ describe("Attribute Value Service", () => {
             const { values, totalPages, currentPage, totalItems } =
                 await attributeValueService.getAttributeValues({
                     attributeID: "5",
+                    size: "20",
                 });
 
             expect(currentPage).toBe(1);
@@ -95,6 +96,7 @@ describe("Attribute Value Service", () => {
             const { values, totalPages, currentPage, totalItems } =
                 await attributeValueService.getAttributeValues({
                     value: ["[like]f", "[like]l"],
+                    size: "20",
                 });
 
             expect(currentPage).toBe(1);
@@ -121,7 +123,8 @@ describe("Attribute Value Service", () => {
             const { values, totalPages, currentPage, totalItems } =
                 await attributeValueService.getAttributeValues({
                     value: "[ne]loose",
-                    attribute: ["color", "fit", "size"],
+                    attributeName: ["color", "fit", "size"],
+                    size: "20",
                 });
 
             expect(currentPage).toBe(1);

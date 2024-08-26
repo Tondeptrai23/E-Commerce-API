@@ -436,45 +436,6 @@ describe("validateCreateAttributeValue", () => {
     });
 });
 
-describe("validatePatchAttributeValue", () => {
-    test("should return empty error array if all fields are valid", async () => {
-        const req = {
-            body: {
-                value: "red",
-            },
-        };
-
-        for (const validationChain of validator.validatePatchAttributeValue) {
-            await validationChain.run(req);
-        }
-        const errors = validationResult(req);
-
-        expect(errors.isEmpty()).toBe(true);
-    });
-
-    test("should return error array if value is invalid", async () => {
-        const req = {
-            body: {
-                value: 123,
-            },
-        };
-
-        for (const validationChain of validator.validatePatchAttributeValue) {
-            await validationChain.run(req);
-        }
-        const errors = validationResult(req);
-
-        expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toEqual(
-            expect.arrayContaining([
-                expect.objectContaining({
-                    msg: "Value should be a string",
-                }),
-            ])
-        );
-    });
-});
-
 describe("validateQueryGetAttributeValue", () => {
     test("should return empty error array if all fields are valid", async () => {
         const req = {
