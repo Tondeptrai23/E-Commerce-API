@@ -1,4 +1,4 @@
-# GET /admin/attributes/values:
+# GET /admin/attributeValues:
 tags:
   - Admin Attribute Values
 summary: Get attribute values
@@ -97,8 +97,8 @@ responses:
                 allOf:
                   - $ref: "../../../schemas/products/value.yaml"
                   - $ref: "../../../schemas/timestamps.yaml"
-            pagination:
-              $ref: "../../../schemas/pagination.yaml"
+          allOf:
+            - $ref: "../../../schemas/pagination.yaml"
   400:
     description: Invalid request parameters
     content:

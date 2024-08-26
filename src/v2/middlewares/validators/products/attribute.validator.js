@@ -124,10 +124,6 @@ const validatePostAttributeValue = [
         .withMessage("Value should be a string"),
 ];
 
-const validatePatchAttributeValue = [
-    body("value").optional().isString().withMessage("Value should be a string"),
-];
-
 const validateQueryGetAttributeValue = [
     query("sort")
         .customSanitizer(sanitizeSortingQuery)
@@ -165,7 +161,6 @@ export {
     validatePatchAttribute,
     validatePostAttribute,
     validateQueryGetAttributeValue,
-    validatePatchAttributeValue,
     validatePostAttributeValue,
     validateQueryGetVariants,
 };

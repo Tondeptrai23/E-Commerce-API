@@ -76,7 +76,6 @@ const validator = {
     validatePatchAttribute: attributeValidator.validatePatchAttribute,
 
     validateCreateAttributeValue: attributeValidator.validatePostAttributeValue,
-    validatePatchAttributeValue: attributeValidator.validatePatchAttributeValue,
     validateQueryGetAttributeValue:
         attributeValidator.validateQueryGetAttributeValue,
     validateQueryGetAttributeVariants:

@@ -204,7 +204,7 @@ paths:
 
 
   # Admin Attribute Values:
-  /admin/attributes/values:
+  /admin/attributesValues:
     $ref: ./paths/index.paths.yaml#/adminValues
 
   /admin/attributes/{attributeID}/values:

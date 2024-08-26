@@ -4,11 +4,14 @@ import {
     verifyToken,
     isAdmin,
 } from "../../../middlewares/auth/authJwt.middlewares.js";
+import validator from "../../../middlewares/validators/index.validator.js";
 
 const adminAttributeValuesRoute = Router();
 
 adminAttributeValuesRoute.get(
-    "/attributes/values",
+    "/attributeValues",
+    validator.validateQueryGetAttributeValue,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     attributeValuesController.getAttributeValues
@@ -16,8 +19,8 @@ adminAttributeValuesRoute.get(
 
 adminAttributeValuesRoute.post(
     "/attributes/:attributeID/values",
-    // validator.validateCreateAttributeValue,
-    // validator.handleValidationErrors,
+    validator.validateCreateAttributeValue,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     attributeValuesController.createAttributeValue
@@ -25,8 +28,8 @@ adminAttributeValuesRoute.post(
 
 adminAttributeValuesRoute.patch(
     "/attributes/:attributeID/values/:valueID",
-    // validator.validatePatchAttributeValue,
-    // validator.handleValidationErrors,
+    validator.validateCreateAttributeValue,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     attributeValuesController.renameAttributeValue
@@ -34,8 +37,8 @@ adminAttributeValuesRoute.patch(
 
 adminAttributeValuesRoute.put(
     "/attributes/:attributeID/values/:valueID",
-    // validator.validatePutAttributeValue,
-    // validator.handleValidationErrors,
+    validator.validateCreateAttributeValue,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     attributeValuesController.replaceAttributeValue
@@ -50,6 +53,8 @@ adminAttributeValuesRoute.delete(
 
 adminAttributeValuesRoute.get(
     "/attributes/:attributeID/values/:valueID/variants",
+    validator.validateQueryGetAttributeVariants,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     attributeValuesController.getAttributeValueVariants

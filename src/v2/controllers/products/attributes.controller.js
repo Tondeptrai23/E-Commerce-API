@@ -199,8 +199,6 @@ class AttributeController {
             // Serialize
             const serializedAttribute = AttributeSerializer.parse(attribute);
 
-            console.log(serializedAttribute);
-
             // Send response
             res.status(StatusCodes.OK).send({
                 success: true,

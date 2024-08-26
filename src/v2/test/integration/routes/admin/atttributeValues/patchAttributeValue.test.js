@@ -34,115 +34,75 @@ beforeAll(async () => {
 /**
  * Tests
  */
-describe("PUT /api/v2/admin/attributes/:attributeID", () => {
-    it("should replace an attribute", async () => {
+describe("PATCH /api/v2/admin/attributes/:attributeID/values/:valueID", () => {
+    it("should return 200 and update attribute value", async () => {
         const res = await request(app)
-            .put("/api/v2/admin/attributes/1")
+            .patch("/api/v2/admin/attributes/1/values/1")
             .set("Authorization", `Bearer ${accessToken}`)
             .send({
-                name: "New name",
+                value: "New value",
             });
 
         expect(res.status).toBe(StatusCodes.OK);
         expect(res.body).toEqual({
             success: true,
-            attribute: {
+            value: {
+                valueID: "1",
+                value: "New value",
                 attributeID: "1",
-                name: "New name",
                 createdAt: expect.any(String),
                 updatedAt: expect.any(String),
-                values: expect.toBeOneOf([null, [], undefined]),
             },
         });
 
         const resGet = await request(app)
-            .get("/api/v2/admin/attributes/1/variants")
+            .get("/api/v2/admin/attributes/1/values/1/variants")
             .set("Authorization", `Bearer ${accessToken}`);
 
         expect(resGet.status).toBe(StatusCodes.OK);
-        expect(resGet.body).toEqual(
-            expect.objectContaining({
-                variants: [],
-            })
-        );
+        expect(resGet.body.variants.length).toBeGreaterThan(0);
     });
 
-    it("should replace an attribute 2", async () => {
+    it("should return 409 if value already exists", async () => {
         const res = await request(app)
-            .put("/api/v2/admin/attributes/2")
+            .patch("/api/v2/admin/attributes/1/values/2")
             .set("Authorization", `Bearer ${accessToken}`)
             .send({
-                name: "New name 2",
-                values: ["value 1", "value 2"],
-            });
-
-        expect(res.status).toBe(StatusCodes.OK);
-        expect(res.body).toEqual({
-            success: true,
-            attribute: {
-                attributeID: "2",
-                name: "New name 2",
-                createdAt: expect.any(String),
-                updatedAt: expect.any(String),
-                values: ["value 1", "value 2"],
-            },
-        });
-
-        const resGet = await request(app)
-            .get("/api/v2/admin/attributes/2/variants")
-            .set("Authorization", `Bearer ${accessToken}`);
-
-        expect(resGet.status).toBe(StatusCodes.OK);
-        expect(resGet.body).toEqual(
-            expect.objectContaining({
-                variants: [],
-            })
-        );
-    });
-
-    it("should return 404 if attribute is not found", async () => {
-        const res = await request(app)
-            .put("/api/v2/admin/attributes/999")
-            .set("Authorization", `Bearer ${accessToken}`)
-            .send({
-                name: "New name",
-            });
-
-        expect(res.status).toBe(StatusCodes.NOT_FOUND);
-        expect(res.body).toEqual({
-            success: false,
-            errors: expect.any(Array),
-        });
-
-        expect(res.body.errors[0]).toEqual({
-            error: "NotFound",
-            message: "Attribute not found",
-        });
-    });
-
-    it("should return 409 if name is taken", async () => {
-        const res = await request(app)
-            .put("/api/v2/admin/attributes/1")
-            .set("Authorization", `Bearer ${accessToken}`)
-            .send({
-                name: "material",
+                value: "New value",
             });
 
         expect(res.status).toBe(StatusCodes.CONFLICT);
         expect(res.body).toEqual({
             success: false,
-            errors: expect.any(Array),
-        });
-
-        expect(res.body.errors[0]).toEqual({
-            error: "Conflict",
-            message: "Attribute name is taken",
+            errors: [
+                {
+                    error: "Conflict",
+                    message: "Attribute value is taken",
+                },
+            ],
         });
     });
 
-    it("should return 400 if name is not provided", async () => {
+    it("should return 400 if value is empty", async () => {
         const res = await request(app)
-            .put("/api/v2/admin/attributes/1")
+            .patch("/api/v2/admin/attributes/1/values/1")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                value: "",
+            });
+
+        expect(res.status).toBe(StatusCodes.BAD_REQUEST);
+        expect(res.body).toEqual({
+            success: false,
+            errors: expect.any(Array),
+        });
+
+        expect(res.body.errors[0].message).toBe("Value is required");
+    });
+
+    it("should return 400 if value is not provided", async () => {
+        const res = await request(app)
+            .patch("/api/v2/admin/attributes/1/values/1")
             .set("Authorization", `Bearer ${accessToken}`)
             .send({});
 
@@ -151,27 +111,66 @@ describe("PUT /api/v2/admin/attributes/:attributeID", () => {
             success: false,
             errors: expect.any(Array),
         });
-        expect(res.body.errors[0]).toEqual(
-            expect.objectContaining({
-                message: "Name is required",
-            })
-        );
+
+        expect(res.body.errors[0].message).toBe("Value is required");
+    });
+
+    it("should return 404 if attribute does not exist", async () => {
+        const res = await request(app)
+            .patch("/api/v2/admin/attributes/999/values/1")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                value: "New value",
+            });
+
+        expect(res.status).toBe(StatusCodes.NOT_FOUND);
+        expect(res.body).toEqual({
+            success: false,
+            errors: [
+                {
+                    error: "NotFound",
+                    message: "Attribute not found",
+                },
+            ],
+        });
+    });
+
+    it("should return 404 if attribute value does not exist", async () => {
+        const res = await request(app)
+            .patch("/api/v2/admin/attributes/1/values/999")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                value: "New value",
+            });
+
+        expect(res.status).toBe(StatusCodes.NOT_FOUND);
+        expect(res.body).toEqual({
+            success: false,
+            errors: [
+                {
+                    error: "NotFound",
+                    message: "Attribute value not found",
+                },
+            ],
+        });
     });
 
     it("should return 401 if token is not provided", async () => {
-        const res = await request(app).put("/api/v2/admin/attributes/1").send({
-            name: "New name",
-        });
+        const res = await request(app)
+            .patch("/api/v2/admin/attributes/1/values/1")
+            .send({
+                value: "New value",
+            });
 
         assertTokenNotProvided(res);
     });
 
     it("should return 401 if token is invalid", async () => {
         const res = await request(app)
-            .put("/api/v2/admin/attributes/1")
+            .patch("/api/v2/admin/attributes/1/values/1")
             .set("Authorization", `Bearer invalid`)
             .send({
-                name: "New name",
+                value: "New value",
             });
 
         assertTokenInvalid(res);
@@ -179,10 +178,10 @@ describe("PUT /api/v2/admin/attributes/:attributeID", () => {
 
     it("should return 401 if user is not an admin", async () => {
         const res = await request(app)
-            .put("/api/v2/admin/attributes/1")
+            .patch("/api/v2/admin/attributes/1/values/1")
             .set("Authorization", `Bearer ${accessTokenUser}`)
             .send({
-                name: "New name",
+                value: "New value",
             });
 
         assertNotAnAdmin(res);
