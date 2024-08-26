@@ -21,15 +21,15 @@ const validateCreateCoupon = [
 
     body("discountType")
         .notEmpty()
-        .withMessage("Discount type is required")
+        .withMessage("DiscountType is required")
         .isIn(["percentage", "fixed"])
-        .withMessage("Discount type should be valid"),
+        .withMessage("DiscountType should be valid"),
 
     body("discountValue")
         .notEmpty()
-        .withMessage("Discount value is required")
-        .custom(validateNumber("Discount value"))
-        .custom(validateMinValue("Discount value", 0)),
+        .withMessage("DiscountValue is required")
+        .custom(validateNumber("DiscountValue"))
+        .custom(validateMinValue("DiscountValue", 0)),
 
     body("target")
         .notEmpty()
@@ -44,12 +44,12 @@ const validateCreateCoupon = [
 
     body("minimumOrderAmount")
         .optional()
-        .custom(validateNumber("Minimum order amount"))
-        .custom(validateMinValue("Minimum order amount", 0))
+        .custom(validateNumber("MinimumOrderAmount"))
+        .custom(validateMinValue("MinimumOrderAmount", 0))
         .custom((value, { req }) => {
             if (req.body.discountType === "percentage" && value > 100) {
                 throw new Error(
-                    "Minimum order amount should be less than 100 for percentage discount"
+                    "MinimumOrderAmount should be less than 100 for percentage discount"
                 );
             }
 
@@ -58,23 +58,23 @@ const validateCreateCoupon = [
 
     body("maxUsage")
         .optional()
-        .custom(validateInteger("Max usage"))
-        .custom(validateMinValue("Max usage", 0)),
+        .custom(validateInteger("MaxUsage"))
+        .custom(validateMinValue("MaxUsage", 0)),
 
     body("startDate")
         .optional()
         .isString()
-        .withMessage("Start date should be a string of date")
+        .withMessage("StartDate should be a string of date")
         .isISO8601()
-        .withMessage("Start date should be a valid date (ISO8601)")
+        .withMessage("StartDate should be a valid date (ISO8601)")
         .toDate(),
 
     body("endDate")
         .optional()
         .isString()
-        .withMessage("Start date should be a string of date")
+        .withMessage("EndDate should be a string of date")
         .isISO8601()
-        .withMessage("End date should be a valid date (ISO8601)")
+        .withMessage("EndDate should be a valid date (ISO8601)")
         .toDate(),
 
     body().custom((value) => {
@@ -83,7 +83,7 @@ const validateCreateCoupon = [
                 new Date(value.startDate).getTime() >
                 new Date(value.endDate).getTime()
             ) {
-                throw new Error("Start date should be before end date");
+                throw new Error("StartDate should be before endDate");
             }
         }
 
@@ -147,23 +147,23 @@ const validatePatchCoupon = [
 
     body("minimumOrderAmount")
         .optional()
-        .custom(validateNumber("Minimum order amount"))
-        .custom(validateMinValue("Minimum order amount", 0)),
+        .custom(validateNumber("MinimumOrderAmount"))
+        .custom(validateMinValue("MinimumOrderAmount", 0)),
 
     body("maxUsage")
         .optional()
-        .custom(validateInteger("Max usage"))
-        .custom(validateMinValue("Max usage", 0)),
+        .custom(validateInteger("MaxUsage"))
+        .custom(validateMinValue("MaxUsage", 0)),
 
     body("startDate")
         .optional()
         .isISO8601()
-        .withMessage("Start date should be a valid date (ISO8601)"),
+        .withMessage("StartDate should be a valid date (ISO8601)"),
 
     body("endDate")
         .optional()
         .isISO8601()
-        .withMessage("End date should be a valid date (ISO8601)"),
+        .withMessage("EndDate should be a valid date (ISO8601)"),
 
     body().custom((value) => {
         if (value.startDate && value.endDate) {
@@ -171,7 +171,7 @@ const validatePatchCoupon = [
                 new Date(value.startDate).getTime() >
                 new Date(value.endDate).getTime()
             ) {
-                throw new Error("Start date should be before end date");
+                throw new Error("StartDate should be before endDate");
             }
         }
 
@@ -252,11 +252,11 @@ const validateQueryGetCoupon = [
     query("discountType")
         .optional()
         .isIn(["percentage", "fixed"])
-        .withMessage("Discount type should be valid"),
+        .withMessage("DiscountType should be valid"),
 
     query("discountValue")
         .optional()
-        .custom(validateQueryNumber("Discount value")),
+        .custom(validateQueryNumber("DiscountValue")),
 
     query("target")
         .optional()
@@ -265,34 +265,32 @@ const validateQueryGetCoupon = [
 
     query("minimumOrderAmount")
         .optional()
-        .custom(validateQueryNumber("Minimum order amount")),
+        .custom(validateQueryNumber("MinimumOrderAmount")),
 
-    query("maxUsage").optional().custom(validateQueryNumber("Max usage")),
+    query("maxUsage").optional().custom(validateQueryNumber("MaxUsage")),
 
-    query("startDate").optional().custom(validateQueryDate("Start date")),
+    query("startDate").optional().custom(validateQueryDate("StartDate")),
 
-    query("endDate").optional().custom(validateQueryDate("End date")),
+    query("endDate").optional().custom(validateQueryDate("EndDate")),
 
-    query("createdAt").optional().custom(validateQueryDate("Created at")),
+    query("createdAt").optional().custom(validateQueryDate("CreatedAt")),
 
-    query("updatedAt").optional().custom(validateQueryDate("Updated at")),
+    query("updatedAt").optional().custom(validateQueryDate("UpdatedAt")),
 
     query("product")
         .optional()
         .isObject()
         .withMessage("Product should be an object"),
 
-    query("product.name")
-        .optional()
-        .custom(validateQueryString("Product name")),
+    query("product.name").optional().custom(validateQueryString("ProductName")),
 
     query("product.productID")
         .optional()
-        .custom(validateQueryString("Product ID")),
+        .custom(validateQueryString("ProductID")),
 
     query("product.createdAt")
         .optional()
-        .custom(validateQueryDate("Product created at")),
+        .custom(validateQueryDate("ProductCreatedAt")),
 
     query("category")
         .optional()

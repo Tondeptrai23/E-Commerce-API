@@ -1,11 +1,5 @@
 import { validationResult } from "express-validator";
 import validator from "../../../../../middlewares/validators/index.validator.js";
-import seedData from "../../../../../seedData.js";
-import { stringRegex } from "../../../../../middlewares/validators/utils.validator.js";
-
-beforeAll(async () => {
-    await seedData();
-});
 
 describe("validateCreateProduct", () => {
     test("should return empty error array if all fields are valid", async () => {
@@ -281,7 +275,7 @@ describe("validateCreateProduct", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Unexpected fields: unexpectedField, unexpectedField2",
+                    msg: "Unexpected field: unexpectedField, unexpectedField2",
                 }),
             ])
         );
@@ -323,7 +317,7 @@ describe("validatePatchProduct", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Unexpected fields: productID",
+                    msg: "Unexpected field: productID",
                 }),
                 expect.objectContaining({
                     msg: "Name should be a string",
@@ -431,16 +425,16 @@ describe("validateQueryGetProductUser", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Variant price should have valid number format",
+                    msg: "VariantPrice should have valid number format",
                 }),
                 expect.objectContaining({
-                    msg: "Variant stock array should contain valid number formats",
+                    msg: "VariantStock array should contain valid number formats",
                 }),
                 expect.objectContaining({
-                    msg: "Variant discount price should have valid number format",
+                    msg: "VariantDiscountPrice should have valid number format",
                 }),
                 expect.objectContaining({
-                    msg: "Variant SKU should be a string or an array of string",
+                    msg: "VariantSKU should be a string or an array of string",
                 }),
             ])
         );
@@ -591,16 +585,16 @@ describe("validateQueryGetProduct", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Variant price should have valid number format",
+                    msg: "VariantPrice should have valid number format",
                 }),
                 expect.objectContaining({
-                    msg: "Variant stock array should contain valid number formats",
+                    msg: "VariantStock array should contain valid number formats",
                 }),
                 expect.objectContaining({
-                    msg: "Variant discount price should have valid number format",
+                    msg: "VariantDiscountPrice should have valid number format",
                 }),
                 expect.objectContaining({
-                    msg: "Variant SKU should be a string or an array of string",
+                    msg: "VariantSKU should be a string or an array of string",
                 }),
             ])
         );

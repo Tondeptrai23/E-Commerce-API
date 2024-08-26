@@ -5328,9 +5328,9 @@ paths:
           required: false
           schema:
             type: integer
-        - name: attributeID
+        - name: valueID
           in: query
-          description: 'Filter by attributeID. <br> For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#query-string).'
+          description: 'Filter by valueID. <br> For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#query-string).'
           required: false
           schema:
             example: '[like]1'
@@ -5340,6 +5340,18 @@ paths:
           required: false
           schema:
             example: '[like]value'
+        - name: attributeID
+          in: query
+          description: 'Filter by attributeID. <br> For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#query-string).'
+          required: false
+          schema:
+            example: '[like]1'
+        - name: attributeName
+          in: query
+          description: 'Filter by attribute name. <br> For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#query-string).'
+          required: false
+          schema:
+            example: '[like]attribute'
         - name: createdAt
           in: query
           description: 'Filter by created time. <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'

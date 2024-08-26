@@ -2,8 +2,9 @@ const stringRegex = /^(\[(like|ne)\])?([\w-]+)$/;
 
 const numberRegex = /^(?:\[(lte|gte|lt|gt|ne)\]\d+|\[between]\d+,\d+|\d+)$/;
 
-const dateRegex =
-    /^(?:\[(lte|gte|lt|gt|ne)\](\d{4}-\d{2}-\d{2})|\[between\](\d{4}-\d{2}-\d{2}),(\d{4}-\d{2}-\d{2})|(\d{4}-\d{2}-\d{2}))$/;
+const dateRegex = /^(\[(lte|gte|lt|gt|ne)\])?\d{4}-\d{2}-\d{2}$/;
+
+const dateBetweenRegex = /^\[between\](\d{4}-\d{2}-\d{2}),(\d{4}-\d{2}-\d{2})$/;
 
 const validateMinValue = (fieldName, minValue) => {
     return (value) => {
@@ -63,6 +64,37 @@ const validateQueryNumber = (fieldName) => {
     };
 };
 
+const checkDateFormat = (value) => {
+    let isValid = dateRegex.test(value);
+
+    // Check for date between format
+    if (!isValid) {
+        isValid = dateBetweenRegex.test(value);
+        // Check if the date is valid
+        if (isValid) {
+            const dates = value.split("]")[1].split(",");
+            const date1 = new Date(dates[0]);
+            const date2 = new Date(dates[1]);
+
+            if (
+                date1.toString() === "Invalid Date" ||
+                date2.toString() === "Invalid Date"
+            ) {
+                isValid = false;
+            }
+        }
+    } else {
+        // Check if the date is valid if not in between format
+        let date =
+            value[0] === "[" ? new Date(value.split("]")[1]) : new Date(value);
+        if (date.toString() === "Invalid Date") {
+            isValid = false;
+        }
+    }
+
+    return isValid;
+};
+
 const validateQueryDate = (fieldName) => {
     return (value) => {
         if (typeof value !== "string" && !Array.isArray(value)) {
@@ -70,7 +102,8 @@ const validateQueryDate = (fieldName) => {
         }
 
         if (typeof value === "string") {
-            const isValid = dateRegex.test(value);
+            let isValid = checkDateFormat(value);
+
             if (!isValid) {
                 throw new Error(
                     `${fieldName} should have valid date format ([operator]YYYY-MM-DD)`
@@ -80,7 +113,8 @@ const validateQueryDate = (fieldName) => {
 
         if (Array.isArray(value)) {
             value.forEach((element) => {
-                const isValid = dateRegex.test(element);
+                let isValid = checkDateFormat(element);
+
                 if (!isValid) {
                     throw new Error(
                         `${fieldName} array should contain valid date formats ([operator]YYYY-MM-DD)`
@@ -128,7 +162,8 @@ const validateQueryInteger = (fieldName) => {
             return true;
         }
 
-        if (isNaN(parseInt(value, 10))) {
+        let num = parseInt(value, 10);
+        if (isNaN(num) || num < 0) {
             throw new Error(`${fieldName} should be a positive integer`);
         }
 
@@ -181,9 +216,7 @@ const validateUnexpectedFields = (allowedFields) => {
         );
 
         if (unexpectedFields.length > 0) {
-            throw new Error(
-                `Unexpected fields: ${unexpectedFields.join(", ")}`
-            );
+            throw new Error(`Unexpected field: ${unexpectedFields.join(", ")}`);
         }
 
         return true;

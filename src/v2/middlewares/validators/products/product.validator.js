@@ -82,17 +82,17 @@ const validateQueryGetProductUser = [
 
     query("variant.price")
         .optional()
-        .custom(validateQueryNumber("Variant price")),
+        .custom(validateQueryNumber("VariantPrice")),
 
     query("variant.discountPrice")
         .optional()
-        .custom(validateQueryNumber("Variant discount price")),
+        .custom(validateQueryNumber("VariantDiscountPrice")),
 
     query("variant.stock")
         .optional()
-        .custom(validateQueryNumber("Variant stock")),
+        .custom(validateQueryNumber("VariantStock")),
 
-    query("variant.sku").optional().custom(validateQueryString("Variant SKU")),
+    query("variant.sku").optional().custom(validateQueryString("VariantSKU")),
 
     query("category")
         .optional()
@@ -149,17 +149,17 @@ const validateQueryGetProduct = [
 
     query("variant.price")
         .optional()
-        .custom(validateQueryNumber("Variant price")),
+        .custom(validateQueryNumber("VariantPrice")),
 
     query("variant.discountPrice")
         .optional()
-        .custom(validateQueryNumber("Variant discount price")),
+        .custom(validateQueryNumber("VariantDiscountPrice")),
 
     query("variant.stock")
         .optional()
-        .custom(validateQueryNumber("Variant stock")),
+        .custom(validateQueryNumber("VariantStock")),
 
-    query("variant.sku").optional().custom(validateQueryString("Variant SKU")),
+    query("variant.sku").optional().custom(validateQueryString("VariantSKU")),
 
     query("category")
         .optional()

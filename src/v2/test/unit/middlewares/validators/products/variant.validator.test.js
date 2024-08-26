@@ -241,7 +241,7 @@ describe("validateCreateVariants", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Unexpected fields: unexpectedField, unexpectedField2",
+                    msg: "Unexpected field: unexpectedField, unexpectedField2",
                 }),
             ])
         );
@@ -423,7 +423,7 @@ describe("validatePutVariant", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Unexpected fields: unexpectedField, unexpectedField2",
+                    msg: "Unexpected field: unexpectedField, unexpectedField2",
                 }),
             ])
         );
@@ -541,7 +541,7 @@ describe("validatePatchVariant", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Unexpected fields: unexpectedField, unexpectedField2",
+                    msg: "Unexpected field: unexpectedField, unexpectedField2",
                 }),
             ])
         );

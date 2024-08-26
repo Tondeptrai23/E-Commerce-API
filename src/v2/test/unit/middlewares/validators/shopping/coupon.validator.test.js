@@ -45,10 +45,10 @@ describe("validateCreateCoupon", () => {
                 msg: "Code is required",
             }),
             expect.objectContaining({
-                msg: "Discount type is required",
+                msg: "DiscountType is required",
             }),
             expect.objectContaining({
-                msg: "Discount value is required",
+                msg: "DiscountValue is required",
             }),
             expect.objectContaining({
                 msg: "Target is required",
@@ -83,25 +83,25 @@ describe("validateCreateCoupon", () => {
                     msg: "Code should be a string",
                 }),
                 expect.objectContaining({
-                    msg: "Discount type should be valid",
+                    msg: "DiscountType should be valid",
                 }),
                 expect.objectContaining({
-                    msg: "Discount value should be a number",
+                    msg: "DiscountValue should be a number",
                 }),
                 expect.objectContaining({
                     msg: "Target should be valid",
                 }),
                 expect.objectContaining({
-                    msg: "Minimum order amount should be a number",
+                    msg: "MinimumOrderAmount should be a number",
                 }),
                 expect.objectContaining({
-                    msg: "Max usage should be an integer",
+                    msg: "MaxUsage should be an integer",
                 }),
                 expect.objectContaining({
-                    msg: "Start date should be a valid date (ISO8601)",
+                    msg: "StartDate should be a valid date (ISO8601)",
                 }),
                 expect.objectContaining({
-                    msg: "End date should be a valid date (ISO8601)",
+                    msg: "EndDate should be a valid date (ISO8601)",
                 }),
             ])
         );
@@ -131,16 +131,16 @@ describe("validateCreateCoupon", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Discount value should be greater than or equal to 0",
+                    msg: "DiscountValue should be greater than or equal to 0",
                 }),
                 expect.objectContaining({
-                    msg: "Max usage should be greater than or equal to 0",
+                    msg: "MaxUsage should be greater than or equal to 0",
                 }),
                 expect.objectContaining({
-                    msg: "Minimum order amount should be less than 100 for percentage discount",
+                    msg: "MinimumOrderAmount should be less than 100 for percentage discount",
                 }),
                 expect.objectContaining({
-                    msg: "Start date should be before end date",
+                    msg: "StartDate should be before endDate",
                 }),
             ])
         );
@@ -191,16 +191,16 @@ describe("validatePatchCoupon", () => {
                     msg: "Description should be a string",
                 }),
                 expect.objectContaining({
-                    msg: "Minimum order amount should be a number",
+                    msg: "MinimumOrderAmount should be a number",
                 }),
                 expect.objectContaining({
-                    msg: "Max usage should be an integer",
+                    msg: "MaxUsage should be an integer",
                 }),
                 expect.objectContaining({
-                    msg: "Start date should be a valid date (ISO8601)",
+                    msg: "StartDate should be a valid date (ISO8601)",
                 }),
                 expect.objectContaining({
-                    msg: "End date should be a valid date (ISO8601)",
+                    msg: "EndDate should be a valid date (ISO8601)",
                 }),
             ])
         );
@@ -226,16 +226,16 @@ describe("validatePatchCoupon", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Max usage should be greater than or equal to 0",
+                    msg: "MaxUsage should be greater than or equal to 0",
                 }),
                 expect.objectContaining({
-                    msg: "Minimum order amount should be greater than or equal to 0",
+                    msg: "MinimumOrderAmount should be greater than or equal to 0",
                 }),
                 expect.objectContaining({
-                    msg: "Start date should be a valid date (ISO8601)",
+                    msg: "StartDate should be a valid date (ISO8601)",
                 }),
                 expect.objectContaining({
-                    msg: "End date should be a valid date (ISO8601)",
+                    msg: "EndDate should be a valid date (ISO8601)",
                 }),
             ])
         );
@@ -534,10 +534,10 @@ describe("validateQueryGetCoupon", () => {
                     msg: "Invalid sort field: 123",
                 }),
                 expect.objectContaining({
-                    msg: "Discount type should be valid",
+                    msg: "DiscountType should be valid",
                 }),
                 expect.objectContaining({
-                    msg: "Discount value should have valid number format",
+                    msg: "DiscountValue should have valid number format",
                 }),
                 expect.objectContaining({
                     msg: "Target should be valid",
@@ -546,34 +546,34 @@ describe("validateQueryGetCoupon", () => {
                     msg: "Coupon ID should have valid string format",
                 }),
                 expect.objectContaining({
-                    msg: "Minimum order amount array should contain valid number formats",
+                    msg: "MinimumOrderAmount array should contain valid number formats",
                 }),
                 expect.objectContaining({
-                    msg: "Max usage should have valid number format",
+                    msg: "MaxUsage should have valid number format",
                 }),
                 expect.objectContaining({
-                    msg: "Start date should have valid date format ([operator]YYYY-MM-DD)",
+                    msg: "StartDate should have valid date format ([operator]YYYY-MM-DD)",
                 }),
                 expect.objectContaining({
-                    msg: "End date should have valid date format ([operator]YYYY-MM-DD)",
+                    msg: "EndDate should have valid date format ([operator]YYYY-MM-DD)",
                 }),
                 expect.objectContaining({
-                    msg: "Product name array should contain valid string formats",
+                    msg: "ProductName array should contain valid string formats",
                 }),
                 expect.objectContaining({
-                    msg: "Product ID should have valid string format",
+                    msg: "ProductID should have valid string format",
                 }),
                 expect.objectContaining({
-                    msg: "Product created at should have valid date format ([operator]YYYY-MM-DD)",
+                    msg: "ProductCreatedAt should have valid date format ([operator]YYYY-MM-DD)",
                 }),
                 expect.objectContaining({
                     msg: "Category should be an array or a string",
                 }),
                 expect.objectContaining({
-                    msg: "Created at should have valid date format ([operator]YYYY-MM-DD)",
+                    msg: "CreatedAt should have valid date format ([operator]YYYY-MM-DD)",
                 }),
                 expect.objectContaining({
-                    msg: "Updated at should have valid date format ([operator]YYYY-MM-DD)",
+                    msg: "UpdatedAt should have valid date format ([operator]YYYY-MM-DD)",
                 }),
             ])
         );
