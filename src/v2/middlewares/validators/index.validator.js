@@ -72,13 +72,15 @@ const validator = {
     validateQueryGetCoupon: couponValidator.validateQueryGetCoupon,
 
     validateQueryGetAttribute: attributeValidator.validateQueryGetAttribute,
-    validatePostAttribute: attributeValidator.validatePostAttribute,
+    validateCreateAttribute: attributeValidator.validatePostAttribute,
     validatePatchAttribute: attributeValidator.validatePatchAttribute,
 
-    validatePostAttributeValue: attributeValidator.validatePostAttributeValue,
+    validateCreateAttributeValue: attributeValidator.validatePostAttributeValue,
     validatePatchAttributeValue: attributeValidator.validatePatchAttributeValue,
     validateQueryGetAttributeValue:
         attributeValidator.validateQueryGetAttributeValue,
+    validateQueryGetAttributeVariants:
+        attributeValidator.validateQueryGetVariants,
 };
 
 export default validator;

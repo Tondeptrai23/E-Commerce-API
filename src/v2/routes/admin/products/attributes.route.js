@@ -29,8 +29,8 @@ adminAttributeRoute.get(
 
 adminAttributeRoute.post(
     "/attributes",
-    // validator.validateCreateAttribute,
-    // validator.handleValidationErrors,
+    validator.validateCreateAttribute,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     attributeController.createAttribute
@@ -38,8 +38,8 @@ adminAttributeRoute.post(
 
 adminAttributeRoute.patch(
     "/attributes/:attributeID",
-    // validator.validatePatchAttribute,
-    // validator.handleValidationErrors,
+    validator.validatePatchAttribute,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     attributeController.renameAttribute
@@ -47,8 +47,8 @@ adminAttributeRoute.patch(
 
 adminAttributeRoute.put(
     "/attributes/:attributeID",
-    // validator.validatePutAttribute,
-    // validator.handleValidationErrors,
+    validator.validateCreateAttribute,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     attributeController.replaceAttribute
@@ -63,6 +63,8 @@ adminAttributeRoute.delete(
 
 adminAttributeRoute.get(
     "/attributes/:attributeID/variants",
+    validator.validateQueryGetAttributeVariants,
+    validator.handleValidationErrors,
     verifyToken,
     isAdmin,
     attributeController.getAttributeVariants

@@ -4741,6 +4741,12 @@ paths:
           required: false
           schema:
             type: integer
+        - name: attributeID
+          in: query
+          description: 'Filter by attributeID. <br> For more information, see [Number Query](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).'
+          required: false
+          schema:
+            example: '[gte]1'
         - name: name
           in: query
           description: 'Filter by name. <br> For more information, see [String Query](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).'
@@ -5244,6 +5250,12 @@ paths:
         - name: updatedAt
           in: query
           description: 'Filter by variants'' updated time. <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
+          required: false
+          schema:
+            example: '[gte]2022-01-01'
+        - name: deletedAt
+          in: query
+          description: 'Filter by variants'' deleted time. <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
           required: false
           schema:
             example: '[gte]2022-01-01'

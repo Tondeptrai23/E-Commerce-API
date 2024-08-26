@@ -22,6 +22,14 @@ parameters:
     schema:
       type: integer
 
+  - name: attributeID
+    in: query
+    description: Filter by attributeID. <br> 
+      For more information, see [Number Query](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).
+    required: false
+    schema:
+      example: "[gte]1"
+
   - name: name
     in: query
     description: Filter by name. <br> 

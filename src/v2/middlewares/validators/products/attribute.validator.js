@@ -5,6 +5,7 @@ import {
     validateQueryString,
     validateQueryDate,
     validateSortingQuery,
+    validateQueryNumber,
 } from "../utils.validator.js";
 
 const validatePostAttribute = [
@@ -23,13 +24,69 @@ const validatePostAttribute = [
                 throw new Error("Values should have at least one value");
             }
             return true;
+        })
+        .custom((values) => {
+            const uniqueValues = new Set(values);
+            if (uniqueValues.size !== values.length) {
+                throw new Error("Values should be unique");
+            }
+            return true;
         }),
 
     body("values.*").isString().withMessage("Value should be a string"),
 ];
 
 const validatePatchAttribute = [
-    body("name").notEmpty().isString().withMessage("Name should be a string"),
+    body("name")
+        .notEmpty()
+        .withMessage("Name is required")
+        .isString()
+        .withMessage("Name should be a string"),
+];
+
+const validateQueryGetVariants = [
+    query("page").optional().custom(validateQueryInteger("Page")),
+
+    query("size").optional().custom(validateQueryInteger("Size")),
+
+    query("sort")
+        .optional()
+        .customSanitizer(sanitizeSortingQuery)
+        .custom(
+            validateSortingQuery([
+                "variantID",
+                "productID",
+                "price",
+                "name",
+                "discountPrice",
+                "stock",
+                "createdAt",
+                "updatedAt",
+                "deletedAt",
+            ])
+        ),
+
+    query("variantID").optional().custom(validateQueryString("VariantID")),
+
+    query("name").optional().custom(validateQueryString("Name")),
+
+    query("price").optional().custom(validateQueryNumber("Price")),
+
+    query("discountPrice")
+        .optional()
+        .custom(validateQueryNumber("Discount price")),
+
+    query("stock").optional().custom(validateQueryNumber("Stock")),
+
+    query("sku").optional().custom(validateQueryString("SKU")),
+
+    query("productID").optional().custom(validateQueryString("ProductID")),
+
+    query("updatedAt").optional().custom(validateQueryDate("UpdatedAt")),
+
+    query("createdAt").optional().custom(validateQueryDate("CreatedAt")),
+
+    query("deletedAt").optional().custom(validateQueryDate("DeletedAt")),
 ];
 
 const validateQueryGetAttribute = [
@@ -110,4 +167,5 @@ export {
     validateQueryGetAttributeValue,
     validatePatchAttributeValue,
     validatePostAttributeValue,
+    validateQueryGetVariants,
 };

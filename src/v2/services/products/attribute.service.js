@@ -159,8 +159,8 @@ class AttributeService {
      * @param {String[]} values the new values
      * @returns {Promise<Attribute>} the replaced attribute
      */
-    async replaceAttribute(attributeID, name, values) {
-        const attribute = await Attribute.findByPk(attributeID);
+    async replaceAttribute(attributeID, name, values = []) {
+        let attribute = await Attribute.findByPk(attributeID);
         if (!attribute) {
             throw new ResourceNotFoundError("Attribute not found");
         }
@@ -172,6 +172,7 @@ class AttributeService {
                 throw new ConflictError("Attribute name is taken");
             }
             attribute.name = name;
+            attribute = await attribute.save();
         }
 
         // Replace attribute values

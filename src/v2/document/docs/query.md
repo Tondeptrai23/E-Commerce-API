@@ -41,6 +41,8 @@ Used to filter results based on string fields. The filter can be applied to a si
 
 Supports both exact matches and partial matches (using `[like]` as a prefix), and is case-insensitive.
 
+Supports `[ne]` for not equal.
+
 Accepts either a single string or an array of strings.
 
 Example:
@@ -50,6 +52,8 @@ Example:
 -   `?name[like]shirt`: Filter results where the name contains `shirt`. E.g. `T-shirt`, `Shirt`, `shirt`.
 
 -   `?name=[like]shirt&name=[like]sleeve`: Filter results where the name contains both `shirt` and `sleeve`. E.g. `Short sleeve shirt`, `Long sleeve shirt`.
+
+-   `?name[ne]=T-shirt`: Filter results where the name is not equal to `T-shirt`.
 
 ### **Number Filtering**
 
@@ -157,3 +161,7 @@ These query parameters can be applied to any route. However, some routes have ad
 -   Filter by Values: `?values=[like]L`
 
     -   Filters attributes based on the values. This will return all attributes with any values containing `L` or `l`.
+
+-   Filter by Values using `ne`: `?values[ne]=L`
+
+    -   This will not work as expected. You'll get attributes that have any values other than L, even if they also have the value L. This is because the filter checks each value individually, not the entire attribute.

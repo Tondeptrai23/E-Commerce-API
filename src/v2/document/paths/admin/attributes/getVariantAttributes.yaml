@@ -63,6 +63,14 @@ parameters:
     schema:
       example: "[gte]2022-01-01"
 
+  - name: deletedAt
+    in: query
+    description: Filter by variants' deleted time. <br> 
+      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
+    required: false
+    schema:
+      example: "[gte]2022-01-01"
+
   - name: sort
     in: query
     description: |

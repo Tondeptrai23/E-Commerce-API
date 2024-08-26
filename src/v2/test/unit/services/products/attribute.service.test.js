@@ -431,7 +431,7 @@ describe("Attribute Service", () => {
 
         test("should throw an error if attribute name is taken", async () => {
             await expect(
-                attributeService.replaceAttribute("6", "size", ["S", "M", "L"])
+                attributeService.replaceAttribute("6", "fit", ["S", "M", "L"])
             ).rejects.toThrow("Attribute name is taken");
         });
     });

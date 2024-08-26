@@ -1,7 +1,7 @@
 import validator from "../../../../../middlewares/validators/index.validator.js";
 import { validationResult } from "express-validator";
 
-describe("validatePostAttribute", () => {
+describe("validateCreateAttribute", () => {
     test("should return empty error array if all fields are valid", async () => {
         const req = {
             body: {
@@ -10,7 +10,7 @@ describe("validatePostAttribute", () => {
             },
         };
 
-        for (const validationChain of validator.validatePostAttribute) {
+        for (const validationChain of validator.validateCreateAttribute) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
@@ -25,7 +25,7 @@ describe("validatePostAttribute", () => {
             },
         };
 
-        for (const validationChain of validator.validatePostAttribute) {
+        for (const validationChain of validator.validateCreateAttribute) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
@@ -48,7 +48,7 @@ describe("validatePostAttribute", () => {
             },
         };
 
-        for (const validationChain of validator.validatePostAttribute) {
+        for (const validationChain of validator.validateCreateAttribute) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
@@ -74,7 +74,7 @@ describe("validatePostAttribute", () => {
             },
         };
 
-        for (const validationChain of validator.validatePostAttribute) {
+        for (const validationChain of validator.validateCreateAttribute) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
@@ -97,7 +97,7 @@ describe("validatePostAttribute", () => {
             },
         };
 
-        for (const validationChain of validator.validatePostAttribute) {
+        for (const validationChain of validator.validateCreateAttribute) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
@@ -107,6 +107,29 @@ describe("validatePostAttribute", () => {
             expect.arrayContaining([
                 expect.objectContaining({
                     msg: "Value should be a string",
+                }),
+            ])
+        );
+    });
+
+    test("should return error array if values are duplicated", async () => {
+        const req = {
+            body: {
+                name: "color",
+                values: ["red", "red", "blue"],
+            },
+        };
+
+        for (const validationChain of validator.validateCreateAttribute) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Values should be unique",
                 }),
             ])
         );
@@ -143,7 +166,7 @@ describe("validatePatchAttribute", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Name should be a string",
+                    msg: "Name is required",
                 }),
             ])
         );
@@ -245,7 +268,116 @@ describe("validateQueryGetAttribute", () => {
     });
 });
 
-describe("validatePostAttributeValue", () => {
+describe("validateQueryGetAttributeVariants", () => {
+    test("should return empty error array if all fields are valid", async () => {
+        const req = {
+            query: {
+                page: "1",
+                size: "10",
+                sort: [
+                    "variantID",
+                    "name",
+                    "price",
+                    "discountPrice",
+                    "stock",
+                    "productID",
+                    "updatedAt",
+                    "createdAt",
+                    "deletedAt",
+                ],
+                name: "example",
+                price: "100",
+                discountPrice: "[lt]90",
+                stock: "[ne]100",
+                sku: "[like]example",
+                productID: "123",
+                updatedAt: ["2024-01-01", "[gte]2024-01-01"],
+                createdAt: "[ne]2024-01-01",
+                deletedAt: "[lte]2024-01-01",
+            },
+        };
+
+        for (const validationChain of validator.validateQueryGetVariant) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(true);
+    });
+
+    test("should return errors if fields are invalid", async () => {
+        const req = {
+            query: {
+                variantID: ["[invalid]invalid"],
+                page: "invalid",
+                size: "invalid",
+                sort: "invalid",
+                name: "[invalid]invalid",
+                price: "invalid",
+                discountPrice: "invalid",
+                stock: "invalid",
+                sku: ["valid", "[invalid]invalid"],
+                productID: "[invalid]invalid",
+                updatedAt: "invalid",
+                createdAt: ["01-01-2024"],
+                deletedAt: "2024-01-01T00:00:00.000Z",
+                extrafield: "invalid",
+            },
+        };
+
+        for (const validationChain of validator.validateQueryGetVariant) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Page should be a positive integer",
+                }),
+                expect.objectContaining({
+                    msg: "Size should be a positive integer",
+                }),
+                expect.objectContaining({
+                    msg: "Invalid sort field: invalid",
+                }),
+                expect.objectContaining({
+                    msg: "Name should have valid string format",
+                }),
+                expect.objectContaining({
+                    msg: "VariantID array should contain valid string formats",
+                }),
+                expect.objectContaining({
+                    msg: "Price should have valid number format",
+                }),
+                expect.objectContaining({
+                    msg: "Discount price should have valid number format",
+                }),
+                expect.objectContaining({
+                    msg: "Stock should have valid number format",
+                }),
+                expect.objectContaining({
+                    msg: "SKU array should contain valid string formats",
+                }),
+                expect.objectContaining({
+                    msg: "ProductID should have valid string format",
+                }),
+                expect.objectContaining({
+                    msg: "UpdatedAt should have valid date format ([operator]YYYY-MM-DD)",
+                }),
+                expect.objectContaining({
+                    msg: "CreatedAt array should contain valid date formats ([operator]YYYY-MM-DD)",
+                }),
+                expect.objectContaining({
+                    msg: "DeletedAt should have valid date format ([operator]YYYY-MM-DD)",
+                }),
+            ])
+        );
+    });
+});
+
+describe("validateCreateAttributeValue", () => {
     test("should return empty error array if all fields are valid", async () => {
         const req = {
             body: {
@@ -253,7 +385,7 @@ describe("validatePostAttributeValue", () => {
             },
         };
 
-        for (const validationChain of validator.validatePostAttributeValue) {
+        for (const validationChain of validator.validateCreateAttributeValue) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
@@ -266,7 +398,7 @@ describe("validatePostAttributeValue", () => {
             body: {},
         };
 
-        for (const validationChain of validator.validatePostAttributeValue) {
+        for (const validationChain of validator.validateCreateAttributeValue) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);
@@ -288,7 +420,7 @@ describe("validatePostAttributeValue", () => {
             },
         };
 
-        for (const validationChain of validator.validatePostAttributeValue) {
+        for (const validationChain of validator.validateCreateAttributeValue) {
             await validationChain.run(req);
         }
         const errors = validationResult(req);

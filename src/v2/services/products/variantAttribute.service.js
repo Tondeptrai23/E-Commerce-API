@@ -5,6 +5,7 @@ import PaginationBuilder from "../condition/paginationBuilder.service.js";
 import VariantSortBuilder from "../condition/sort/variantSortBuilder.service.js";
 import VariantFilterBuilder from "../condition/filter/variantFilterBuilder.service.js";
 import { Op } from "sequelize";
+import ProductImage from "../../models/products/productImage.model.js";
 
 class VariantAttributeService {
     /**
@@ -194,19 +195,26 @@ class VariantAttributeService {
             where: {
                 variantID: variantIDs,
             },
-            include: {
-                model: AttributeValue,
-                as: "attributeValues",
-                attributes: ["value"],
-                through: {
-                    attributes: [],
+            include: [
+                {
+                    model: AttributeValue,
+                    as: "attributeValues",
+                    attributes: ["value"],
+                    through: {
+                        attributes: [],
+                    },
+                    include: {
+                        model: Attribute,
+                        as: "attribute",
+                        attributes: ["name"],
+                    },
                 },
-                include: {
-                    model: Attribute,
-                    as: "attribute",
-                    attributes: ["name"],
+                {
+                    model: ProductImage,
+                    as: "image",
+                    attributes: ["url"],
                 },
-            },
+            ],
             order: [...conditions.sortConditions],
             paranoid: false,
         });
