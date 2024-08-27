@@ -1,4 +1,5 @@
 import Entity from "./index.serializer.service.js";
+import AttributeValueSerializer from "./attributeValue.serializer.service.js";
 
 const AttributeSerializer = new Entity({
     attributeID: {
@@ -10,20 +11,25 @@ const AttributeSerializer = new Entity({
     values: [
         {
             type: "object",
-            default: undefined,
+            default: [],
         },
         function (obj, options) {
             if (options.detailedValues) {
-                return obj.values;
+                if (obj.values === undefined) {
+                    return [];
+                }
+                return AttributeValueSerializer.parse(obj.values);
             }
             return obj.values.map((value) => value.value);
         },
     ],
     createdAt: {
-        type: "string",
+        type: "date",
+        format: "iso",
     },
     updatedAt: {
-        type: "string",
+        type: "date",
+        format: "iso",
     },
 });
 

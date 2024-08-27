@@ -13,17 +13,21 @@ const AttributeValueSerializer = new Entity({
     attribute: [
         {
             type: "string",
-            default: undefined,
         },
         function (obj) {
+            if (obj.attribute === undefined) {
+                return undefined;
+            }
             return obj.attribute.name;
         },
     ],
     createdAt: {
-        type: "string",
+        type: "date",
+        format: "iso",
     },
     updatedAt: {
-        type: "string",
+        type: "date",
+        format: "iso",
     },
 });
 
