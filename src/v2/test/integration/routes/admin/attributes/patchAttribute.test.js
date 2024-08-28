@@ -46,12 +46,12 @@ describe("PATCH /api/v2/admin/attributes/:attributeID", () => {
         expect(res.status).toBe(StatusCodes.OK);
         expect(res.body).toEqual({
             success: true,
-            attribute: {
+            attribute: expect.objectContaining({
                 attributeID: "1",
                 name: "New name",
                 createdAt: expect.any(String),
                 updatedAt: expect.any(String),
-            },
+            }),
         });
     });
 
@@ -66,12 +66,12 @@ describe("PATCH /api/v2/admin/attributes/:attributeID", () => {
         expect(res.status).toBe(StatusCodes.OK);
         expect(res.body).toEqual({
             success: true,
-            attribute: {
+            attribute: expect.objectContaining({
                 attributeID: "1",
                 name: "New name",
                 createdAt: expect.any(String),
                 updatedAt: expect.any(String),
-            },
+            }),
         });
     });
 

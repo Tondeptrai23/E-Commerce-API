@@ -3,7 +3,7 @@ tags:
   - Admin Products
 summary: Create product variants
 description: Creates multiple product variants for the specified product. <br>
-  If variant's name is not provided, it will use the product name
+  If variant's name is not provided, it will use the product name. <br>
   If image is provided, a new product image will be created and associated with the variant
 security:
   - bearerAuth: []
@@ -98,6 +98,13 @@ responses:
       application/json:
         schema:
           $ref: "../../../../schemas/error/error404.yaml"
+
+  409:
+    description: SKU already exists
+    content:
+      application/json:
+        schema:
+          $ref: "../../../../schemas/error/error409.yaml"
 
   500:
     description: Internal Server Error

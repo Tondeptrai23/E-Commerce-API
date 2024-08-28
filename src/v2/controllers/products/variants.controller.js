@@ -1,5 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import { ResourceNotFoundError, BadRequestError } from "../../utils/error.js";
+import {
+    ResourceNotFoundError,
+    BadRequestError,
+    ConflictError,
+} from "../../utils/error.js";
 import variantService from "../../services/products/variant.service.js";
 import productBuilderService from "../../services/products/productBuilder.service.js";
 import VariantSerializer from "../../services/serializers/variant.serializer.service.js";
@@ -138,6 +142,16 @@ class VariantController {
                     errors: [
                         {
                             error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
+                });
+            } else if (err instanceof ConflictError) {
+                res.status(StatusCodes.CONFLICT).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "Conflict",
                             message: err.message,
                         },
                     ],

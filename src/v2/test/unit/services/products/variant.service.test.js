@@ -437,6 +437,24 @@ describe("Variant Service", () => {
         });
     });
 
+    describe("checkSKUExists", () => {
+        test("should return true if the SKU exists", async () => {
+            const sku = "TSHIRT1-S-BLACK";
+
+            const exists = await variantService.checkSKUExists(sku);
+
+            expect(exists).toBe(true);
+        });
+
+        test("should return false if the SKU does not exist", async () => {
+            const sku = "SKU-999";
+
+            const exists = await variantService.checkSKUExists(sku);
+
+            expect(exists).toBe(false);
+        });
+    });
+
     describe("createVariantForProduct", () => {
         test("should create a variant for a product and return the added variant", async () => {
             const product = await Product.findByPk("1");
@@ -473,7 +491,7 @@ describe("Variant Service", () => {
             const variantData = {
                 price: 100,
                 stock: 10,
-                sku: "SKU-001",
+                sku: "SKU-002",
                 attributes: {
                     color: "Red",
                     size: "M",
@@ -486,6 +504,24 @@ describe("Variant Service", () => {
             );
 
             expect(addedVariant.name).toBe(product.name);
+        });
+
+        test("should throw error if sku is taken", async () => {
+            const product = await Product.findByPk("1");
+
+            const variantData = {
+                price: 100,
+                stock: 10,
+                sku: "SKU-001",
+                attributes: {
+                    color: "Red",
+                    size: "M",
+                },
+            };
+
+            await expect(
+                variantService.createVariantForProduct(product, variantData)
+            ).rejects.toThrow(Error);
         });
     });
 });

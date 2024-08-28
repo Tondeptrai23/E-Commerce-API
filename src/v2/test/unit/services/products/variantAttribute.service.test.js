@@ -1,3 +1,5 @@
+import { db } from "../../../../models/index.model.js";
+import Variant from "../../../../models/products/variant.model.js";
 import seedData from "../../../../seedData.js";
 import variantAttributeService from "../../../../services/products/variantAttribute.service.js";
 
@@ -513,6 +515,180 @@ describe("Variant Attribute Service", () => {
                 );
 
             expect(variants.length).toBe(0);
+        });
+    });
+
+    describe("addAttributesForVariant", () => {
+        test("should add attributes for variant", async () => {
+            const variant =
+                await variantAttributeService.addAttributesForVariant(
+                    await Variant.findByPk("101"),
+                    {
+                        style: "formal",
+                    }
+                );
+
+            expect(variant).toEqual(
+                expect.objectContaining({
+                    variantID: "101",
+                    name: expect.any(String),
+                    price: expect.any(Number),
+                    stock: expect.any(Number),
+                    createdAt: expect.any(Date),
+                    updatedAt: expect.any(Date),
+                })
+            );
+
+            expect(variant.attributeValues).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        value: "formal",
+                        attribute: expect.objectContaining({
+                            name: "style",
+                        }),
+                    }),
+                ])
+            );
+        });
+
+        test("should ignore some attributes if not found", async () => {
+            let variant = await variantAttributeService.addAttributesForVariant(
+                await Variant.findByPk("102"),
+                {
+                    fit: "loose",
+                    style: "morden",
+                }
+            );
+
+            expect(variant).toEqual(
+                expect.objectContaining({
+                    variantID: "102",
+                    name: expect.any(String),
+                    price: expect.any(Number),
+                    stock: expect.any(Number),
+                    createdAt: expect.any(Date),
+                    updatedAt: expect.any(Date),
+                })
+            );
+
+            expect(variant.attributeValues).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        value: "loose",
+                        attribute: expect.objectContaining({
+                            name: "fit",
+                        }),
+                    }),
+                ])
+            );
+            expect(
+                variant.attributeValues.some(
+                    (v) => v.attribute.name === "style"
+                )
+            ).toBe(false);
+        });
+
+        test("should ignore some attributes if variant already has them", async () => {
+            let variant = await variantAttributeService.addAttributesForVariant(
+                await Variant.findByPk("103"),
+                {
+                    color: "black",
+                    size: "M",
+                    style: "casual",
+                }
+            );
+
+            expect(variant).toEqual(
+                expect.objectContaining({
+                    variantID: "103",
+                    name: expect.any(String),
+                    price: expect.any(Number),
+                    stock: expect.any(Number),
+                    createdAt: expect.any(Date),
+                    updatedAt: expect.any(Date),
+                })
+            );
+
+            expect(variant.attributeValues).toEqual(
+                expect.arrayContaining([
+                    // Old values
+                    expect.objectContaining({
+                        value: "blue",
+                        attribute: expect.objectContaining({
+                            name: "color",
+                        }),
+                    }),
+                    expect.objectContaining({
+                        value: "S",
+                        attribute: expect.objectContaining({
+                            name: "size",
+                        }),
+                    }),
+
+                    // New value
+                    expect.objectContaining({
+                        value: "casual",
+                        attribute: expect.objectContaining({
+                            name: "style",
+                        }),
+                    }),
+                ])
+            );
+        });
+
+        test("should return the variant if it is not an instance of Variant", async () => {
+            const variant =
+                await variantAttributeService.addAttributesForVariant(
+                    {
+                        variantID: "999",
+                    },
+                    {
+                        material: "cotton",
+                        color: "black",
+                    }
+                );
+
+            expect(variant).toEqual({
+                variantID: "999",
+            });
+        });
+
+        test("should return the variant if attributes are empty", async () => {
+            const variant =
+                await variantAttributeService.addAttributesForVariant(
+                    await Variant.findByPk("101"),
+                    {}
+                );
+
+            expect(variant).toEqual(
+                expect.objectContaining({
+                    variantID: "101",
+                    name: expect.any(String),
+                    price: expect.any(Number),
+                    stock: expect.any(Number),
+                    createdAt: expect.any(Date),
+                    updatedAt: expect.any(Date),
+                })
+            );
+        });
+
+        test("should return the variant if attributes are null", async () => {
+            const variant =
+                await variantAttributeService.addAttributesForVariant(
+                    await Variant.findByPk("101"),
+                    null
+                );
+
+            expect(variant).toEqual(
+                expect.objectContaining({
+                    variantID: "101",
+                    name: expect.any(String),
+                    price: expect.any(Number),
+                    stock: expect.any(Number),
+                    createdAt: expect.any(Date),
+                    updatedAt: expect.any(Date),
+                })
+            );
         });
     });
 });

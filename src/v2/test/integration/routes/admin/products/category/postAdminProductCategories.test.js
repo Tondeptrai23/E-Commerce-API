@@ -13,6 +13,7 @@ import {
  */
 let accessToken = "";
 let accessTokenUser = "";
+let createdProduct = {};
 beforeAll(async () => {
     // Seed data
     await seedData();
@@ -29,6 +30,28 @@ beforeAll(async () => {
         password: "password1",
     });
     accessTokenUser = resUser.body.accessToken;
+
+    // Add mock product
+    const resProduct = await request(app)
+        .post("/api/v2/admin/products")
+        .set("Authorization", "Bearer " + accessToken)
+        .send({
+            name: "product",
+            description: "description",
+            variants: [
+                {
+                    name: "New Variant",
+                    price: 100,
+                    stock: 10,
+                    sku: "SKU123",
+                    attributes: {
+                        color: "red",
+                        size: "M",
+                    },
+                },
+            ],
+        });
+    createdProduct = resProduct.body.product.productID;
 });
 
 /**
@@ -37,7 +60,7 @@ beforeAll(async () => {
 describe("POST /api/v2/admin/products/:productID/categories", () => {
     it("should add categories to product", async () => {
         const res = await request(app)
-            .post("/api/v2/admin/products/1/categories")
+            .post(`/api/v2/admin/products/${createdProduct}/categories`)
             .set("Authorization", "Bearer " + accessToken)
             .send({ categories: ["shorts", "tshirt"] });
 
@@ -62,7 +85,7 @@ describe("POST /api/v2/admin/products/:productID/categories", () => {
         // Check if the category was added and only once
         const categories = (
             await request(app)
-                .get("/api/v2/admin/products/1/categories")
+                .get(`/api/v2/admin/products/${createdProduct}/categories`)
                 .set("Authorization", "Bearer " + accessToken)
         ).body.categories.map((category) => category.name);
         expect(
@@ -71,6 +94,41 @@ describe("POST /api/v2/admin/products/:productID/categories", () => {
         expect(
             categories.filter((category) => category === "shorts").length
         ).toBe(1);
+    });
+
+    it("should ignore duplicate categories", async () => {
+        const res = await request(app)
+            .post(`/api/v2/admin/products/${createdProduct}/categories`)
+            .set("Authorization", "Bearer " + accessToken)
+            .send({ categories: ["shorts", "blouse"] });
+
+        expect(res.status).toBe(StatusCodes.CREATED);
+        expect(res.body).toEqual(
+            expect.objectContaining({
+                success: true,
+                product: expect.objectContaining({
+                    productID: expect.any(String),
+                    name: expect.any(String),
+                    description: expect.toBeOneOf([expect.any(String), null]),
+                    createdAt: expect.any(String),
+                    updatedAt: expect.any(String),
+                    categories: expect.any(Array),
+                }),
+            })
+        );
+
+        expect(res.body.product.categories).toEqual(["blouse"]);
+
+        // Check if the category was added and only once
+        const categories = (
+            await request(app)
+                .get(`/api/v2/admin/products/${createdProduct}/categories`)
+                .set("Authorization", "Bearer " + accessToken)
+        ).body.categories.map((category) => category.name);
+
+        expect(categories).toEqual(
+            expect.arrayContaining(["shorts", "tshirt", "blouse"])
+        );
     });
 
     it("should return 400 if categories are not provided", async () => {

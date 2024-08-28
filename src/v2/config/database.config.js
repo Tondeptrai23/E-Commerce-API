@@ -1,6 +1,11 @@
 import { Sequelize } from "sequelize";
 import "dotenv/config.js";
 
+// Automatically bind the transaction to the CLS namespace
+import * as cls from "cls-hooked";
+const namespace = cls.createNamespace("my-very-own-namespace");
+Sequelize.useCLS(namespace);
+
 let sequelize;
 if (process.env.NODE_ENV === "test") {
     sequelize = new Sequelize(

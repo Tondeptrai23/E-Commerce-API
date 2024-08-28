@@ -40,11 +40,12 @@ Variant.init(
 );
 
 // Hook to automatically set the variant name based on the product name
-Variant.beforeCreate(async (variant) => {
+Variant.beforeCreate(async (variant, options) => {
     if (!variant.name) {
         const productName = await Product.findByPk(variant.productID, {
             paranoid: false,
             attributes: ["name"],
+            transaction: options.transaction,
         });
         variant.name = productName.name;
     }

@@ -59,7 +59,7 @@ describe("POST /admin/products", () => {
                         price: 200,
                         discountPrice: 150,
                         stock: 20,
-                        sku: "SKU123",
+                        sku: "SKU234",
                         imageIndex: 0,
                         attributes: {
                             color: "blue",
@@ -114,7 +114,7 @@ describe("POST /admin/products", () => {
                 price: 200,
                 discountPrice: 150,
                 stock: 20,
-                sku: "SKU123",
+                sku: "SKU234",
                 imageID: expect.any(String),
                 attributes: expect.objectContaining({
                     color: "blue",
@@ -154,7 +154,7 @@ describe("POST /admin/products", () => {
                     {
                         price: 100,
                         stock: 10,
-                        sku: "SKU123",
+                        sku: "SKU345",
                         attributes: {
                             color: "red",
                             size: "M",
@@ -184,7 +184,7 @@ describe("POST /admin/products", () => {
                 name: "New Product 2",
                 price: 100,
                 stock: 10,
-                sku: "SKU123",
+                sku: "SKU345",
                 attributes: expect.objectContaining({
                     color: "red",
                     size: "M",
@@ -205,7 +205,7 @@ describe("POST /admin/products", () => {
                     {
                         price: 100,
                         stock: 10,
-                        sku: "SKU123",
+                        sku: "SKU456",
                         imageIndex: 1,
                         attributes: {
                             color: "red",
@@ -241,7 +241,7 @@ describe("POST /admin/products", () => {
                 name: "New Product 3",
                 price: 100,
                 stock: 10,
-                sku: "SKU123",
+                sku: "SKU456",
                 imageID: null,
                 attributes: expect.objectContaining({
                     color: "red",
@@ -280,6 +280,44 @@ describe("POST /admin/products", () => {
         );
     });
 
+    it("should return 409 if variant's SKU already exists", async () => {
+        const res = await request(app)
+            .post("/api/v2/admin/products")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                name: "New Product 3456",
+                description: "New Product Description",
+                variants: [
+                    {
+                        name: "New Variant",
+                        price: 100,
+                        stock: 10,
+                        sku: "SKU123",
+                        attributes: {
+                            color: "red",
+                            size: "M",
+                        },
+                    },
+                ],
+                categories: ["tshirt"],
+            });
+
+        expect(res.statusCode).toEqual(StatusCodes.CONFLICT);
+        expect(res.body).toEqual(
+            expect.objectContaining({
+                success: false,
+                errors: expect.any(Array),
+            })
+        );
+
+        expect(res.body.errors[0]).toEqual(
+            expect.objectContaining({
+                error: "Conflict",
+                message: "SKU is already taken",
+            })
+        );
+    });
+
     it("should return 409 if product name already exists", async () => {
         const res = await request(app)
             .post("/api/v2/admin/products")
@@ -292,7 +330,7 @@ describe("POST /admin/products", () => {
                         name: "New Variant",
                         price: 100,
                         stock: 10,
-                        sku: "SKU123",
+                        sku: "SKU567",
                         attributes: {
                             color: "red",
                             size: "M",

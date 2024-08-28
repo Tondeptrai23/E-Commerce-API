@@ -1,6 +1,10 @@
 import Product from "../../models/products/product.model.js";
 import Variant from "../../models/products/variant.model.js";
-import { BadRequestError, ResourceNotFoundError } from "../../utils/error.js";
+import {
+    BadRequestError,
+    ConflictError,
+    ResourceNotFoundError,
+} from "../../utils/error.js";
 import AttributeValue from "../../models/products/attributeValue.model.js";
 import Attribute from "../../models/products/attribute.model.js";
 import ProductImage from "../../models/products/productImage.model.js";
@@ -258,6 +262,22 @@ class VariantService {
     }
 
     /**
+     * Check if SKU exists
+     *
+     * @param {String} sku the SKU to be checked
+     * @returns {Promise<Boolean>} true if SKU exists, false otherwise
+     */
+    async checkSKUExists(sku) {
+        const variant = await Variant.findOne({
+            where: {
+                sku: sku,
+            },
+            attributes: ["sku"],
+        });
+
+        return variant ? true : false;
+    }
+    /**
      * Create a variant for a product with the given variant data
      *
      * @param {Product} product the product to be added a variant
@@ -267,7 +287,15 @@ class VariantService {
     async createVariantForProduct(product, variantData) {
         const { attributes, ...restData } = variantData;
 
-        let variant = await product.createVariant(restData);
+        const isSKUtaken = await this.checkSKUExists(restData.sku);
+        if (isSKUtaken) {
+            throw new ConflictError("SKU is already taken");
+        }
+
+        let variant = await Variant.create({
+            ...restData,
+            productID: product.productID,
+        });
 
         if (attributes) {
             variant = await variantAttributeService.addAttributesForVariant(

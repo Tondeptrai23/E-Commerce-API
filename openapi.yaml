@@ -2378,7 +2378,7 @@ paths:
       tags:
         - Admin Products
       summary: Create product variants
-      description: 'Creates multiple product variants for the specified product. <br> If variant''s name is not provided, it will use the product name If image is provided, a new product image will be created and associated with the variant'
+      description: 'Creates multiple product variants for the specified product. <br> If variant''s name is not provided, it will use the product name. <br> If image is provided, a new product image will be created and associated with the variant'
       security:
         - bearerAuth: []
       parameters:
@@ -2469,6 +2469,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error404'
+        '409':
+          description: SKU already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1signup/post/responses/409/content/application~1json/schema'
         '500':
           description: Internal Server Error
           content:
@@ -5319,7 +5325,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
-  /admin/attributes/values:
+  /admin/attributesValues:
     get:
       tags:
         - Admin Attribute Values
@@ -5403,8 +5409,8 @@ paths:
                       allOf:
                         - $ref: '#/components/schemas/value'
                         - $ref: '#/components/schemas/timestamps'
-                  pagination:
-                    $ref: '#/components/schemas/pagination'
+                allOf:
+                  - $ref: '#/components/schemas/pagination'
         '400':
           description: Invalid request parameters
           content:

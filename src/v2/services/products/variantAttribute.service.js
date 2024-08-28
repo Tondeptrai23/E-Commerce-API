@@ -6,6 +6,7 @@ import VariantSortBuilder from "../condition/sort/variantSortBuilder.service.js"
 import VariantFilterBuilder from "../condition/filter/variantFilterBuilder.service.js";
 import { Op } from "sequelize";
 import ProductImage from "../../models/products/productImage.model.js";
+import VariantAttributeValue from "../../models/products/variantAttributeValue.model.js";
 
 class VariantAttributeService {
     /**
@@ -78,43 +79,70 @@ class VariantAttributeService {
      * @returns {Promise<Variant>} the variant with the added attributes
      */
     async addAttributesForVariant(variant, attributes) {
-        if (variant instanceof Variant === false) {
+        if (
+            variant instanceof Variant === false ||
+            !attributes ||
+            Object.keys(attributes).length === 0
+        ) {
             return variant;
         }
 
-        if (!attributes || Object.keys(attributes).length === 0) {
-            return variant;
+        // Find existing attributes for the variant
+        const detailedVariant = await Variant.findByPk(variant.variantID, {
+            include: {
+                model: AttributeValue,
+                as: "attributeValues",
+                attributes: ["value"],
+                through: {
+                    attributes: [],
+                },
+                include: {
+                    model: Attribute,
+                    as: "attribute",
+                    attributes: ["attributeID", "name"],
+                },
+            },
+        });
+        const existingAttributes = detailedVariant.attributeValues.map(
+            ({ attribute }) => attribute.name
+        );
+
+        // Filter attributes that need to be added
+        const attributesToAdd = Object.entries(attributes).filter(
+            ([name]) => !existingAttributes.includes(name)
+        );
+
+        // Bulk fetch AttributeValues that need to be added
+        const attributeValuesToCreate = await Promise.all(
+            attributesToAdd.map(async ([name, value]) => {
+                return await AttributeValue.findOne({
+                    where: { value },
+                    include: {
+                        model: Attribute,
+                        as: "attribute",
+                        attributes: ["name"],
+                        where: { name },
+                    },
+                });
+            })
+        );
+
+        // Filter out any null results (attribute values that were not found)
+        const validAttributeValues = attributeValuesToCreate.filter(Boolean);
+
+        // Bulk create VariantAttributeValue records
+        if (validAttributeValues.length > 0) {
+            await VariantAttributeValue.bulkCreate(
+                validAttributeValues.map(({ valueID }) => ({
+                    variantID: variant.variantID,
+                    valueID,
+                }))
+            );
+
+            // Append new attribute values to the detailed variant
+            detailedVariant.attributeValues.push(...validAttributeValues);
         }
-
-        const variantAttributes = (
-            await Promise.all(
-                Object.entries(attributes).map(async ([name, value]) => {
-                    const attributeValue = await AttributeValue.findOne({
-                        where: {
-                            value: value,
-                        },
-                        include: {
-                            model: Attribute,
-                            as: "attribute",
-                            attributes: ["name"],
-                            where: {
-                                name: name,
-                            },
-                        },
-                    });
-
-                    if (!attributeValue) {
-                        return null;
-                    }
-                    await variant.addAttributeValue(attributeValue);
-
-                    return attributeValue;
-                })
-            )
-        ).filter((attribute) => attribute !== null);
-
-        variant.attributeValues = variantAttributes;
-        return variant;
+        return detailedVariant;
     }
 
     /**

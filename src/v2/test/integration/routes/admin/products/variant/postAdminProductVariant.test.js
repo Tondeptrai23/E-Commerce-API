@@ -83,7 +83,7 @@ describe("POST /admin/products/:productID/variants", () => {
                         name: "variant1",
                         price: 100,
                         stock: 10,
-                        sku: "sku1",
+                        sku: "sku2",
                         image: {
                             url: "url1",
                             altText: "altText1",
@@ -106,7 +106,7 @@ describe("POST /admin/products/:productID/variants", () => {
                 name: "variant1",
                 price: 100,
                 stock: 10,
-                sku: "sku1",
+                sku: "sku2",
                 imageID: expect.any(String),
                 productID: "1",
                 createdAt: expect.any(String),
@@ -140,7 +140,7 @@ describe("POST /admin/products/:productID/variants", () => {
                         name: "variant1",
                         price: 100,
                         stock: 10,
-                        sku: "sku1",
+                        sku: "sku3",
                         image: {
                             url: "url1",
                             altText: "altText1",
@@ -167,7 +167,7 @@ describe("POST /admin/products/:productID/variants", () => {
                 name: "variant1",
                 price: 100,
                 stock: 10,
-                sku: "sku1",
+                sku: "sku3",
                 imageID: expect.any(String),
                 productID: "1",
                 attributes: expect.objectContaining({
@@ -205,14 +205,14 @@ describe("POST /admin/products/:productID/variants", () => {
                         name: "variant1",
                         price: 100,
                         stock: 10,
-                        sku: "sku1",
+                        sku: "sku4",
                     },
                     {
                         name: "variant2",
                         price: 200,
                         discountPrice: 120,
                         stock: 20,
-                        sku: "sku2",
+                        sku: "sku5",
                     },
                 ],
             });
@@ -231,7 +231,7 @@ describe("POST /admin/products/:productID/variants", () => {
                 name: "variant1",
                 price: 100,
                 stock: 10,
-                sku: "sku1",
+                sku: "sku4",
                 productID: "1",
                 createdAt: expect.any(String),
                 updatedAt: expect.any(String),
@@ -242,7 +242,7 @@ describe("POST /admin/products/:productID/variants", () => {
                 price: 200,
                 discountPrice: 120,
                 stock: 20,
-                sku: "sku2",
+                sku: "sku5",
                 productID: "1",
                 createdAt: expect.any(String),
                 updatedAt: expect.any(String),
@@ -260,7 +260,7 @@ describe("POST /admin/products/:productID/variants", () => {
                         name: "variant1",
                         price: 100,
                         stock: 10,
-                        sku: "sku1",
+                        sku: "sku6",
                         image: {
                             url: "url1",
                             altText: "altText1",
@@ -275,7 +275,7 @@ describe("POST /admin/products/:productID/variants", () => {
                         price: 200,
                         discountPrice: 120,
                         stock: 20,
-                        sku: "sku2",
+                        sku: "sku7",
                         image: {
                             url: "url2",
                             altText: "altText2",
@@ -302,7 +302,7 @@ describe("POST /admin/products/:productID/variants", () => {
                 name: "variant1",
                 price: 100,
                 stock: 10,
-                sku: "sku1",
+                sku: "sku6",
                 productID: "1",
                 createdAt: expect.any(String),
                 updatedAt: expect.any(String),
@@ -313,7 +313,7 @@ describe("POST /admin/products/:productID/variants", () => {
                 price: 200,
                 discountPrice: 120,
                 stock: 20,
-                sku: "sku2",
+                sku: "sku7",
                 productID: "1",
                 createdAt: expect.any(String),
                 updatedAt: expect.any(String),
@@ -364,6 +364,34 @@ describe("POST /admin/products/:productID/variants", () => {
         );
     });
 
+    it("should return 409 if sku is taken", async () => {
+        const res = await request(app)
+            .post("/api/v2/admin/products/1/variants")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                variants: [
+                    {
+                        name: "variant1",
+                        price: 100,
+                        stock: 10,
+                        sku: "sku1",
+                    },
+                ],
+            });
+
+        expect(res.statusCode).toEqual(StatusCodes.CONFLICT);
+        expect(res.body).toEqual(
+            expect.objectContaining({
+                success: false,
+                errors: expect.arrayContaining([
+                    expect.objectContaining({
+                        message: "SKU is already taken",
+                    }),
+                ]),
+            })
+        );
+    });
+
     it("should return 400 if price is missing", async () => {
         const res = await request(app)
             .post("/api/v2/admin/products/1/variants")
@@ -373,7 +401,7 @@ describe("POST /admin/products/:productID/variants", () => {
                     {
                         name: "variant1",
                         stock: 10,
-                        sku: "sku1",
+                        sku: "sku7",
                     },
                 ],
             });
@@ -401,7 +429,7 @@ describe("POST /admin/products/:productID/variants", () => {
                         name: "variant1",
                         price: 100,
                         stock: 10,
-                        sku: "sku1",
+                        sku: "sku7",
                     },
                 ],
             });
@@ -419,7 +447,7 @@ describe("POST /admin/products/:productID/variants", () => {
                         name: "variant1",
                         price: 100,
                         stock: 10,
-                        sku: "sku1",
+                        sku: "sku7",
                     },
                 ],
             });
@@ -436,7 +464,7 @@ describe("POST /admin/products/:productID/variants", () => {
                         name: "variant1",
                         price: 100,
                         stock: 10,
-                        sku: "sku1",
+                        sku: "sku7",
                     },
                 ],
             });
@@ -454,7 +482,7 @@ describe("POST /admin/products/:productID/variants", () => {
                         name: "variant1",
                         price: 100,
                         stock: 10,
-                        sku: "sku1",
+                        sku: "sku7",
                     },
                 ],
             });

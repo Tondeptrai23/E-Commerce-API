@@ -5,6 +5,8 @@ import { Op } from "sequelize";
 import { removeEmptyFields } from "../../utils/utils.js";
 import variantService from "./variant.service.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
+import { db } from "../../models/index.model.js";
+import ProductCategory from "../../models/products/productCategory.model.js";
 
 class ProductBuilderService {
     /**
@@ -58,6 +60,8 @@ class ProductBuilderService {
                 if (!categories) {
                     return this;
                 }
+
+                // Get the categories
                 const categoriesObj = await Category.findAll({
                     where: {
                         name: {
@@ -65,8 +69,32 @@ class ProductBuilderService {
                         },
                     },
                 });
-                this.categories = categoriesObj;
-                await this.product.addCategories(categoriesObj);
+
+                // Get the existing category IDs in the product
+                const existingCategoryIDs = (
+                    await ProductCategory.findAll({
+                        where: {
+                            productID: this.product.productID,
+                        },
+                        attributes: ["categoryID"],
+                    })
+                ).map((category) => category.categoryID);
+
+                const newCategories = categoriesObj.filter((category) => {
+                    return !existingCategoryIDs.includes(category.categoryID);
+                });
+
+                // Add the new categories
+                await ProductCategory.bulkCreate(
+                    newCategories.map((category) => {
+                        return {
+                            productID: this.product.productID,
+                            categoryID: category.categoryID,
+                        };
+                    })
+                );
+
+                this.categories = newCategories;
 
                 return this;
             },
@@ -109,25 +137,26 @@ class ProductBuilderService {
                     return this;
                 }
 
-                this.variants = await Promise.all(
-                    variants.map(async (variant) => {
-                        const { imageIndex, ...rest } = variant;
+                const newVariants = [];
+                for (const variant of variants) {
+                    const { imageIndex, ...rest } = variant;
 
-                        let newVariant =
-                            await variantService.createVariantForProduct(
-                                this.product,
-                                rest
-                            );
+                    let newVariant =
+                        await variantService.createVariantForProduct(
+                            this.product,
+                            rest
+                        );
 
-                        if (this.images && this.images[imageIndex]) {
-                            newVariant = await newVariant.update({
-                                imageID: this.images[imageIndex].imageID,
-                            });
-                        }
+                    if (this.images && this.images[imageIndex]) {
+                        newVariant = await newVariant.update({
+                            imageID: this.images[imageIndex].imageID,
+                        });
+                    }
 
-                        return newVariant;
-                    })
-                );
+                    newVariants.push(newVariant);
+                }
+
+                this.variants = newVariants;
 
                 return this;
             },
@@ -148,6 +177,12 @@ class ProductBuilderService {
 
                 result = removeEmptyFields(result);
 
+                // Clean up
+                this.product = null;
+                this.variants = null;
+                this.categories = null;
+                this.images = null;
+
                 return result;
             },
         };
@@ -165,12 +200,19 @@ class ProductBuilderService {
      *
      */
     async addProduct(productInfo, variants, categories, images) {
-        let builder = await this.productBuilder();
-        builder = await builder.setProductInfo(productInfo);
-        builder = await builder.setImages(images);
-        builder = await builder.setVariants(variants);
-        builder = await builder.setCategories(categories);
-        return await builder.build();
+        return await db
+            .transaction(async (t) => {
+                let builder = await this.productBuilder(null);
+                builder = await builder.setProductInfo(productInfo);
+                builder = await builder.setImages(images);
+                builder = await builder.setVariants(variants);
+                builder = await builder.setCategories(categories);
+
+                return await builder.build();
+            })
+            .catch(async (err) => {
+                throw err;
+            });
     }
 
     /**
@@ -182,11 +224,17 @@ class ProductBuilderService {
      * @throws {ResourceNotFoundError} if the product is not found
      */
     async addImages(productID, imagesData) {
-        let builder = await this.productBuilder(productID);
-        builder = await builder.setImages(imagesData);
-        const product = await builder.build();
+        return await db
+            .transaction(async (t) => {
+                let builder = await this.productBuilder(productID);
+                builder = await builder.setImages(imagesData);
+                const product = await builder.build();
 
-        return product;
+                return product;
+            })
+            .catch(async (err) => {
+                throw err;
+            });
     }
 
     /**
@@ -198,27 +246,33 @@ class ProductBuilderService {
      * @throws {ResourceNotFoundError} if the product is not found
      */
     async addVariants(productID, variants) {
-        let builder = await this.productBuilder(productID);
+        return await db
+            .transaction(async (t) => {
+                let builder = await this.productBuilder(productID);
 
-        // Preprocess
-        const { images, variants: newVariants } = variants.reduce(
-            (acc, variant) => {
-                if (variant.image) {
-                    acc.images.push(variant.image);
-                    variant.imageIndex = acc.images.length - 1;
-                    delete variant.image;
-                }
-                acc.variants.push(variant);
-                return acc;
-            },
-            { images: [], variants: [] }
-        );
+                // Preprocess
+                const { images, variants: newVariants } = variants.reduce(
+                    (acc, variant) => {
+                        if (variant.image) {
+                            acc.images.push(variant.image);
+                            variant.imageIndex = acc.images.length - 1;
+                            delete variant.image;
+                        }
+                        acc.variants.push(variant);
+                        return acc;
+                    },
+                    { images: [], variants: [] }
+                );
 
-        builder = await builder.setImages(images);
-        builder = await builder.setVariants(newVariants);
-        const product = await builder.build();
+                builder = await builder.setImages(images);
+                builder = await builder.setVariants(newVariants);
+                const product = await builder.build();
 
-        return product;
+                return product;
+            })
+            .catch((err) => {
+                throw err;
+            });
     }
 
     /**
@@ -230,11 +284,17 @@ class ProductBuilderService {
      * @throws {ResourceNotFoundError} if the product is not found
      */
     async addCategories(productID, categories) {
-        const builder = await this.productBuilder(productID);
-        await builder.setCategories(categories);
-        const product = await builder.build();
+        return await db
+            .transaction(async (t) => {
+                let builder = await this.productBuilder(productID);
+                builder = await builder.setCategories(categories);
+                const product = await builder.build();
 
-        return product;
+                return product;
+            })
+            .catch((err) => {
+                throw err;
+            });
     }
 }
 
