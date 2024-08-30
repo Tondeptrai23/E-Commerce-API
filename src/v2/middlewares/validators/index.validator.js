@@ -64,6 +64,7 @@ const validator = {
     validateAddToCart: cartValidator.validateAddToCart,
     validateUpdateCart: cartValidator.validateUpdateCart,
     validateFetchCart: cartValidator.validateFetchCart,
+    validateQueryCart: cartValidator.validateQueryCart,
 
     validateCreateCoupon: couponValidator.validateCreateCoupon,
     validatePatchCoupon: couponValidator.validatePatchCoupon,

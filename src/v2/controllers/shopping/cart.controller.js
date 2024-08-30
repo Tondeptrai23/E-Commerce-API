@@ -11,7 +11,8 @@ class CartController {
             const user = req.user;
 
             // Call services
-            const cart = await cartService.getCart(user);
+            const { cart, currentPage, totalPages, totalItems } =
+                await cartService.getCart(user);
 
             // Serialize data
             const serializedCart = CartSerializer.parse(cart);
@@ -19,22 +20,32 @@ class CartController {
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    cart: serializedCart,
-                },
+                currentPage: currentPage,
+                totalPages: totalPages,
+                totalItems: totalItems,
+                cart: serializedCart,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when get cart",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when get cart",
+                        },
+                    ],
                 });
             }
         }
@@ -60,22 +71,29 @@ class CartController {
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    order: serializedOrder,
-                },
+                order: serializedOrder,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when fetch cart to order",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when fetch cart to order",
+                        },
+                    ],
                 });
             }
         }
@@ -89,34 +107,41 @@ class CartController {
             const { quantity } = req.body;
 
             // Call services
-            const cartItem = await cartService.addToCart(
+            await cartService.addToCart(user, variantID, quantity);
+            const cartItem = await cartService.getDetailedCartItem(
                 user,
-                variantID,
-                quantity
+                variantID
             );
+
+            // Serialize data
+            const serializedCartItem = CartSerializer.parse(cartItem);
 
             // Response
             res.status(StatusCodes.CREATED).json({
                 success: true,
-                data: {
-                    cartItem: {
-                        quantity: cartItem.quantity,
-                        variantID: cartItem.variantID,
-                    },
-                },
+                cartItem: serializedCartItem,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when add to cart",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when add to cart",
+                        },
+                    ],
                 });
             }
         }
@@ -130,34 +155,41 @@ class CartController {
             const { quantity } = req.body;
 
             // Call services
-            const cartItem = await cartService.updateCart(
+            await cartService.updateCart(user, variantID, quantity);
+            const cartItem = await cartService.getDetailedCartItem(
                 user,
-                variantID,
-                quantity
+                variantID
             );
+
+            // Serialize data
+            const serializedCartItem = CartSerializer.parse(cartItem);
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    cartItem: {
-                        quantity: cartItem.quantity,
-                        variantID: cartItem.variantID,
-                    },
-                },
+                cartItem: serializedCartItem,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when update cart",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when update cart",
+                        },
+                    ],
                 });
             }
         }
@@ -170,27 +202,33 @@ class CartController {
             const { variantID } = req.params;
 
             // Call services
-            let cart = await cartService.deleteItem(user, variantID);
-
-            // Serialize data
+            await cartService.deleteItem(user, variantID);
 
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                cart: cart,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when delete item",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when delete item",
+                        },
+                    ],
                 });
             }
         }
@@ -209,17 +247,26 @@ class CartController {
                 success: true,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error when delete cart",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error when delete cart",
+                        },
+                    ],
                 });
             }
         }

@@ -5,6 +5,7 @@ describe("Cart Serializer", () => {
         const cart = {
             variantID: "variantID",
             productID: "productID",
+            name: "name",
             price: 100,
             discountPrice: 90,
             extraField: "extraField",
@@ -13,6 +14,7 @@ describe("Cart Serializer", () => {
                 extraField: "extraField",
             },
             cartItem: {
+                cartItemID: "cartItemID",
                 quantity: 2,
                 extraField: "extraField",
             },
@@ -21,8 +23,10 @@ describe("Cart Serializer", () => {
         const serializedCart = CartSerializer.parse(cart);
 
         expect(serializedCart).toEqual({
+            cartItemID: "cartItemID",
             variantID: "variantID",
             productID: "productID",
+            name: "name",
             price: 100,
             discountPrice: 90,
             image: "imageURL",
@@ -37,6 +41,7 @@ describe("Cart Serializer", () => {
             productID: "productID",
             price: 50,
             cartItem: {
+                cartItemID: "cartItemID",
                 quantity: 3,
             },
         };
@@ -44,8 +49,10 @@ describe("Cart Serializer", () => {
         const serializedCart = CartSerializer.parse(cart);
 
         expect(serializedCart).toEqual({
+            cartItemID: "cartItemID",
             variantID: "variantID",
             productID: "productID",
+            name: null,
             price: 50,
             image: null,
             discountPrice: null,
@@ -59,20 +66,24 @@ describe("Cart Serializer", () => {
             {
                 variantID: "variantID1",
                 productID: "productID1",
+                name: "name1",
                 price: 100,
                 discountPrice: 90,
                 image: {
                     url: "imageURL1",
                 },
                 cartItem: {
+                    cartItemID: "cartItemID1",
                     quantity: 2,
                 },
             },
             {
                 variantID: "variantID2",
                 productID: "productID2",
+                name: "name2",
                 price: 50,
                 cartItem: {
+                    cartItemID: "cartItemID2",
                     quantity: 3,
                 },
             },
@@ -82,8 +93,10 @@ describe("Cart Serializer", () => {
 
         expect(serializedCarts).toEqual([
             {
+                cartItemID: "cartItemID1",
                 variantID: "variantID1",
                 productID: "productID1",
+                name: "name1",
                 price: 100,
                 discountPrice: 90,
                 image: "imageURL1",
@@ -91,8 +104,10 @@ describe("Cart Serializer", () => {
                 totalPrice: 180,
             },
             {
+                cartItemID: "cartItemID2",
                 variantID: "variantID2",
                 productID: "productID2",
+                name: "name2",
                 price: 50,
                 discountPrice: null,
                 image: null,

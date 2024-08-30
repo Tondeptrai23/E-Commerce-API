@@ -792,14 +792,7 @@ paths:
                   cart:
                     type: array
                     items:
-                      $ref: '#/components/schemas/variant'
-                      properties:
-                        quantity:
-                          type: number
-                          example: 1
-                        totalPrice:
-                          type: number
-                          example: 90
+                      $ref: '#/paths/~1cart~1items/post/responses/200/content/application~1json/schema/properties/cartItem'
         '401':
           description: 'Token invalid, not authenticated'
           content:
@@ -957,17 +950,36 @@ paths:
                   success:
                     type: boolean
                     example: true
-                  cart:
+                  cartItem:
                     type: object
-                    allOf:
-                      - $ref: '#/components/schemas/variant'
                     properties:
+                      cartItemID:
+                        type: string
+                        example: '1'
+                      variantID:
+                        type: string
+                        example: '1'
+                      productID:
+                        type: string
+                        example: '1'
+                      name:
+                        type: string
+                        example: Product 1
+                      price:
+                        type: number
+                        example: 100
+                      discountPrice:
+                        type: number
+                        example: 90
                       quantity:
                         type: number
                         example: 1
                       totalPrice:
                         type: number
-                        example: 90
+                        example: 100
+                      image:
+                        type: string
+                        example: image.jpg
         '400':
           description: Invalid request parameters
           content:
@@ -1014,16 +1026,7 @@ paths:
                     type: boolean
                     example: true
                   cartItem:
-                    type: object
-                    allOf:
-                      - $ref: '#/components/schemas/variant'
-                    properties:
-                      quantity:
-                        type: number
-                        example: 1
-                      totalPrice:
-                        type: number
-                        example: 90
+                    $ref: '#/paths/~1cart~1items/post/responses/200/content/application~1json/schema/properties/cartItem'
         '400':
           description: Invalid request parameters
           content:

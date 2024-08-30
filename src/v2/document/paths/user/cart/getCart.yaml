@@ -40,14 +40,7 @@ responses:
             cart:
               type: array
               items:
-                $ref: '../../../schemas/products/variant.yaml'
-                properties:
-                  quantity:
-                    type: number
-                    example: 1
-                  totalPrice:
-                    type: number
-                    example: 90
+                $ref: '../../../schemas/shopping/cartItem.yaml'
   401:
     description: Token invalid, not authenticated
     content:

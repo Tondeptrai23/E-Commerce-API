@@ -163,6 +163,79 @@ describe("validateUpdateCart", () => {
     });
 });
 
+describe("validateQueryCart", () => {
+    test("should return empty error array if all fields are valid", async () => {
+        const req = {
+            body: {
+                page: "1",
+                size: "10",
+            },
+        };
+
+        for (const validationChain of validator.validateQueryCart) {
+            await validationChain.run(req);
+        }
+
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(true);
+    });
+
+    test("should return error if fields are not an integer", async () => {
+        const req = {
+            body: {
+                page: "page",
+                size: "size",
+            },
+        };
+
+        for (const validationChain of validator.validateQueryCart) {
+            await validationChain.run(req);
+        }
+
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Page should be a positive integer",
+                }),
+                expect.objectContaining({
+                    msg: "Size should be a positive integer",
+                }),
+            ])
+        );
+    });
+
+    test("should return error if fields are less than 1", async () => {
+        const req = {
+            body: {
+                page: "0",
+                size: "0",
+            },
+        };
+
+        for (const validationChain of validator.validateQueryCart) {
+            await validationChain.run(req);
+        }
+
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Page should be a positive integer",
+                }),
+                expect.objectContaining({
+                    msg: "Size should be a positive integer",
+                }),
+            ])
+        );
+    });
+});
+
 describe("validateFetchCart", () => {
     test("should return empty error array if all fields are valid", async () => {
         const req = {
@@ -195,7 +268,7 @@ describe("validateFetchCart", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Variant IDs should be an array",
+                    msg: "VariantIDs should be an array",
                 }),
             ])
         );
@@ -217,7 +290,7 @@ describe("validateFetchCart", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Variant IDs should not be empty",
+                    msg: "VariantIDs should not be empty",
                 }),
             ])
         );
@@ -239,7 +312,7 @@ describe("validateFetchCart", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Variant IDs should be an array of strings",
+                    msg: "VariantID should be a string",
                 }),
             ])
         );

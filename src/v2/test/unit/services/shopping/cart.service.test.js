@@ -13,21 +13,108 @@ describe("CartService", () => {
         test("should retrieve the user's cart items", async () => {
             const user = await User.findByPk("1");
 
-            const cartItems = await cartService.getCart(user);
+            const { cart, totalPages, currentPage, totalItems } =
+                await cartService.getCart(user);
 
-            expect(cartItems).toBeDefined();
-            expect(Array.isArray(cartItems)).toBe(true);
-            expect(cartItems.length).toBeGreaterThan(0);
+            expect(currentPage).toBe(1);
+            expect(totalPages).toBeGreaterThanOrEqual(0);
+            expect(totalItems).toBeGreaterThanOrEqual(0);
+
+            for (const item of cart) {
+                expect(item).toEqual(
+                    expect.objectContaining({
+                        productID: expect.any(String),
+                        name: expect.any(String),
+                        variantID: expect.any(String),
+                        price: expect.any(Number),
+                        discountPrice: expect.toBeOneOf([
+                            null,
+                            expect.any(Number),
+                        ]),
+                        cartItem: expect.objectContaining({
+                            quantity: expect.any(Number),
+                        }),
+                        image: expect.toBeOneOf([
+                            null,
+                            expect.objectContaining({
+                                url: expect.any(String),
+                            }),
+                        ]),
+                    })
+                );
+            }
         });
 
         test("should return empty array if the user's cart is empty", async () => {
             const user = await User.findByPk("4");
 
-            const cartItems = await cartService.getCart(user);
+            const { cart, totalPages, currentPage, totalItems } =
+                await cartService.getCart(user);
 
-            expect(cartItems).toBeDefined();
-            expect(Array.isArray(cartItems)).toBe(true);
-            expect(cartItems.length).toBe(0);
+            expect(totalItems).toBe(0);
+            expect(currentPage).toBe(1);
+            expect(totalPages).toBe(0);
+            expect(cart.length).toBe(0);
+        });
+
+        test("should return the user's cart items with pagination", async () => {
+            const user = await User.findByPk("1");
+            const pagination = {
+                page: 1,
+                size: 1,
+            };
+
+            const { cart, totalPages, currentPage, totalItems } =
+                await cartService.getCart(user, pagination);
+
+            expect(currentPage).toBe(1);
+            expect(totalPages).toBeGreaterThanOrEqual(0);
+            expect(totalItems).toBeGreaterThanOrEqual(0);
+            expect(cart.length).toBeLessThanOrEqual(pagination.size);
+
+            const {
+                cart: cart2,
+                currentPage: currentPage2,
+                totalPages: totalPages2,
+            } = await cartService.getCart(user, {
+                page: 2,
+                size: 1,
+            });
+
+            expect(currentPage2).toBe(2);
+            expect(totalPages2).toEqual(totalPages);
+            expect(cart2.length).toBeLessThanOrEqual(pagination.size);
+        });
+    });
+
+    describe("CartService.getDetailedCartItem", () => {
+        test("should retrieve a detailed cart item", async () => {
+            const user = await User.findByPk("1");
+            const variantID = "102";
+
+            const detailedCartItem = await cartService.getDetailedCartItem(
+                user,
+                variantID
+            );
+
+            expect(detailedCartItem).toEqual(
+                expect.objectContaining({
+                    productID: expect.any(String),
+                    name: expect.any(String),
+                    variantID: expect.any(String),
+                    price: expect.any(Number),
+                    discountPrice: expect.toBeOneOf([null, expect.any(Number)]),
+                    cartItem: expect.objectContaining({
+                        quantity: expect.any(Number),
+                    }),
+                    image: expect.toBeOneOf([
+                        null,
+                        expect.objectContaining({
+                            url: expect.any(String),
+                        }),
+                    ]),
+                })
+            );
         });
     });
 
@@ -84,9 +171,9 @@ describe("CartService", () => {
             const user = await User.findByPk(1);
 
             // Get an existing variant ID from the user's cart
-            const variant = await cartService.getCart(user);
-            const variantID = variant[0].variantID;
-            const quantity = variant[0].cartItem.quantity;
+            const { cart } = await cartService.getCart(user);
+            const variantID = cart[0].variantID;
+            const quantity = cart[0].cartItem.quantity;
 
             const updatedCartItem = await cartService.addToCart(
                 user,
@@ -144,7 +231,7 @@ describe("CartService", () => {
 
             await cartService.deleteItem(user, variantID);
 
-            const cartItems = await cartService.getCart(user);
+            const { cart: cartItems } = await cartService.getCart(user);
             const deletedItem = cartItems.find(
                 (item) => item.variantID === variantID
             );
@@ -158,7 +245,7 @@ describe("CartService", () => {
 
             await cartService.deleteCart(user);
 
-            const cartItems = await cartService.getCart(user);
+            const { cart: cartItems } = await cartService.getCart(user);
             expect(cartItems.length).toBe(0);
         });
     });

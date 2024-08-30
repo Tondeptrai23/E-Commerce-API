@@ -31,17 +31,8 @@ responses:
             success:
               type: boolean
               example: true
-            cart:
-              type: object
-              allOf:
-                - $ref: "../../../schemas/products/variant.yaml"
-              properties:
-                quantity:
-                  type: number
-                  example: 1
-                totalPrice:
-                  type: number
-                  example: 90
+            cartItem:
+              $ref: "../../../schemas/shopping/cartItem.yaml"
   400:
     description: Invalid request parameters
     content:

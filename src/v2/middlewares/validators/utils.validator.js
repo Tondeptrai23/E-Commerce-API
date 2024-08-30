@@ -163,7 +163,7 @@ const validateQueryInteger = (fieldName) => {
         }
 
         let num = parseInt(value, 10);
-        if (isNaN(num) || num < 0) {
+        if (isNaN(num) || num <= 0) {
             throw new Error(`${fieldName} should be a positive integer`);
         }
 

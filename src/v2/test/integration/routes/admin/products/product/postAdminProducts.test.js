@@ -316,6 +316,16 @@ describe("POST /admin/products", () => {
                 message: "SKU is already taken",
             })
         );
+
+        // Check if the product is not created
+        const resProducts = await request(app).get("/api/v2/products").query({
+            size: "20",
+        });
+        expect(
+            resProducts.body.products.every(
+                (p) => p.name !== "New Product 3456"
+            )
+        ).toBe(true);
     });
 
     it("should return 409 if product name already exists", async () => {

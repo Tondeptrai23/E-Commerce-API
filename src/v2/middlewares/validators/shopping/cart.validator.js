@@ -1,5 +1,9 @@
 import { body } from "express-validator";
-import { validateInteger, validateMinValue } from "../utils.validator.js";
+import {
+    validateInteger,
+    validateMinValue,
+    validateQueryInteger,
+} from "../utils.validator.js";
 
 const validateAddToCart = [
     body("quantity")
@@ -17,27 +21,32 @@ const validateUpdateCart = [
         .custom(validateMinValue("Quantity", 1)),
 ];
 
+const validateQueryCart = [
+    body("page").custom(validateQueryInteger("Page")),
+
+    body("size").custom(validateQueryInteger("Size")),
+];
+
 const validateFetchCart = [
     body("variantIDs")
         .notEmpty()
-        .withMessage("Variant IDs is required")
+        .withMessage("VariantIDs is required")
         .isArray()
-        .withMessage("Variant IDs should be an array")
+        .withMessage("VariantIDs should be an array")
         .custom((value) => {
             if (value.length === 0) {
-                throw new Error("Variant IDs should not be empty");
-            }
-
-            return true;
-        })
-        .custom((value) => {
-            const isValid = value.every((item) => typeof item === "string");
-            if (!isValid) {
-                throw new Error("Variant IDs should be an array of strings");
+                throw new Error("VariantIDs should not be empty");
             }
 
             return true;
         }),
+
+    body("variantIDs.*").isString().withMessage("VariantID should be a string"),
 ];
 
-export { validateAddToCart, validateUpdateCart, validateFetchCart };
+export {
+    validateAddToCart,
+    validateUpdateCart,
+    validateFetchCart,
+    validateQueryCart,
+};
