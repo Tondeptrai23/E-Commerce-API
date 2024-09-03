@@ -11,6 +11,7 @@ import Coupon from "../../models/shopping/coupon.model.js";
 import Product from "../../models/products/product.model.js";
 import { db } from "../../models/index.model.js";
 import PaginationBuilder from "../condition/paginationBuilder.service.js";
+import couponService from "./coupon.service.js";
 
 /**
  * Service class for managing the user's shopping cart.
@@ -113,8 +114,13 @@ class CartService {
 
     /**
      * Fetches the user's cart items and prepares them for ordering.
-     * Create an pending order
-     * CartItem will be removed after order is checked out
+     * Create an pending order, add the cart items to the order, and calculate the total amount.
+     *
+     * If an existing pending order is found, the order will be updated with the new items.
+     *
+     * If a coupon is applied, the final total will be recalculated.
+     *
+     * The cart items will be removed after the order is checked out.
      *
      * @param {User} user - The user object
      * @param {String[]} variantIDs - The variant IDs
@@ -132,13 +138,12 @@ class CartService {
                         },
                     },
                 });
-
                 if (cart.length === 0) {
                     throw new ResourceNotFoundError("No cart items found");
                 }
 
-                // Remove existing pending order
-                await Order.destroy({
+                // Find existing pending order
+                const existingOrder = await Order.findOne({
                     where: {
                         userID: user.userID,
                         status: "pending",
@@ -151,46 +156,79 @@ class CartService {
                         userID: user.userID,
                     },
                 });
+                const addressID = shippingAddress
+                    ? shippingAddress.addressID
+                    : null;
 
-                let newOrder = await Order.create({
-                    userID: user.userID,
-                    orderDate: new Date(),
-                    status: "pending",
-                    shippingAddressID: shippingAddress.addressID,
-                    totalAmount: 0,
-                });
+                // Create or update order
+                let newOrder;
+                if (existingOrder) {
+                    await OrderItem.destroy({
+                        where: {
+                            orderID: existingOrder.orderID,
+                        },
+                    });
 
-                // Calculate total amount
+                    newOrder = existingOrder.set({
+                        shippingAddressID: addressID,
+                        message: null,
+                        createdAt: new Date(),
+                        finalTotal: 0,
+                        subTotal: 0,
+                    });
+                } else {
+                    newOrder = await Order.create({
+                        userID: user.userID,
+                        shippingAddressID: addressID,
+                        status: "pending",
+                    });
+                }
+
+                // Calculate total amount and create order items
                 let totalAmount = 0;
                 const orderItems = cart.map((variant) => {
-                    totalAmount += variant.price * variant.cartItem.quantity;
+                    totalAmount += variant.discountPrice
+                        ? variant.discountPrice * variant.cartItem.quantity
+                        : variant.price * variant.cartItem.quantity;
 
                     return {
                         orderID: newOrder.orderID,
                         variantID: variant.variantID,
                         quantity: variant.cartItem.quantity,
+                        priceAtPurchase: variant.price,
+                        discountPriceAtPurchase: variant.discountPrice,
                     };
                 });
-
                 await OrderItem.bulkCreate(orderItems);
-
-                await newOrder.update({
+                newOrder.set({
                     subTotal: totalAmount,
-                    finalTotal: totalAmount,
                 });
+
+                // Apply coupon if available
+                if (newOrder.couponID) {
+                    const coupon = await Coupon.findByPk(newOrder.couponID);
+
+                    const newFinalTotal = await couponService.calcFinalTotal(
+                        {
+                            ...newOrder.toJSON(),
+                            orderItems: orderItems,
+                        },
+                        coupon
+                    );
+
+                    newOrder.set({
+                        finalTotal: newFinalTotal,
+                    });
+                }
+
+                await newOrder.save();
 
                 return await Order.findByPk(newOrder.orderID, {
                     include: [
                         {
                             model: Variant,
                             as: "products",
-                            attributes: [
-                                "productID",
-                                "variantID",
-                                "name",
-                                "price",
-                                "discountPrice",
-                            ],
+                            attributes: ["productID", "variantID", "name"],
                             include: {
                                 model: ProductImage,
                                 as: "image",

@@ -256,7 +256,9 @@ class CouponService {
             // Calculate the total amount
             for (const product of products) {
                 if (supportProducts.includes(product.productID)) {
-                    let price = product.discountPrice ?? product.price;
+                    let price =
+                        product.orderItem.discountPriceAtPurchase ??
+                        product.orderItem.priceAtPurchase;
 
                     switch (coupon.discountType) {
                         case "percentage":
@@ -302,20 +304,26 @@ class CouponService {
 
         // Calculate final total
         order.finalTotal = await this.calcFinalTotal(order, coupon);
+        if (order.couponID === coupon.couponID) {
+            // If the order already has the same coupon, do nothing
+        } else {
+            if (order.couponID) {
+                // If the order already has a different coupon, decrement the timesUsed
+                await Coupon.update(
+                    { timesUsed: Sequelize.literal("timesUsed - 1") },
+                    {
+                        where: {
+                            couponID: order.couponID,
+                        },
+                    }
+                );
+            }
 
-        // Update order
-        if (order.couponID) {
-            await Coupon.update(
-                { timesUsed: Sequelize.literal("timesUsed - 1") },
-                {
-                    where: {
-                        couponID: order.couponID,
-                    },
-                }
-            );
+            // Update the order with the new coupon
+            order.couponID = coupon.couponID;
+            order.coupon = coupon;
+            await coupon.increment("timesUsed");
         }
-        order.couponID = coupon.couponID;
-        await coupon.increment("timesUsed");
 
         return await order.save();
     }

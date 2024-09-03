@@ -66,6 +66,7 @@ class CartController {
             // Serialize data
             const serializedOrder = OrderSerializer.parse(newOrder, {
                 detailAddress: true,
+                includeTimestamps: true,
             });
 
             // Response

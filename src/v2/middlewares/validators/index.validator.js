@@ -60,6 +60,8 @@ const validator = {
     validatePostOrder: orderValidator.validatePostOrder,
     validatePatchOrder: orderValidator.validatePatchOrder,
     validateApplyCoupon: orderValidator.validateApplyCoupon,
+    validateQueryGetOrderUser: orderValidator.validateQueryGetOrderUser,
+    validateQueryGetOrderAdmin: orderValidator.validateQueryGetOrderAdmin,
 
     validateAddToCart: cartValidator.validateAddToCart,
     validateUpdateCart: cartValidator.validateUpdateCart,

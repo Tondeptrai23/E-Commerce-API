@@ -8,16 +8,7 @@ properties:
   orderItems:
     type: array
     items:
-      type: object
-      allOf:
-        - $ref: "../../schemas/products/variant.yaml"
-      properties:
-        quantity:
-          type: number
-          example: 1
-        totalPrice:
-          type: number
-          example: 90
+      $ref: "../../schemas/shopping/orderItem.yaml"
 allOf:
   - $ref: "../../schemas/shopping/order.yaml"
   - $ref: "../../schemas/timestamps.yaml"

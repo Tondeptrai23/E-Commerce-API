@@ -6,7 +6,15 @@ import validator from "../../middlewares/validators/index.validator.js";
 
 const userOrderRoute = Router();
 
-userOrderRoute.get("/", verifyToken, ordersController.getOrders);
+userOrderRoute.get(
+    "/",
+    validator.validateQueryGetOrderUser,
+    validator.handleValidationErrors,
+    verifyToken,
+    ordersController.getOrders
+);
+
+userOrderRoute.get("/pending", verifyToken, ordersController.getPendingOrder);
 
 userOrderRoute.get("/:orderID", verifyToken, ordersController.getOrder);
 
@@ -41,7 +49,5 @@ userOrderRoute.patch(
 );
 
 userOrderRoute.delete("/:orderID", verifyToken, ordersController.deleteOrder);
-
-userOrderRoute.delete("/", verifyToken, ordersController.deleteAllOrders);
 
 export default userOrderRoute;

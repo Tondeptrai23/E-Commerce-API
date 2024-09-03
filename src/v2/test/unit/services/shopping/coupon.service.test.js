@@ -7,6 +7,7 @@ import {
 import Order from "../../../../models/shopping/order.model.js";
 import orderService from "../../../../services/shopping/order.service.js";
 import Coupon from "../../../../models/shopping/coupon.model.js";
+import { jest } from "@jest/globals";
 
 beforeAll(async () => {
     await seedData();
@@ -494,17 +495,17 @@ describe("CouponService", () => {
                 products: [
                     {
                         variantID: "101",
-                        price: 10,
                         productID: "1",
                         orderItem: {
+                            priceAtPurchase: 10,
                             quantity: 1,
                         },
                     },
                     {
                         variantID: "201",
-                        price: 20,
                         productID: "2",
                         orderItem: {
+                            priceAtPurchase: 20,
                             quantity: 2,
                         },
                     },
@@ -532,17 +533,17 @@ describe("CouponService", () => {
                 products: [
                     {
                         variantID: "101",
-                        price: 10,
                         productID: "1",
                         orderItem: {
+                            priceAtPurchase: 10,
                             quantity: 1,
                         },
                     },
                     {
                         variantID: "201",
-                        price: 20,
                         productID: "2",
                         orderItem: {
+                            priceAtPurchase: 20,
                             quantity: 2,
                         },
                     },
@@ -569,23 +570,68 @@ describe("CouponService", () => {
             expect(finalTotal).toEqual(46);
         });
 
+        test("Calculate final total based on single-target, percentage-typed coupon 2", async () => {
+            const order = {
+                subTotal: 41,
+                products: [
+                    {
+                        variantID: "101",
+                        productID: "1",
+                        orderItem: {
+                            priceAtPurchase: 10,
+                            discountPriceAtPurchase: 9,
+                            quantity: 1,
+                        },
+                    },
+                    {
+                        variantID: "201",
+                        productID: "2",
+                        orderItem: {
+                            priceAtPurchase: 20,
+                            discountPriceAtPurchase: 16,
+                            quantity: 2,
+                        },
+                    },
+                ],
+            };
+
+            const coupon = {
+                discountType: "percentage",
+                discountValue: 10,
+                target: "single",
+                categories: [
+                    {
+                        name: "shorts",
+                    },
+                ],
+            };
+
+            const finalTotal = await couponService.calcFinalTotal(
+                order,
+                coupon
+            );
+
+            expect(finalTotal).toBeDefined();
+            expect(finalTotal).toEqual(37.8);
+        });
+
         test("Calculate final total based on all-target, fixed-typed coupon", async () => {
             const order = {
                 subTotal: 50,
                 products: [
                     {
                         variantID: "101",
-                        price: 10,
                         productID: "1",
                         orderItem: {
+                            priceAtPurchase: 10,
                             quantity: 1,
                         },
                     },
                     {
                         variantID: "201",
-                        price: 20,
                         productID: "2",
                         orderItem: {
+                            priceAtPurchase: 20,
                             quantity: 2,
                         },
                     },
@@ -613,17 +659,17 @@ describe("CouponService", () => {
                 products: [
                     {
                         variantID: "101",
-                        price: 10,
                         productID: "1",
                         orderItem: {
+                            priceAtPurchase: 10,
                             quantity: 1,
                         },
                     },
                     {
                         variantID: "201",
-                        price: 20,
                         productID: "2",
                         orderItem: {
+                            priceAtPurchase: 20,
                             quantity: 2,
                         },
                     },
@@ -649,6 +695,51 @@ describe("CouponService", () => {
             expect(finalTotal).toBeDefined();
             expect(finalTotal).toEqual(44);
         });
+
+        test("Calculate final total based on single-target, fixed-typed coupon 2", async () => {
+            const order = {
+                subTotal: 41,
+                products: [
+                    {
+                        variantID: "101",
+                        productID: "1",
+                        orderItem: {
+                            priceAtPurchase: 10,
+                            discountPriceAtPurchase: 9,
+                            quantity: 1,
+                        },
+                    },
+                    {
+                        variantID: "201",
+                        productID: "2",
+                        orderItem: {
+                            priceAtPurchase: 20,
+                            discountPriceAtPurchase: 16,
+                            quantity: 2,
+                        },
+                    },
+                ],
+            };
+
+            const coupon = {
+                discountType: "fixed",
+                discountValue: 3,
+                target: "single",
+                categories: [
+                    {
+                        name: "shorts",
+                    },
+                ],
+            };
+
+            const finalTotal = await couponService.calcFinalTotal(
+                order,
+                coupon
+            );
+
+            expect(finalTotal).toBeDefined();
+            expect(finalTotal).toEqual(35);
+        });
     });
 
     describe("applyCoupon", () => {
@@ -668,6 +759,7 @@ describe("CouponService", () => {
             expect(updatedOrder).toBeInstanceOf(Order);
             expect(updatedOrder.orderID).toBe(order.orderID);
             expect(updatedOrder.finalTotal).toBe(52);
+            expect(updatedOrder.couponID).toBe(coupon.couponID);
 
             // Verify that the coupon is used
             await new Promise((resolve) => setTimeout(resolve, 1000)); // Add a delay of 1 second
@@ -685,6 +777,34 @@ describe("CouponService", () => {
                 couponService.applyCoupon(order, couponCode)
             ).rejects.toThrow(ResourceNotFoundError);
         });
+
+        test("Not apply a coupon if something went wrong", async () => {
+            const couponCode = "20OFF_SHORTS";
+            const coupon = await Coupon.findOne({
+                where: { code: couponCode },
+            });
+            const order = await orderService.getOrder({ userID: "1" }, "1");
+
+            // Mock order.save()
+            jest.spyOn(order, "save").mockImplementation(() => {
+                throw new Error("Something went wrong");
+            });
+
+            await expect(
+                couponService.applyCoupon(order, couponCode)
+            ).rejects.toThrow();
+
+            jest.restoreAllMocks();
+
+            // Verify that the coupon is not used
+            const updatedCoupon = await Coupon.findOne({
+                where: { code: couponCode },
+            });
+            const updatedOrder = await Order.findByPk(order.orderID);
+
+            expect(updatedCoupon.timesUsed).toBe(coupon.timesUsed);
+            expect(updatedOrder.finalTotal).toBe(order.finalTotal);
+        });
     });
 
     describe("getRecommendedCoupons", () => {
@@ -694,17 +814,17 @@ describe("CouponService", () => {
                 products: [
                     {
                         variantID: "101",
-                        price: 10,
                         productID: "1",
                         orderItem: {
+                            price: 10,
                             quantity: 1,
                         },
                     },
                     {
                         variantID: "201",
-                        price: 20,
                         productID: "2",
                         orderItem: {
+                            price: 20,
                             quantity: 2,
                         },
                     },

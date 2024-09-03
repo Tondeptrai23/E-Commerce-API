@@ -1,4 +1,4 @@
-const stringRegex = /^(\[(like|ne)\])?([\w-]+)$/;
+const stringRegex = /^(\[(like|ne)\])?(([\w-]|\s)+)$/;
 
 const numberRegex = /^(?:\[(lte|gte|lt|gt|ne)\]\d+|\[between]\d+,\d+|\d+)$/;
 

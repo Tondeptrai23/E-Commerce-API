@@ -1,13 +1,10 @@
 import Entity from "./index.serializer.service.js";
+import AddressSerializer from "./address.seralizer.service.js";
 
 const OrderSerializer = new Entity({
     orderID: {
         type: "string",
         required: true,
-    },
-    orderDate: {
-        type: "date",
-        format: "iso",
     },
     status: {
         type: "string",
@@ -34,22 +31,29 @@ const OrderSerializer = new Entity({
         function (obj) {
             return obj.products.map((product) => {
                 return {
+                    orderItemID: product.orderItem.orderItemID,
                     productID: product.productID,
                     variantID: product.variantID,
-                    price: product.price,
-                    discountPrice: product.discountPrice,
+                    name: product.name,
+                    price: product.orderItem.priceAtPurchase,
+                    discountPrice: product.orderItem.discountPriceAtPurchase,
                     quantity: product.orderItem.quantity,
                     image: product.image ? product.image.url : null,
                     totalPrice:
-                        (product.discountPrice ?? product.price) *
+                        (product.orderItem.discountPriceAtPurchase
+                            ? product.orderItem.discountPriceAtPurchase
+                            : product.orderItem.priceAtPurchase) *
                         product.orderItem.quantity,
                 };
             });
         },
     ],
+    couponID: {
+        type: "string",
+    },
     coupon: [
         {
-            type: "object",
+            type: "string",
         },
         function (obj) {
             return obj.coupon.code;
@@ -58,15 +62,25 @@ const OrderSerializer = new Entity({
     shippingAddress: [
         {
             type: "object",
+            default: undefined,
         },
         function (obj, options) {
-            if (options.detailAddress) {
-                const { updatedAt, createdAt, ...address } = JSON.parse(
-                    JSON.stringify(obj.shippingAddress)
-                );
-                return address;
+            if (!obj.shippingAddress) {
+                return undefined;
             }
-            return undefined;
+
+            if (options.detailAddress) {
+                const addressOption = {
+                    detailAddress: false,
+                    includeTimestamps: false,
+                };
+                return AddressSerializer.parse(
+                    obj.shippingAddress,
+                    addressOption
+                );
+            } else {
+                return undefined;
+            }
         },
     ],
     shippingAddressID: {
@@ -78,7 +92,7 @@ const OrderSerializer = new Entity({
             format: "iso",
         },
         function (obj, options) {
-            if (options.includeTimestamps) {
+            if (options.includeTimestamps || options.isAdmin) {
                 return obj.createdAt;
             }
             return undefined;
@@ -90,8 +104,20 @@ const OrderSerializer = new Entity({
             format: "iso",
         },
         function (obj, options) {
-            if (options.includeTimestamps) {
+            if (options.includeTimestamps || options.isAdmin) {
                 return obj.updatedAt;
+            }
+            return undefined;
+        },
+    ],
+    deletedAt: [
+        {
+            type: "date",
+            format: "iso",
+        },
+        function (obj, options) {
+            if (options.isAdmin) {
+                return obj.deletedAt;
             }
             return undefined;
         },

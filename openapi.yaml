@@ -855,15 +855,34 @@ paths:
                         type: array
                         items:
                           type: object
-                          allOf:
-                            - $ref: '#/components/schemas/variant'
                           properties:
+                            orderItemID:
+                              type: string
+                              example: '1'
+                            variantID:
+                              type: string
+                              example: '1'
+                            productID:
+                              type: string
+                              example: '1'
+                            name:
+                              type: string
+                              example: Product 1
+                            price:
+                              type: number
+                              example: 100
+                            discountPrice:
+                              type: number
+                              example: 90
                             quantity:
                               type: number
                               example: 1
                             totalPrice:
                               type: number
-                              example: 90
+                              example: 100
+                            image:
+                              type: string
+                              example: image.jpg
                     allOf:
                       - $ref: '#/components/schemas/order'
                       - $ref: '#/components/schemas/timestamps'
@@ -1121,53 +1140,63 @@ paths:
             example: 10
         - name: sort
           in: query
-          description: 'Sort orders by one or more fields. <br> - A comma-separated list of fields ("finalTotal,-createdAt"). <br> - A single field ("finalTotal"). <br> - An array of fields (["finalTotal", "-createdAt"]). <br>'
+          description: |
+            Sort orders by one or more fields. <br>
+            Support fields: subTotal, finalTotal, status, paymentMethod, createdAt, updatedAt. <br>
+            For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#sorting).
           required: false
           schema:
-            type: string
             example: 'finalTotal,-createdAt'
+            oneOf:
+              - type: string
+              - type: array
+        - name: subTotal
+          in: query
+          description: 'Filter by subTotal <br> For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).'
+          required: false
+          schema:
+            example: '[lte]100'
+        - name: finalTotal
+          in: query
+          description: 'Filter by finalTotal <br> For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).'
+          required: false
+          schema:
+            example: '[gte]100'
         - name: status
           in: query
           description: Filter by status
           required: false
           schema:
             type: string
-            example: delivered
+            enum:
+              - pending
+              - processing
+              - shipping
+              - delivered
+            example: pending
         - name: paymentMethod
           in: query
-          description: Filter by payment method
+          description: Filter by paymentMethod
           required: false
           schema:
             type: string
-            example: COD
-        - name: subTotal
-          in: query
-          description: 'Filter by subTotal. <br> - Support operators "[lte]100", "[gte]100", "[between]100,200"'
-          required: false
-          schema:
-            type: string
-            example: '[gte]100'
-        - name: finalTotal
-          in: query
-          description: 'Filter by finalTotal. <br> - Support operators "[lte]100", "[gte]100", "[between]100,200"'
-          required: false
-          schema:
-            type: string
-            example: '[gte]100'
+            enum:
+              - cod
+              - momo
+              - credit card
+            example: cod
         - name: createdAt
           in: query
-          description: 'Filter by createdAt. <br> - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2021-12-31"'
+          description: 'Filter by createdAt <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
           required: false
           schema:
-            type: string
-            example: '[gte]2021-01-01'
+            example: '[lte]2024-01-01'
         - name: updatedAt
           in: query
-          description: 'Filter by updatedAt. <br> - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2021-12-31"'
+          description: 'Filter by updatedAt <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
           required: false
           schema:
-            type: string
-            example: '[lte]2021-12-31'
+            example: '[lte]2024-01-01'
       responses:
         '200':
           description: Orders found
@@ -6242,6 +6271,7 @@ paths:
         Get all orders.
         Support pagination, filtering, sorting. <br>
         If `sort` is not provided, the default sort is by `createdAt` in descending order. <br>
+        For more information, see the [Order Filter](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md##get-adminorders)
       parameters:
         - name: page
           in: query
@@ -6249,15 +6279,20 @@ paths:
           required: false
           schema:
             type: integer
+            example: 1
         - name: size
           in: query
           description: Size each page
           required: false
           schema:
             type: integer
+            example: 10
         - name: sort
           in: query
-          description: Sort orders by one or more fields.
+          description: |
+            Sort orders by one or more fields. <br>
+            Support fields: subTotal, finalTotal, status, paymentMethod, userID, shippingAddressID, couponID, createdAt, updatedAt, deletedAt. <br>
+            For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#sorting).
           required: false
           schema:
             example: 'finalTotal,-createdAt'
@@ -6266,17 +6301,15 @@ paths:
               - type: array
         - name: subTotal
           in: query
-          description: 'Filter by subTotal <br> Support operators "[lte]", "[gte]", "[between]"'
+          description: 'Filter by subTotal <br> For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).'
           required: false
           schema:
-            type: string
             example: '[lte]100'
         - name: finalTotal
           in: query
-          description: 'Filter by finalTotal <br> Support operators "[lte]", "[gte]", "[between]"'
+          description: 'Filter by finalTotal <br> For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).'
           required: false
           schema:
-            type: string
             example: '[gte]100'
         - name: status
           in: query
@@ -6301,27 +6334,106 @@ paths:
               - momo
               - credit card
             example: cod
+        - name: couponCode
+          in: query
+          description: 'Filter by couponCode <br> For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).'
+          required: false
+          schema:
+            example: COUPONCODE
+        - name: userID
+          in: query
+          description: 'Filter by userID <br> For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).'
+          required: false
+          schema:
+            example: '1'
+        - name: shippingAddressID
+          in: query
+          description: 'Filter by shippingAddressID <br> For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).'
+          required: false
+          schema:
+            example: '1'
+        - name: couponID
+          in: query
+          description: 'Filter by couponID <br> For more information, see the [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering).'
+          required: false
+          schema:
+            example: '1'
+        - name: variant
+          in: query
+          style: deepObject
+          explode: true
+          description: Filter by variant's properties. <br>
+          required: false
+          schema:
+            type: object
+            properties:
+              variantID:
+                description: |
+                  [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
+              productID:
+                description: |
+                  [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
+                example: '1'
+              name:
+                description: |
+                  Filter by variant's name, not the product's name. <br>
+                  [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
+                example: '[like]T-shirt'
+              price:
+                description: |
+                  [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering) 
+                example: '[gte]50'
+              discountPrice:
+                description: |
+                  [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering) 
+                example: '[lte]50'
+              sku:
+                description: |
+                  [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
+                example: SKU123
+              stock:
+                description: |
+                  [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering) 
+                example: '[gte]10'
+        - name: shippingAddress
+          in: query
+          style: deepObject
+          explode: true
+          description: Filter by shippingAddress's properties. <br>
+          required: false
+          schema:
+            type: object
+            properties:
+              city:
+                description: |
+                  [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
+                example: Hanoi
+              district:
+                description: |
+                  [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
+                example: Cau Giay
+              address:
+                description: |
+                  [Query String](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#string-filtering)
+                example: '[like]123 Nguyen Trai'
         - name: createdAt
           in: query
-          description: 'Filter by createdAt Support operators "[lte]", "[gte]", "[between]"'
+          description: 'Filter by createdAt <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
           required: false
           schema:
-            type: string
-            example: '[lte]2021-01-01T00:00:00.000Z'
+            example: '[lte]2024-01-01'
         - name: updatedAt
           in: query
-          description: 'Filter by updatedAt <br> Support operators "[lte]", "[gte]", "[between]"'
+          description: 'Filter by updatedAt <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
           required: false
           schema:
-            type: string
-            example: '[lte]2021-01-01T00:00:00.000Z'
+            example: '[lte]2024-01-01'
         - name: deletedAt
           in: query
-          description: 'Filter by deletedAt <br> Support operators "[lte]", "[gte]", "[between]" <br> If you want to get only deleted orders, use "[lte]" with current date'
+          description: 'Filter by deletedAt <br> For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).'
           required: false
           schema:
-            type: string
-            example: '[lte]2021-01-01T00:00:00.000Z'
+            example: '[lte]2024-01-01'
       security:
         - bearerAuth: []
       responses:
@@ -6713,6 +6825,12 @@ components:
           type: string
           example: COD
         userID:
+          type: string
+          example: '1'
+        couponID:
+          type: string
+          example: '1'
+        shippingAddressID:
           type: string
           example: '1'
     user:

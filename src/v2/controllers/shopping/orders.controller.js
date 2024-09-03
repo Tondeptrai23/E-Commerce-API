@@ -6,10 +6,53 @@ import couponService from "../../services/shopping/coupon.service.js";
 import OrderSerializer from "../../services/serializers/order.serializer.service.js";
 
 class OrderController {
+    async getPendingOrder(req, res) {
+        try {
+            // Call service
+            const order = await orderService.getPendingOrder(req.user);
+
+            // Serialize data
+            const serializedOrder = OrderSerializer.parse(order, {
+                includeTimestamps: true,
+                detailAddress: true,
+            });
+
+            // Response
+            res.status(StatusCodes.OK).json({
+                success: true,
+                order: serializedOrder,
+            });
+        } catch (err) {
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
+                });
+            } else {
+                console.log(err);
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error in getting pending order",
+                        },
+                    ],
+                });
+            }
+        }
+    }
+
     async getOrders(req, res) {
         try {
             // Call service
-            const orders = await orderService.getOrders(req.user);
+            const { orders, currentPage, totalPages, totalItems } =
+                await orderService.getOrders(req.user, req.query);
 
             // Serialize data
             const serializedOrders = OrderSerializer.parse(orders, {
@@ -19,15 +62,22 @@ class OrderController {
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    orders: serializedOrders,
-                },
+                currentPage: currentPage,
+                totalPages: totalPages,
+                totalItems: totalItems,
+                orders: serializedOrders,
             });
         } catch (err) {
             console.log(err);
 
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                error: "Server error in getting orders",
+                success: false,
+                errors: [
+                    {
+                        error: "ServerError",
+                        message: "Server error in getting orders",
+                    },
+                ],
             });
         }
     }
@@ -49,22 +99,108 @@ class OrderController {
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    order: serializedOrder,
-                },
+                order: serializedOrder,
+            });
+        } catch (err) {
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
+                });
+            } else {
+                console.log(err);
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error in getting order",
+                        },
+                    ],
+                });
+            }
+        }
+    }
+
+    async getOrdersAdmin(req, res) {
+        try {
+            // Call service
+            const { orders, currentPage, totalItems, totalPages } =
+                await orderService.getAdminOrders(req.query);
+
+            // Serialize data
+            const serializedOrders = OrderSerializer.parse(orders, {
+                isAdmin: true,
+            });
+
+            // Response
+            res.status(StatusCodes.OK).json({
+                success: true,
+                currentPage: currentPage,
+                totalItems: totalItems,
+                totalPages: totalPages,
+                orders: serializedOrders,
             });
         } catch (err) {
             console.log(err);
 
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                success: false,
+                errors: [
+                    {
+                        error: "ServerError",
+                        message: "Server error in getting orders",
+                    },
+                ],
+            });
+        }
+    }
+
+    async getOrderAdmin(req, res) {
+        try {
+            // Get param
+            const { orderID } = req.params;
+
+            // Call service
+            const order = await orderService.getAdminOrder(orderID);
+
+            // Serialize data
+            const serializedOrder = OrderSerializer.parse(order, {
+                isAdmin: true,
+                detailAddress: true,
+            });
+
+            // Response
+            res.status(StatusCodes.OK).json({
+                success: true,
+                order: serializedOrder,
+            });
+        } catch (err) {
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error in getting order",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error in getting order",
+                        },
+                    ],
                 });
             }
         }
@@ -78,7 +214,12 @@ class OrderController {
 
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                error: "Server error in checking out order",
+                errors: [
+                    {
+                        error: "ServerError",
+                        message: "Server error in posting order",
+                    },
+                ],
             });
         }
     }
@@ -103,22 +244,29 @@ class OrderController {
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    order: serializedOrder,
-                },
+                order: serializedOrder,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error in updating order",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error in updating order",
+                        },
+                    ],
                 });
             }
         }
@@ -127,11 +275,11 @@ class OrderController {
     async applyCoupon(req, res) {
         try {
             // Get params
-            const { couponCode } = req.body;
+            const { code } = req.body;
 
             // Call service
             let order = await orderService.getPendingOrder(req.user);
-            order = await couponService.applyCoupon(order, couponCode);
+            order = await couponService.applyCoupon(order, code);
 
             // Serailize data
             const serializedOrder = OrderSerializer.parse(order, {
@@ -141,22 +289,29 @@ class OrderController {
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    order: serializedOrder,
-                },
+                order: serializedOrder,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error in applying coupon",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error in applying coupon",
+                        },
+                    ],
                 });
             }
         }
@@ -177,22 +332,30 @@ class OrderController {
             // Response
             res.status(StatusCodes.OK).json({
                 success: true,
-                data: {
-                    coupons: coupons,
-                },
+                coupons: coupons,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error in applying coupon",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message:
+                                "Server error in getting recommended coupons",
+                        },
+                    ],
                 });
             }
         }
@@ -211,38 +374,28 @@ class OrderController {
                 success: true,
             });
         } catch (err) {
-            console.log(err);
-
             if (err instanceof ResourceNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    error: err.message,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
-                    error: "Server error in deleting order",
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error in deleting order",
+                        },
+                    ],
                 });
             }
-        }
-    }
-
-    async deleteAllOrders(req, res) {
-        try {
-            // Call service
-            await orderService.deleteAllOrders(req.user);
-
-            // Response
-            res.status(StatusCodes.OK).json({
-                success: true,
-            });
-        } catch (err) {
-            console.log(err);
-
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                error: "Server error in deleting all orders",
-            });
         }
     }
 }

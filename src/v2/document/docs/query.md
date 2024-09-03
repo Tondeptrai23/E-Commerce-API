@@ -165,3 +165,17 @@ These query parameters can be applied to any route. However, some routes have ad
 -   Filter by Values using `ne`: `?values[ne]=L`
 
     -   This will not work as expected. You'll get attributes that have any values other than L, even if they also have the value L. This is because the filter checks each value individually, not the entire attribute.
+
+#### _GET /admin/orders_
+
+-   Filter by Variants: `?variants[price]=[lte]100`
+
+    -   Filters orders based on the properties of the variants in the order. This will return orders with at least one variant priced at or below `100`.
+
+-   Filter by Variants using `ne`: `?variants[price]=[ne]100`
+
+    -   This will not work as expected. You'll get orders that have any variants with a price other than 100, even if they also have a variant with a price of 100. This is because the filter checks each variant individually, not the entire order.
+
+-   Filter by Shipping Address: `?shippingAddress[city]=Ha Noi`
+
+    -   Filters orders based on the shipping address. This will return orders with the shipping address in Ha Noi.

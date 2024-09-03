@@ -155,7 +155,7 @@ describe("validateQueryString", () => {
     });
 
     test("should return true if value is an array", () => {
-        const result = validateQueryString(["[ne]value", "[like]value2"]);
+        const result = validateQueryString(["[ne]value", "[like]val ue2"]);
         expect(result).toBe(true);
     });
 

@@ -2,7 +2,6 @@ import Product from "../../../../models/products/product.model.js";
 import productBuilderService from "../../../../services/products/productBuilder.service.js";
 import seedData from "../../../../seedData.js";
 import Variant from "../../../../models/products/variant.model.js";
-import { jest } from "@jest/globals";
 
 beforeAll(async () => {
     await seedData();

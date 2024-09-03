@@ -3,13 +3,15 @@ import cartService from "../../../../services/shopping/cart.service.js";
 import User from "../../../../models/user/user.model.js";
 import Order from "../../../../models/shopping/order.model.js";
 import Variant from "../../../../models/products/variant.model.js";
+import { jest } from "@jest/globals";
+import OrderItem from "../../../../models/shopping/orderItem.model.js";
 
 beforeAll(async () => {
     await seedData();
 }, 15000);
 
 describe("CartService", () => {
-    describe("CartService.getCart", () => {
+    describe("getCart", () => {
         test("should retrieve the user's cart items", async () => {
             const user = await User.findByPk("1");
 
@@ -87,7 +89,7 @@ describe("CartService", () => {
         });
     });
 
-    describe("CartService.getDetailedCartItem", () => {
+    describe("getDetailedCartItem", () => {
         test("should retrieve a detailed cart item", async () => {
             const user = await User.findByPk("1");
             const variantID = "102";
@@ -118,7 +120,7 @@ describe("CartService", () => {
         });
     });
 
-    describe("CartService.fetchCartToOrder", () => {
+    describe("fetchCartToOrder", () => {
         test("should fetch the user's cart items and prepare them for ordering", async () => {
             const user = await User.findByPk(3);
             const variantIDs = ["501"];
@@ -130,6 +132,34 @@ describe("CartService", () => {
             expect(order.products).toBeDefined();
             expect(order.products).toBeInstanceOf(Array);
             expect(order.products[0]).toBeInstanceOf(Variant);
+        });
+
+        test("should fetch the user's cart items and replace the existing order items", async () => {
+            const user = await User.findByPk(1);
+            await cartService.addToCart(user, "101", 5);
+            await cartService.addToCart(user, "104", 2);
+            const variantIDs = ["101", "104"];
+
+            const pendingOrder = await Order.findOne({
+                where: { userID: user.userID, status: "pending" },
+            });
+
+            const order = await cartService.fetchCartToOrder(user, variantIDs);
+
+            expect(order).toBeDefined();
+            expect(order).toBeInstanceOf(Order);
+            expect(order.products).toBeDefined();
+            expect(order.products).toBeInstanceOf(Array);
+            expect(order.products.length).toBe(2);
+            expect(order.couponID).not.toBeNull();
+            expect(order.shippingAddressID).not.toBeNull();
+            expect(order.message).toBeNull();
+
+            const orderItems = await OrderItem.findAll({
+                where: { orderID: order.orderID },
+            });
+            expect(orderItems.length).toBe(2);
+            expect(pendingOrder.orderID).toEqual(order.orderID);
         });
 
         test("should throw an error if the variantIDs is not found", async () => {
@@ -149,9 +179,38 @@ describe("CartService", () => {
                 cartService.fetchCartToOrder(user, variantIDs)
             ).rejects.toThrow();
         });
+
+        test("should throw an error and not create an order if something goes wrong", async () => {
+            const user = await User.findByPk(1);
+            await cartService.addToCart(user, "101", 5);
+            await cartService.addToCart(user, "104", 2);
+            const variantIDs = ["101", "104"];
+
+            const pendingOrder = await Order.findOne({
+                where: { userID: user.userID, status: "pending" },
+            });
+
+            jest.spyOn(OrderItem, "bulkCreate").mockImplementation(() => {
+                throw new Error("Error creating order items");
+            });
+
+            await expect(
+                cartService.fetchCartToOrder(user, variantIDs)
+            ).rejects.toThrow();
+
+            jest.restoreAllMocks();
+
+            // Check for order to not be created
+            const orders = await Order.findAll({
+                where: { userID: user.userID, status: "pending" },
+            });
+
+            expect(orders[0]).toEqual(pendingOrder);
+            expect(orders.length).toBe(1);
+        });
     });
 
-    describe("CartService.addToCart", () => {
+    describe("addToCart", () => {
         test("should add a new variant to the user's cart", async () => {
             const user = await User.findByPk(1);
             const variantID = "101";
@@ -196,7 +255,7 @@ describe("CartService", () => {
         });
     });
 
-    describe("CartService.updateCart", () => {
+    describe("updateCart", () => {
         test("should update the quantity of a variant in the user's cart", async () => {
             const user = await User.findByPk("1");
             const variantID = "102";
@@ -224,7 +283,7 @@ describe("CartService", () => {
         });
     });
 
-    describe("CartService.deleteItem", () => {
+    describe("deleteItem", () => {
         test("should delete a variant from the user's cart", async () => {
             const user = await User.findByPk("1");
             const variantID = "102";
@@ -239,7 +298,7 @@ describe("CartService", () => {
         });
     });
 
-    describe("CartService.deleteCart", () => {
+    describe("deleteCart", () => {
         test("should delete all cart items for the given user", async () => {
             const user = await User.findByPk("1");
 

@@ -1,0 +1,30 @@
+type: object
+properties:
+  orderItemID:
+    type: string
+    example: "1"
+  variantID:
+    type: string
+    example: "1"
+  productID:
+    type: string
+    example: "1"
+  name:
+    type: string
+    example: "Product 1"
+  price:
+    type: number
+    example: 100
+  discountPrice:
+    type: number
+    example: 90
+  quantity:
+    type: number
+    example: 1
+  totalPrice:
+    type: number
+    example: 100
+  image:
+    type: string
+    example: "image.jpg"
+  

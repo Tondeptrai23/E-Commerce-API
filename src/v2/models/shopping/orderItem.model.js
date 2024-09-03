@@ -14,6 +14,13 @@ OrderItem.init(
             type: DataTypes.INTEGER,
             allowNull: false,
         },
+        priceAtPurchase: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+        },
+        discountPriceAtPurchase: {
+            type: DataTypes.FLOAT,
+        },
     },
     {
         sequelize,

@@ -21,3 +21,9 @@ properties:
   userID:
     type: string
     example: "1"
+  couponID:
+    type: string
+    example: "1"
+  shippingAddressID:
+    type: string
+    example: "1"

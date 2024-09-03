@@ -24,68 +24,69 @@ parameters:
     schema:
       type: integer
       example: 10
-  
+
   - name: sort
     in: query
-    description: Sort orders by one or more fields. <br> 
-      - A comma-separated list of fields ("finalTotal,-createdAt"). <br> 
-      - A single field ("finalTotal"). <br> - An array of fields (["finalTotal", "-createdAt"]). <br>
+    description: |
+      Sort orders by one or more fields. <br>
+      Support fields: subTotal, finalTotal, status, paymentMethod, createdAt, updatedAt. <br>
+      For more information, see the [Sorting](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#sorting).
     required: false
     schema:
-      type: string
       example: "finalTotal,-createdAt"
-    
+      oneOf:
+        - type: string
+        - type: array
+  
+  - name: subTotal
+    in: query
+    description: Filter by subTotal <br>
+      For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering). 
+    required: false
+    schema:
+      example: "[lte]100"
+
+  - name: finalTotal
+    in: query
+    description: Filter by finalTotal <br>
+      For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).
+    required: false
+    schema:
+      example: "[gte]100"
+
   - name: status
     in: query
     description: Filter by status
     required: false
     schema:
       type: string
-      example: "delivered"
-  
+      enum: ["pending", "processing", "shipping", "delivered"]
+      example: "pending"
+
   - name: paymentMethod
     in: query
-    description: Filter by payment method
+    description: Filter by paymentMethod
     required: false
     schema:
       type: string
-      example: "COD"
-
-  - name: subTotal
-    in: query
-    description: Filter by subTotal. <br> 
-      - Support operators "[lte]100", "[gte]100", "[between]100,200"
-    required: false
-    schema:
-      type: string
-      example: "[gte]100"
-
-  - name: finalTotal
-    in: query
-    description: Filter by finalTotal. <br> 
-      - Support operators "[lte]100", "[gte]100", "[between]100,200"
-    required: false
-    schema:
-      type: string
-      example: "[gte]100"
+      enum: ["cod", "momo", "credit card"]
+      example: "cod"
 
   - name: createdAt
     in: query
-    description: Filter by createdAt. <br> 
-      - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2021-12-31"
+    description: Filter by createdAt <br>
+      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     required: false
     schema:
-      type: string
-      example: "[gte]2021-01-01"
+      example: "[lte]2024-01-01"
 
   - name: updatedAt
     in: query
-    description: Filter by updatedAt. <br> 
-      - Support operators "[lte]2021-01-01", "[gte]2021-01-01", "[between]2021-01-01,2021-12-31"
+    description: Filter by updatedAt <br>
+      For more information, see the [Query Date](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#date-filtering).
     required: false
     schema:
-      type: string
-      example: "[lte]2021-12-31"
+      example: "[lte]2024-01-01"
 
 responses:
   200:
