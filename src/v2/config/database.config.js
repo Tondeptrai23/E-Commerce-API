@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize";
+import { Sequelize, Transaction } from "sequelize";
 import "dotenv/config.js";
 
 // Automatically bind the transaction to the CLS namespace
@@ -17,6 +17,7 @@ if (process.env.NODE_ENV === "test") {
             host: "localhost",
             port: process.env.DB_PORT,
             logging: false,
+            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
         }
     );
 } else {

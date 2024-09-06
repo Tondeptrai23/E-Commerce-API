@@ -38,6 +38,7 @@ const seedData = async () => {
     await seedOrder();
     await seedOrderItem();
     await seedCartItem();
+    await seedOrderItem2();
 };
 
 export default seedData;
@@ -1441,6 +1442,194 @@ const seedCartItem = async () => {
             userID: 3,
             variantID: 612,
             quantity: 3,
+        },
+    ]);
+};
+
+const seedOrderItem2 = async () => {
+    await OrderItem.bulkCreate([
+        {
+            orderID: 6,
+            variantID: 101,
+            quantity: 1,
+            priceAtPurchase: 10,
+            discountPriceAtPurchase: 8,
+        },
+        {
+            orderID: 6,
+            variantID: 102,
+            quantity: 1,
+            priceAtPurchase: 10,
+            discountPriceAtPurchase: 8,
+        },
+        {
+            orderID: 6,
+            variantID: 103,
+            quantity: 1,
+            priceAtPurchase: 15,
+            discountPriceAtPurchase: 12,
+        },
+        {
+            orderID: 7,
+            variantID: 104,
+            quantity: 1,
+            priceAtPurchase: 10,
+            discountPriceAtPurchase: 8,
+        },
+        {
+            orderID: 7,
+            variantID: 105,
+            quantity: 1,
+            priceAtPurchase: 10,
+            discountPriceAtPurchase: 8,
+        },
+        {
+            orderID: 7,
+            variantID: 106,
+            quantity: 1,
+            priceAtPurchase: 15,
+            discountPriceAtPurchase: 12,
+        },
+        {
+            orderID: 8,
+            variantID: 107,
+            quantity: 1,
+            priceAtPurchase: 10,
+            discountPriceAtPurchase: 8,
+        },
+        {
+            orderID: 8,
+            variantID: 108,
+            quantity: 1,
+            priceAtPurchase: 10,
+            discountPriceAtPurchase: 8,
+        },
+        {
+            orderID: 8,
+            variantID: 109,
+            quantity: 1,
+            priceAtPurchase: 15,
+            discountPriceAtPurchase: 12,
+        },
+        {
+            orderID: 9,
+            variantID: 201,
+            quantity: 1,
+            priceAtPurchase: 20,
+        },
+        {
+            orderID: 9,
+            variantID: 202,
+            quantity: 1,
+            priceAtPurchase: 20,
+        },
+        {
+            orderID: 9,
+            variantID: 203,
+            quantity: 1,
+            priceAtPurchase: 20,
+        },
+        {
+            orderID: 10,
+            variantID: 301,
+            quantity: 1,
+            priceAtPurchase: 30,
+        },
+        {
+            orderID: 10,
+            variantID: 302,
+            quantity: 1,
+            priceAtPurchase: 30,
+        },
+        {
+            orderID: 10,
+            variantID: 303,
+            quantity: 1,
+            priceAtPurchase: 30,
+        },
+        {
+            orderID: 11,
+            variantID: 401,
+            quantity: 1,
+            priceAtPurchase: 40,
+        },
+        {
+            orderID: 11,
+            variantID: 402,
+            quantity: 1,
+            priceAtPurchase: 40,
+        },
+        {
+            orderID: 11,
+            variantID: 403,
+            quantity: 1,
+            priceAtPurchase: 40,
+        },
+        {
+            orderID: 12,
+            variantID: 501,
+            quantity: 1,
+            priceAtPurchase: 60,
+        },
+        {
+            orderID: 12,
+            variantID: 502,
+            quantity: 1,
+            priceAtPurchase: 60,
+        },
+        {
+            orderID: 12,
+            variantID: 503,
+            quantity: 1,
+            priceAtPurchase: 60,
+        },
+        {
+            orderID: 13,
+            variantID: 504,
+            quantity: 1,
+            priceAtPurchase: 60,
+        },
+        {
+            orderID: 13,
+            variantID: 505,
+            quantity: 1,
+            priceAtPurchase: 60,
+        },
+        {
+            orderID: 13,
+            variantID: 506,
+            quantity: 1,
+            priceAtPurchase: 70,
+        },
+        {
+            orderID: 14,
+            variantID: 507,
+            quantity: 1,
+            priceAtPurchase: 60,
+        },
+        {
+            orderID: 14,
+            variantID: 508,
+            quantity: 1,
+            priceAtPurchase: 60,
+        },
+        {
+            orderID: 14,
+            variantID: 509,
+            quantity: 1,
+            priceAtPurchase: 70,
+        },
+        {
+            orderID: 15,
+            variantID: 601,
+            quantity: 1,
+            priceAtPurchase: 20,
+        },
+        {
+            orderID: 15,
+            variantID: 602,
+            quantity: 1,
+            priceAtPurchase: 20,
         },
     ]);
 };

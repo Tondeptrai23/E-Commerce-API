@@ -233,8 +233,9 @@ describe("OrderService", () => {
             });
 
             expect(orders[0]).toBeInstanceOf(Order);
+
             for (let i = 0; i < orders.length; i++) {
-                expect(["1", "4"]).toContain(orders[i].orderID);
+                expect(["1", "4", "6", "7"]).toContain(orders[i].orderID);
             }
         });
 

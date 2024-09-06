@@ -51,6 +51,7 @@ Coupon.init(
     {
         sequelize,
         modelName: "coupon",
+        version: true,
     }
 );
 

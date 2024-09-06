@@ -1,5 +1,5 @@
 import { toArray } from "../../utils/utils.js";
-import { Op, Sequelize, Model } from "sequelize";
+import { Op, Sequelize, Model, OptimisticLockError } from "sequelize";
 import Category from "../../models/products/category.model.js";
 import Product from "../../models/products/product.model.js";
 import Coupon from "../../models/shopping/coupon.model.js";
@@ -303,29 +303,71 @@ class CouponService {
         }
 
         // Calculate final total
-        order.finalTotal = await this.calcFinalTotal(order, coupon);
-        if (order.couponID === coupon.couponID) {
-            // If the order already has the same coupon, do nothing
-        } else {
-            if (order.couponID) {
+        return await db
+            .transaction(async (t) => {
+                // If the order already has the same coupon, do nothing
+                if (order.couponID === coupon.couponID) {
+                    return order;
+                }
+
                 // If the order already has a different coupon, decrement the timesUsed
-                await Coupon.update(
-                    { timesUsed: Sequelize.literal("timesUsed - 1") },
+                // of the old coupon and increment the timesUsed of the new coupon
+                if (order.couponID) {
+                    const oldCoupon = await Coupon.findByPk(order.couponID);
+
+                    const temp = await Coupon.update(
+                        {
+                            timesUsed: Sequelize.literal("timesUsed - 1"),
+                            version: Sequelize.literal("version + 1"),
+                        },
+                        {
+                            where: {
+                                couponID: oldCoupon.couponID,
+                                version: oldCoupon.version,
+                            },
+                        }
+                    );
+
+                    if (temp[0] === 0) {
+                        throw new OptimisticLockError();
+                    }
+                }
+
+                const affectedCount = await Coupon.update(
+                    {
+                        timesUsed: Sequelize.literal("timesUsed + 1"),
+                        version: Sequelize.literal("version + 1"),
+                    },
                     {
                         where: {
-                            couponID: order.couponID,
+                            couponID: coupon.couponID,
+                            maxUsage: {
+                                [Op.or]: {
+                                    [Op.gt]: Sequelize.col("timesUsed"),
+                                    [Op.is]: null,
+                                },
+                            },
+                            version: coupon.version,
                         },
                     }
                 );
-            }
 
-            // Update the order with the new coupon
-            order.couponID = coupon.couponID;
-            order.coupon = coupon;
-            await coupon.increment("timesUsed");
-        }
+                if (affectedCount[0] === 0) {
+                    throw new OptimisticLockError();
+                }
 
-        return await order.save();
+                // Update the order with the new coupon
+                const finalTotal = await this.calcFinalTotal(order, coupon);
+                await order.update({
+                    couponID: coupon.couponID,
+                    finalTotal,
+                });
+
+                return await order.reload();
+            })
+            .catch((error) => {
+                throw error;
+            });
     }
 
     /**

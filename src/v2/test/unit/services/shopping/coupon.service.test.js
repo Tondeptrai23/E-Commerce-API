@@ -8,6 +8,7 @@ import Order from "../../../../models/shopping/order.model.js";
 import orderService from "../../../../services/shopping/order.service.js";
 import Coupon from "../../../../models/shopping/coupon.model.js";
 import { jest } from "@jest/globals";
+import { OptimisticLockError } from "sequelize";
 
 beforeAll(async () => {
     await seedData();
@@ -760,6 +761,7 @@ describe("CouponService", () => {
             expect(updatedOrder.orderID).toBe(order.orderID);
             expect(updatedOrder.finalTotal).toBe(52);
             expect(updatedOrder.couponID).toBe(coupon.couponID);
+            expect(updatedOrder.coupon.code).toBe(coupon.code);
 
             // Verify that the coupon is used
             await new Promise((resolve) => setTimeout(resolve, 1000)); // Add a delay of 1 second
@@ -779,22 +781,25 @@ describe("CouponService", () => {
         });
 
         test("Not apply a coupon if something went wrong", async () => {
-            const couponCode = "20OFF_SHORTS";
+            const couponCode = "WINTER10";
             const coupon = await Coupon.findOne({
                 where: { code: couponCode },
             });
             const order = await orderService.getOrder({ userID: "1" }, "1");
 
-            // Mock order.save()
-            jest.spyOn(order, "save").mockImplementation(() => {
-                throw new Error("Something went wrong");
-            });
+            // Mock order.reload()
+            order.update = jest
+                .spyOn(order, "update")
+                .mockImplementation(() => {
+                    throw new Error("Something went wrong");
+                });
 
-            await expect(
-                couponService.applyCoupon(order, couponCode)
-            ).rejects.toThrow();
-
-            jest.restoreAllMocks();
+            try {
+                await couponService.applyCoupon(order, couponCode);
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+            }
+            expect(order.update).toHaveBeenCalled();
 
             // Verify that the coupon is not used
             const updatedCoupon = await Coupon.findOne({
@@ -804,6 +809,68 @@ describe("CouponService", () => {
 
             expect(updatedCoupon.timesUsed).toBe(coupon.timesUsed);
             expect(updatedOrder.finalTotal).toBe(order.finalTotal);
+            expect(updatedOrder.couponID).toBe(order.couponID);
+
+            jest.restoreAllMocks();
+        });
+    });
+
+    describe("Concurrent Apply Coupon", () => {
+        let orders;
+        const orderIDs = ["8", "11", "10", "7"];
+        beforeAll(async () => {
+            await Coupon.create({
+                couponID: "123",
+                code: "TESTCODE",
+                discountType: "percentage",
+                discountValue: 10,
+                target: "all",
+                maxUsage: 10,
+            });
+
+            orders = await Order.findAll({
+                where: {
+                    orderID: orderIDs,
+                },
+            });
+        });
+
+        test("should apply coupon concurrently", async () => {
+            // Run test
+            const results = await Promise.allSettled(
+                orders.map(async (order) => {
+                    return await couponService.applyCoupon(order, "TESTCODE");
+                })
+            );
+            for (const result of results) {
+                if (result.status === "rejected") {
+                    expect(result.reason).toBeInstanceOf(OptimisticLockError);
+                } else {
+                    expect(result.value).toBeInstanceOf(Order);
+                }
+            }
+        });
+
+        test("Assert apply coupon", async () => {
+            // Assert
+            const coupon = await Coupon.findOne({
+                where: { code: "TESTCODE" },
+            });
+
+            const updatedOrders = await Order.findAll({
+                where: {
+                    orderID: orderIDs,
+                },
+            });
+
+            let count = 0;
+            for (let i = 0; i < orders.length; i++) {
+                if (updatedOrders[i].couponID === coupon.couponID) {
+                    count++;
+                }
+            }
+
+            expect(coupon.timesUsed).toBe(count);
         });
     });
 
