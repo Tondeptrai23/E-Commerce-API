@@ -1,5 +1,7 @@
 import attributeValueService from "../../../../services/products/attributeValue.service.js";
 import seedData from "../../../../seedData.js";
+import { jest } from "@jest/globals";
+import VariantAttributeValue from "../../../../models/products/variantAttributeValue.model.js";
 
 beforeAll(async () => {
     await seedData();
@@ -403,6 +405,13 @@ describe("Attribute Value Service", () => {
                     updatedAt: expect.any(Date),
                 })
             );
+
+            const attributeValue = await VariantAttributeValue.findOne({
+                where: {
+                    valueID: "12",
+                },
+            });
+            expect(attributeValue).toBeNull();
         });
 
         test("should throw an error if attribute is not found", async () => {
@@ -429,6 +438,26 @@ describe("Attribute Value Service", () => {
             await expect(
                 attributeValueService.replaceAttributeValue("5", "12", "fitted")
             ).rejects.toThrow("Attribute value is taken");
+        });
+
+        test("should not replace attribute value if something goes wrong", async () => {
+            jest.spyOn(
+                attributeValueService,
+                "isAttributeValueTaken"
+            ).mockImplementation(() => {
+                throw new Error("Unexpected error");
+            });
+
+            await expect(
+                attributeValueService.replaceAttributeValue("1", "1", "abcdef")
+            ).rejects.toThrow("Unexpected error");
+
+            const attributeValue = await VariantAttributeValue.findOne({
+                where: {
+                    valueID: "1",
+                },
+            });
+            expect(attributeValue).not.toBeNull();
         });
     });
 

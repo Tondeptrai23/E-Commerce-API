@@ -3,7 +3,7 @@ import "dotenv/config.js";
 
 // Automatically bind the transaction to the CLS namespace
 import * as cls from "cls-hooked";
-const namespace = cls.createNamespace("my-very-own-namespace");
+const namespace = cls.createNamespace("transaction-namespace");
 Sequelize.useCLS(namespace);
 
 let sequelize;

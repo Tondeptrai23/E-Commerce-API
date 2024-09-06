@@ -5,6 +5,7 @@ import FilterBuilder from "../condition/filter/filterBuilder.service.js";
 import PaginationBuilder from "../condition/paginationBuilder.service.js";
 import AttributeFilterBuilder from "../condition/filter/attributeFilterBuilder.service.js";
 import AttributeSortBuilder from "../condition/sort/attributeSortBuilder.service.js";
+import { db } from "../../models/index.model.js";
 
 class AttributeService {
     /**
@@ -105,20 +106,26 @@ class AttributeService {
             throw new ConflictError("Attribute name is taken");
         }
 
-        const attribute = await Attribute.create({
-            name: name,
-        });
+        return await db
+            .transaction(async (t) => {
+                const attribute = await Attribute.create({
+                    name: name,
+                });
 
-        const attributeValues = await AttributeValue.bulkCreate(
-            values.map((value) => ({
-                value: value,
-                attributeID: attribute.attributeID,
-            }))
-        );
+                const attributeValues = await AttributeValue.bulkCreate(
+                    values.map((value) => ({
+                        value: value,
+                        attributeID: attribute.attributeID,
+                    }))
+                );
 
-        attribute.values = attributeValues;
+                attribute.values = attributeValues;
 
-        return attribute;
+                return attribute;
+            })
+            .catch((error) => {
+                throw error;
+            });
     }
 
     /**
@@ -165,33 +172,39 @@ class AttributeService {
             throw new ResourceNotFoundError("Attribute not found");
         }
 
-        // Rename
-        if (attribute.name !== name) {
-            const isNameTaken = await this.isAttributeNameTaken(name);
-            if (isNameTaken) {
-                throw new ConflictError("Attribute name is taken");
-            }
-            attribute.name = name;
-            attribute = await attribute.save();
-        }
+        return await db
+            .transaction(async (t) => {
+                // Rename
+                if (attribute.name !== name) {
+                    const isNameTaken = await this.isAttributeNameTaken(name);
+                    if (isNameTaken) {
+                        throw new ConflictError("Attribute name is taken");
+                    }
+                    attribute.name = name;
+                    attribute = await attribute.save();
+                }
 
-        // Replace attribute values
-        await AttributeValue.destroy({
-            where: {
-                attributeID: attributeID,
-            },
-        });
+                // Replace attribute values
+                await AttributeValue.destroy({
+                    where: {
+                        attributeID: attributeID,
+                    },
+                });
 
-        const attributeValues = await AttributeValue.bulkCreate(
-            values.map((value) => ({
-                value: value,
-                attributeID: attribute.attributeID,
-            }))
-        );
+                const attributeValues = await AttributeValue.bulkCreate(
+                    values.map((value) => ({
+                        value: value,
+                        attributeID: attribute.attributeID,
+                    }))
+                );
 
-        attribute.values = attributeValues;
+                attribute.values = attributeValues;
 
-        return attribute;
+                return attribute;
+            })
+            .catch((error) => {
+                throw error;
+            });
     }
 
     /**

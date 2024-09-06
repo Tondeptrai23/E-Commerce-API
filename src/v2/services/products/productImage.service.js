@@ -1,3 +1,4 @@
+import { db } from "../../models/index.model.js";
 import Product from "../../models/products/product.model.js";
 import ProductImage from "../../models/products/productImage.model.js";
 import { BadRequestError, ResourceNotFoundError } from "../../utils/error.js";
@@ -80,13 +81,19 @@ class ProductImageService {
             throw new BadRequestError("Cannot delete the last image");
         }
 
-        await images[imageIndex].destroy();
+        return await db
+            .transaction(async (t) => {
+                await images[imageIndex].destroy();
 
-        // Update display order for remaining images
-        for (let i = imageIndex + 1; i < images.length; i++) {
-            images[i].displayOrder = i;
-            await images[i].save();
-        }
+                // Update display order for remaining images
+                for (let i = imageIndex + 1; i < images.length; i++) {
+                    images[i].displayOrder = i;
+                    await images[i].save();
+                }
+            })
+            .catch((error) => {
+                throw error;
+            });
     }
 
     /**
@@ -150,12 +157,16 @@ class ProductImageService {
             }
         }
 
-        // Only update the images if all images are found
-        const newImages = await Promise.all(
-            oldImages.map(async (image) => await image.save())
-        );
-
-        return newImages;
+        return await db
+            .transaction(async (t) => {
+                // Only update the images if all images are found
+                return await Promise.all(
+                    oldImages.map(async (image) => await image.save())
+                );
+            })
+            .catch((error) => {
+                throw error;
+            });
     }
 }
 

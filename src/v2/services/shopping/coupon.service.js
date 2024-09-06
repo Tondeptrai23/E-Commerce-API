@@ -34,33 +34,39 @@ class CouponService {
             throw new ConflictError("Coupon code already exists");
         }
 
-        const coupon = await Coupon.create(couponData);
+        return await db
+            .transaction(async (t) => {
+                const coupon = await Coupon.create(couponData);
 
-        if (couponData.categories) {
-            const categories = await Category.findAll({
-                where: {
-                    name: {
-                        [Op.in]: couponData.categories,
-                    },
-                },
+                if (couponData.categories) {
+                    const categories = await Category.findAll({
+                        where: {
+                            name: {
+                                [Op.in]: couponData.categories,
+                            },
+                        },
+                    });
+                    await coupon.setCategories(categories);
+                    coupon.categories = categories;
+                }
+
+                if (couponData.products) {
+                    const products = await Product.findAll({
+                        where: {
+                            productID: {
+                                [Op.in]: couponData.products,
+                            },
+                        },
+                    });
+                    await coupon.setProducts(products);
+                    coupon.products = products;
+                }
+
+                return coupon;
+            })
+            .catch((err) => {
+                throw err;
             });
-            await coupon.setCategories(categories);
-            coupon.categories = categories;
-        }
-
-        if (couponData.products) {
-            const products = await Product.findAll({
-                where: {
-                    productID: {
-                        [Op.in]: couponData.products,
-                    },
-                },
-            });
-            await coupon.setProducts(products);
-            coupon.products = products;
-        }
-
-        return coupon;
     }
 
     /**
@@ -315,22 +321,10 @@ class CouponService {
                 if (order.couponID) {
                     const oldCoupon = await Coupon.findByPk(order.couponID);
 
-                    const temp = await Coupon.update(
-                        {
-                            timesUsed: Sequelize.literal("timesUsed - 1"),
-                            version: Sequelize.literal("version + 1"),
-                        },
-                        {
-                            where: {
-                                couponID: oldCoupon.couponID,
-                                version: oldCoupon.version,
-                            },
-                        }
-                    );
-
-                    if (temp[0] === 0) {
-                        throw new OptimisticLockError();
-                    }
+                    await oldCoupon.update({
+                        timesUsed: Sequelize.literal("timesUsed - 1"),
+                        version: Sequelize.literal("version + 1"),
+                    });
                 }
 
                 const affectedCount = await Coupon.update(

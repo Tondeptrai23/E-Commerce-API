@@ -14,6 +14,7 @@ import PaginationBuilder from "../condition/paginationBuilder.service.js";
 import VariantSortBuilder from "../condition/sort/variantSortBuilder.service.js";
 import variantFilterBuilder from "../condition/filter/variantFilterBuilder.service.js";
 import variantAttributeService from "./variantAttribute.service.js";
+import { db } from "../../models/index.model.js";
 
 class VariantService {
     /**
@@ -124,20 +125,28 @@ class VariantService {
             }
         }
 
-        await variant.update(variantData);
-        variant = await variant.reload();
+        return await db
+            .transaction(async (t) => {
+                await variant.update(variantData);
+                variant = await variant.reload();
 
-        // This calling service is not implemented yet
-        if (variantData.attributes) {
-            await VariantAttributeValue.destroy({
-                where: { variantID },
+                await VariantAttributeValue.destroy({
+                    where: { variantID },
+                });
+
+                // This calling service is not implemented yet
+                if (variantData.attributes) {
+                    variant =
+                        await variantAttributeService.addAttributesForVariant(
+                            variant,
+                            variantData.attributes
+                        );
+                }
+                return variant;
+            })
+            .catch((error) => {
+                throw error;
             });
-            variant = await variantAttributeService.addAttributesForVariant(
-                variant,
-                variantData.attributes
-            );
-        }
-        return variant;
     }
 
     /**
@@ -279,6 +288,7 @@ class VariantService {
     }
     /**
      * Create a variant for a product with the given variant data
+     * This method requires a transaction to be passed by an outer service
      *
      * @param {Product} product the product to be added a variant
      * @param {Object} variantData the variant data to be added

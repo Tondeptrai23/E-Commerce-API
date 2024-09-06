@@ -1,6 +1,9 @@
+import Attribute from "../../../../models/products/attribute.model.js";
+import AttributeValue from "../../../../models/products/attributeValue.model.js";
 import seedData from "../../../../seedData.js";
 import attributeService from "../../../../services/products/attribute.service.js";
 import variantAttributeService from "../../../../services/products/variantAttribute.service.js";
+import { jest } from "@jest/globals";
 
 beforeAll(async () => {
     await seedData();
@@ -356,6 +359,25 @@ describe("Attribute Service", () => {
                 ])
             ).rejects.toThrow("Attribute name is taken");
         });
+
+        test("should not create an attribute if something goes wrong", async () => {
+            jest.spyOn(AttributeValue, "bulkCreate").mockRejectedValue(
+                new Error("Failed")
+            );
+
+            await expect(
+                attributeService.createAttribute("size3", ["S", "M", "L"])
+            ).rejects.toThrow("Failed");
+
+            jest.spyOn(AttributeValue, "bulkCreate").mockRestore();
+
+            const attribute = await Attribute.findOne({
+                where: {
+                    name: "size3",
+                },
+            });
+            expect(attribute).toBeNull();
+        });
     });
 
     describe("renameAttribute", () => {
@@ -437,6 +459,32 @@ describe("Attribute Service", () => {
             await expect(
                 attributeService.replaceAttribute("6", "fit", ["S", "M", "L"])
             ).rejects.toThrow("Attribute name is taken");
+        });
+
+        test("should not replace an attribute if something goes wrong", async () => {
+            jest.spyOn(AttributeValue, "bulkCreate").mockRejectedValue(
+                new Error("Failed")
+            );
+
+            await expect(
+                attributeService.replaceAttribute("6", "fit2", ["S", "M", "L"])
+            ).rejects.toThrow("Failed");
+
+            jest.spyOn(AttributeValue, "bulkCreate").mockRestore();
+
+            const attribute = await Attribute.findOne({
+                where: {
+                    name: "fit2",
+                },
+            });
+            expect(attribute).toBeNull();
+
+            const attributeValues = await AttributeValue.findAll({
+                where: {
+                    attributeID: "6",
+                },
+            });
+            expect(attributeValues.length).toBe(3);
         });
     });
 

@@ -7,6 +7,7 @@ import {
 import Order from "../../../../models/shopping/order.model.js";
 import orderService from "../../../../services/shopping/order.service.js";
 import Coupon from "../../../../models/shopping/coupon.model.js";
+import Product from "../../../../models/products/product.model.js";
 import { jest } from "@jest/globals";
 import { OptimisticLockError } from "sequelize";
 
@@ -398,6 +399,39 @@ describe("CouponService", () => {
             expect(createdCoupon.maxUsage).toBe(couponData.maxUsage);
             expect(createdCoupon.categories).toBeUndefined();
             expect(createdCoupon.products).toBeUndefined();
+        });
+
+        test("Should not create a new coupon if something goes wrong", async () => {
+            const couponData = {
+                code: "SUMMER24",
+                discountType: "percentage",
+                discountValue: 10,
+                minimumOrderAmount: 20,
+                timesUsed: 0,
+                maxUsage: 10,
+                target: "all",
+                startDate: new Date("2024/8/1"),
+                endDate: new Date("2024/7/12"),
+                products: ["1", "2"],
+            };
+
+            // Mock Coupon.create()
+            jest.spyOn(Product, "findAll").mockImplementation(() => {
+                throw new Error("Something went wrong");
+            });
+
+            try {
+                await couponService.createCoupon(couponData);
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+            }
+
+            jest.restoreAllMocks();
+
+            const createdCoupon = await Coupon.findOne({
+                where: { code: "SUMMER24" },
+            });
+            expect(createdCoupon).toBeNull();
         });
     });
 
@@ -852,6 +886,101 @@ describe("CouponService", () => {
         });
 
         test("Assert apply coupon", async () => {
+            // Assert
+            const coupon = await Coupon.findOne({
+                where: { code: "TESTCODE" },
+            });
+
+            const updatedOrders = await Order.findAll({
+                where: {
+                    orderID: orderIDs,
+                },
+            });
+
+            let count = 0;
+            for (let i = 0; i < orders.length; i++) {
+                if (updatedOrders[i].couponID === coupon.couponID) {
+                    count++;
+                }
+            }
+
+            expect(coupon.timesUsed).toBe(count);
+        });
+    });
+
+    describe("Concurrent Apply Coupon 2", () => {
+        let orders;
+        let coupons = [];
+        const orderIDs = ["8", "11", "10", "7"];
+        beforeAll(async () => {
+            await Coupon.update(
+                {
+                    timesUsed: 0,
+                },
+                {
+                    where: {
+                        couponID: "123",
+                    },
+                }
+            );
+
+            orders = await Order.findAll({
+                where: {
+                    orderID: orderIDs,
+                },
+            });
+
+            for (const order of orders) {
+                order.couponID = "123";
+                await Coupon.increment("timesUsed", {
+                    where: { couponID: "123" },
+                });
+                await order.save();
+            }
+
+            coupons[0] = await Coupon.findOne({
+                where: { code: "20OFF_SHORTS" },
+            });
+            coupons[1] = await Coupon.findOne({
+                where: { code: "5OFF_TOPS" },
+            });
+            coupons[2] = await Coupon.findOne({
+                where: { code: "WINTER10" },
+            });
+            coupons[3] = await Coupon.findOne({
+                where: { code: "WINTER5" },
+            });
+        });
+        test("should decrement old coupon usage if applying new coupon", async () => {
+            // Run test
+            const results = await Promise.allSettled([
+                couponService.applyCoupon(orders[0], coupons[0].code),
+                couponService.applyCoupon(orders[1], coupons[1].code),
+                couponService.applyCoupon(orders[2], coupons[2].code),
+                couponService.applyCoupon(orders[3], coupons[3].code),
+            ]);
+            for (const result of results) {
+                if (result.status === "rejected") {
+                    expect(result.reason).toBeInstanceOf(OptimisticLockError);
+                } else {
+                    expect(result.value).toBeInstanceOf(Order);
+                }
+            }
+        });
+
+        test("assert decrement old coupon usage", async () => {
+            // Check if new coupons are applied
+            const newCoupons = await Coupon.findAll({
+                where: {
+                    code: ["20OFF_SHORTS", "5OFF_TOPS", "WINTER10", "WINTER5"],
+                },
+            });
+            expect(
+                coupons.reduce((acc, coupon) => acc + coupon.timesUsed, 0) + 1
+            ).toBe(
+                newCoupons.reduce((acc, coupon) => acc + coupon.timesUsed, 0)
+            );
+
             // Assert
             const coupon = await Coupon.findOne({
                 where: { code: "TESTCODE" },

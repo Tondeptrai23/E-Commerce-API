@@ -6,6 +6,7 @@ import PaginationBuilder from "../condition/paginationBuilder.service.js";
 import FilterBuilder from "../condition/filter/filterBuilder.service.js";
 import AttributeValueFilterBuilder from "../condition/filter/attributeValueFilterBuilder.service.js";
 import AttributeValueSortBuilder from "../condition/sort/attributeValueSortBuilder.service.js";
+import { db } from "../../models/index.model.js";
 
 class AttributeValueService {
     /**
@@ -156,6 +157,7 @@ class AttributeValueService {
 
     /**
      * Replace attribute value
+     * Remove all asscoiations between variant and attribute value
      *
      * @param {String} attributeID the attribute's ID
      * @param {String} valueID the attribute value's ID
@@ -169,27 +171,33 @@ class AttributeValueService {
             attributeID,
             valueID
         );
-        // Delete variant attribute value
-        await VariantAttributeValue.destroy({
-            where: {
-                valueID: valueID,
-            },
-        });
+        return await db
+            .transaction(async (t) => {
+                // Delete variant attribute value
+                await VariantAttributeValue.destroy({
+                    where: {
+                        valueID: valueID,
+                    },
+                });
 
-        // Rename
-        if (attributeValue.value !== value) {
-            const isValueTaken = await this.isAttributeValueTaken(
-                attributeValue.attributeID,
-                value
-            );
-            if (isValueTaken) {
-                throw new ConflictError("Attribute value is taken");
-            }
-            attributeValue.value = value;
-            await attributeValue.save();
-        }
+                // Rename
+                if (attributeValue.value !== value) {
+                    const isValueTaken = await this.isAttributeValueTaken(
+                        attributeValue.attributeID,
+                        value
+                    );
+                    if (isValueTaken) {
+                        throw new ConflictError("Attribute value is taken");
+                    }
+                    attributeValue.value = value;
+                    await attributeValue.save();
+                }
 
-        return attributeValue;
+                return attributeValue;
+            })
+            .catch((error) => {
+                throw error;
+            });
     }
 
     /**

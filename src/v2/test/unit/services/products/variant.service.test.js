@@ -8,6 +8,8 @@ import {
 import Product from "../../../../models/products/product.model.js";
 import AttributeValue from "../../../../models/products/attributeValue.model.js";
 import ProductImage from "../../../../models/products/productImage.model.js";
+import { jest } from "@jest/globals";
+import VariantAttributeValue from "../../../../models/products/variantAttributeValue.model.js";
 
 beforeAll(async () => {
     await seedData();
@@ -287,6 +289,14 @@ describe("Variant Service", () => {
             expect(updatedVariant.discountPrice).toBe(
                 variantData.discountPrice
             );
+
+            // Verify that attribute value is deleted
+            const attributeValue = await VariantAttributeValue.findOne({
+                where: {
+                    variantID: variantID,
+                },
+            });
+            expect(attributeValue).toBeNull();
         });
 
         test("should update the attributes of a variant", async () => {
@@ -352,6 +362,26 @@ describe("Variant Service", () => {
             await expect(
                 variantService.updateVariant(variantID, variantData)
             ).rejects.toThrow(ResourceNotFoundError);
+        });
+
+        test("should not update variant if something goes wrong", async () => {
+            const variantID = "104";
+            const variantData = { price: 2000 };
+
+            jest.spyOn(VariantAttributeValue, "destroy").mockImplementation(
+                () => {
+                    throw new Error();
+                }
+            );
+
+            await expect(
+                variantService.updateVariant(variantID, variantData)
+            ).rejects.toThrow();
+
+            jest.restoreAllMocks();
+
+            const variant = await variantService.getVariant(variantID);
+            expect(variant.price).not.toBe(variantData.price);
         });
     });
 

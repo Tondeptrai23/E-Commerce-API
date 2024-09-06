@@ -2,6 +2,8 @@ import productImageService from "../../../../services/products/productImage.serv
 import seedData from "../../../../seedData.js";
 import ProductImage from "../../../../models/products/productImage.model.js";
 import { ResourceNotFoundError } from "../../../../utils/error.js";
+import { BadRequestError } from "../../../../utils/error.js";
+import { jest } from "@jest/globals";
 
 beforeAll(async () => {
     await seedData();
@@ -124,6 +126,57 @@ describe("ProductImageService", () => {
             expect(updatedImages.every((image) => image.displayOrder > 0)).toBe(
                 true
             );
+        });
+
+        test("should throw BadRequestError if the image is the last image of the product", async () => {
+            const productID = "2";
+
+            const images = await ProductImage.findAll({
+                where: { productID },
+                order: [["displayOrder", "ASC"]],
+            });
+
+            for (let i = 0; i < images.length - 1; i++) {
+                await productImageService.deleteImage(
+                    productID,
+                    images[i].imageID
+                );
+            }
+
+            await expect(
+                productImageService.deleteImage(
+                    productID,
+                    images[images.length - 1].imageID
+                )
+            ).rejects.toThrow(BadRequestError);
+        });
+
+        test("should not delete the image if something goes wrong", async () => {
+            const productID = "3";
+
+            const images = await ProductImage.findAll({
+                where: { productID },
+                order: [["displayOrder", "ASC"]],
+            });
+
+            jest.spyOn(images[1], "save").mockImplementation(() => {
+                throw new Error();
+            });
+
+            jest.spyOn(ProductImage, "findAll").mockImplementation(() => {
+                return images;
+            });
+
+            await expect(
+                productImageService.deleteImage(productID, images[0].imageID)
+            ).rejects.toThrow();
+
+            jest.restoreAllMocks();
+
+            const updatedImages = await productImageService.getProductImages(
+                productID
+            );
+            expect(updatedImages.length).toBe(images.length);
         });
     });
 
