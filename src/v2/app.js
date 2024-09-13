@@ -1,14 +1,12 @@
 import express from "express";
-import "dotenv/config.js";
 import bodyParser from "body-parser";
 import cors from "cors";
-
-import { router } from "./routes/index.route.js";
-
 import swaggerUI from "swagger-ui-express";
-
 import fs from "fs";
 import YAML from "yaml";
+
+import { router } from "./routes/index.route.js";
+import { serverConfig } from "./config/config.js";
 
 const app = express();
 app.use(bodyParser.json());
@@ -16,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(
     cors({
-        origin: process.env.FRONT_END_URL,
+        origin: serverConfig.FRONT_END_URL,
     })
 );
 
@@ -30,7 +28,7 @@ app.use((req, res, next) => {
 
 const file = fs.readFileSync("./openapi.yaml", "utf8");
 const swaggerDocument = YAML.parse(file);
-swaggerDocument.servers[0].url = `http://localhost:${process.env.PORT}/api/v2`;
+swaggerDocument.servers[0].url = `${serverConfig.SERVER_URL}:${serverConfig.PORT}/api/v2`;
 app.use(
     "/docs",
     swaggerUI.serve,

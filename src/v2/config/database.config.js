@@ -1,36 +1,22 @@
 import { Sequelize, Transaction } from "sequelize";
-import "dotenv/config.js";
+import { dbConfig } from "./config.js";
 
 // Automatically bind the transaction to the CLS namespace
 import * as cls from "cls-hooked";
 const namespace = cls.createNamespace("transaction-namespace");
 Sequelize.useCLS(namespace);
 
-let sequelize;
-if (process.env.NODE_ENV === "test") {
-    sequelize = new Sequelize(
-        process.env.DB_TEST_NAME,
-        process.env.DB_USERNAME,
-        process.env.DB_PASSWORD,
-        {
-            dialect: "mysql",
-            host: "localhost",
-            port: process.env.DB_PORT,
-            logging: false,
-            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-        }
-    );
-} else {
-    sequelize = new Sequelize(
-        process.env.DB_NAME,
-        process.env.DB_USERNAME,
-        process.env.DB_PASSWORD,
-        {
-            dialect: "mysql",
-            host: "localhost",
-            port: process.env.DB_PORT,
-        }
-    );
-}
+let sequelize = new Sequelize(
+    dbConfig.DB_NAME,
+    dbConfig.DB_USERNAME,
+    dbConfig.DB_PASSWORD,
+    {
+        host: dbConfig.DB_HOST,
+        dialect: dbConfig.DB_TYPE,
+        port: dbConfig.DB_PORT,
+        logging: dbConfig.DB_LOGGING,
+        isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+    }
+);
 
 export { sequelize };
