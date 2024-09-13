@@ -24,7 +24,7 @@ jobs:
                     # The MySQL docker container requires these environment variables to be set
                     # so we can create and migrate the test database.
                     # See: https://hub.docker.com/_/mysql
-                    MYSQL_DATABASE: ${{secrets.DB_TEST_NAME}}
+                    MYSQL_DATABASE: ${{secrets.DB_NAME}}
                     MYSQL_ROOT_PASSWORD: ${{secrets.DB_PASSWORD}}
                 ports:
                     # Opens port 3306 on service container and host
@@ -46,4 +46,4 @@ jobs:
                   DB_USERNAME: ${{secrets.DB_USERNAME}}
                   DB_PASSWORD: ${{secrets.DB_PASSWORD}}
                   DB_PORT: 3306
-                  DB_TEST_NAME: ${{secrets.DB_TEST_NAME}}
+                  DB_NAME: ${{secrets.DB_NAME}}
