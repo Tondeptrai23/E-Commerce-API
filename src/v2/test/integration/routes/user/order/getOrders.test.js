@@ -54,8 +54,9 @@ describe("GET /api/v2/orders", () => {
                     orderID: expect.any(String),
                     status: expect.toBeOneOf([
                         "pending",
+                        "awaiting payment",
                         "processing",
-                        "shipped",
+                        "cancelled",
                         "delivered",
                     ]),
                     message: expect.toBeOneOf([expect.any(String), null]),

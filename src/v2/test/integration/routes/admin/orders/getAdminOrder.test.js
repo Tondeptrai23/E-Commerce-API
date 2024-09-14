@@ -47,6 +47,7 @@ describe("GET /api/v2/admin/orders/:orderID", () => {
         });
         expect(res.body.order).toEqual({
             orderID: "1",
+            orderDate: expect.toBeOneOf([expect.any(String), null]),
             status: expect.toBeOneOf([
                 "pending",
                 "processing",

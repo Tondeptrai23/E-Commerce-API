@@ -59,18 +59,18 @@ describe("Variant Service", () => {
 
         test("should return all variants with multiple filtering options", async () => {
             const { variants } = await variantService.getVariants({
-                price: "[lte]60",
+                price: "[lte]6000",
                 stock: "[gte]5",
-                discountPrice: "[between]20,60",
+                discountPrice: "[between]2000,6000",
             });
 
             expect(variants).toBeInstanceOf(Array);
             expect(variants.length).toBeGreaterThan(0);
-            expect(variants.every((v) => v.price <= 60)).toBe(true);
+            expect(variants.every((v) => v.price <= 6000)).toBe(true);
             expect(variants.every((v) => v.stock >= 5)).toBe(true);
             expect(
                 variants.every(
-                    (v) => v.discountPrice >= 20 && v.discountPrice <= 60
+                    (v) => v.discountPrice >= 2000 && v.discountPrice <= 6000
                 )
             ).toBe(true);
         });
@@ -177,7 +177,7 @@ describe("Variant Service", () => {
         test("should return all variants with the given filtering, sorting, and pagination options", async () => {
             const { variants, totalItems, totalPages, currentPage } =
                 await variantService.getVariants({
-                    price: "[lte]50",
+                    price: "[lte]5000",
                     stock: "[gte]10",
                     attributes: {
                         color: ["red", "black"],
@@ -193,7 +193,7 @@ describe("Variant Service", () => {
             expect(totalItems).toBeGreaterThanOrEqual(3);
             expect(totalPages).toBeGreaterThanOrEqual(1);
             expect(currentPage).toBe(1);
-            expect(variants.every((v) => v.price <= 50)).toBe(true);
+            expect(variants.every((v) => v.price <= 5000)).toBe(true);
             expect(variants.every((v) => v.stock >= 10)).toBe(true);
             expect(
                 variants.every(
@@ -218,7 +218,7 @@ describe("Variant Service", () => {
 
             // Assert sorting through pages
             const { variants: variants2 } = await variantService.getVariants({
-                price: "[lte]50",
+                price: "[lte]5000",
                 stock: "[gte]10",
                 attributes: {
                     color: ["red", "black"],

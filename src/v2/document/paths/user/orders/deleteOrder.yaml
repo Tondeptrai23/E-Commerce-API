@@ -3,8 +3,10 @@ tags:
   - User Orders
 summary: Delete an order
 description: Delete an order belongs to user by orderID. <br>
-  - Only delivered order or pending order can be deleted. <br>
-  - The order will be marked as deleted, only pending order will be permanently deleted. <br>
+  - If the order is pending or cancelled, it will be permanently deleted. <br>
+  - If an order is awaiting payment, it cannot be deleted. However, it can be deleted once it times out and changes to a cancelled status. <br>
+  - If the order is processing, it cannot be deleted. <br>
+  - If the order is delivered, delete it will mark it as deleted. <br>
 security:
   - bearerAuth: []
 parameters:

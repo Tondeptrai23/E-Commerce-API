@@ -202,6 +202,7 @@ class CartService {
                 await OrderItem.bulkCreate(orderItems);
                 newOrder.set({
                     subTotal: totalAmount,
+                    finalTotal: totalAmount,
                 });
 
                 // Apply coupon if available

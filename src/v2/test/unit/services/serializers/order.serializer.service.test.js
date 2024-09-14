@@ -5,6 +5,7 @@ describe("OrderSerializer", () => {
 
     const orderData = {
         orderID: "123456",
+        orderDate: new Date(date),
         status: "pending",
         message: "Please process the order",
         subTotal: 100.0,
@@ -73,6 +74,7 @@ describe("OrderSerializer", () => {
         expect(serializedOrder).toEqual(
             expect.objectContaining({
                 orderID: "123456",
+                orderDate: new Date(date).toISOString(),
                 status: "pending",
                 message: "Please process the order",
                 subTotal: 100.0,
@@ -118,6 +120,7 @@ describe("OrderSerializer", () => {
         expect(serializedOrder).toEqual(
             expect.objectContaining({
                 orderID: "123456",
+                orderDate: new Date(date).toISOString(),
                 status: "pending",
                 message: "Please process the order",
                 subTotal: 100.0,
@@ -165,6 +168,7 @@ describe("OrderSerializer", () => {
         expect(serializedOrder).toEqual(
             expect.objectContaining({
                 orderID: "123456",
+                orderDate: new Date(date).toISOString(),
                 status: "pending",
                 message: "Please process the order",
                 subTotal: 100.0,
@@ -217,6 +221,7 @@ describe("OrderSerializer", () => {
         expect(serializedOrders).toEqual([
             expect.objectContaining({
                 orderID: "123456",
+                orderDate: new Date(date).toISOString(),
                 status: "pending",
                 message: "Please process the order",
                 subTotal: 100.0,
@@ -253,6 +258,7 @@ describe("OrderSerializer", () => {
             }),
             expect.objectContaining({
                 orderID: "123456",
+                orderDate: new Date(date).toISOString(),
                 status: "pending",
                 message: "Please process the order",
                 subTotal: 100.0,
@@ -300,6 +306,7 @@ describe("OrderSerializer", () => {
         expect(serializedOrders).toEqual([
             expect.objectContaining({
                 orderID: "123456",
+                orderDate: new Date(date).toISOString(),
                 status: "pending",
                 message: "Please process the order",
                 subTotal: 100.0,
@@ -349,6 +356,7 @@ describe("OrderSerializer", () => {
         expect(serializedOrders).toEqual([
             expect.objectContaining({
                 orderID: "123456",
+                orderDate: new Date(date).toISOString(),
                 status: "pending",
                 message: "Please process the order",
                 subTotal: 100.0,

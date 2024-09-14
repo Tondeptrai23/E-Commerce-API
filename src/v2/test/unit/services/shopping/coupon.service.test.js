@@ -733,14 +733,14 @@ describe("CouponService", () => {
 
         test("Calculate final total based on single-target, fixed-typed coupon 2", async () => {
             const order = {
-                subTotal: 41,
+                subTotal: 4100,
                 products: [
                     {
                         variantID: "101",
                         productID: "1",
                         orderItem: {
-                            priceAtPurchase: 10,
-                            discountPriceAtPurchase: 9,
+                            priceAtPurchase: 1000,
+                            discountPriceAtPurchase: 900,
                             quantity: 1,
                         },
                     },
@@ -748,8 +748,8 @@ describe("CouponService", () => {
                         variantID: "201",
                         productID: "2",
                         orderItem: {
-                            priceAtPurchase: 20,
-                            discountPriceAtPurchase: 16,
+                            priceAtPurchase: 2000,
+                            discountPriceAtPurchase: 1600,
                             quantity: 2,
                         },
                     },
@@ -758,7 +758,7 @@ describe("CouponService", () => {
 
             const coupon = {
                 discountType: "fixed",
-                discountValue: 3,
+                discountValue: 300,
                 target: "single",
                 categories: [
                     {
@@ -773,7 +773,7 @@ describe("CouponService", () => {
             );
 
             expect(finalTotal).toBeDefined();
-            expect(finalTotal).toEqual(35);
+            expect(finalTotal).toEqual(3500);
         });
     });
 
@@ -793,7 +793,7 @@ describe("CouponService", () => {
             expect(updatedOrder).toBeDefined();
             expect(updatedOrder).toBeInstanceOf(Order);
             expect(updatedOrder.orderID).toBe(order.orderID);
-            expect(updatedOrder.finalTotal).toBe(52);
+            expect(updatedOrder.finalTotal).toBe(5200);
             expect(updatedOrder.couponID).toBe(coupon.couponID);
             expect(updatedOrder.coupon.code).toBe(coupon.code);
 

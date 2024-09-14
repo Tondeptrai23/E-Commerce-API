@@ -3,13 +3,15 @@ import ShippingAddress from "../../models/user/address.model.js";
 import Order from "../../models/shopping/order.model.js";
 import User from "../../models/user/user.model.js";
 import Coupon from "../../models/shopping/coupon.model.js";
-import { ResourceNotFoundError } from "../../utils/error.js";
+import CartItem from "../../models/shopping/cartItem.model.js";
+import { ConflictError, ResourceNotFoundError } from "../../utils/error.js";
 import ProductImage from "../../models/products/productImage.model.js";
 import PaginationBuilder from "../condition/paginationBuilder.service.js";
 import OrderFilterBuilder from "../condition/filter/orderFilterBuilder.service.js";
 import OrderSortBuilder from "../condition/sort/orderSortBuilder.service.js";
 import FilterBuilder from "../condition/filter/filterBuilder.service.js";
 import VariantFilterBuilder from "../condition/filter/variantFilterBuilder.service.js";
+import { db } from "../../models/index.model.js";
 
 class OrderService {
     /**
@@ -26,7 +28,6 @@ class OrderService {
                 status: "pending",
             },
             include: getIncludeOptions(),
-            paranoid: false,
         });
 
         if (!order) {
@@ -221,62 +222,188 @@ class OrderService {
     }
 
     /**
-     * Build conditions for getting orders
+     * Checkout order
+     * Only has responsibility to update order status and product stock
+     * Payment will be handled by PaymentService
      *
-     * @param {Object} query - The query parameters
-     * @returns {Object} - The conditions
+     * @param {User} user - The user
+     * @param {String} payment - The payment method
+     * @returns {Promise<Order>} - The order
      */
-    #buildConditions(query) {
-        const paginationConditions = new PaginationBuilder(query).build();
+    async checkOutOrder(user, payment) {
+        return await db
+            .transaction(async (t) => {
+                const order = await Order.findOne({
+                    where: {
+                        userID: user.userID,
+                        status: "pending",
+                    },
+                    include: {
+                        model: Variant,
+                        as: "products",
+                        paranoid: false,
+                        required: true,
+                        attributes: ["variantID", "stock"],
+                        through: {
+                            attributes: ["quantity"],
+                        },
+                    },
+                    lock: t.LOCK.UPDATE,
+                });
 
-        if (!query || Object.keys(query).length === 0) {
-            return {
-                paginationConditions,
-                orderFilter: [],
-                couponFilter: [],
-                variantFilter: [],
-                shippingAddressFilter: [],
-                sortingConditions: [],
-            };
-        }
+                if (!order) {
+                    throw new ResourceNotFoundError("Order not found");
+                }
 
-        const orderFilter = new OrderFilterBuilder(query).build();
-        const couponFilter = new FilterBuilder({
-            code: query.couponCode,
-        }).build();
-        const variantFilter = new VariantFilterBuilder(query.variant).build();
-        const sortingConditions = new OrderSortBuilder(query).build();
+                if (order.shippingAddressID === null) {
+                    throw new ConflictError("Shipping address is required");
+                }
 
-        const queryShippingAddress = query.shippingAddress
-            ? {
-                  recipientName: query.shippingAddress.recipientName,
-                  phoneNumber: query.shippingAddress.phoneNumber,
-                  address: query.shippingAddress.address,
-                  city: query.shippingAddress.city,
-                  district: query.shippingAddress.district,
-              }
-            : {};
+                // Reload order to get the latest data
+                const variantsInOrder = [];
+                for (let i = 0; i < order.products.length; i++) {
+                    // Update product stock
+                    const affectedCount = (
+                        await Variant.update(
+                            {
+                                stock: db.literal(
+                                    `stock - ${order.products[i].orderItem.quantity}`
+                                ),
+                            },
+                            {
+                                where: {
+                                    variantID: order.products[i].variantID,
+                                    stock: {
+                                        [db.Sequelize.Op.gte]:
+                                            order.products[i].orderItem
+                                                .quantity,
+                                    },
+                                },
+                                lock: t.LOCK.UPDATE,
+                            }
+                        )
+                    )[0];
 
-        const shippingAddressFilter = new FilterBuilder(
-            queryShippingAddress
-        ).build();
+                    if (affectedCount === 0) {
+                        throw new ConflictError("Variant out of stock");
+                    }
 
-        return {
-            paginationConditions,
-            orderFilter,
-            couponFilter,
-            variantFilter,
-            shippingAddressFilter,
-            sortingConditions,
-        };
+                    variantsInOrder.push(order.products[i].variantID);
+                }
+
+                // Update order status
+                if (payment === "COD") {
+                    order.status = "processing";
+                } else {
+                    order.status = "awaiting payment";
+                }
+                order.paymentMethod = payment;
+                order.orderDate = new Date();
+                await order.save();
+
+                await CartItem.destroy({
+                    where: {
+                        userID: order.userID,
+                        variantID: variantsInOrder,
+                    },
+                });
+
+                return order;
+            })
+            .catch((error) => {
+                throw error;
+            });
     }
 
     /**
-     * Checkout order
+     * Handle failed payment for an order.
      *
+     * @param {Order} orderID - The order ID.
+     * @returns {Promise<Order>} - The updated order.
+     * @throws {ResourceNotFoundError} - If the order is not found.
+     * @throws {ConflictError} - If the order is not awaiting payment.
      */
-    async postOrder(user, orderItems) {
-        //
+    async handleFailedPayment(orderID) {
+        return await db
+            .transaction(async (t) => {
+                const order = await Order.findByPk(orderID, {
+                    include: {
+                        model: Variant,
+                        as: "products",
+                        paranoid: false,
+                        required: true,
+                    },
+                });
+
+                if (!order) {
+                    throw new ResourceNotFoundError("Order not found");
+                }
+
+                if (order.status !== "awaiting payment") {
+                    throw new ConflictError("Order is not awaiting payment");
+                }
+
+                // Update order status and failure reason
+                order.status = "cancelled";
+                await order.save();
+
+                // Restore product stock
+                for (let i = 0; i < order.products.length; i++) {
+                    Variant.update(
+                        {
+                            stock: db.literal(
+                                `stock + ${order.products[i].orderItem.quantity}`
+                            ),
+                        },
+                        {
+                            where: {
+                                variantID: order.products[i].variantID,
+                            },
+                            lock: t.LOCK.UPDATE,
+                        }
+                    );
+                }
+
+                return await Order.findByPk(orderID);
+            })
+            .catch((error) => {
+                throw error;
+            });
+    }
+
+    /**
+     * Update an order status.
+     *
+     * @param {String} orderID - The ID of the order.
+     * @param {String} status - The new status of the order.
+     * @returns {Promise<Order>} - The updated order.
+     * @throws {ResourceNotFoundError} - If the order is not found.
+     * @throws {ConflictError} - If the order is cancelled or delivered.
+     */
+    async updateOrderStatus(orderID, status) {
+        const order = await Order.findByPk(orderID, {
+            include: {
+                model: Variant,
+                as: "products",
+                paranoid: false,
+                required: true,
+            },
+        });
+
+        if (!order) {
+            throw new ResourceNotFoundError("Order not found");
+        }
+
+        if (order.status === "cancelled") {
+            throw new ConflictError("Order is cancelled");
+        }
+
+        if (order.status === "delivered") {
+            throw new ConflictError("Order is delivered");
+        }
+
+        order.status = status;
+        return await order.save();
     }
 
     /**
@@ -333,14 +460,71 @@ class OrderService {
         if (!order) {
             throw new ResourceNotFoundError("Order not found");
         }
-
-        if (order.status === "pending") {
-            await order.destroy({
-                force: true,
-            });
-        } else {
-            await order.destroy();
+        switch (order.status) {
+            case "pending":
+            case "cancelled":
+                await order.destroy({
+                    force: true,
+                });
+                break;
+            case "delivered":
+                await order.destroy();
+                break;
+            default:
+                // Order is processing or awaiting payment
+                throw new ConflictError(`Order is ${order.status}`);
         }
+    }
+
+    /**
+     * Build conditions for getting orders
+     *
+     * @param {Object} query - The query parameters
+     * @returns {Object} - The conditions
+     */
+    #buildConditions(query) {
+        const paginationConditions = new PaginationBuilder(query).build();
+
+        if (!query || Object.keys(query).length === 0) {
+            return {
+                paginationConditions,
+                orderFilter: [],
+                couponFilter: [],
+                variantFilter: [],
+                shippingAddressFilter: [],
+                sortingConditions: [],
+            };
+        }
+
+        const orderFilter = new OrderFilterBuilder(query).build();
+        const couponFilter = new FilterBuilder({
+            code: query.couponCode,
+        }).build();
+        const variantFilter = new VariantFilterBuilder(query.variant).build();
+        const sortingConditions = new OrderSortBuilder(query).build();
+
+        const queryShippingAddress = query.shippingAddress
+            ? {
+                  recipientName: query.shippingAddress.recipientName,
+                  phoneNumber: query.shippingAddress.phoneNumber,
+                  address: query.shippingAddress.address,
+                  city: query.shippingAddress.city,
+                  district: query.shippingAddress.district,
+              }
+            : {};
+
+        const shippingAddressFilter = new FilterBuilder(
+            queryShippingAddress
+        ).build();
+
+        return {
+            paginationConditions,
+            orderFilter,
+            couponFilter,
+            variantFilter,
+            shippingAddressFilter,
+            sortingConditions,
+        };
     }
 }
 
@@ -350,13 +534,7 @@ const getIncludeOptions = () => {
             model: Variant,
             as: "products",
             paranoid: false,
-            attributes: [
-                "name",
-                "price",
-                "discountPrice",
-                "productID",
-                "variantID",
-            ],
+            attributes: ["name", "productID", "variantID", "stock"],
             include: {
                 model: ProductImage,
                 as: "image",

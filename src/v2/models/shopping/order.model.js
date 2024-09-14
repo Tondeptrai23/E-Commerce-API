@@ -10,11 +10,16 @@ Order.init(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
+        orderDate: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
         status: {
             type: DataTypes.ENUM(
                 "pending",
+                "awaiting payment",
                 "processing",
-                "shipped",
+                "cancelled",
                 "delivered"
             ),
             defaultValue: "pending",

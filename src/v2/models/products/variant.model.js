@@ -36,6 +36,7 @@ Variant.init(
         sequelize,
         modelName: "variant",
         paranoid: true,
+        version: true,
     }
 );
 

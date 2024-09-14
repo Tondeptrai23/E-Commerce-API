@@ -132,6 +132,8 @@ describe("CartService", () => {
             expect(order.products).toBeDefined();
             expect(order.products).toBeInstanceOf(Array);
             expect(order.products[0]).toBeInstanceOf(Variant);
+            expect(order.subTotal).toBeGreaterThan(0);
+            expect(order.finalTotal).toBeGreaterThan(0);
         });
 
         test("should fetch the user's cart items and replace the existing order items", async () => {

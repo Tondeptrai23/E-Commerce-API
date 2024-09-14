@@ -61,6 +61,7 @@ describe("POST /api/v2/cart", () => {
             couponID: null,
             shippingAddressID: null,
             message: null,
+            orderDate: null,
             paymentMethod: "COD",
             subTotal: expect.any(Number),
             finalTotal: expect.any(Number),

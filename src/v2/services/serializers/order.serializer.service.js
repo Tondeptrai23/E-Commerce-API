@@ -6,6 +6,10 @@ const OrderSerializer = new Entity({
         type: "string",
         required: true,
     },
+    orderDate: {
+        type: "date",
+        format: "iso",
+    },
     status: {
         type: "string",
     },

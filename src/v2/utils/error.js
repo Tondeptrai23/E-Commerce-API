@@ -33,10 +33,18 @@ class ConflictError extends Error {
     }
 }
 
+class PaymentInvalidError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "PaymentInvalid";
+    }
+}
+
 export {
     ResourceNotFoundError,
     UnauthorizedError,
     ForbiddenError,
     BadRequestError,
     ConflictError,
+    PaymentInvalidError,
 };

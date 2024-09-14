@@ -15,6 +15,7 @@ import userCartRoute from "./user/cart.route.js";
 import userOrderRoute from "./user/orders.route.js";
 import userProductRoute from "./user/products.route.js";
 import userCategoryRoute from "./user/categories.route.js";
+import userPaymentRoute from "./user/payment.route.js";
 
 const router = Router();
 
@@ -24,6 +25,7 @@ router.use("/cart", userCartRoute);
 router.use("/orders", userOrderRoute);
 router.use("/products", userProductRoute);
 router.use("/categories", userCategoryRoute);
+router.use("/payment", userPaymentRoute);
 
 router.use("/admin", adminCartRoute);
 router.use("/admin", adminProductRoute);

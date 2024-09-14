@@ -52,6 +52,7 @@ describe("GET /api/v2/orders/:orderID", () => {
                 "shipped",
                 "delivered",
             ]),
+            orderDate: expect.toBeOneOf([expect.any(String), null]),
             message: expect.toBeOneOf([expect.any(String), null]),
             subTotal: expect.any(Number),
             finalTotal: expect.any(Number),

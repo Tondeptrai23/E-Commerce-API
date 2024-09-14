@@ -7,13 +7,15 @@ dotenv.config({
 
 const paymentConfig = {
     momo: {
-        partnerCode: process.env.MOMO_PARTNER_CODE,
-        accessKey: process.env.MOMO_ACCESS_KEY,
-        secretKey: process.env.MOMO_SECRET_KEY,
-        returnUrl: process.env.FRONT_END_URL,
-        notifyUrl: process.env.SERVER_URL + "/api/v2/payment/momo/notify",
-        orderType: "payWithMethod",
-        language: "vi",
+        PAYMENT_URL: process.env.MOMO_PAYMENT_URL,
+        PARTNER_CODE: process.env.MOMO_PARTNER_CODE,
+        ACCESS_KEY: process.env.MOMO_ACCESS_KEY,
+        SECRET_KEY: process.env.MOMO_SECRET_KEY,
+        REDIRECT_URL: process.env.FRONT_END_URL,
+        NOTIFY_URL: `${process.env.SERVER_URL}/api/v2/payment/momo/notify`,
+        REQUEST_TYPE: "payWithMethod",
+        ORDER_INFO: "Thanh toán đơn hàng",
+        LANGUAGE: "vi",
     },
     stripe: {
         //

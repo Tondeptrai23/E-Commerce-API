@@ -128,7 +128,7 @@ describe("GET /admin/variants", () => {
     it("should return a list of variants with filtering 2", async () => {
         const res = await request(app)
             .get("/api/v2/admin/variants")
-            .query({ price: "[lte]40", stock: "[gte]10" })
+            .query({ price: "[lte]4000", stock: "[gte]10" })
             .set("Authorization", `Bearer ${accessToken}`);
 
         expect(res.statusCode).toEqual(StatusCodes.OK);
@@ -154,7 +154,7 @@ describe("GET /admin/variants", () => {
         );
 
         for (const variant of res.body.variants) {
-            expect(variant.price).toBeLessThanOrEqual(40);
+            expect(variant.price).toBeLessThanOrEqual(4000);
             expect(variant.stock).toBeGreaterThanOrEqual(10);
         }
     });

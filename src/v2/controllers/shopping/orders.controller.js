@@ -1,9 +1,14 @@
 import { StatusCodes } from "http-status-codes";
 
 import orderService from "../../services/shopping/order.service.js";
-import { ResourceNotFoundError } from "../../utils/error.js";
+import {
+    ConflictError,
+    ResourceNotFoundError,
+    PaymentInvalidError,
+} from "../../utils/error.js";
 import couponService from "../../services/shopping/coupon.service.js";
 import OrderSerializer from "../../services/serializers/order.serializer.service.js";
+import MomoPayment from "../../services/payment/momoPayment.service.js";
 
 class OrderController {
     async getPendingOrder(req, res) {
@@ -208,19 +213,84 @@ class OrderController {
 
     async postOrder(req, res) {
         try {
-            //
-        } catch (err) {
-            console.log(err);
+            // POST /api/v2/orders/pending/checkout
+            // Get param
+            const { payment } = req.body;
 
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Server error in posting order",
-                    },
-                ],
+            const order = await orderService.checkOutOrder(req.user, payment);
+            // If payment is COD, checkout order immediately
+            if (payment === "COD") {
+                // Serialize data
+                const serializedOrder = OrderSerializer.parse(order, {
+                    detailAddress: true,
+                });
+
+                // Response
+                return res.status(StatusCodes.OK).json({
+                    success: true,
+                    order: serializedOrder,
+                });
+            }
+
+            let paymentInfo;
+            try {
+                paymentInfo = await MomoPayment.getPaymentInfo(order);
+            } catch (err) {
+                await orderService.handleFailedPayment(order);
+
+                throw err;
+            }
+
+            // Call payment service
+            res.status(StatusCodes.OK).json({
+                success: true,
+                order: order,
+                paymentUrl: paymentInfo.paymentUrl,
             });
+        } catch (err) {
+            if (err instanceof ResourceNotFoundError) {
+                res.status(StatusCodes.NOT_FOUND).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
+                });
+            } else if (err instanceof ConflictError) {
+                res.status(StatusCodes.CONFLICT).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "Conflict",
+                            message: err.message,
+                        },
+                    ],
+                });
+            } else if (err instanceof PaymentInvalidError) {
+                res.status(StatusCodes.BAD_REQUEST).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "PaymentInvalid",
+                            message: err.message,
+                        },
+                    ],
+                });
+            } else {
+                console.log(err);
+
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "ServerError",
+                            message: "Server error in posting order",
+                        },
+                    ],
+                });
+            }
         }
     }
 

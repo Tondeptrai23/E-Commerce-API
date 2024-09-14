@@ -8,7 +8,20 @@ import {
     validateQueryString,
 } from "../utils.validator.js";
 
-const validatePostOrder = [];
+const validatePostOrder = [
+    body("payment")
+        .notEmpty()
+        .withMessage("Payment is required")
+        .isString()
+        .withMessage("Payment should be a string")
+        .custom((value) => {
+            if (!["cod", "momo", "creditcart"].includes(value.toLowerCase())) {
+                throw new Error("Invalid payment method");
+            }
+
+            return true;
+        }),
+];
 
 const validatePatchOrder = [
     body("message")
