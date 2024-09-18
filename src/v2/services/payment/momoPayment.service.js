@@ -1,13 +1,15 @@
 import { default as axios } from "axios";
 import { createHmac } from "crypto";
-import Order from "../../models/shopping/order.model.js";
 import { paymentConfig } from "../../config/config.js";
 import { PaymentInvalidError } from "../../utils/error.js";
+import IPayment from "./iPayment.service.js";
 
-export default class MomoPayment {
-    constructor() {}
+export default class MomoPayment extends IPayment {
+    constructor(order) {
+        super(order);
+    }
 
-    static #signSignature(data) {
+    #signSignature(data) {
         const rawSignature = Object.keys(data)
             .sort()
             .map((key) => key + "=" + data[key])
@@ -21,16 +23,15 @@ export default class MomoPayment {
     /**
      * Get payment url from MoMo API
      *
-     * @param {Order} order Order object
      * @returns {Promise<String>} Payment url
      */
-    static async getPaymentInfo(order) {
+    async createPaymentUrl() {
         const dataToSigned = {
             partnerCode: paymentConfig.momo.PARTNER_CODE,
             accessKey: paymentConfig.momo.ACCESS_KEY,
-            requestId: order.orderID,
-            amount: order.finalTotal,
-            orderId: order.orderID,
+            requestId: this._order.orderID,
+            amount: this._order.finalTotal,
+            orderId: this._order.orderID,
             orderInfo: paymentConfig.momo.ORDER_INFO,
             requestType: paymentConfig.momo.REQUEST_TYPE,
             redirectUrl: paymentConfig.momo.REDIRECT_URL,
@@ -57,7 +58,7 @@ export default class MomoPayment {
             }
         );
 
-        if (response.data.errorCode !== 0) {
+        if (response.data.resultCode !== 0) {
             throw new PaymentInvalidError("Payment failed! Cancel order!");
         }
 
@@ -66,38 +67,5 @@ export default class MomoPayment {
             orderID: response.data.orderId,
             amount: response.data.amount,
         };
-    }
-
-    /**
-     * Get payment status from MoMo API
-     */
-    static async getPaymentStatus(order) {
-        const data = {
-            partnerCode: paymentConfig.momo.PARTNER_CODE,
-            accessKey: paymentConfig.momo.ACCESS_KEY,
-            requestId: order.orderID,
-            orderId: order.orderID,
-        };
-
-        const requestBody = {
-            ...data,
-            lang: paymentConfig.momo.LANGUAGE,
-            signature: this.#signSignature(data),
-        };
-
-        const response = await axios.post(
-            `${paymentConfig.momo.PAYMENT_URL}/v2/gateway/api/query`,
-            requestBody,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Content-Length": Buffer.byteLength(
-                        JSON.stringify(requestBody)
-                    ),
-                },
-            }
-        );
-
-        return response.data;
     }
 }

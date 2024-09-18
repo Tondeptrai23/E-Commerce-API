@@ -18,7 +18,13 @@ const paymentConfig = {
         LANGUAGE: "vi",
     },
     stripe: {
-        //
+        SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+        PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
+        NOTIFY_URL: `${process.env.SERVER_URL}/api/v2/payment/stripe/notify`,
+        REDIRECT_URL_SUCCESS: `${process.env.FRONT_END_URL}/success`,
+        REDIRECT_URL_FAILED: `${process.env.FRONT_END_URL}/failed`,
+        CURRENCY: "vnd",
+        EXPIRED_TIME: 100 * 60, // 100 minutes, equal to Momo expired time
     },
 };
 

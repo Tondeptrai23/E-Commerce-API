@@ -6,4 +6,6 @@ const paymentRoute = Router();
 
 paymentRoute.post("/momo/notify", paymentController.notifyMoMo);
 
+paymentRoute.post("/stripe/notify", paymentController.notifyStripe);
+
 export default paymentRoute;

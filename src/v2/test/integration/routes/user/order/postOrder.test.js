@@ -58,13 +58,15 @@ beforeAll(async () => {
     newUser = await userService.findUserByEmail("test@gmail.com");
 
     // Mocking
-    jest.spyOn(MomoPayment, "getPaymentInfo").mockImplementation(() => {
-        return {
-            paymentUrl: "https://momo.vn",
-            orderID: "123",
-            amount: "10000",
-        };
-    });
+    jest.spyOn(MomoPayment.prototype, "createPaymentUrl").mockImplementation(
+        () => {
+            return {
+                paymentUrl: "https://momo.vn",
+                orderID: "123",
+                amount: "10000",
+            };
+        }
+    );
 });
 
 afterEach(async () => {
@@ -282,6 +284,13 @@ describe("POST /api/v2/orders/pending", () => {
     });
 
     it("should return 409 if shipping address not found", async () => {
+        // Delete shipping address
+        await ShippingAddress.destroy({
+            where: {
+                userID: "4",
+            },
+        });
+
         // Add new item to cart
         await request(app)
             .post("/api/v2/cart/102")

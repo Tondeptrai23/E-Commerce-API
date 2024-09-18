@@ -243,9 +243,13 @@ class OrderService {
                         as: "products",
                         paranoid: false,
                         required: true,
-                        attributes: ["variantID", "stock"],
+                        attributes: ["variantID", "stock", "name"],
                         through: {
-                            attributes: ["quantity"],
+                            attributes: [
+                                "quantity",
+                                "priceAtPurchase",
+                                "discountPriceAtPurchase",
+                            ],
                         },
                     },
                     lock: t.LOCK.UPDATE,

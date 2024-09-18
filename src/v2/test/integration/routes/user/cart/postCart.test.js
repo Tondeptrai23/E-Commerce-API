@@ -59,7 +59,7 @@ describe("POST /api/v2/cart", () => {
             orderID: expect.any(String),
             userID: "4",
             couponID: null,
-            shippingAddressID: null,
+            shippingAddressID: expect.toBeOneOf([null, expect.any(Object)]),
             message: null,
             orderDate: null,
             paymentMethod: "COD",

@@ -1,6 +1,7 @@
 import orderService from "../../services/shopping/order.service.js";
 import { StatusCodes } from "http-status-codes";
 import { paymentConfig } from "../../config/config.js";
+import StripePayment from "../../services/payment/stripePayment.service.js";
 
 class PaymentController {
     constructor() {}
@@ -25,6 +26,27 @@ class PaymentController {
         }
 
         res.status(StatusCodes.NO_CONTENT).send();
+    }
+
+    async notifyStripe(req, res) {
+        try {
+            const event = req.body;
+            const orderID = await StripePayment.getOrderIDFromPaymentIntent(
+                event.data.object.payment_intent
+            );
+
+            if (event.type === "charge.succeeded") {
+                await orderService.updateOrderStatus(orderID, "processing");
+            } else {
+                await orderService.handleFailedPayment(orderID);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+
+        res.status(StatusCodes.OK).send({
+            recieved: true,
+        });
     }
 }
 

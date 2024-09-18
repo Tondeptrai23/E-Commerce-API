@@ -8,7 +8,7 @@ import {
 } from "../../utils/error.js";
 import couponService from "../../services/shopping/coupon.service.js";
 import OrderSerializer from "../../services/serializers/order.serializer.service.js";
-import MomoPayment from "../../services/payment/momoPayment.service.js";
+import PaymentFactory from "../../services/payment/paymentFactory.service.js";
 
 class OrderController {
     async getPendingOrder(req, res) {
@@ -232,11 +232,16 @@ class OrderController {
                 });
             }
 
+            // Create payment
             let paymentInfo;
             try {
-                paymentInfo = await MomoPayment.getPaymentInfo(order);
+                const paymentService = PaymentFactory.createPayment(
+                    payment,
+                    order
+                );
+                paymentInfo = await paymentService.createPaymentUrl();
             } catch (err) {
-                await orderService.handleFailedPayment(order);
+                await orderService.handleFailedPayment(order.orderID);
 
                 throw err;
             }

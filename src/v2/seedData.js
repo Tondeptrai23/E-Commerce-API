@@ -144,7 +144,6 @@ const seedAddress = async () => {
             district: "Hoan Kiem",
             phoneNumber: "123456789",
             recipientName: "User 1/1",
-            paymentMethod: "COD",
         },
         {
             addressID: 102,
@@ -154,7 +153,6 @@ const seedAddress = async () => {
             district: "Quan 1",
             phoneNumber: "087654321",
             recipientName: "User 1/2",
-            paymentMethod: "Momo",
         },
         {
             addressID: 201,
@@ -164,7 +162,6 @@ const seedAddress = async () => {
             district: "Quan 1",
             phoneNumber: "087654321",
             recipientName: "User 2/1",
-            paymentMethod: "COD",
         },
         {
             addressID: 301,
@@ -174,7 +171,15 @@ const seedAddress = async () => {
             district: "Hai Chau",
             phoneNumber: "087654321",
             recipientName: "User 3/1",
-            paymentMethod: "Credit Card",
+        },
+        {
+            addressID: 401,
+            userID: 4,
+            address: "123 Duong Ching",
+            city: "Ha Noi",
+            district: "Hoan Kiem",
+            phoneNumber: "123456789",
+            recipientName: "Admin 1",
         },
     ]);
 };

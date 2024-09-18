@@ -15,7 +15,7 @@ const validatePostOrder = [
         .isString()
         .withMessage("Payment should be a string")
         .custom((value) => {
-            if (!["cod", "momo", "creditcart"].includes(value.toLowerCase())) {
+            if (!["cod", "momo", "credit card"].includes(value.toLowerCase())) {
                 throw new Error("Invalid payment method");
             }
 
