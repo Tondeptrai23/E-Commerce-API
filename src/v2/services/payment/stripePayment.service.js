@@ -38,6 +38,8 @@ export default class StripePayment extends IPayment {
             expires_at:
                 Math.floor(Date.now() / 1000) +
                 paymentConfig.stripe.EXPIRED_TIME,
+
+            // Add orderID to metadata of paymentIntent
             payment_intent_data: {
                 metadata: {
                     orderID: this._order.orderID,
@@ -52,6 +54,12 @@ export default class StripePayment extends IPayment {
         };
     }
 
+    /**
+     * Get orderID from metadata of paymentIntent
+     *
+     * @param {String} paymentIntentID payment_intent ID get from Stripe
+     * @returns {String} orderID
+     */
     static async getOrderIDFromPaymentIntent(paymentIntentID) {
         const paymentIntent = await stripe.paymentIntents.retrieve(
             paymentIntentID

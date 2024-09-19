@@ -55,21 +55,23 @@ describe("POST /api/v2/cart", () => {
             order: expect.any(Object),
         });
 
-        expect(res.body.order).toEqual({
-            orderID: expect.any(String),
-            userID: "4",
-            couponID: null,
-            shippingAddressID: expect.toBeOneOf([null, expect.any(Object)]),
-            message: null,
-            orderDate: null,
-            paymentMethod: "COD",
-            subTotal: expect.any(Number),
-            finalTotal: expect.any(Number),
-            status: "pending",
-            createdAt: expect.any(String),
-            updatedAt: expect.any(String),
-            orderItems: expect.any(Array),
-        });
+        expect(res.body.order).toEqual(
+            expect.objectContaining({
+                orderID: expect.any(String),
+                userID: "4",
+                couponID: null,
+                shippingAddressID: expect.toBeOneOf([null, expect.any(String)]),
+                message: null,
+                orderDate: null,
+                paymentMethod: "COD",
+                subTotal: expect.any(Number),
+                finalTotal: expect.any(Number),
+                status: "pending",
+                createdAt: expect.any(String),
+                updatedAt: expect.any(String),
+                orderItems: expect.any(Array),
+            })
+        );
 
         expect(res.body.order.subTotal).toBeGreaterThan(0);
         for (const item of res.body.order.orderItems) {

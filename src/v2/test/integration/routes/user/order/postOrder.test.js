@@ -13,6 +13,7 @@ import orderService from "../../../../../services/shopping/order.service.js";
 import ShippingAddress from "../../../../../models/user/address.model.js";
 import Variant from "../../../../../models/products/variant.model.js";
 import { paymentConfig } from "../../../../../config/config.js";
+import StripePayment from "../../../../../services/payment/stripePayment.service.js";
 
 /**
  * Set up
@@ -65,6 +66,22 @@ beforeAll(async () => {
                 orderID: "123",
                 amount: "10000",
             };
+        }
+    );
+
+    jest.spyOn(StripePayment.prototype, "createPaymentUrl").mockImplementation(
+        () => {
+            return {
+                paymentUrl: "https://stripe.vn",
+                orderID: "123",
+                amount: "10000",
+            };
+        }
+    );
+
+    jest.spyOn(StripePayment, "getOrderIDFromPaymentIntent").mockImplementation(
+        (orderID) => {
+            return orderID;
         }
     );
 });
@@ -157,7 +174,7 @@ describe("POST /api/v2/orders/pending", () => {
             success: true,
             order: expect.objectContaining({
                 orderID: expect.any(String),
-                paymentMethod: "momo",
+                paymentMethod: "Momo",
                 status: "awaiting payment",
                 finalTotal: 12000,
             }),
@@ -277,6 +294,164 @@ describe("POST /api/v2/orders/pending", () => {
             });
 
         expect(resNotify.status).toBe(StatusCodes.NO_CONTENT);
+
+        // Check stock
+        const newStock2 = (await Variant.findByPk("103")).stock;
+        expect(newStock2).toBe(stock);
+    });
+
+    it("should return 200 and create awaiting payment order with Credit Card", async () => {
+        // Add new item to cart
+        await request(app)
+            .post("/api/v2/cart/103")
+            .set("Authorization", `Bearer ${accessTokenUser}`)
+            .send({
+                quantity: 5,
+            });
+
+        // Get stock
+        const stock = (await Variant.findByPk("103")).stock;
+
+        // Create pending order
+        await request(app)
+            .post("/api/v2/cart")
+            .set("Authorization", `Bearer ${accessTokenUser}`)
+            .send({
+                variantIDs: ["103"],
+            });
+
+        const res = await request(app)
+            .post("/api/v2/orders/pending")
+            .set("Authorization", `Bearer ${accessTokenUser}`)
+            .send({
+                payment: "credit_card",
+            });
+
+        expect(res.status).toBe(StatusCodes.OK);
+        expect(res.body).toEqual({
+            success: true,
+            order: expect.objectContaining({
+                orderID: expect.any(String),
+                paymentMethod: "CreditCard",
+                status: "awaiting payment",
+                finalTotal: 6000,
+            }),
+            paymentUrl: expect.any(String),
+        });
+
+        // Check stock
+        const newStock = (await Variant.findByPk("103")).stock;
+        expect(newStock).toBe(stock - 5);
+    });
+
+    it("should return 200 and create awaiting payment order with Credit Card, also notify if success", async () => {
+        // Add new item to cart
+        await request(app)
+            .post("/api/v2/cart/103")
+            .set("Authorization", `Bearer ${accessTokenUser}`)
+            .send({
+                quantity: 5,
+            });
+
+        // Get stock
+        const stock = (await Variant.findByPk("103")).stock;
+
+        // Create pending order
+        await request(app)
+            .post("/api/v2/cart")
+            .set("Authorization", `Bearer ${accessTokenUser}`)
+            .send({
+                variantIDs: ["103"],
+            });
+
+        const res = await request(app)
+            .post("/api/v2/orders/pending")
+            .set("Authorization", `Bearer ${accessTokenUser}`)
+            .send({
+                payment: "credit_card",
+                notify: true,
+            });
+
+        expect(res.status).toBe(StatusCodes.OK);
+        expect(res.body).toEqual(
+            expect.objectContaining({
+                success: true,
+                paymentUrl: expect.any(String),
+            })
+        );
+
+        // Check stock
+        const newStock = (await Variant.findByPk("103")).stock;
+        expect(newStock).toBe(stock - 5);
+
+        // Notify
+        const order = res.body.order;
+        const resNotify = await request(app)
+            .post("/api/v2/payment/stripe/notify")
+            .send({
+                data: {
+                    object: {
+                        payment_intent: order.orderID,
+                    },
+                },
+            });
+
+        expect(resNotify.status).toBe(StatusCodes.OK);
+    });
+
+    it("should return 200 and create awaiting payment order with Credit Card, also notify if failed", async () => {
+        // Add new item to cart
+        await request(app)
+            .post("/api/v2/cart/103")
+            .set("Authorization", `Bearer ${accessTokenUser}`)
+            .send({
+                quantity: 5,
+            });
+
+        // Get stock
+        const stock = (await Variant.findByPk("103")).stock;
+
+        // Create pending order
+        await request(app)
+            .post("/api/v2/cart")
+            .set("Authorization", `Bearer ${accessTokenUser}`)
+            .send({
+                variantIDs: ["103"],
+            });
+
+        const res = await request(app)
+            .post("/api/v2/orders/pending")
+            .set("Authorization", `Bearer ${accessTokenUser}`)
+            .send({
+                payment: "credit_card",
+                notify: true,
+            });
+
+        expect(res.status).toBe(StatusCodes.OK);
+        expect(res.body).toEqual(
+            expect.objectContaining({
+                success: true,
+                paymentUrl: expect.any(String),
+            })
+        );
+
+        // Check stock
+        const newStock = (await Variant.findByPk("103")).stock;
+        expect(newStock).toBe(stock - 5);
+
+        // Notify
+        const order = res.body.order;
+        const resNotify = await request(app)
+            .post("/api/v2/payment/stripe/notify")
+            .send({
+                data: {
+                    object: {
+                        payment_intent: order.orderID,
+                    },
+                },
+            });
+
+        expect(resNotify.status).toBe(StatusCodes.OK);
 
         // Check stock
         const newStock2 = (await Variant.findByPk("103")).stock;

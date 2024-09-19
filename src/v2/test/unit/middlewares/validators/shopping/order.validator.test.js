@@ -2,7 +2,114 @@ import validator from "../../../../../middlewares/validators/index.validator.js"
 import { validationResult } from "express-validator";
 
 describe("validatePostOrder", () => {
-    // Will be implemented in the future
+    test("should return empty error array if all fields are valid 1", async () => {
+        const req = {
+            body: {
+                payment: "COD",
+            },
+        };
+
+        for (const validationChain of validator.validatePostOrder) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(true);
+    });
+
+    test("should return empty error array if all fields are valid 2", async () => {
+        const req = {
+            body: {
+                payment: "Momo",
+            },
+        };
+
+        for (const validationChain of validator.validatePostOrder) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(true);
+    });
+
+    test("should return empty error array if all fields are valid 3", async () => {
+        const req = {
+            body: {
+                payment: "CrEdIt_CarD",
+            },
+        };
+
+        for (const validationChain of validator.validatePostOrder) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(true);
+    });
+
+    test("should return error if payment is missing", async () => {
+        const req = {
+            body: {},
+        };
+
+        for (const validationChain of validator.validatePostOrder) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Payment is required",
+                }),
+            ])
+        );
+    });
+
+    test("should return error if payment is not a string", async () => {
+        const req = {
+            body: {
+                payment: 123,
+            },
+        };
+
+        for (const validationChain of validator.validatePostOrder) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Payment should be a string",
+                }),
+            ])
+        );
+    });
+
+    test("should return error if payment is not a valid payment method", async () => {
+        const req = {
+            body: {
+                payment: "InvalidPayment",
+            },
+        };
+
+        for (const validationChain of validator.validatePostOrder) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Invalid payment method",
+                }),
+            ])
+        );
+    });
 });
 
 describe("validatePatchOrder", () => {

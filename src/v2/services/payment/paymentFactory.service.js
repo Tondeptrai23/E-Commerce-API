@@ -13,9 +13,9 @@ export default class PaymentFactory {
      */
     static createPayment(paymentType, order) {
         switch (paymentType) {
-            case "momo":
+            case "Momo":
                 return new MomoPayment(order);
-            case "credit card":
+            case "CreditCard":
                 return new StripePayment(order);
             default:
                 throw new ConflictError("Invalid payment type!");
