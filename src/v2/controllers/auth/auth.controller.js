@@ -4,6 +4,8 @@ import userService from "../../services/auth/user.service.js";
 import tokenService from "../../services/auth/token.service.js";
 import { ConflictError, UnauthorizedError } from "../../utils/error.js";
 import UserSerializer from "../../services/serializers/user.serializer.service.js";
+import { googleConfig } from "../../config/config.js";
+import { randomBytes } from "crypto";
 
 class AuthController {
     async signin(req, res) {
@@ -53,6 +55,50 @@ class AuthController {
                     ],
                 });
             }
+        }
+    }
+
+    async googleCallback(req, res) {
+        try {
+            const user = {
+                email: req.user._json.email,
+                name: req.user._json.name,
+            };
+
+            const { user: existingUser, isExisted } =
+                await userService.isUserExisted(user.email);
+
+            let currentUser = existingUser;
+            if (!isExisted) {
+                currentUser = await userService.createNewAccount({
+                    email: user.email,
+                    password: randomBytes(4).toString("hex"),
+                    name: user.name,
+                });
+            }
+
+            const accessToken = await tokenService.signToken({
+                id: currentUser.userID,
+            });
+
+            const refreshToken = await tokenService.createRefreshToken(
+                currentUser
+            );
+
+            res.redirect(
+                `${googleConfig.REDIRECT_URL}?accessToken=${accessToken}&refreshToken=${refreshToken}`
+            );
+        } catch (err) {
+            console.log(err);
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                success: false,
+                errors: [
+                    {
+                        error: "ServerError",
+                        message: "Error in signing in with Google",
+                    },
+                ],
+            });
         }
     }
 

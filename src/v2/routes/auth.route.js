@@ -6,6 +6,7 @@ import {
     checkEmailExistsForSignIn,
 } from "../middlewares/auth/authJwt.middlewares.js";
 import validator from "../middlewares/validators/index.validator.js";
+import passport, { REDIRECT_URL_FAILED } from "../config/passport.config.js";
 
 const authRoute = Router();
 
@@ -22,6 +23,23 @@ authRoute.post(
     validator.handleValidationErrors,
     checkEmailExistsForSignIn,
     authController.signin
+);
+
+authRoute.get(
+    "/google",
+    passport.authenticate("google", {
+        scope: ["profile", "email"],
+        session: false,
+    })
+);
+
+authRoute.get(
+    "/google/callback",
+    passport.authenticate("google", {
+        failureRedirect: REDIRECT_URL_FAILED,
+        session: false,
+    }),
+    authController.googleCallback
 );
 
 authRoute.post(

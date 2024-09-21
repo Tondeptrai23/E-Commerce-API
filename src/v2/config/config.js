@@ -37,6 +37,14 @@ const jwtConfig = {
     REFRESH_TOKEN_LIFE: parseInt(process.env.REFRESH_TOKEN_LIFE) || 86400 * 30,
 };
 
+const googleConfig = {
+    CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    REDIRECT_URL: process.env.GOOGLE_REDIRECT_URL,
+    REDIRECT_URL_FAILED: process.env.GOOGLE_REDIRECT_URL_FAILED,
+    CALLBACK_URL: `${process.env.SERVER_URL}/api/v2/auth/google/callback`,
+};
+
 const dbConfig = {
     DB_NAME: process.env.DB_NAME,
     DB_USERNAME: process.env.DB_USERNAME,
@@ -53,6 +61,4 @@ const serverConfig = {
     FRONT_END_URL: process.env.FRONT_END_URL,
 };
 
-export { paymentConfig, jwtConfig, dbConfig, serverConfig };
-
-export default { paymentConfig, jwtConfig, dbConfig, serverConfig };
+export { paymentConfig, jwtConfig, dbConfig, serverConfig, googleConfig };
