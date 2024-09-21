@@ -38,8 +38,8 @@ const jwtConfig = {
 };
 
 const googleConfig = {
-    CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-    CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "temp",
+    CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "temp",
     REDIRECT_URL: process.env.GOOGLE_REDIRECT_URL,
     REDIRECT_URL_FAILED: process.env.GOOGLE_REDIRECT_URL_FAILED,
     CALLBACK_URL: `${process.env.SERVER_URL}/api/v2/auth/google/callback`,
