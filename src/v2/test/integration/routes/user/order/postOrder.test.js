@@ -6,7 +6,7 @@ import {
     assertTokenNotProvided,
     assertTokenInvalid,
 } from "../../utils.integration.js";
-import userService from "../../../../../services/auth/user.service.js";
+import userService from "../../../../../services/users/user.service.js";
 import { jest } from "@jest/globals";
 import MomoPayment from "../../../../../services/payment/momoPayment.service.js";
 import orderService from "../../../../../services/shopping/order.service.js";

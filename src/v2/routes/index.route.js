@@ -11,11 +11,13 @@ import adminVariantRoute from "./admin/products/variants.route.js";
 import adminAttributeRoute from "./admin/products/attributes.route.js";
 import adminAttributeValueRoute from "./admin/products/attributeValues.route.js";
 
-import userCartRoute from "./user/cart.route.js";
-import userOrderRoute from "./user/orders.route.js";
-import userProductRoute from "./user/products.route.js";
-import userCategoryRoute from "./user/categories.route.js";
-import userPaymentRoute from "./user/payment.route.js";
+import userCartRoute from "./user/shopping/cart.route.js";
+import userOrderRoute from "./user/shopping/orders.route.js";
+import userProductRoute from "./user/products/products.route.js";
+import userCategoryRoute from "./user/products/categories.route.js";
+import userPaymentRoute from "./user/shopping/payment.route.js";
+import userAddressRoute from "./user/info/address.route.js";
+import userInfoRoute from "./user/info/info.route.js";
 
 const router = Router();
 
@@ -26,6 +28,8 @@ router.use("/orders", userOrderRoute);
 router.use("/products", userProductRoute);
 router.use("/categories", userCategoryRoute);
 router.use("/payment", userPaymentRoute);
+router.use("/address", userAddressRoute);
+router.use("/me", userInfoRoute);
 
 router.use("/admin", adminCartRoute);
 router.use("/admin", adminProductRoute);

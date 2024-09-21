@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import userController from "../../controllers/auth/user.controller.js";
+import userController from "../../controllers/users/user.controller.js";
 import {
     verifyToken,
     isAdmin,

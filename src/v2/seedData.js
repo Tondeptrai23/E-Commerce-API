@@ -13,7 +13,7 @@ import Order from "./models/shopping/order.model.js";
 import OrderItem from "./models/shopping/orderItem.model.js";
 import CartItem from "./models/shopping/cartItem.model.js";
 import ProductCategory from "./models/products/productCategory.model.js";
-import userService from "./services/auth/user.service.js";
+import userService from "./services/users/user.service.js";
 import ShippingAddress from "./models/user/address.model.js";
 import orderService from "./services/shopping/order.service.js";
 import couponService from "./services/shopping/coupon.service.js";

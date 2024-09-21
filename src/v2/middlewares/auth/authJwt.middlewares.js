@@ -7,7 +7,7 @@ import {
     ResourceNotFoundError,
 } from "../../utils/error.js";
 import tokenService from "../../services/auth/token.service.js";
-import userService from "../../services/auth/user.service.js";
+import userService from "../../services/users/user.service.js";
 
 const verifyToken = async (req, res, next) => {
     try {

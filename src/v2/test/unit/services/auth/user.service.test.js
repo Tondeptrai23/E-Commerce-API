@@ -1,4 +1,4 @@
-import userService from "../../../../services/auth/user.service.js";
+import userService from "../../../../services/users/user.service.js";
 import seedData from "../../../../seedData.js";
 import User from "../../../../models/user/user.model.js";
 import { ConflictError } from "../../../../utils/error.js";

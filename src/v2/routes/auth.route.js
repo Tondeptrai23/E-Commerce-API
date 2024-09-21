@@ -54,4 +54,6 @@ authRoute.post(
     authController.resetRefreshToken
 );
 
+authRoute.post("/forgot-password", authController.forgotPassword);
+
 export default authRoute;

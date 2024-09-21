@@ -2,7 +2,7 @@ import { jest } from "@jest/globals";
 import authController from "../../../controllers/auth/auth.controller.js";
 import seedData from "../../../seedData.js";
 import User from "../../../models/user/user.model.js";
-import userService from "../../../services/auth/user.service.js";
+import userService from "../../../services/users/user.service.js";
 import tokenService from "../../../services/auth/token.service.js";
 
 beforeAll(async () => {

@@ -1,8 +1,8 @@
 import { Router } from "express";
 
-import ordersController from "../../controllers/shopping/orders.controller.js";
-import { verifyToken } from "../../middlewares/auth/authJwt.middlewares.js";
-import validator from "../../middlewares/validators/index.validator.js";
+import ordersController from "../../../controllers/shopping/orders.controller.js";
+import { verifyToken } from "../../../middlewares/auth/authJwt.middlewares.js";
+import validator from "../../../middlewares/validators/index.validator.js";
 
 const userOrderRoute = Router();
 

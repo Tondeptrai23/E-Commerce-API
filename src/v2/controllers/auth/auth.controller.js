@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 
-import userService from "../../services/auth/user.service.js";
+import userService from "../../services/users/user.service.js";
 import tokenService from "../../services/auth/token.service.js";
 import { ConflictError, UnauthorizedError } from "../../utils/error.js";
 import UserSerializer from "../../services/serializers/user.serializer.service.js";
@@ -188,6 +188,10 @@ class AuthController {
                 ],
             });
         }
+    }
+
+    async forgotPassword(req, res) {
+        res.json({ message: "Not implemented" });
     }
 }
 
