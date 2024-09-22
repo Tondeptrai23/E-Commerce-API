@@ -3,15 +3,16 @@ import User from "../../models/user/user.model.js";
 import Variant from "../../models/products/variant.model.js";
 import Order from "../../models/shopping/order.model.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
-import ShippingAddress from "../../models/user/address.model.js";
+import ShippingAddress from "../../models/shopping/shippingAddress.model.js";
 import OrderItem from "../../models/shopping/orderItem.model.js";
-import { Op } from "sequelize";
+import { Op, or } from "sequelize";
 import ProductImage from "../../models/products/productImage.model.js";
 import Coupon from "../../models/shopping/coupon.model.js";
 import Product from "../../models/products/product.model.js";
 import { db } from "../../models/index.model.js";
 import PaginationBuilder from "../condition/paginationBuilder.service.js";
 import couponService from "./coupon.service.js";
+import Address from "../../models/user/address.model.js";
 
 /**
  * Service class for managing the user's shopping cart.
@@ -138,6 +139,7 @@ class CartService {
                         },
                     },
                 });
+
                 if (cart.length === 0) {
                     throw new ResourceNotFoundError("No cart items found");
                 }
@@ -151,18 +153,34 @@ class CartService {
                 });
 
                 // Find default shipping address
-                const shippingAddress = await ShippingAddress.findOne({
+                const address = await Address.findOne({
                     where: {
                         userID: user.userID,
+                        isDefault: true,
                     },
                 });
-                const addressID = shippingAddress
-                    ? shippingAddress.addressID
+
+                let shippingAddress;
+                // Create shipping address
+                shippingAddress = address
+                    ? await ShippingAddress.create({
+                          address: address.address,
+                          city: address.city,
+                          district: address.district,
+                          recipientName: address.recipientName,
+                          phoneNumber: address.phoneNumber,
+                      })
                     : null;
 
                 // Create or update order
                 let newOrder;
                 if (existingOrder) {
+                    // Remove existing order items and shipping address
+                    await ShippingAddress.destroy({
+                        where: {
+                            shippingAddressID: existingOrder.shippingAddressID,
+                        },
+                    });
                     await OrderItem.destroy({
                         where: {
                             orderID: existingOrder.orderID,
@@ -170,7 +188,9 @@ class CartService {
                     });
 
                     newOrder = existingOrder.set({
-                        shippingAddressID: addressID,
+                        shippingAddressID: shippingAddress
+                            ? shippingAddress.shippingAddressID
+                            : null,
                         message: null,
                         createdAt: new Date(),
                         finalTotal: 0,
@@ -179,8 +199,13 @@ class CartService {
                 } else {
                     newOrder = await Order.create({
                         userID: user.userID,
-                        shippingAddressID: addressID,
+                        shippingAddressID: shippingAddress
+                            ? shippingAddress.shippingAddressID
+                            : null,
                         status: "pending",
+                        paymentMethod: "COD",
+                        subTotal: 0,
+                        finalTotal: 0,
                     });
                 }
 
@@ -199,6 +224,7 @@ class CartService {
                         discountPriceAtPurchase: variant.discountPrice,
                     };
                 });
+
                 await OrderItem.bulkCreate(orderItems);
                 newOrder.set({
                     subTotal: totalAmount,
@@ -249,6 +275,7 @@ class CartService {
                 });
             })
             .catch((err) => {
+                console.log(err);
                 throw err;
             });
     }

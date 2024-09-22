@@ -81,7 +81,7 @@ describe("GET /api/v2/admin/orders/:orderID", () => {
             });
         }
         expect(res.body.order.shippingAddress).toEqual({
-            addressID: expect.any(String),
+            shippingAddressID: expect.any(String),
             recipientName: expect.any(String),
             phoneNumber: expect.any(String),
             address: expect.any(String),

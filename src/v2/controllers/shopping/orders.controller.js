@@ -302,13 +302,14 @@ class OrderController {
     async updateOrder(req, res) {
         try {
             // Get param
-            const { message, addressID } = req.body;
+            const { message, addressID, address } = req.body;
 
             // Call service
             let order = await orderService.getPendingOrder(req.user);
             order = await orderService.updateOrder(order, {
                 message: message,
                 addressID: addressID,
+                address: address,
             });
 
             // Serialize data

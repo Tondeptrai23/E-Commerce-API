@@ -6,7 +6,7 @@ import {
     ConflictError,
     ResourceNotFoundError,
 } from "../../../../utils/error.js";
-import ShippingAddress from "../../../../models/user/address.model.js";
+import ShippingAddress from "../../../../models/shopping/shippingAddress.model.js";
 import OrderItem from "../../../../models/shopping/orderItem.model.js";
 import Variant from "../../../../models/products/variant.model.js";
 import { jest } from "@jest/globals";
@@ -328,10 +328,33 @@ describe("OrderService", () => {
 
             expect(order).toBeDefined();
             expect(order).toBeInstanceOf(Order);
-            expect(order.dataValues.shippingAddress).toBeInstanceOf(
-                ShippingAddress
-            );
+            expect(order.shippingAddress).toBeInstanceOf(ShippingAddress);
             expect(order.message).toBe("New message");
+        });
+
+        test("should update the address", async () => {
+            const addressID = "102";
+            const order = await orderService.updateOrder(
+                await orderService.getPendingOrder(user),
+                {
+                    address: {
+                        city: "Ho Chi Minh",
+                        district: "District 1",
+                        recipientName: "John Doe",
+                        phoneNumber: "123456789",
+                        address: "123 Street",
+                    },
+                }
+            );
+
+            expect(order).toBeDefined();
+            expect(order).toBeInstanceOf(Order);
+            expect(order.shippingAddress).toBeInstanceOf(ShippingAddress);
+            expect(order.shippingAddress.city).toBe("Ho Chi Minh");
+            expect(order.shippingAddress.district).toBe("District 1");
+            expect(order.shippingAddress.recipientName).toBe("John Doe");
+            expect(order.shippingAddress.phoneNumber).toBe("123456789");
+            expect(order.shippingAddress.address).toBe("123 Street");
         });
 
         test("should throw ResourceNotFoundError if the address is not found", async () => {

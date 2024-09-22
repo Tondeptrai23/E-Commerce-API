@@ -10,10 +10,11 @@ import userService from "../../../../../services/users/user.service.js";
 import { jest } from "@jest/globals";
 import MomoPayment from "../../../../../services/payment/momoPayment.service.js";
 import orderService from "../../../../../services/shopping/order.service.js";
-import ShippingAddress from "../../../../../models/user/address.model.js";
+import ShippingAddress from "../../../../../models/shopping/shippingAddress.model.js";
 import Variant from "../../../../../models/products/variant.model.js";
 import { paymentConfig } from "../../../../../config/config.js";
 import StripePayment from "../../../../../services/payment/stripePayment.service.js";
+import Address from "../../../../../models/user/address.model.js";
 
 /**
  * Set up
@@ -41,13 +42,14 @@ beforeAll(async () => {
 
     //Delay 1s
     await new Promise((r) => setTimeout(r, 1000));
-    await ShippingAddress.create({
+    await Address.create({
         userID: "123",
         address: "123 Duong Ching",
         city: "Ha Noi",
         district: "Hoan Kiem",
         phoneNumber: "123456789",
         recipientName: "User 123",
+        isDefault: true,
     });
 
     const resUser = await request(app).post("/api/v2/auth/signin").send({
@@ -458,9 +460,9 @@ describe("POST /api/v2/orders/pending", () => {
         expect(newStock2).toBe(stock);
     });
 
-    it("should return 409 if shipping address not found", async () => {
-        // Delete shipping address
-        await ShippingAddress.destroy({
+    it("should return 409 if address not found", async () => {
+        // Delete address
+        await Address.destroy({
             where: {
                 userID: "4",
             },

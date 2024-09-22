@@ -14,7 +14,8 @@ import OrderItem from "./models/shopping/orderItem.model.js";
 import CartItem from "./models/shopping/cartItem.model.js";
 import ProductCategory from "./models/products/productCategory.model.js";
 import userService from "./services/users/user.service.js";
-import ShippingAddress from "./models/user/address.model.js";
+import Address from "./models/user/address.model.js";
+import ShippingAddress from "./models/shopping/shippingAddress.model.js";
 import orderService from "./services/shopping/order.service.js";
 import couponService from "./services/shopping/coupon.service.js";
 
@@ -137,6 +138,49 @@ const seedUser = async () => {
 const seedAddress = async () => {
     await ShippingAddress.bulkCreate([
         {
+            shippingAddressID: 101,
+            address: "123 Duong Ching",
+            city: "Ha Noi",
+            district: "Hoan Kiem",
+            phoneNumber: "123456789",
+            recipientName: "User 1/1",
+        },
+        {
+            shippingAddressID: 102,
+            address: "456 Duong Pho",
+            city: "Ho Chi Minh City",
+            district: "Quan 1",
+            phoneNumber: "087654321",
+            recipientName: "User 1/2",
+        },
+        {
+            shippingAddressID: 201,
+            address: "456 Duong Pho",
+            city: "Ho Chi Minh City",
+            district: "Quan 1",
+            phoneNumber: "087654321",
+            recipientName: "User 2/1",
+        },
+        {
+            shippingAddressID: 301,
+            address: "789 Duong Cay",
+            city: "Da Nang",
+            district: "Hai Chau",
+            phoneNumber: "087654321",
+            recipientName: "User 3/1",
+        },
+        {
+            shippingAddressID: 401,
+            address: "123 Duong Ching",
+            city: "Ha Noi",
+            district: "Hoan Kiem",
+            phoneNumber: "123456789",
+            recipientName: "Admin 1",
+        },
+    ]);
+
+    await Address.bulkCreate([
+        {
             addressID: 101,
             userID: 1,
             address: "123 Duong Ching",
@@ -144,6 +188,7 @@ const seedAddress = async () => {
             district: "Hoan Kiem",
             phoneNumber: "123456789",
             recipientName: "User 1/1",
+            isDefault: true,
         },
         {
             addressID: 102,
@@ -162,6 +207,7 @@ const seedAddress = async () => {
             district: "Quan 1",
             phoneNumber: "087654321",
             recipientName: "User 2/1",
+            isDefault: true,
         },
         {
             addressID: 301,
@@ -171,6 +217,7 @@ const seedAddress = async () => {
             district: "Hai Chau",
             phoneNumber: "087654321",
             recipientName: "User 3/1",
+            isDefault: true,
         },
         {
             addressID: 401,
@@ -180,6 +227,7 @@ const seedAddress = async () => {
             district: "Hoan Kiem",
             phoneNumber: "123456789",
             recipientName: "Admin 1",
+            isDefault: true,
         },
     ]);
 };

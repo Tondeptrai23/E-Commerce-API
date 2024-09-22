@@ -1,5 +1,5 @@
 import Variant from "../../models/products/variant.model.js";
-import ShippingAddress from "../../models/user/address.model.js";
+import ShippingAddress from "../../models/shopping/shippingAddress.model.js";
 import Order from "../../models/shopping/order.model.js";
 import User from "../../models/user/user.model.js";
 import Coupon from "../../models/shopping/coupon.model.js";
@@ -12,6 +12,8 @@ import OrderSortBuilder from "../condition/sort/orderSortBuilder.service.js";
 import FilterBuilder from "../condition/filter/filterBuilder.service.js";
 import VariantFilterBuilder from "../condition/filter/variantFilterBuilder.service.js";
 import { db } from "../../models/index.model.js";
+import Address from "../../models/user/address.model.js";
+import addressService from "../users/address.service.js";
 
 class OrderService {
     /**
@@ -423,19 +425,35 @@ class OrderService {
         orderData = {
             message: undefined,
             addressID: null,
+            address: undefined,
         }
     ) {
+        // If addressID is provided, use the address
         if (orderData.addressID) {
-            const shippingAddress = await ShippingAddress.findOne({
+            const address = await Address.findOne({
                 where: {
                     userID: order.userID,
                     addressID: orderData.addressID,
                 },
             });
-            if (!shippingAddress) {
+            if (!address) {
                 throw new ResourceNotFoundError("Address not found");
             }
-            order.shippingAddressID = shippingAddress.addressID;
+
+            const shippingAddress = await addressService.createShippingAddress(
+                address.toJSON()
+            );
+
+            order.shippingAddressID = shippingAddress.shippingAddressID;
+            order.shippingAddress = shippingAddress;
+        }
+        // If address is provided, create a new shipping address
+        else if (orderData.address) {
+            const shippingAddress = await addressService.createShippingAddress(
+                orderData.address
+            );
+
+            order.shippingAddressID = shippingAddress.shippingAddressID;
             order.shippingAddress = shippingAddress;
         }
 
@@ -548,9 +566,8 @@ const getIncludeOptions = () => {
         {
             model: ShippingAddress,
             as: "shippingAddress",
-            paranoid: false,
             attributes: {
-                exclude: ["createdAt", "updatedAt", "deletedAt", "isDefault"],
+                exclude: ["createdAt", "updatedAt"],
             },
         },
         {

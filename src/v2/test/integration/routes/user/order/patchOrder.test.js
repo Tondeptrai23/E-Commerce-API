@@ -6,12 +6,14 @@ import {
     assertTokenNotProvided,
     assertTokenInvalid,
 } from "../../utils.integration.js";
+import Address from "../../../../../models/user/address.model.js";
 
 /**
  * Set up
  */
 let accessToken = "";
 let accessTokenUser = "";
+let address = {};
 beforeAll(async () => {
     // Seed data
     await seedData();
@@ -28,6 +30,17 @@ beforeAll(async () => {
         password: "password1",
     });
     accessTokenUser = resUser.body.accessToken;
+
+    // Create an address
+    await Address.create({
+        addressID: "123",
+        userID: "1",
+        phoneNumber: "1234567890",
+        recipientName: "User 1",
+        address: "123 Street",
+        city: "City",
+        district: "District",
+    });
 });
 
 /**
@@ -48,7 +61,7 @@ describe("PATCH /api/v2/orders/pending", () => {
             .patch("/api/v2/orders/pending")
             .set("Authorization", `Bearer ${accessTokenUser}`)
             .send({
-                addressID: "102",
+                addressID: "123",
             });
 
         expect(res.status).toBe(StatusCodes.OK);
@@ -56,7 +69,13 @@ describe("PATCH /api/v2/orders/pending", () => {
             success: true,
             order: expect.objectContaining({
                 orderID: order.orderID,
-                shippingAddressID: "102",
+                shippingAddress: expect.objectContaining({
+                    city: "City",
+                    district: "District",
+                    recipientName: "User 1",
+                    phoneNumber: "1234567890",
+                    address: "123 Street",
+                }),
             }),
         });
 
@@ -70,7 +89,13 @@ describe("PATCH /api/v2/orders/pending", () => {
             success: true,
             order: expect.objectContaining({
                 orderID: order.orderID,
-                shippingAddressID: "102",
+                shippingAddress: expect.objectContaining({
+                    city: "City",
+                    district: "District",
+                    recipientName: "User 1",
+                    phoneNumber: "1234567890",
+                    address: "123 Street",
+                }),
             }),
         });
         order = res2.body.order;
@@ -110,13 +135,22 @@ describe("PATCH /api/v2/orders/pending", () => {
         order = res2.body.order;
     });
 
-    it("should update an order 3", async () => {
+    it("should update an order 3 (ignore provided address)", async () => {
+        const address = await Address.findByPk("101");
+
         const res = await request(app)
             .patch("/api/v2/orders/pending")
             .set("Authorization", `Bearer ${accessTokenUser}`)
             .send({
                 message: null,
                 addressID: "101",
+                address: {
+                    city: "City1",
+                    district: "District1",
+                    recipientName: "User 11",
+                    phoneNumber: "12345678901",
+                    address: "123 Street1",
+                },
             });
 
         expect(res.status).toBe(StatusCodes.OK);
@@ -125,7 +159,13 @@ describe("PATCH /api/v2/orders/pending", () => {
             order: expect.objectContaining({
                 orderID: order.orderID,
                 message: null,
-                shippingAddressID: "101",
+                shippingAddress: expect.objectContaining({
+                    city: address.city,
+                    district: address.district,
+                    recipientName: address.recipientName,
+                    phoneNumber: address.phoneNumber,
+                    address: address.address,
+                }),
             }),
         });
 
@@ -140,7 +180,65 @@ describe("PATCH /api/v2/orders/pending", () => {
             order: expect.objectContaining({
                 orderID: order.orderID,
                 message: null,
-                shippingAddressID: "101",
+                shippingAddress: expect.objectContaining({
+                    city: address.city,
+                    district: address.district,
+                    recipientName: address.recipientName,
+                    phoneNumber: address.phoneNumber,
+                    address: address.address,
+                }),
+            }),
+        });
+
+        order = res2.body.order;
+    });
+
+    it("should update an order 4 (provide address)", async () => {
+        const res = await request(app)
+            .patch("/api/v2/orders/pending")
+            .set("Authorization", `Bearer ${accessTokenUser}`)
+            .send({
+                address: {
+                    city: "City1",
+                    district: "District1",
+                    recipientName: "User 11",
+                    phoneNumber: "12345678901",
+                    address: "123 Street1",
+                },
+            });
+
+        expect(res.status).toBe(StatusCodes.OK);
+        expect(res.body).toEqual({
+            success: true,
+            order: expect.objectContaining({
+                orderID: order.orderID,
+                shippingAddress: expect.objectContaining({
+                    city: "City1",
+                    district: "District1",
+                    recipientName: "User 11",
+                    phoneNumber: "12345678901",
+                    address: "123 Street1",
+                }),
+            }),
+        });
+
+        // Check if order is updated
+        const res2 = await request(app)
+            .get("/api/v2/orders/pending")
+            .set("Authorization", `Bearer ${accessTokenUser}`);
+
+        expect(res2.status).toBe(StatusCodes.OK);
+        expect(res2.body).toEqual({
+            success: true,
+            order: expect.objectContaining({
+                orderID: order.orderID,
+                shippingAddress: expect.objectContaining({
+                    city: "City1",
+                    district: "District1",
+                    recipientName: "User 11",
+                    phoneNumber: "12345678901",
+                    address: "123 Street1",
+                }),
             }),
         });
 

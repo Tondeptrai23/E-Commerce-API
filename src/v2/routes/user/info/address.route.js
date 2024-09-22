@@ -12,13 +12,9 @@ userAddressRoute.get(
     addressController.getUserAddress
 );
 
-userAddressRoute.post("/", verifyToken, addressController.createAddress);
+userAddressRoute.post("/", verifyToken, addressController.postAddress);
 
-userAddressRoute.put(
-    "/:addressID",
-    verifyToken,
-    addressController.updateAddress
-);
+userAddressRoute.put("/:addressID", verifyToken, addressController.putAddress);
 
 userAddressRoute.delete(
     "/:addressID",

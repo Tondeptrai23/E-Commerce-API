@@ -174,6 +174,105 @@ describe("validatePatchOrder", () => {
             ])
         );
     });
+
+    test("should return error if address is not an object", async () => {
+        const req = {
+            body: {
+                message: "Message",
+                address: "Address",
+            },
+        };
+
+        for (const validationChain of validator.validatePatchOrder) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Address should be an object",
+                }),
+            ])
+        );
+    });
+
+    test("should return error if address is missing required fields", async () => {
+        const req = {
+            body: {
+                message: "Message",
+                address: {},
+            },
+        };
+
+        for (const validationChain of validator.validatePatchOrder) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Address is required",
+                }),
+                expect.objectContaining({
+                    msg: "City is required",
+                }),
+                expect.objectContaining({
+                    msg: "District is required",
+                }),
+                expect.objectContaining({
+                    msg: "RecipientName is required",
+                }),
+                expect.objectContaining({
+                    msg: "PhoneNumber is required",
+                }),
+            ])
+        );
+    });
+
+    test("should return error if address fields are not strings", async () => {
+        const req = {
+            body: {
+                message: "Message",
+                address: {
+                    city: 123,
+                    district: 123,
+                    address: 123,
+                    recipientName: 123,
+                    phoneNumber: 123,
+                },
+            },
+        };
+
+        for (const validationChain of validator.validatePatchOrder) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "City should be a string",
+                }),
+                expect.objectContaining({
+                    msg: "District should be a string",
+                }),
+                expect.objectContaining({
+                    msg: "Address should be a string",
+                }),
+                expect.objectContaining({
+                    msg: "RecipientName should be a string",
+                }),
+                expect.objectContaining({
+                    msg: "PhoneNumber should be a string",
+                }),
+            ])
+        );
+    });
 });
 
 describe("validateApplyCoupon", () => {

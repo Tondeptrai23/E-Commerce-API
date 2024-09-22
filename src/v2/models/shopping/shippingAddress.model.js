@@ -1,11 +1,11 @@
 import { sequelize } from "../../config/database.config.js";
 import { DataTypes, Model } from "sequelize";
 
-class Address extends Model {}
+class ShippingAddress extends Model {}
 
-Address.init(
+ShippingAddress.init(
     {
-        addressID: {
+        shippingAddressID: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
@@ -30,16 +30,13 @@ Address.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        isDefault: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
-        },
     },
     {
         sequelize,
-        modelName: "address",
-        tableName: "address",
+        modelName: "shippingAddress",
+        tableName: "shipping_address",
+        timestamps: false,
     }
 );
 
-export default Address;
+export default ShippingAddress;

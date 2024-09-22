@@ -7,6 +7,7 @@ import {
     validateQueryNumber,
     validateQueryString,
 } from "../utils.validator.js";
+import { validateCreateAddress } from "../users/address.validator.js";
 
 const validatePostOrder = [
     body("payment")
@@ -58,6 +59,46 @@ const validatePatchOrder = [
         .optional()
         .isString()
         .withMessage("Address ID should be a string"),
+
+    body("address")
+        .optional()
+        .isObject()
+        .withMessage("Address should be an object"),
+
+    body("address.city")
+        .if(body("address").exists())
+        .notEmpty()
+        .withMessage("City is required")
+        .isString()
+        .withMessage("City should be a string"),
+
+    body("address.district")
+        .if(body("address").exists())
+        .notEmpty()
+        .withMessage("District is required")
+        .isString()
+        .withMessage("District should be a string"),
+
+    body("address.address")
+        .if(body("address").exists())
+        .notEmpty()
+        .withMessage("Address is required")
+        .isString()
+        .withMessage("Address should be a string"),
+
+    body("address.recipientName")
+        .if(body("address").exists())
+        .notEmpty()
+        .withMessage("RecipientName is required")
+        .isString()
+        .withMessage("RecipientName should be a string"),
+
+    body("address.phoneNumber")
+        .if(body("address").exists())
+        .notEmpty()
+        .withMessage("PhoneNumber is required")
+        .isString()
+        .withMessage("PhoneNumber should be a string"),
 ];
 
 const validateApplyCoupon = [

@@ -3,7 +3,11 @@ import Entity from "baiji-entity";
 const AddressSerializer = new Entity({
     addressID: {
         type: "string",
-        required: true,
+        default: undefined,
+    },
+    shippingAddressID: {
+        type: "string",
+        default: undefined,
     },
     address: {
         type: "string",
@@ -62,18 +66,6 @@ const AddressSerializer = new Entity({
         function (obj, options) {
             if (options.detailAddress) {
                 return obj.updatedAt;
-            }
-            return undefined;
-        },
-    ],
-    deletedAt: [
-        {
-            type: "date",
-            format: "iso",
-        },
-        function (obj, options) {
-            if (options.includeDeleted) {
-                return obj.deletedAt;
             }
             return undefined;
         },

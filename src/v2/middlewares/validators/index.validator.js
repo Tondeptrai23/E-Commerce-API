@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator";
 import { StatusCodes } from "http-status-codes";
-import * as userValidator from "./user.validator.js";
+import * as userValidator from "./users/user.validator.js";
 import * as productValidator from "./products/product.validator.js";
 import * as categoryValidator from "./products/category.validator.js";
 import * as variantValidator from "./products/variant.validator.js";
@@ -9,6 +9,7 @@ import * as orderValidator from "./shopping/order.validator.js";
 import * as cartValidator from "./shopping/cart.validator.js";
 import * as couponValidator from "./shopping/coupon.validator.js";
 import * as attributeValidator from "./products/attribute.validator.js";
+import * as addressValidator from "./users/address.validator.js";
 
 const handleValidationErrors = (req, res, next) => {
     const errors = validationResult(req);
@@ -32,6 +33,9 @@ const validator = {
 
     validateRegisterUser: userValidator.validateRegisterUser,
     validateSignInUser: userValidator.validateSignInUser,
+
+    validateCreateAddress: addressValidator.validateCreateAddress,
+    validatePutAddress: addressValidator.validatePutAddress,
 
     validateCreateProduct: productValidator.validateCreateProduct,
     validatePatchProduct: productValidator.validatePatchProduct,
