@@ -1,27 +1,22 @@
-# GET /address:
+# GET /admin/users/{userID}/address:
 tags:
-  - User Address
-summary: Get addresses
+  - Admin Address
+summary: Get address by userID
 description: |
-  Get all addresses of the authenticated user
+  Get address by userID
 security:
   - bearerAuth: []
 parameters:
-  - in: query
-    name: page
+  - name: userID
+    in: path
+    description: User ID
+    required: true
     schema:
-      type: integer
-      example: 1
-    description: Page number
-  - in: query
-    name: limit
-    schema:
-      type: integer
-      example: 10
-    description: Number of items per page
+      type: string
+      example: "1"
 responses:
   200:
-    description: Addresses found
+    description: Address found
     content:
       application/json:
         schema:
@@ -45,6 +40,12 @@ responses:
       application/json:
         schema:
           $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
   500:
     description: Internal Server Error
     content:

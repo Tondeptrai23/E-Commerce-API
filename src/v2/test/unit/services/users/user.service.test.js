@@ -1,7 +1,10 @@
 import userService from "../../../../services/users/user.service.js";
 import seedData from "../../../../seedData.js";
 import User from "../../../../models/user/user.model.js";
-import { ConflictError } from "../../../../utils/error.js";
+import {
+    ConflictError,
+    ResourceNotFoundError,
+} from "../../../../utils/error.js";
 
 beforeAll(async () => {
     await seedData();
@@ -154,11 +157,11 @@ describe("User Service", () => {
             expect(user.userID).toBe(id);
         });
 
-        test("should return null if the id does not exist", async () => {
+        test("should throw ResourceNotFoundError if the id does not exist", async () => {
             const id = "999";
-            const user = await userService.getUser(id);
-
-            expect(user).toBeNull();
+            await expect(userService.getUser(id)).rejects.toThrow(
+                ResourceNotFoundError
+            );
         });
     });
 

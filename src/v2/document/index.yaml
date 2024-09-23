@@ -48,6 +48,9 @@ tags:
   - name: Admin Orders
     description: Endpoints for managing orders.
 
+  - name: Admin Address
+    description: Endpoints for managing user addresses.
+
 externalDocs:
   description: Detailed Query Parameters Documentation
   url: "https://github.com/Tondeptrai23/E-Commerce-API/blob/main/src/v2/document/docs/query.md" 

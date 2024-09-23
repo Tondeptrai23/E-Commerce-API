@@ -1,7 +1,11 @@
 import User from "../../models/user/user.model.js";
 
 import bcrypt from "bcryptjs";
-import { BadRequestError, ConflictError } from "../../utils/error.js";
+import {
+    BadRequestError,
+    ConflictError,
+    ResourceNotFoundError,
+} from "../../utils/error.js";
 
 class UserService {
     /**
@@ -100,9 +104,14 @@ class UserService {
      *
      * @param {String} userID The ID of the user
      * @returns {Promise<User>} The user
+     * @throws {ResourceNotFoundError} If the user is not found
      */
     async getUser(userID) {
         const user = await User.findByPk(userID);
+
+        if (!user) {
+            throw new ResourceNotFoundError("User not found");
+        }
 
         return user;
     }

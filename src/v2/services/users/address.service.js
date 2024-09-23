@@ -3,6 +3,7 @@ import Address from "../../models/user/address.model.js";
 import User from "../../models/user/user.model.js";
 import { ConflictError, ResourceNotFoundError } from "../../utils/error.js";
 import ShippingAddress from "../../models/shopping/shippingAddress.model.js";
+import PaginationBuilder from "../condition/paginationBuilder.service.js";
 
 class AddressService {
     /**
@@ -34,6 +35,9 @@ class AddressService {
 
     /**
      * Create a shipping address based on the addressID
+     *
+     * @param {Object} addressData address data
+     * @returns {Promise<ShippingAddress>} created shipping address
      */
     async createShippingAddress(addressData) {
         return await ShippingAddress.create({
@@ -47,11 +51,12 @@ class AddressService {
     }
 
     /**
+     * Get an address by ID
      *
-     * @param {User} user
-     * @param {String} addressID
-     * @returns {Promise<Address>}
-     * @throws {ResourceNotFoundError}
+     * @param {User} user user model instance
+     * @param {String} addressID address ID
+     * @returns {Promise<Address>} address
+     * @throws {ResourceNotFoundError} if address not found
      */
     async getAddressByID(user, addressID) {
         const address = await Address.findOne({
@@ -69,26 +74,60 @@ class AddressService {
     }
 
     /**
+     * Get all addresses of a user
      *
+     * @param {User} user user model instance
+     * @param {Object} query query parameters
+     * @returns {Promise<Address[]>} list of addresses
      */
-    async getAddresses(user) {
-        const addresses = await Address.findAll({
+    async getAddresses(user, query) {
+        const paginationConditions = new PaginationBuilder(query).build();
+
+        const { count, rows: addresses } = await Address.findAndCountAll({
             where: {
                 userID: user.userID,
             },
+            ...paginationConditions,
+            order: [["createdAt", "DESC"]],
         });
 
-        return addresses;
+        return {
+            currentPage:
+                paginationConditions.offset / paginationConditions.limit + 1,
+            totalPages: Math.ceil(count / paginationConditions.limit),
+            totalItems: count,
+            addresses: addresses,
+        };
+    }
+
+    /**
+     * Get shipping address
+     *
+     * @param {String} shippingAddressID shipping address ID
+     * @returns {Promise<ShippingAddress>} shipping address
+     */
+    async getShippingAddress(shippingAddressID) {
+        const address = await ShippingAddress.findOne({
+            where: {
+                shippingAddressID,
+            },
+        });
+
+        if (!address) {
+            throw new ResourceNotFoundError("Shipping address not found");
+        }
+
+        return address;
     }
 
     /**
      * Update an address
      *
-     * @param {User} user
-     * @param {String} addressID
-     * @param {Object} addressData
-     * @returns {Promise<Address>}
-     * @throws {ResourceNotFoundError}
+     * @param {User} user user model instance
+     * @param {String} addressID address ID to update
+     * @param {Object} addressData address data to update
+     * @returns {Promise<Address>} updated address
+     * @throws {ResourceNotFoundError} if address not found
      */
     async updateAddress(
         user,
@@ -102,7 +141,7 @@ class AddressService {
             isDefault: false,
         }
     ) {
-        const address = await this.getAddressByID(user, addressID);
+        let address = await this.getAddressByID(user, addressID);
 
         // Toggle default address to false
         if (address.isDefault && !addressData.isDefault) {
@@ -116,7 +155,7 @@ class AddressService {
             });
 
             if (!otherAddress) {
-                throw ConflictError(
+                throw new ConflictError(
                     "There is no other address to set as default"
                 );
             }
@@ -145,8 +184,8 @@ class AddressService {
     /**
      * Delete an address
      *
-     * @param {User} user
-     * @param {String} addressID
+     * @param {User} user user model instance
+     * @param {String} addressID address ID to delete
      */
     async deleteAddress(user, addressID) {
         const address = await this.getAddressByID(user, addressID);

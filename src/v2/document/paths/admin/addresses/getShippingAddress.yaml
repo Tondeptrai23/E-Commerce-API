@@ -1,23 +1,16 @@
-# GET /address/{addressID}:
+# GET /admin/address/shipping/{shippingAddressID}:
 tags:
-  - User Address
-summary: Get address by addressID 
+  - Admin Address
+summary: Get shipping address
 description: |
-  Get address by addressID
-  Only the owner can get the address
+  Get shipping address by shippingAddressID
+  Only admin can get the shipping address
+  User can only get shipping address through order (GET /order/{orderID})
 security:
   - bearerAuth: []
-parameters:
-  - name: addressID
-    in: path
-    description: Address ID
-    required: true
-    schema:
-      type: string
-      example: "1"
 responses:
   200:
-    description: Address found
+    description: Shipping address found
     content:
       application/json:
         schema:
@@ -26,10 +19,10 @@ responses:
             success:
               type: boolean
               example: true
-            address:
+            shippingAddress:
               type: object
               allOf:
-                - $ref: "../../../schemas/users/address.yaml"
+                - $ref: "../../../schemas/shopping/shippingAddress.yaml"
                 - $ref: "../../../schemas/timestamps.yaml"
   401:
     description: Token invalid, not authenticated
@@ -37,8 +30,14 @@ responses:
       application/json:
         schema:
           $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
   404:
-    description: Address not found
+    description: Shipping address not found
     content:
       application/json:
         schema:

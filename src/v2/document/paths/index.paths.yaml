@@ -198,6 +198,19 @@ adminOrder:
   get:
     $ref: "./admin/orders/getOrder.yaml"
 
+# ADMIN ADDRESS
+adminAddress:
+  get:
+    $ref: "./admin/addresses/getUserAddress.yaml"
+
+adminAddresses:
+  get:
+    $ref: "./admin/addresses/getUserAddresses.yaml"
+
+adminShippingAddress:
+  get:
+    $ref: "./admin/addresses/getShippingAddress.yaml"
+
 # USER PRODUCTS
 userProducts:
   get:

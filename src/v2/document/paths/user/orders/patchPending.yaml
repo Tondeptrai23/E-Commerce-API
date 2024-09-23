@@ -33,7 +33,7 @@ responses:
               type: object
               properties:
                 shippingAddress:
-                  $ref: "../../../schemas/users/address.yaml"
+                  $ref: "../../../schemas/shopping/shippingAddress.yaml"
               allOf:
                 - $ref: "../../../schemas/shopping/associatedOrder.yaml"
   400:

@@ -19,7 +19,7 @@ class OrderController {
             // Serialize data
             const serializedOrder = OrderSerializer.parse(order, {
                 includeTimestamps: true,
-                detailAddress: true,
+                includeAddress: true,
             });
 
             // Response
@@ -98,7 +98,7 @@ class OrderController {
             // Serialize data
             const serializedOrder = OrderSerializer.parse(order, {
                 includeTimestamps: true,
-                detailAddress: true,
+                includeAddress: true,
             });
 
             // Response
@@ -177,7 +177,7 @@ class OrderController {
             // Serialize data
             const serializedOrder = OrderSerializer.parse(order, {
                 isAdmin: true,
-                detailAddress: true,
+                includeAddress: true,
             });
 
             // Response
@@ -222,7 +222,7 @@ class OrderController {
             if (payment === "COD") {
                 // Serialize data
                 const serializedOrder = OrderSerializer.parse(order, {
-                    detailAddress: true,
+                    includeAddress: true,
                 });
 
                 // Response
@@ -314,7 +314,7 @@ class OrderController {
 
             // Serialize data
             const serializedOrder = OrderSerializer.parse(order, {
-                detailAddress: true,
+                includeAddress: true,
             });
 
             // Response
@@ -359,7 +359,7 @@ class OrderController {
 
             // Serailize data
             const serializedOrder = OrderSerializer.parse(order, {
-                detailAddress: true,
+                includeAddress: true,
             });
 
             // Response

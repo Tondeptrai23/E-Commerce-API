@@ -1,5 +1,5 @@
 import Entity from "./index.serializer.service.js";
-import AddressSerializer from "./address.seralizer.service.js";
+import AddressSerializer from "./address.serializer.service.js";
 
 const OrderSerializer = new Entity({
     orderID: {
@@ -73,10 +73,9 @@ const OrderSerializer = new Entity({
                 return undefined;
             }
 
-            if (options.detailAddress) {
+            if (options.includeAddress) {
                 const addressOption = {
                     detailAddress: false,
-                    includeTimestamps: false,
                 };
                 return AddressSerializer.parse(
                     obj.shippingAddress,
@@ -87,9 +86,17 @@ const OrderSerializer = new Entity({
             }
         },
     ],
-    shippingAddressID: {
-        type: "string",
-    },
+    shippingAddressID: [
+        {
+            type: "string",
+        },
+        function (obj, options) {
+            if (options.isAdmin) {
+                return obj.shippingAddressID;
+            }
+            return undefined;
+        },
+    ],
     createdAt: [
         {
             type: "date",

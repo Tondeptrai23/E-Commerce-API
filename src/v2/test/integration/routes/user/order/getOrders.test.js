@@ -64,7 +64,6 @@ describe("GET /api/v2/orders", () => {
                     finalTotal: expect.any(Number),
                     paymentMethod: expect.any(String),
                     userID: expect.any(String),
-                    shippingAddressID: expect.any(String),
                     coupon: expect.any(String),
                     couponID: expect.any(String),
                 })

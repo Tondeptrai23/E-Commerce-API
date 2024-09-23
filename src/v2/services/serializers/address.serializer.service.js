@@ -5,10 +5,18 @@ const AddressSerializer = new Entity({
         type: "string",
         default: undefined,
     },
-    shippingAddressID: {
-        type: "string",
-        default: undefined,
-    },
+    shippingAddressID: [
+        {
+            type: "string",
+            default: undefined,
+        },
+        function (obj, options) {
+            if (options.detailAddress) {
+                return obj.shippingAddressID;
+            }
+            return undefined;
+        },
+    ],
     address: {
         type: "string",
     },

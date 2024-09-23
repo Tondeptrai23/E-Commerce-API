@@ -1,5 +1,8 @@
-import { body } from "express-validator";
-import { validateUnexpectedFields } from "../utils.validator.js";
+import { body, query } from "express-validator";
+import {
+    validateUnexpectedFields,
+    validateQueryInteger,
+} from "../utils.validator.js";
 
 const validateCreateAddress = [
     body("address").notEmpty().withMessage("Address is required"),
@@ -46,8 +49,15 @@ const validatePutAddress = [
             "district",
             "recipientName",
             "phoneNumber",
+            "isDefault",
         ])
     ),
 ];
 
-export { validateCreateAddress, validatePutAddress };
+const validateQueryAddressUser = [
+    query("page").optional().custom(validateQueryInteger("Page")),
+
+    query("size").optional().custom(validateQueryInteger("Size")),
+];
+
+export { validateCreateAddress, validatePutAddress, validateQueryAddressUser };

@@ -32,6 +32,8 @@ tags:
     description: Endpoints for managing attribute values.
   - name: Admin Orders
     description: Endpoints for managing orders.
+  - name: Admin Address
+    description: Endpoints for managing user addresses.
 externalDocs:
   description: Detailed Query Parameters Documentation
   url: 'https://github.com/Tondeptrai23/E-Commerce-API/blob/main/src/v2/document/docs/query.md'
@@ -1439,7 +1441,7 @@ paths:
                     type: object
                     properties:
                       shippingAddress:
-                        $ref: '#/components/schemas/address'
+                        $ref: '#/paths/~1orders~1pending/get/responses/200/content/application~1json/schema/properties/order/properties/shippingAddress'
                     allOf:
                       - $ref: '#/paths/~1cart/post/responses/200/content/application~1json/schema/properties/order'
         '400':
@@ -1586,6 +1588,19 @@ paths:
         Get all addresses of the authenticated user
       security:
         - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            example: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            example: 10
+          description: Number of items per page
       responses:
         '200':
           description: Addresses found
@@ -1604,6 +1619,8 @@ paths:
                       allOf:
                         - $ref: '#/components/schemas/address'
                         - $ref: '#/components/schemas/timestamps'
+                allOf:
+                  - $ref: '#/components/schemas/pagination'
         '401':
           description: 'Token invalid, not authenticated'
           content:

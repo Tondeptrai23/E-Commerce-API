@@ -1,16 +1,22 @@
-# GET /address/{addressID}:
+# GET /admin/users/{userID}/address/{addressID}:
 tags:
-  - User Address
+  - Admin Address
 summary: Get address by addressID 
 description: |
   Get address by addressID
-  Only the owner can get the address
 security:
   - bearerAuth: []
 parameters:
   - name: addressID
     in: path
     description: Address ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+  - name: userID
+    in: path
+    description: User ID
     required: true
     schema:
       type: string
@@ -37,6 +43,12 @@ responses:
       application/json:
         schema:
           $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
   404:
     description: Address not found
     content:

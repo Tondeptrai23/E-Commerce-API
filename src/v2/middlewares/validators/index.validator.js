@@ -31,17 +31,22 @@ const handleValidationErrors = (req, res, next) => {
 const validator = {
     handleValidationErrors,
 
+    // Auth
     validateRegisterUser: userValidator.validateRegisterUser,
     validateSignInUser: userValidator.validateSignInUser,
 
+    // Address
     validateCreateAddress: addressValidator.validateCreateAddress,
     validatePutAddress: addressValidator.validatePutAddress,
+    validateQueryAddressUser: addressValidator.validateQueryAddressUser,
 
+    // Product
     validateCreateProduct: productValidator.validateCreateProduct,
     validatePatchProduct: productValidator.validatePatchProduct,
     validateQueryGetProduct: productValidator.validateQueryGetProduct,
     validateQueryGetProductUser: productValidator.validateQueryGetProductUser,
 
+    // Category
     validateAddCategoriesForProduct:
         categoryValidator.validateAddCategoriesForProduct,
     validatePutCategoriesForProduct:
@@ -52,36 +57,43 @@ const validator = {
     validateQueryGetCategoryUser:
         categoryValidator.validateQueryGetCategoryUser,
 
+    // Variant
     validateCreateVariants: variantValidator.validateCreateVariants,
     validatePutVariant: variantValidator.validatePutVariant,
     validatePatchVariant: variantValidator.validatePatchVariant,
     validateQueryGetVariant: variantValidator.validateQueryGetVariant,
 
+    // Image
     validateCreateImages: imageValidator.validateCreateImages,
     validatePatchImage: imageValidator.validatePatchImage,
     validateReorderImages: imageValidator.validateReorderImages,
 
+    // Order
     validatePostOrder: orderValidator.validatePostOrder,
     validatePatchOrder: orderValidator.validatePatchOrder,
     validateApplyCoupon: orderValidator.validateApplyCoupon,
     validateQueryGetOrderUser: orderValidator.validateQueryGetOrderUser,
     validateQueryGetOrderAdmin: orderValidator.validateQueryGetOrderAdmin,
 
+    // Cart
     validateAddToCart: cartValidator.validateAddToCart,
     validateUpdateCart: cartValidator.validateUpdateCart,
     validateFetchCart: cartValidator.validateFetchCart,
     validateQueryCart: cartValidator.validateQueryCart,
 
+    // Coupon
     validateCreateCoupon: couponValidator.validateCreateCoupon,
     validatePatchCoupon: couponValidator.validatePatchCoupon,
     validateAddCategoriesCoupon: couponValidator.validateAddCategoriesCoupon,
     validateAddProductsCoupon: couponValidator.validateAddProductsCoupon,
     validateQueryGetCoupon: couponValidator.validateQueryGetCoupon,
 
+    // Attribute
     validateQueryGetAttribute: attributeValidator.validateQueryGetAttribute,
     validateCreateAttribute: attributeValidator.validatePostAttribute,
     validatePatchAttribute: attributeValidator.validatePatchAttribute,
 
+    // Attribute Value
     validateCreateAttributeValue: attributeValidator.validatePostAttributeValue,
     validateQueryGetAttributeValue:
         attributeValidator.validateQueryGetAttributeValue,

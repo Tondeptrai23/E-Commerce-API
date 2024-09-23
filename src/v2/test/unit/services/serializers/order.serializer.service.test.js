@@ -107,7 +107,6 @@ describe("OrderSerializer", () => {
                 ],
                 couponID: "123456",
                 coupon: "DISCOUNT10",
-                shippingAddressID: "789012",
             })
         );
     });
@@ -153,16 +152,15 @@ describe("OrderSerializer", () => {
                 ],
                 couponID: "123456",
                 coupon: "DISCOUNT10",
-                shippingAddressID: "789012",
                 createdAt: new Date(date).toISOString(),
                 updatedAt: new Date(date).toISOString(),
             })
         );
     });
 
-    test("should serialize order data correctly with detailAddress flag", () => {
+    test("should serialize order data correctly with includeAddress flag", () => {
         const serializedOrder = OrderSerializer.parse(orderData, {
-            detailAddress: true,
+            includeAddress: true,
         });
 
         expect(serializedOrder).toEqual(
@@ -208,7 +206,6 @@ describe("OrderSerializer", () => {
                     city: "New York",
                     district: "Manhattan",
                 }),
-                shippingAddressID: "789012",
             })
         );
     });
@@ -254,7 +251,6 @@ describe("OrderSerializer", () => {
                 ],
                 couponID: "123456",
                 coupon: "DISCOUNT10",
-                shippingAddressID: "789012",
             }),
             expect.objectContaining({
                 orderID: "123456",
@@ -291,7 +287,6 @@ describe("OrderSerializer", () => {
                 ],
                 couponID: "123456",
                 coupon: "DISCOUNT10",
-                shippingAddressID: "789012",
             }),
         ]);
     });
@@ -339,7 +334,6 @@ describe("OrderSerializer", () => {
                 ],
                 couponID: "123456",
                 coupon: "DISCOUNT10",
-                shippingAddressID: "789012",
                 createdAt: new Date(date).toISOString(),
                 updatedAt: new Date(date).toISOString(),
             }),
