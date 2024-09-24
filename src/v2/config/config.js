@@ -61,4 +61,23 @@ const serverConfig = {
     FRONT_END_URL: process.env.FRONT_END_URL,
 };
 
-export { paymentConfig, jwtConfig, dbConfig, serverConfig, googleConfig };
+const awsConfig = {
+    ACCESS_KEY: process.env.AWS_ACCESS_KEY,
+    SECRET_KEY: process.env.AWS_SECRET_KEY,
+    REGION: process.env.AWS_REGION,
+    BUCKET_NAME: process.env.AWS_BUCKET_NAME,
+    CLOUDFRONT_URL: process.env.AWS_CLOUDFRONT_URL,
+    CLOUDFRONT_KEY_PAIR_ID: process.env.AWS_CLOUDFRONT_KEY_PAIR_ID,
+    CLOUDFRONT_PRIVATE_KEY: (
+        process.env.AWS_CLOUDFRONT_PRIVATE_KEY ?? ""
+    ).replace(/\\n/g, "\n"),
+};
+
+export {
+    paymentConfig,
+    jwtConfig,
+    dbConfig,
+    serverConfig,
+    googleConfig,
+    awsConfig,
+};

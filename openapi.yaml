@@ -6866,9 +6866,6 @@ components:
         couponID:
           type: string
           example: '1'
-        shippingAddressID:
-          type: string
-          example: '1'
     user:
       type: object
       properties:
