@@ -2051,64 +2051,107 @@ paths:
       tags:
         - Admin Products
       summary: Create a product
-      description: 'Creates a new product. <br> The product name must be unique. <br> The order of images in the request body determines their display order on the product. <br> The product should have at least 1 variant. <br> If variant''s name is not provided, it will use the product name'
+      description: 'Creates a new product. <br> The product name must be unique. <br> The order of images in the request body determines their display order on the product. <br> The product should have at least 1 variant. <br> If variant''s name is not provided, it will use the product name. <br> If you want to add images to the variants, use multipart/form-data. <br>'
       security:
         - bearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
+            description: Add a product without images
             schema:
               type: object
               properties:
-                name:
-                  type: string
-                  example: T-Shirt
-                description:
-                  type: string
-                variants:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        example: Red T-Shirt
-                        nullable: true
-                      price:
-                        type: number
-                        example: 100
-                      discountPrice:
-                        type: number
-                        example: 90
-                        nullable: true
-                      stock:
-                        type: integer
-                        example: 10
-                      sku:
-                        type: string
-                      imageIndex:
-                        type: number
-                        example: 0
-                      attributes:
+                product:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: T-Shirt
+                    description:
+                      type: string
+                    variants:
+                      type: array
+                      items:
                         type: object
-                        description: Dynamic attributes of the product
-                        example:
-                          color: red
-                          size: M
-                categories:
-                  $ref: '#/components/schemas/categoryNames'
+                        properties:
+                          name:
+                            type: string
+                            example: Red T-Shirt
+                            nullable: true
+                          price:
+                            type: number
+                            example: 100
+                          discountPrice:
+                            type: number
+                            example: 90
+                            nullable: true
+                          stock:
+                            type: integer
+                            example: 10
+                          sku:
+                            type: string
+                          imageIndex:
+                            type: number
+                            example: 0
+                          attributes:
+                            type: object
+                            description: Dynamic attributes of the product
+                            example:
+                              color: red
+                              size: M
+                    categories:
+                      $ref: '#/components/schemas/categoryNames'
+          multipart/form-data:
+            description: Add a product with images
+            schema:
+              type: object
+              properties:
+                product:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: T-Shirt
+                    description:
+                      type: string
+                    variants:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: Red T-Shirt
+                            nullable: true
+                          price:
+                            type: number
+                            example: 100
+                          discountPrice:
+                            type: number
+                            example: 90
+                            nullable: true
+                          stock:
+                            type: integer
+                            example: 10
+                          sku:
+                            type: string
+                          imageIndex:
+                            type: number
+                            example: 0
+                          attributes:
+                            type: object
+                            description: Dynamic attributes of the product
+                            example:
+                              color: red
+                              size: M
+                    categories:
+                      $ref: '#/components/schemas/categoryNames'
                 images:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      url:
-                        type: string
-                        example: 'https://example.com/image.jpg'
-                      altText:
-                        type: string
-                        example: Red T-Shirt
+                    type: string
+                    format: binary
       responses:
         '201':
           description: Product created
@@ -2446,7 +2489,7 @@ paths:
       tags:
         - Admin Products
       summary: Create product variants
-      description: 'Creates multiple product variants for the specified product. <br> If variant''s name is not provided, it will use the product name. <br> If image is provided, a new product image will be created and associated with the variant'
+      description: 'Creates multiple product variants for the specified product. <br> If variant''s name is not provided, it will use the product name. <br> If you want to add images to the variants, use multipart/form-data. <br>'
       security:
         - bearerAuth: []
       parameters:
@@ -2461,6 +2504,7 @@ paths:
         required: true
         content:
           application/json:
+            description: Add variants without images
             schema:
               type: object
               properties:
@@ -2483,19 +2527,46 @@ paths:
                       stock:
                         type: integer
                         example: 10
-                      image:
-                        type: object
-                        properties:
-                          url:
-                            type: string
-                            example: image.com/image.jpg
-                          altText:
-                            type: string
-                            nullable: true
                       sku:
                         type: string
                     allOf:
                       - $ref: '#/components/schemas/variantAttribute'
+          multipart/form-data:
+            description: 'Add variants with images <br> ImageIndex is the index of image in the images array. <br> If an image is not associated with any variant, it will be ignored.'
+            schema:
+              type: object
+              properties:
+                variants:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: Variant name
+                        nullable: true
+                      price:
+                        type: number
+                        example: 100
+                      discountPrice:
+                        type: number
+                        example: 90
+                        nullable: true
+                      imageIndex:
+                        type: number
+                        example: 0
+                      stock:
+                        type: integer
+                        example: 10
+                      sku:
+                        type: string
+                    allOf:
+                      - $ref: '#/components/schemas/variantAttribute'
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
       responses:
         '201':
           description: Variant created
@@ -2679,21 +2750,15 @@ paths:
         description: Image data to add
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
                 images:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      url:
-                        type: string
-                        example: 'https://example.com/image.jpg'
-                      altText:
-                        type: string
-                        example: A beautiful image
+                    type: string
+                    format: binary
       responses:
         '200':
           description: Images added
@@ -2810,7 +2875,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/error500'
   '/admin/products/{productID}/images/{imageID}':
-    patch:
+    put:
       tags:
         - Admin Products
       summary: Update an image of a product
@@ -2836,16 +2901,13 @@ paths:
         description: Image data to update
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
-                url:
+                image:
                   type: string
-                  example: 'https://example.com/image.jpg'
-                altText:
-                  type: string
-                  example: A beautiful image
+                  format: binary
       responses:
         '200':
           description: Image updated
@@ -6740,9 +6802,6 @@ components:
         url:
           type: string
           example: image.com/image.jpg
-        altText:
-          type: string
-          nullable: true
         displayOrder:
           type: integer
           example: 1

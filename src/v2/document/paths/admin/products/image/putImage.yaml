@@ -1,4 +1,4 @@
-# PATCH /admin/products/{productID}/images/{imageID}:
+# PUT /admin/products/{productID}/images/{imageID}:
 tags:
   - Admin Products
 summary: Update an image of a product
@@ -24,16 +24,14 @@ requestBody:
   description: Image data to update
   required: true
   content:
-    application/json:
+    multipart/form-data:
       schema:
         type: object
         properties:
-          url:
+          image:
             type: string
-            example: "https://example.com/image.jpg"
-          altText:
-            type: string
-            example: "A beautiful image"
+            format: binary
+
 responses:
   200:
     description: Image updated

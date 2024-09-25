@@ -4,7 +4,7 @@ tags:
 summary: Create product variants
 description: Creates multiple product variants for the specified product. <br>
   If variant's name is not provided, it will use the product name. <br>
-  If image is provided, a new product image will be created and associated with the variant
+  If you want to add images to the variants, use multipart/form-data. <br>
 security:
   - bearerAuth: []
 parameters:
@@ -19,6 +19,7 @@ requestBody:
   required: true
   content:
     application/json:
+      description: Add variants without images
       schema:
         type: object
         properties:
@@ -41,19 +42,50 @@ requestBody:
                 stock:
                   type: integer
                   example: 10
-                image:
-                  type: object
-                  properties:
-                    url:
-                      type: string
-                      example: "image.com/image.jpg"
-                    altText:
-                      type: string
-                      nullable: true
                 sku:
                   type: string
               allOf:
                 - $ref: "../../../../schemas/products/variantAttribute.yaml"
+
+    multipart/form-data:
+      description: Add variants with images <br>
+        ImageIndex is the index of image in the images array. <br>
+        If an image is not associated with any variant, it will be ignored.
+      schema:
+        type: object
+        properties:
+          variants:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Variant name"
+                  nullable: true
+                price:
+                  type: number
+                  example: 100
+                discountPrice:
+                  type: number
+                  example: 90
+                  nullable: true
+                imageIndex: 
+                  type: number
+                  example: 0
+                stock:
+                  type: integer
+                  example: 10
+                sku:
+                  type: string
+              allOf:
+                - $ref: "../../../../schemas/products/variantAttribute.yaml"
+          images:
+            type: array
+            items:
+              type: string
+              format: binary
+
 responses:
   201:
     description: Variant created

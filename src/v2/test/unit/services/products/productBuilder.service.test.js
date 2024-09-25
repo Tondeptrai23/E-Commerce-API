@@ -423,6 +423,71 @@ describe("ProductBuilderService", () => {
 
             expect(variant).toBeNull();
         });
+
+        test("should ignore images that are not associated with a variant", async () => {
+            const variants = [
+                {
+                    price: 70,
+                    sku: "sku6",
+                    stock: 10,
+                    attributes: {
+                        size: "M",
+                        color: "white",
+                    },
+                },
+                {
+                    price: 80,
+                    sku: "sku7",
+                    stock: 20,
+                    attributes: {
+                        size: "L",
+                        color: "black",
+                    },
+                },
+            ];
+
+            const images = [
+                {
+                    mimetype: "image/png",
+                    buffer: Buffer.from("image5"),
+                },
+                {
+                    mimetype: "image/jpg",
+                    buffer: Buffer.from("image6"),
+                },
+            ];
+
+            const result = await productBuilderService.addVariants(
+                "1",
+                variants,
+                images
+            );
+
+            expect(result).toEqual(
+                expect.objectContaining({
+                    productID: "1",
+                    name: "Crew Neck Short Sleeve T-Shirt",
+                    description:
+                        "A simple crew neck short sleeve t-shirt for everyday wear",
+                    variants: expect.any(Array),
+                })
+            );
+
+            expect(result.variants).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        sku: "sku6",
+                    }),
+                    expect.objectContaining({
+                        sku: "sku7",
+                    }),
+                ])
+            );
+
+            expect(result.images).toEqual(
+                expect.toBeOneOf([null, [], undefined])
+            );
+        });
     });
 
     describe("productBuilderService.addCategories", () => {

@@ -6,65 +6,111 @@ description: Creates a new product. <br>
   The product name must be unique. <br>
   The order of images in the request body determines their display order on the product. <br>
   The product should have at least 1 variant. <br>
-  If variant's name is not provided, it will use the product name
+  If variant's name is not provided, it will use the product name. <br>
+  If you want to add images to the variants, use multipart/form-data. <br>
 security:
   - bearerAuth: []
 requestBody:
   required: true
   content:
     application/json:
+      description: Add a product without images
       schema:
         type: object
         properties:
-          name: 
-            type: string
-            example: "T-Shirt"
-          description:
-            type: string
-          variants:
-            type: array
-            items:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: "Red T-Shirt"
-                  nullable: true
-                price:
-                  type: number
-                  example: 100
-                discountPrice:
-                  type: number
-                  example: 90
-                  nullable: true
-                stock:
-                  type: integer
-                  example: 10
-                sku:
-                  type: string
-                imageIndex:
-                  type: number
-                  example: 0
-                attributes:
+          product:
+            type: object
+            properties:
+              name: 
+                type: string
+                example: "T-Shirt"
+              description:
+                type: string
+              variants:
+                type: array
+                items:
                   type: object
-                  description: Dynamic attributes of the product
-                  example:
-                    color: "red"
-                    size: "M"
-          categories:
-            $ref: "../../../../schemas/products/categoryNames.yaml"
+                  properties:
+                    name:
+                      type: string
+                      example: "Red T-Shirt"
+                      nullable: true
+                    price:
+                      type: number
+                      example: 100
+                    discountPrice:
+                      type: number
+                      example: 90
+                      nullable: true
+                    stock:
+                      type: integer
+                      example: 10
+                    sku:
+                      type: string
+                    imageIndex:
+                      type: number
+                      example: 0
+                    attributes:
+                      type: object
+                      description: Dynamic attributes of the product
+                      example:
+                        color: "red"
+                        size: "M"
+              categories:
+                $ref: "../../../../schemas/products/categoryNames.yaml"
+
+    multipart/form-data:
+      description: Add a product with images
+      schema:
+        type: object
+        properties:
+          product:
+            type: object
+            properties:
+              name: 
+                type: string
+                example: "T-Shirt"
+              description:
+                type: string
+              variants:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: "Red T-Shirt"
+                      nullable: true
+                    price:
+                      type: number
+                      example: 100
+                    discountPrice:
+                      type: number
+                      example: 90
+                      nullable: true
+                    stock:
+                      type: integer
+                      example: 10
+                    sku:
+                      type: string
+                    imageIndex:
+                      type: number
+                      example: 0
+                    attributes:
+                      type: object
+                      description: Dynamic attributes of the product
+                      example:
+                        color: "red"
+                        size: "M"
+              categories:
+                $ref: "../../../../schemas/products/categoryNames.yaml"
           images:
             type: array
             items:
-              type: object
-              properties:
-                url:
-                  type: string
-                  example: "https://example.com/image.jpg"
-                altText:
-                  type: string
-                  example: "Red T-Shirt"
-                  
+              type: string
+              format: binary
+
+
 responses:
     201:
       description: Product created

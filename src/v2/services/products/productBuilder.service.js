@@ -287,10 +287,16 @@ class ProductBuilderService {
      * @returns {Promise<Product>} the product with the new variants added
      * @throws {ResourceNotFoundError} if the product is not found
      */
-    async addVariants(productID, variants, images) {
+    async addVariants(productID, variants, images = []) {
         return await db
             .transaction(async (t) => {
                 let builder = await this.productBuilder(productID);
+
+                // Ignore the image that is not assigned to any variant
+                images = images.filter((image, index) =>
+                    variants.some((variant) => variant.imageIndex === index)
+                );
+
                 builder = await builder.setImages(images);
                 builder = await builder.setVariants(variants);
                 await builder.uploadImages();

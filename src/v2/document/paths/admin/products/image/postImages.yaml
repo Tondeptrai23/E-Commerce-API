@@ -17,21 +17,15 @@ requestBody:
   description: Image data to add
   required: true
   content:
-    application/json:
+    multipart/form-data:
       schema:
         type: object
         properties:
           images:
             type: array
             items:
-              type: object
-              properties:
-                url:
-                  type: string
-                  example: "https://example.com/image.jpg"
-                altText:
-                  type: string
-                  example: "A beautiful image"
+              type: string
+              format: binary
 responses:
   200:
     description: Images added

@@ -49,8 +49,8 @@ adminProductImages:
     $ref: "./admin/products/image/patchImages.yaml"
 
 adminProductImage:
-  patch:
-    $ref: "./admin/products/image/patchImage.yaml"
+  put:
+    $ref: "./admin/products/image/putImage.yaml"
   delete:
     $ref: "./admin/products/image/deleteImage.yaml"
 
