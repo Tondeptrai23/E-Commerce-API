@@ -4,12 +4,13 @@ import productsController from "../../../controllers/products/products.controlle
 import {
     verifyToken,
     isAdmin,
-} from "../../../middlewares/auth/authJwt.middlewares.js";
+} from "../../../middlewares/auth/authJwt.middleware.js";
 import validator from "../../../middlewares/validators/index.validator.js";
 
 import productCategoryRoute from "./productCategory.route.js";
 import productImageRoute from "./image.route.js";
 import productVariantRoute from "./productVariant.route.js";
+import { imageConfig } from "../../../config/config.js";
 
 const adminProductRoute = Router();
 
@@ -35,6 +36,8 @@ adminProductRoute.get(
 
 adminProductRoute.post(
     "/products",
+    imageConfig.upload.array("images", imageConfig.MAX_COUNT),
+    validator.handleValidationFileUpload,
     validator.validateCreateProduct,
     validator.handleValidationErrors,
     verifyToken,

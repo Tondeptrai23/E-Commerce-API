@@ -59,6 +59,7 @@ const ProductSerializer = new Entity({
                 ...options,
                 includeTimestamps: options.includeTimestampsForAll,
             };
+
             return ImageSerializer.parse(obj.images, imageOptions);
         },
     ],

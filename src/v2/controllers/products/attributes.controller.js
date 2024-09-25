@@ -63,7 +63,7 @@ class AttributeController {
                     errors: [
                         {
                             error: "NotFound",
-                            message: "Attribute not found",
+                            message: err.message,
                         },
                     ],
                 });
@@ -108,7 +108,7 @@ class AttributeController {
                     errors: [
                         {
                             error: "Conflict",
-                            message: "Attribute name is taken",
+                            message: err.message,
                         },
                     ],
                 });
@@ -154,7 +154,7 @@ class AttributeController {
                     errors: [
                         {
                             error: "NotFound",
-                            message: "Attribute not found",
+                            message: err.message,
                         },
                     ],
                 });
@@ -164,7 +164,7 @@ class AttributeController {
                     errors: [
                         {
                             error: "Conflict",
-                            message: "Attribute name is taken",
+                            message: err.message,
                         },
                     ],
                 });
@@ -211,7 +211,7 @@ class AttributeController {
                     errors: [
                         {
                             error: "NotFound",
-                            message: "Attribute not found",
+                            message: err.message,
                         },
                     ],
                 });
@@ -221,7 +221,7 @@ class AttributeController {
                     errors: [
                         {
                             error: "Conflict",
-                            message: "Attribute name is taken",
+                            message: err.message,
                         },
                     ],
                 });
@@ -259,7 +259,7 @@ class AttributeController {
                     errors: [
                         {
                             error: "NotFound",
-                            message: "Attribute not found",
+                            message: err.message,
                         },
                     ],
                 });
@@ -316,7 +316,7 @@ class AttributeController {
                     errors: [
                         {
                             error: "NotFound",
-                            message: "Attribute not found",
+                            message: err.message,
                         },
                     ],
                 });

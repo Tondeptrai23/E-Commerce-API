@@ -1,4 +1,4 @@
-import { body, query } from "express-validator";
+import { body, query, header } from "express-validator";
 import {
     validateInteger,
     validateMinValue,
@@ -7,7 +7,6 @@ import {
     validateQueryNumber,
     validateSortingQuery,
     sanitizeSortingQuery,
-    stringRegex,
     validateQueryInteger,
     validateQueryString,
     validateQueryDate,
@@ -21,6 +20,18 @@ const validateDiscountPrice = (value) => {
 };
 
 const validateCreateVariants = [
+    body()
+        .if(
+            header("Content-Type").custom((value) => {
+                return value.includes("multipart/form-data");
+            })
+        )
+        .customSanitizer((value) => {
+            return {
+                variants: JSON.parse(value.variants),
+            };
+        }),
+
     body("variants")
         .notEmpty()
         .withMessage("Variants is required")
@@ -77,21 +88,6 @@ const validateCreateVariants = [
         .custom(validateInteger("Image index"))
         .custom(validateMinValue("Image index", 0)),
 
-    body("variants.*.image")
-        .optional()
-        .isObject()
-        .withMessage("Image should be an object"),
-
-    body("variants.*.image.url")
-        .optional()
-        .isString()
-        .withMessage("Image url should be a string"),
-
-    body("variants.*.image.altText")
-        .optional()
-        .isString()
-        .withMessage("Alt text should be a string"),
-
     // Validate variant discount price compare to price
     body("variants.*").custom(validateDiscountPrice),
 
@@ -105,7 +101,6 @@ const validateCreateVariants = [
             "imageIndex",
             "discountPrice",
             "attributes",
-            "image",
         ])
     ),
 ];

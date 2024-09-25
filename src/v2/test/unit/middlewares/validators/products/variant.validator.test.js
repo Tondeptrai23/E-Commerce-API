@@ -33,6 +33,39 @@ describe("validateCreateVariants", () => {
         expect(errors.isEmpty()).toBe(true);
     });
 
+    test("should return empty error array if all fields are valid 2", async () => {
+        const req = {
+            headers: {
+                "content-type": "multipart/form-data",
+            },
+            body: {
+                variants: JSON.stringify([
+                    {
+                        price: 100,
+                        stock: 100,
+                        sku: "example",
+                        imageIndex: 0,
+                        discountPrice: 90,
+                    },
+                    {
+                        price: 100,
+                        stock: 100,
+                        sku: "example2",
+                        imageIndex: 1,
+                        discountPrice: 80,
+                    },
+                ]),
+            },
+        };
+
+        for (const validationChain of validator.validateCreateVariants) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(true);
+    });
+
     test("should return errors if variants is empty array", async () => {
         const req = {
             body: {
@@ -242,38 +275,6 @@ describe("validateCreateVariants", () => {
             expect.arrayContaining([
                 expect.objectContaining({
                     msg: "Unexpected field: unexpectedField, unexpectedField2",
-                }),
-            ])
-        );
-    });
-
-    test("should return error if image fields are invalid", async () => {
-        const req = {
-            body: {
-                variants: [
-                    {
-                        image: {
-                            url: 123,
-                            altText: 123,
-                        },
-                    },
-                ],
-            },
-        };
-
-        for (const validationChain of validator.validateCreateVariants) {
-            await validationChain.run(req);
-        }
-        const errors = validationResult(req);
-
-        expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toEqual(
-            expect.arrayContaining([
-                expect.objectContaining({
-                    msg: "Image url should be a string",
-                }),
-                expect.objectContaining({
-                    msg: "Alt text should be a string",
                 }),
             ])
         );

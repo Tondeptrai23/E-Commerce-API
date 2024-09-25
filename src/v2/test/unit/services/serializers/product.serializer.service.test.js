@@ -12,8 +12,7 @@ const product = {
     images: [
         {
             imageID: "1",
-            altText: "http://example.com/image.jpg",
-            url: "http://example.com/image.jpg",
+            contentType: "image/jpeg",
             displayOrder: 1,
             productID: "1",
             updatedAt: new Date(date),
@@ -36,8 +35,7 @@ const product = {
             imageID: "1",
             image: {
                 imageID: "1",
-                altText: "http://example.com/image.jpg",
-                url: "http://example.com/image.jpg",
+                contentType: "image/jpeg",
                 displayOrder: 1,
                 productID: "1",
                 updatedAt: new Date(date),
@@ -95,8 +93,7 @@ describe("ProductSerializer", () => {
                 images: [
                     expect.objectContaining({
                         imageID: "1",
-                        altText: "http://example.com/image.jpg",
-                        url: "http://example.com/image.jpg",
+                        url: expect.stringContaining("1.jpg"),
                         displayOrder: 1,
                         productID: "1",
                     }),
@@ -108,7 +105,7 @@ describe("ProductSerializer", () => {
                         imageID: "1",
                         price: 100,
                         discountPrice: 90,
-                        image: "http://example.com/image.jpg",
+                        image: expect.stringContaining("1.jpg"),
                         stock: 10,
                         sku: "SKU",
                         attributes: {
@@ -137,8 +134,7 @@ describe("ProductSerializer", () => {
                 images: [
                     expect.objectContaining({
                         imageID: "1",
-                        altText: "http://example.com/image.jpg",
-                        url: "http://example.com/image.jpg",
+                        url: expect.stringContaining("1.jpg"),
                         displayOrder: 1,
                         productID: "1",
                     }),
@@ -153,7 +149,7 @@ describe("ProductSerializer", () => {
                         stock: 10,
                         sku: "SKU",
                         discountPrice: 90,
-                        image: "http://example.com/image.jpg",
+                        image: expect.stringContaining("1.jpg"),
                         attributes: {
                             color: "Red",
                             size: "M",
@@ -180,8 +176,7 @@ describe("ProductSerializer", () => {
                 images: [
                     expect.objectContaining({
                         imageID: "1",
-                        altText: "http://example.com/image.jpg",
-                        url: "http://example.com/image.jpg",
+                        url: expect.stringContaining("1.jpg"),
                         displayOrder: 1,
                         productID: "1",
                         createdAt: new Date(date).toISOString(),
@@ -198,7 +193,7 @@ describe("ProductSerializer", () => {
                         stock: 10,
                         sku: "SKU",
                         discountPrice: 90,
-                        image: "http://example.com/image.jpg",
+                        image: expect.stringContaining("1.jpg"),
                         createdAt: new Date(date).toISOString(),
                         updatedAt: new Date(date).toISOString(),
                         attributes: {

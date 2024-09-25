@@ -482,7 +482,8 @@ describe("ProductService", () => {
                 expect.arrayContaining([
                     expect.objectContaining({
                         imageID: expect.any(String),
-                        url: expect.any(String),
+                        contentType: expect.any(String),
+                        displayOrder: expect.any(Number),
                     }),
                 ])
             );

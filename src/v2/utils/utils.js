@@ -1,3 +1,6 @@
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
 const isEmptyObject = (obj) => {
     return Object.keys(obj).length === 0 && obj.constructor === Object;
 };
@@ -43,10 +46,21 @@ const toArray = (value) => {
     return Array.isArray(value) ? value : [value];
 };
 
+const getExtensionByContentType = (contentType) => {
+    const contentTypeMap = {
+        "image/jpeg": "jpg",
+        "image/png": "png",
+        "image/gif": "gif",
+        "image/bmp": "bmp",
+    };
+    return contentTypeMap[contentType] ?? "txt";
+};
+
 export {
     isEmptyObject,
     appendToObject,
     removeEmptyFields,
     flattenArray,
     toArray,
+    getExtensionByContentType,
 };

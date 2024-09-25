@@ -7,6 +7,9 @@ import {
     assertTokenInvalid,
     assertTokenNotProvided,
 } from "../../../utils.integration.js";
+import path from "path";
+import { jest } from "@jest/globals";
+import { s3 } from "../../../../../../config/aws.config.js";
 
 /**
  * Set up
@@ -29,6 +32,12 @@ beforeAll(async () => {
         password: "password1",
     });
     accessTokenUser = resUser.body.accessToken;
+
+    jest.spyOn(s3, "putObject").mockImplementation(() => {
+        return {
+            promise: jest.fn().mockResolvedValue(),
+        };
+    });
 });
 
 /**
@@ -42,18 +51,9 @@ describe("POST /api/v2/admin/products/:productID/images", () => {
         const res = await request(app)
             .post("/api/v2/admin/products/1/images")
             .set("Authorization", "Bearer " + accessToken)
-            .send({
-                images: [
-                    {
-                        url: "https://example.com/image.jpg",
-                        altText: "Image description",
-                    },
-                    {
-                        url: "https://example.com/image2.jpg",
-                        altText: "Image description 2",
-                    },
-                ],
-            });
+            .attach("images", path.resolve(process.cwd(), "db_diagram.png"))
+            .attach("images", path.resolve(process.cwd(), "db_diagram.png"));
+
         expect(res.status).toBe(StatusCodes.CREATED);
         expect(res.body).toEqual(
             expect.objectContaining({
@@ -66,13 +66,11 @@ describe("POST /api/v2/admin/products/:productID/images", () => {
         expect(res.body.images).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    url: "https://example.com/image.jpg",
-                    altText: "Image description",
+                    url: expect.stringContaining(".png"),
                     displayOrder: displayOrder,
                 }),
                 expect.objectContaining({
-                    url: "https://example.com/image2.jpg",
-                    altText: "Image description 2",
+                    url: expect.stringContaining(".png"),
                     displayOrder: displayOrder + 1,
                 }),
             ])
@@ -82,8 +80,7 @@ describe("POST /api/v2/admin/products/:productID/images", () => {
     it("should return 400 if images is not provided", async () => {
         const res = await request(app)
             .post("/api/v2/admin/products/1/images")
-            .set("Authorization", "Bearer " + accessToken)
-            .send({});
+            .set("Authorization", "Bearer " + accessToken);
 
         expect(res.status).toBe(StatusCodes.BAD_REQUEST);
         expect(res.body).toEqual(
@@ -98,15 +95,7 @@ describe("POST /api/v2/admin/products/:productID/images", () => {
         const res = await request(app)
             .post("/api/v2/admin/products/999/images")
             .set("Authorization", "Bearer " + accessToken)
-
-            .send({
-                images: [
-                    {
-                        url: "https://example.com/image.jpg",
-                        altText: "Image description",
-                    },
-                ],
-            });
+            .attach("images", path.resolve(process.cwd(), "db_diagram.png"));
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
         expect(res.body).toEqual(
@@ -125,14 +114,7 @@ describe("POST /api/v2/admin/products/:productID/images", () => {
     it("should return 401 if token is not provided", async () => {
         const res = await request(app)
             .post("/api/v2/admin/products/1/images")
-            .send({
-                images: [
-                    {
-                        url: "https://example.com/image.jpg",
-                        altText: "Image description",
-                    },
-                ],
-            });
+            .attach("images", path.resolve(process.cwd(), "db_diagram.png"));
 
         assertTokenNotProvided(res);
     });
@@ -141,14 +123,7 @@ describe("POST /api/v2/admin/products/:productID/images", () => {
         const res = await request(app)
             .post("/api/v2/admin/products/1/images")
             .set("Authorization", "Bearer " + "invalidtoken")
-            .send({
-                images: [
-                    {
-                        url: "https://example.com/image.jpg",
-                        altText: "Image description",
-                    },
-                ],
-            });
+            .attach("images", path.resolve(process.cwd(), "db_diagram.png"));
 
         assertTokenInvalid(res);
     });
@@ -157,14 +132,7 @@ describe("POST /api/v2/admin/products/:productID/images", () => {
         const res = await request(app)
             .post("/api/v2/admin/products/1/images")
             .set("Authorization", "Bearer " + accessTokenUser)
-            .send({
-                images: [
-                    {
-                        url: "https://example.com/image.jpg",
-                        altText: "Image description",
-                    },
-                ],
-            });
+            .attach("images", path.resolve(process.cwd(), "db_diagram.png"));
 
         assertNotAnAdmin(res);
     });

@@ -2,9 +2,17 @@ import Product from "../../../../models/products/product.model.js";
 import productBuilderService from "../../../../services/products/productBuilder.service.js";
 import seedData from "../../../../seedData.js";
 import Variant from "../../../../models/products/variant.model.js";
+import { jest } from "@jest/globals";
+import { s3 } from "../../../../config/aws.config.js";
 
 beforeAll(async () => {
     await seedData();
+
+    jest.spyOn(s3, "putObject").mockImplementation(() => {
+        return {
+            promise: jest.fn().mockResolvedValue(),
+        };
+    });
 });
 
 describe("ProductBuilderService", () => {
@@ -21,9 +29,11 @@ describe("ProductBuilderService", () => {
                 variants: null,
                 categories: null,
                 images: null,
+                imagesBuffer: null,
                 setProductInfo: expect.any(Function),
                 setVariants: expect.any(Function),
                 setCategories: expect.any(Function),
+                uploadImages: expect.any(Function),
                 setImages: expect.any(Function),
                 build: expect.any(Function),
             });
@@ -36,10 +46,12 @@ describe("ProductBuilderService", () => {
                 variants: null,
                 categories: null,
                 images: null,
+                imagesBuffer: null,
                 setProductInfo: expect.any(Function),
                 setVariants: expect.any(Function),
                 setCategories: expect.any(Function),
                 setImages: expect.any(Function),
+                uploadImages: expect.any(Function),
                 build: expect.any(Function),
             });
         });
@@ -114,12 +126,12 @@ describe("ProductBuilderService", () => {
             const productBuilder = await productBuilderService.productBuilder();
             const images = [
                 {
-                    url: "image1",
-                    thumbnail: "thumbnail1",
+                    mimetype: "image/png",
+                    buffer: Buffer.from("image1"),
                 },
                 {
-                    url: "image2",
-                    thumbnail: "thumbnail2",
+                    mimetype: "image/png",
+                    buffer: Buffer.from("image2"),
                 },
             ];
 
@@ -180,14 +192,15 @@ describe("ProductBuilderService", () => {
                 },
             ];
             const categories = ["tops", "male"];
+
             const images = [
                 {
-                    url: "image1",
-                    thumbnail: "thumbnail1",
+                    mimetype: "image/png",
+                    buffer: Buffer.from("image1"),
                 },
                 {
-                    url: "image2",
-                    thumbnail: "thumbnail2",
+                    mimetype: "image/bmp",
+                    buffer: Buffer.from("image2"),
                 },
             ];
 
@@ -218,10 +231,12 @@ describe("ProductBuilderService", () => {
             expect(result.images).toEqual(
                 expect.arrayContaining([
                     expect.objectContaining({
-                        url: "image1",
+                        contentType: "image/png",
+                        displayOrder: 1,
                     }),
                     expect.objectContaining({
-                        url: "image2",
+                        contentType: "image/bmp",
+                        displayOrder: 2,
                     }),
                 ])
             );
@@ -285,10 +300,12 @@ describe("ProductBuilderService", () => {
         test("should return a result object", async () => {
             const imagesData = [
                 {
-                    url: "image3",
+                    mimetype: "image/png",
+                    buffer: Buffer.from("image3"),
                 },
                 {
-                    url: "image4",
+                    mimetype: "image/jpg",
+                    buffer: Buffer.from("image4"),
                 },
             ];
 
@@ -310,10 +327,10 @@ describe("ProductBuilderService", () => {
             expect(result.images).toEqual(
                 expect.arrayContaining([
                     expect.objectContaining({
-                        url: "image3",
+                        contentType: "image/png",
                     }),
                     expect.objectContaining({
-                        url: "image4",
+                        contentType: "image/jpg",
                     }),
                 ])
             );

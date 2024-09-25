@@ -1,4 +1,5 @@
 import Entity from "./index.serializer.service.js";
+import imageService from "../products/image.service.js";
 
 const CartSerializer = new Entity({
     cartItemID: [
@@ -34,7 +35,7 @@ const CartSerializer = new Entity({
             default: null,
         },
         function (obj) {
-            return obj.image.url;
+            return imageService.signImageURL(obj.image);
         },
     ],
     quantity: [

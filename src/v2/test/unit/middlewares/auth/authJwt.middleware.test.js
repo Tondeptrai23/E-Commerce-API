@@ -1,5 +1,5 @@
 import seedData from "../../../../seedData.js";
-import * as authJwt from "../../../../middlewares/auth/authJwt.middlewares.js";
+import * as authJwt from "../../../../middlewares/auth/authJwt.middleware.js";
 import { jwt } from "../../../../config/auth.config.js";
 import { jest } from "@jest/globals";
 import tokenService from "../../../../services/auth/token.service.js";

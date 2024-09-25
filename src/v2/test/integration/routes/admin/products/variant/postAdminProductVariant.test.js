@@ -8,6 +8,7 @@ import {
     assertTokenNotProvided,
 } from "../../../utils.integration.js";
 import ProductImage from "../../../../../../models/products/productImage.model.js";
+import path from "path";
 
 /**
  * Set up
@@ -74,23 +75,20 @@ describe("POST /admin/products/:productID/variants", () => {
     });
 
     it("should create a variant 2", async () => {
+        const variantData = [
+            {
+                name: "variant1",
+                price: 100,
+                stock: 10,
+                sku: "sku2",
+            },
+        ];
+
         const res = await request(app)
             .post("/api/v2/admin/products/1/variants")
             .set("Authorization", `Bearer ${accessToken}`)
-            .send({
-                variants: [
-                    {
-                        name: "variant1",
-                        price: 100,
-                        stock: 10,
-                        sku: "sku2",
-                        image: {
-                            url: "url1",
-                            altText: "altText1",
-                        },
-                    },
-                ],
-            });
+            .field("variants", JSON.stringify(variantData))
+            .attach("images", path.resolve(process.cwd(), "db_diagram.png"));
 
         expect(res.statusCode).toEqual(StatusCodes.CREATED);
         expect(res.body).toEqual(
@@ -107,51 +105,34 @@ describe("POST /admin/products/:productID/variants", () => {
                 price: 100,
                 stock: 10,
                 sku: "sku2",
-                imageID: expect.any(String),
+                imageID: null,
                 productID: "1",
                 createdAt: expect.any(String),
                 updatedAt: expect.any(String),
             })
         );
-
-        const image = await ProductImage.findOne({
-            where: {
-                imageID: res.body.variants[0].imageID,
-            },
-        });
-        expect(image).toEqual(
-            expect.objectContaining({
-                imageID: expect.any(String),
-                url: "url1",
-                altText: "altText1",
-                createdAt: expect.any(Date),
-                updatedAt: expect.any(Date),
-            })
-        );
     });
 
     it("should create a variant 3", async () => {
+        const variantData = [
+            {
+                name: "variant1",
+                price: 100,
+                stock: 10,
+                sku: "sku3",
+                imageIndex: 0,
+                attributes: {
+                    color: "red",
+                    size: "S",
+                },
+            },
+        ];
+
         const res = await request(app)
             .post("/api/v2/admin/products/1/variants")
             .set("Authorization", `Bearer ${accessToken}`)
-            .send({
-                variants: [
-                    {
-                        name: "variant1",
-                        price: 100,
-                        stock: 10,
-                        sku: "sku3",
-                        image: {
-                            url: "url1",
-                            altText: "altText1",
-                        },
-                        attributes: {
-                            color: "red",
-                            size: "S",
-                        },
-                    },
-                ],
-            });
+            .field("variants", JSON.stringify(variantData))
+            .attach("images", path.resolve(process.cwd(), "db_diagram.png"));
 
         expect(res.statusCode).toEqual(StatusCodes.CREATED);
         expect(res.body).toEqual(
@@ -187,8 +168,8 @@ describe("POST /admin/products/:productID/variants", () => {
         expect(image).toEqual(
             expect.objectContaining({
                 imageID: expect.any(String),
-                url: "url1",
-                altText: "altText1",
+                contentType: "image/png",
+                displayOrder: expect.any(Number),
                 createdAt: expect.any(Date),
                 updatedAt: expect.any(Date),
             })
@@ -251,42 +232,38 @@ describe("POST /admin/products/:productID/variants", () => {
     });
 
     it("should create variants 2", async () => {
+        const variantData = [
+            {
+                name: "variant1",
+                price: 100,
+                stock: 10,
+                sku: "sku6",
+                imageIndex: 0,
+                attributes: {
+                    color: "red",
+                    size: "S",
+                },
+            },
+            {
+                name: "variant2",
+                price: 200,
+                discountPrice: 120,
+                stock: 20,
+                sku: "sku7",
+                imageIndex: 1,
+                attributes: {
+                    color: "blue",
+                    size: "M",
+                },
+            },
+        ];
+
         const res = await request(app)
             .post("/api/v2/admin/products/1/variants")
             .set("Authorization", `Bearer ${accessToken}`)
-            .send({
-                variants: [
-                    {
-                        name: "variant1",
-                        price: 100,
-                        stock: 10,
-                        sku: "sku6",
-                        image: {
-                            url: "url1",
-                            altText: "altText1",
-                        },
-                        attributes: {
-                            color: "red",
-                            size: "S",
-                        },
-                    },
-                    {
-                        name: "variant2",
-                        price: 200,
-                        discountPrice: 120,
-                        stock: 20,
-                        sku: "sku7",
-                        image: {
-                            url: "url2",
-                            altText: "altText2",
-                        },
-                        attributes: {
-                            color: "blue",
-                            size: "M",
-                        },
-                    },
-                ],
-            });
+            .field("variants", JSON.stringify(variantData))
+            .attach("images", path.resolve(process.cwd(), "db_diagram.png"))
+            .attach("images", path.resolve(process.cwd(), "db_diagram.png"));
 
         expect(res.statusCode).toEqual(StatusCodes.CREATED);
         expect(res.body).toEqual(
@@ -325,29 +302,14 @@ describe("POST /admin/products/:productID/variants", () => {
                 imageID: res.body.variants[0].imageID,
             },
         });
-        expect(image1).toEqual(
-            expect.objectContaining({
-                imageID: expect.any(String),
-                url: "url1",
-                altText: "altText1",
-                createdAt: expect.any(Date),
-                updatedAt: expect.any(Date),
-            })
-        );
+        expect(image1).not.toBeNull();
 
         const image2 = await ProductImage.findOne({
             where: {
                 imageID: res.body.variants[1].imageID,
             },
         });
-        expect(image2).toEqual(
-            expect.objectContaining({
-                imageID: expect.any(String),
-                url: "url2",
-                altText: "altText2",
-                createdAt: expect.any(Date),
-            })
-        );
+        expect(image2).not.toBeNull();
 
         expect(res.body.variants[0].attributes).toEqual(
             expect.objectContaining({

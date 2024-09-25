@@ -59,7 +59,6 @@ class CartService {
                 {
                     model: ProductImage,
                     as: "image",
-                    attributes: ["url"],
                 },
             ],
         });
@@ -92,7 +91,6 @@ class CartService {
                 {
                     model: ProductImage,
                     as: "image",
-                    attributes: ["url"],
                 },
             ],
             ...paginationConditions,
@@ -259,7 +257,6 @@ class CartService {
                             include: {
                                 model: ProductImage,
                                 as: "image",
-                                attributes: ["url"],
                             },
                         },
                         {
@@ -275,7 +272,6 @@ class CartService {
                 });
             })
             .catch((err) => {
-                console.log(err);
                 throw err;
             });
     }

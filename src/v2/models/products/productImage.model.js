@@ -10,13 +10,9 @@ ProductImage.init(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        url: {
+        contentType: {
             type: DataTypes.STRING,
             allowNull: false,
-        },
-        altText: {
-            type: DataTypes.STRING,
-            allowNull: true,
         },
         displayOrder: {
             type: DataTypes.INTEGER,
@@ -27,7 +23,6 @@ ProductImage.init(
         sequelize,
         modelName: "productImage",
         tableName: "product_images",
-        paranoid: true,
     }
 );
 

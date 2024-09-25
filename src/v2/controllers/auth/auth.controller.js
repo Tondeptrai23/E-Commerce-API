@@ -45,6 +45,7 @@ class AuthController {
                     ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
                     errors: [
@@ -126,6 +127,7 @@ class AuthController {
                     ],
                 });
             } else {
+                console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     success: false,
                     errors: [
@@ -150,6 +152,7 @@ class AuthController {
                 accessToken: accessToken,
             });
         } catch (err) {
+            console.log(err);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 errors: [
@@ -178,6 +181,7 @@ class AuthController {
                 refreshToken: refreshToken,
             });
         } catch (err) {
+            console.log(err);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 success: false,
                 errors: [

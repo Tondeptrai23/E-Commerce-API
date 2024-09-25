@@ -81,7 +81,6 @@ class VariantService {
                 {
                     model: ProductImage,
                     as: "image",
-                    attributes: ["url"],
                 },
             ],
             paranoid: !options.includeDeleted,
@@ -195,7 +194,6 @@ class VariantService {
                         {
                             model: ProductImage,
                             as: "image",
-                            attributes: ["url"],
                         },
                     ],
                 },
@@ -251,7 +249,6 @@ class VariantService {
                         {
                             model: ProductImage,
                             as: "image",
-                            attributes: ["url"],
                         },
                     ],
                 },
@@ -422,7 +419,6 @@ class VariantService {
                 {
                     model: ProductImage,
                     as: "image",
-                    attributes: ["url"],
                 },
             ],
             ...conditions.includeDeleted,

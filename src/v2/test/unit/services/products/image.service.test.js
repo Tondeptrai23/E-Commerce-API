@@ -1,22 +1,39 @@
-import productImageService from "../../../../services/products/productImage.service.js";
+import imageService from "../../../../services/products/image.service.js";
 import seedData from "../../../../seedData.js";
 import ProductImage from "../../../../models/products/productImage.model.js";
 import { ResourceNotFoundError } from "../../../../utils/error.js";
 import { BadRequestError } from "../../../../utils/error.js";
 import { jest } from "@jest/globals";
+import { s3 } from "../../../../config/aws.config.js";
 
 beforeAll(async () => {
     await seedData();
+
+    jest.spyOn(s3, "deleteObject").mockImplementation(() => {
+        return {
+            promise: jest.fn().mockResolvedValue(),
+        };
+    });
+
+    jest.spyOn(s3, "putObject").mockImplementation(() => {
+        return {
+            promise: jest.fn().mockResolvedValue(),
+        };
+    });
 }, 15000);
 
-describe("ProductImageService", () => {
+afterAll(() => {
+    jest.restoreAllMocks();
+});
+
+describe("imageService", () => {
     describe("getProductImage", () => {
         test("should throw ResourceNotFoundError if the product is not found", async () => {
             const productID = "7";
             const imageID = "101";
 
             await expect(
-                productImageService.getProductImage(productID, imageID)
+                imageService.getProductImage(productID, imageID)
             ).rejects.toThrow(ResourceNotFoundError);
         });
 
@@ -25,7 +42,7 @@ describe("ProductImageService", () => {
             const imageID = "111";
 
             await expect(
-                productImageService.getProductImage(productID, imageID)
+                imageService.getProductImage(productID, imageID)
             ).rejects.toThrow(ResourceNotFoundError);
         });
 
@@ -33,7 +50,7 @@ describe("ProductImageService", () => {
             const productID = "1";
             const imageID = "101";
 
-            const productImage = await productImageService.getProductImage(
+            const productImage = await imageService.getProductImage(
                 productID,
                 imageID
             );
@@ -51,7 +68,7 @@ describe("ProductImageService", () => {
             const imageData = { url: "https://example.com/image.jpg" };
 
             await expect(
-                productImageService.updateImage(productID, imageID, imageData)
+                imageService.updateImage(productID, imageID, imageData)
             ).rejects.toThrow(ResourceNotFoundError);
         });
 
@@ -61,7 +78,7 @@ describe("ProductImageService", () => {
             const imageData = { url: "https://example.com/image.jpg" };
 
             await expect(
-                productImageService.updateImage(productID, imageID, imageData)
+                imageService.updateImage(productID, imageID, imageData)
             ).rejects.toThrow(ResourceNotFoundError);
         });
 
@@ -69,10 +86,10 @@ describe("ProductImageService", () => {
             const productID = "1";
             const imageID = "101";
             const imageData = {
-                url: "https://example.com/new-image.jpg",
+                mimetype: "image/bmp",
             };
 
-            const updatedImage = await productImageService.updateImage(
+            const updatedImage = await imageService.updateImage(
                 productID,
                 imageID,
                 imageData
@@ -81,7 +98,7 @@ describe("ProductImageService", () => {
             expect(updatedImage).toBeInstanceOf(ProductImage);
             expect(updatedImage.productID).toBe(productID);
             expect(updatedImage.imageID).toBe(imageID);
-            expect(updatedImage.url).toBe(imageData.url);
+            expect(updatedImage.contentType).toBe(imageData.mimetype);
         });
     });
 
@@ -91,7 +108,7 @@ describe("ProductImageService", () => {
             const imageID = "201";
 
             await expect(
-                productImageService.deleteImage(productID, imageID)
+                imageService.deleteImage(productID, imageID)
             ).rejects.toThrow(ResourceNotFoundError);
         });
 
@@ -100,7 +117,7 @@ describe("ProductImageService", () => {
             const imageID = "111";
 
             await expect(
-                productImageService.deleteImage(productID, imageID)
+                imageService.deleteImage(productID, imageID)
             ).rejects.toThrow(ResourceNotFoundError);
         });
 
@@ -108,18 +125,16 @@ describe("ProductImageService", () => {
             const productID = "2";
             const imageID = "201";
 
-            const images = await productImageService.getProductImages(
-                productID
-            );
-            await productImageService.deleteImage(productID, imageID);
+            const images = await imageService.getProductImages(productID);
+            await imageService.deleteImage(productID, imageID);
 
             // Check if the image is deleted
             await expect(
-                productImageService.getProductImage(productID, imageID)
+                imageService.getProductImage(productID, imageID)
             ).rejects.toThrow(ResourceNotFoundError);
 
             // Check if the display order is updated
-            const updatedImages = await productImageService.getProductImages(
+            const updatedImages = await imageService.getProductImages(
                 productID
             );
             expect(updatedImages.length).toBe(images.length - 1);
@@ -137,14 +152,11 @@ describe("ProductImageService", () => {
             });
 
             for (let i = 0; i < images.length - 1; i++) {
-                await productImageService.deleteImage(
-                    productID,
-                    images[i].imageID
-                );
+                await imageService.deleteImage(productID, images[i].imageID);
             }
 
             await expect(
-                productImageService.deleteImage(
+                imageService.deleteImage(
                     productID,
                     images[images.length - 1].imageID
                 )
@@ -168,12 +180,12 @@ describe("ProductImageService", () => {
             });
 
             await expect(
-                productImageService.deleteImage(productID, images[0].imageID)
+                imageService.deleteImage(productID, images[0].imageID)
             ).rejects.toThrow();
 
             jest.restoreAllMocks();
 
-            const updatedImages = await productImageService.getProductImages(
+            const updatedImages = await imageService.getProductImages(
                 productID
             );
             expect(updatedImages.length).toBe(images.length);
@@ -185,14 +197,14 @@ describe("ProductImageService", () => {
             const productID = "7";
 
             await expect(
-                productImageService.getProductImages(productID)
+                imageService.getProductImages(productID)
             ).rejects.toThrow(ResourceNotFoundError);
         });
 
         test("should return an array of product images if the product exists", async () => {
             const productID = "1";
 
-            const productImages = await productImageService.getProductImages(
+            const productImages = await imageService.getProductImages(
                 productID
             );
 
@@ -209,7 +221,7 @@ describe("ProductImageService", () => {
             const imagesData = ["102", "604", "101", "103"];
 
             await expect(
-                productImageService.setImagesOrder(productID, imagesData)
+                imageService.setImagesOrder(productID, imagesData)
             ).rejects.toThrow(ResourceNotFoundError);
         });
 
@@ -217,15 +229,15 @@ describe("ProductImageService", () => {
             const productID = "1";
             const imagesData = ["102", "604", "101", "103"];
 
-            const productImages = await productImageService.getProductImages(
+            const productImages = await imageService.getProductImages(
                 productID
             );
 
             await expect(
-                productImageService.setImagesOrder(productID, imagesData)
+                imageService.setImagesOrder(productID, imagesData)
             ).rejects.toThrow(ResourceNotFoundError);
 
-            const updatedImages = await productImageService.getProductImages(
+            const updatedImages = await imageService.getProductImages(
                 productID
             );
 
@@ -240,7 +252,7 @@ describe("ProductImageService", () => {
             const productID = "1";
             const imagesData = ["102", "104", "101", "103"];
 
-            const updatedImages = await productImageService.setImagesOrder(
+            const updatedImages = await imageService.setImagesOrder(
                 productID,
                 imagesData
             );

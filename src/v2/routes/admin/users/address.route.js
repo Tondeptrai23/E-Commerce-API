@@ -5,7 +5,7 @@ import addressController from "../../../controllers/users/address.controller.js"
 import {
     verifyToken,
     isAdmin,
-} from "../../../middlewares/auth/authJwt.middlewares.js";
+} from "../../../middlewares/auth/authJwt.middleware.js";
 
 const adminAddressRoute = Router();
 

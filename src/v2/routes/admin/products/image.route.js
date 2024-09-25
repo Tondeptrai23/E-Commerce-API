@@ -1,10 +1,11 @@
 import { Router } from "express";
-import productImageController from "../../../controllers/products/productImages.controller.js";
+import imageController from "../../../controllers/products/images.controller.js";
 import {
     verifyToken,
     isAdmin,
-} from "../../../middlewares/auth/authJwt.middlewares.js";
+} from "../../../middlewares/auth/authJwt.middleware.js";
 import validator from "../../../middlewares/validators/index.validator.js";
+import { imageConfig } from "../../../config/config.js";
 
 const productImageRoute = Router();
 
@@ -12,16 +13,18 @@ productImageRoute.get(
     "/products/:productID/images",
     verifyToken,
     isAdmin,
-    productImageController.getProductImages
+    imageController.getProductImages
 );
 
 productImageRoute.post(
     "/products/:productID/images",
+    imageConfig.upload.array("images", imageConfig.MAX_COUNT),
+    validator.handleValidationFileUpload,
     validator.validateCreateImages,
     validator.handleValidationErrors,
     verifyToken,
     isAdmin,
-    productImageController.addProductImages
+    imageController.addProductImages
 );
 
 productImageRoute.patch(
@@ -30,23 +33,25 @@ productImageRoute.patch(
     validator.handleValidationErrors,
     verifyToken,
     isAdmin,
-    productImageController.setImagesOrder
+    imageController.setImagesOrder
 );
 
-productImageRoute.patch(
+productImageRoute.put(
     "/products/:productID/images/:imageID",
-    validator.validatePatchImage,
+    imageConfig.upload.single("image"),
+    validator.handleValidationFileUpload,
+    validator.validateCreateImages,
     validator.handleValidationErrors,
     verifyToken,
     isAdmin,
-    productImageController.updateProductImage
+    imageController.replaceProductImage
 );
 
 productImageRoute.delete(
     "/products/:productID/images/:imageID",
     verifyToken,
     isAdmin,
-    productImageController.deleteProductImage
+    imageController.deleteProductImage
 );
 
 export default productImageRoute;

@@ -7,6 +7,9 @@ import {
     assertTokenInvalid,
     assertTokenNotProvided,
 } from "../../../utils.integration.js";
+import path from "path";
+import { jest } from "@jest/globals";
+import { s3 } from "../../../../../../config/aws.config.js";
 
 /**
  * Set up
@@ -29,20 +32,23 @@ beforeAll(async () => {
         password: "password1",
     });
     accessTokenUser = resUser.body.accessToken;
+
+    jest.spyOn(s3, "putObject").mockImplementation(() => {
+        return {
+            promise: jest.fn().mockResolvedValue(),
+        };
+    });
 });
 
 /**
  * Tests
  */
-describe("PATCH /api/v2/admin/products/:productID/images/:imageID", () => {
+describe("PUT /api/v2/admin/products/:productID/images/:imageID", () => {
     it("should update an image of a product", async () => {
         const res = await request(app)
-            .patch("/api/v2/admin/products/1/images/101")
+            .put("/api/v2/admin/products/1/images/101")
             .set("Authorization", "Bearer " + accessToken)
-            .send({
-                url: "https://example.com/image.jpg",
-                altText: "Image description",
-            });
+            .attach("image", path.resolve(process.cwd(), "db_diagram.png"));
 
         expect(res.status).toBe(StatusCodes.OK);
         expect(res.body).toEqual(
@@ -50,22 +56,17 @@ describe("PATCH /api/v2/admin/products/:productID/images/:imageID", () => {
                 success: true,
                 image: expect.objectContaining({
                     imageID: "101",
-                    url: "https://example.com/image.jpg",
-                    altText: "Image description",
+                    url: expect.stringContaining("101.png"),
                     displayOrder: expect.any(Number),
                 }),
             })
         );
     });
 
-    it("should return 400 if url is invalid", async () => {
+    it("should return 400 if image is not provided", async () => {
         const res = await request(app)
-            .patch("/api/v2/admin/products/1/images/101")
-            .set("Authorization", "Bearer " + accessToken)
-            .send({
-                url: 123123,
-                altText: "Image description",
-            });
+            .put("/api/v2/admin/products/1/images/101")
+            .set("Authorization", "Bearer " + accessToken);
 
         expect(res.status).toBe(StatusCodes.BAD_REQUEST);
         expect(res.body).toEqual(
@@ -78,13 +79,9 @@ describe("PATCH /api/v2/admin/products/:productID/images/:imageID", () => {
 
     it("should return 404 if product is not found", async () => {
         const res = await request(app)
-            .patch("/api/v2/admin/products/999/images/101")
+            .put("/api/v2/admin/products/999/images/101")
             .set("Authorization", "Bearer " + accessToken)
-
-            .send({
-                url: "https://example.com/image.jpg",
-                altText: "Image description",
-            });
+            .attach("image", path.resolve(process.cwd(), "db_diagram.png"));
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
         expect(res.body).toEqual(
@@ -102,13 +99,9 @@ describe("PATCH /api/v2/admin/products/:productID/images/:imageID", () => {
 
     it("should return 404 if image is not found", async () => {
         const res = await request(app)
-            .patch("/api/v2/admin/products/1/images/999")
+            .put("/api/v2/admin/products/1/images/999")
             .set("Authorization", "Bearer " + accessToken)
-
-            .send({
-                url: "https://example.com/image.jpg",
-                altText: "Image description",
-            });
+            .attach("image", path.resolve(process.cwd(), "db_diagram.png"));
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
         expect(res.body).toEqual(
@@ -126,35 +119,26 @@ describe("PATCH /api/v2/admin/products/:productID/images/:imageID", () => {
 
     it("should return 401 if token is not provided", async () => {
         const res = await request(app)
-            .patch("/api/v2/admin/products/1/images/101")
-            .send({
-                url: "https://example.com/image.jpg",
-                altText: "Image description",
-            });
+            .put("/api/v2/admin/products/1/images/101")
+            .attach("image", path.resolve(process.cwd(), "db_diagram.png"));
 
         assertTokenNotProvided(res);
     });
 
     it("should return 401 if token is invalid", async () => {
         const res = await request(app)
-            .patch("/api/v2/admin/products/1/images/101")
+            .put("/api/v2/admin/products/1/images/101")
             .set("Authorization", "Bearer " + "invalidtoken")
-            .send({
-                url: "https://example.com/image.jpg",
-                altText: "Image description",
-            });
+            .attach("image", path.resolve(process.cwd(), "db_diagram.png"));
 
         assertTokenInvalid(res);
     });
 
     it("should return 403 if user is not an admin", async () => {
         const res = await request(app)
-            .patch("/api/v2/admin/products/1/images/101")
+            .put("/api/v2/admin/products/1/images/101")
             .set("Authorization", "Bearer " + accessTokenUser)
-            .send({
-                url: "https://example.com/image.jpg",
-                altText: "Image description",
-            });
+            .attach("image", path.resolve(process.cwd(), "db_diagram.png"));
 
         assertNotAnAdmin(res);
     });

@@ -1,53 +1,14 @@
-import { body } from "express-validator";
-import {
-    validateInteger,
-    validateMinValue,
-    validateUnexpectedFields,
-} from "../utils.validator.js";
+import { body, header } from "express-validator";
+import { validateInteger, validateMinValue } from "../utils.validator.js";
 
 const validateCreateImages = [
-    body("images")
-        .notEmpty()
-        .withMessage("Images is required")
-        .isArray()
-        .withMessage("Images should be an array")
-        .custom((value) => {
-            if (value.length === 0) {
-                throw new Error("Images should have at least one item");
-            }
-            return true;
-        }),
+    header("Content-Type").custom((value) => {
+        if (!value || value.includes("multipart/form-data") === false) {
+            throw new Error("Content-Type should be multipart/form-data");
+        }
 
-    body("images.*.url")
-        .notEmpty()
-        .withMessage("URL is required")
-        .isString()
-        .withMessage("URL should be a string"),
-
-    body("images.*.altText")
-        .optional()
-        .isString()
-        .withMessage("Alt text should be a string"),
-
-    body("images.*").custom(validateUnexpectedFields(["url", "altText"])),
-];
-
-const validatePatchImage = [
-    body("imageID").not().exists().withMessage("ID should not be provided"),
-
-    body("url").optional().isString().withMessage("URL should be a string"),
-
-    body("images.*.altText")
-        .optional()
-        .isString()
-        .withMessage("Alt text should be a string"),
-
-    body("displayOrder")
-        .not()
-        .exists()
-        .withMessage(
-            "Display order should not be provided. Use POST /images/reorder instead"
-        ),
+        return true;
+    }),
 ];
 
 const validateReorderImages = [
@@ -74,4 +35,4 @@ const validateReorderImages = [
         .custom(validateMinValue("Display order", 1)),
 ];
 
-export { validateCreateImages, validatePatchImage, validateReorderImages };
+export { validateCreateImages, validateReorderImages };

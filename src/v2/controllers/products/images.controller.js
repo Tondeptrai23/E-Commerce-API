@@ -1,10 +1,10 @@
 import { StatusCodes } from "http-status-codes";
 import { ResourceNotFoundError, BadRequestError } from "../../utils/error.js";
-import productImageService from "../../services/products/productImage.service.js";
+import imageService from "../../services/products/image.service.js";
 import productBuilderService from "../../services/products/productBuilder.service.js";
 import ImageSerializer from "../../services/serializers/image.serializer.service.js";
 
-class ProductImageController {
+class ImageController {
     async getProductImages(req, res) {
         try {
             // Get request body
@@ -12,16 +12,13 @@ class ProductImageController {
             const isAdmin = req.admin ? true : false;
 
             // Call services
-            const images = await productImageService.getProductImages(
-                productID,
-                {
-                    includeDeleted: isAdmin,
-                }
-            );
+            const images = await imageService.getProductImages(productID, {
+                includeDeleted: isAdmin,
+            });
 
             // Serialize data
             const serializedImages = ImageSerializer.parse(images, {
-                includeTimestamps: isAdmin,
+                includeTimestamps: true,
             });
 
             // Response
@@ -59,7 +56,7 @@ class ProductImageController {
         try {
             // Get request body
             const { productID } = req.params;
-            const { images } = req.body;
+            const images = req.files;
 
             // Call services
             const product = await productBuilderService.addImages(
@@ -103,21 +100,17 @@ class ProductImageController {
         }
     }
 
-    async updateProductImage(req, res) {
+    async replaceProductImage(req, res) {
         try {
             // Get request body
             const { productID } = req.params;
             const { imageID } = req.params;
-            const { url, altText } = req.body;
 
             // Call services
-            const image = await productImageService.updateImage(
+            const image = await imageService.updateImage(
                 productID,
                 imageID,
-                {
-                    url,
-                    altText,
-                }
+                req.file
             );
 
             // Serialize data
@@ -163,7 +156,7 @@ class ProductImageController {
             const { images } = req.body;
 
             // Call services
-            const updatedImages = await productImageService.setImagesOrder(
+            const updatedImages = await imageService.setImagesOrder(
                 productID,
                 images
             );
@@ -211,7 +204,7 @@ class ProductImageController {
             const { imageID } = req.params;
 
             // Call services
-            await productImageService.deleteImage(productID, imageID);
+            await imageService.deleteImage(productID, imageID);
 
             // Response
             res.status(StatusCodes.OK).json({
@@ -254,4 +247,4 @@ class ProductImageController {
     }
 }
 
-export default new ProductImageController();
+export default new ImageController();

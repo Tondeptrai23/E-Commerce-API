@@ -10,7 +10,8 @@ describe("Cart Serializer", () => {
             discountPrice: 90,
             extraField: "extraField",
             image: {
-                url: "imageURL",
+                imageID: "imageID",
+                contentType: "image/png",
                 extraField: "extraField",
             },
             cartItem: {
@@ -29,7 +30,7 @@ describe("Cart Serializer", () => {
             name: "name",
             price: 100,
             discountPrice: 90,
-            image: "imageURL",
+            image: expect.stringContaining("imageID.png"),
             quantity: 2,
             totalPrice: 180,
         });
@@ -70,7 +71,8 @@ describe("Cart Serializer", () => {
                 price: 100,
                 discountPrice: 90,
                 image: {
-                    url: "imageURL1",
+                    imageID: "imageID",
+                    contentType: "image/png",
                 },
                 cartItem: {
                     cartItemID: "cartItemID1",
@@ -99,7 +101,7 @@ describe("Cart Serializer", () => {
                 name: "name1",
                 price: 100,
                 discountPrice: 90,
-                image: "imageURL1",
+                image: expect.stringContaining("imageID.png"),
                 quantity: 2,
                 totalPrice: 180,
             },

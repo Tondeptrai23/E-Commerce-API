@@ -91,7 +91,6 @@ class ProductService {
                 {
                     model: ProductImage,
                     as: "images",
-                    paranoid: !options.includeDeleted,
                 },
                 {
                     model: Variant,

@@ -560,7 +560,6 @@ const getIncludeOptions = () => {
             include: {
                 model: ProductImage,
                 as: "image",
-                attributes: ["url"],
             },
         },
         {

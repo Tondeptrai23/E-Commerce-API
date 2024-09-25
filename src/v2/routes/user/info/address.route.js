@@ -1,7 +1,7 @@
 import { Router } from "express";
 import addressController from "../../../controllers/users/address.controller.js";
 
-import { verifyToken } from "../../../middlewares/auth/authJwt.middlewares.js";
+import { verifyToken } from "../../../middlewares/auth/authJwt.middleware.js";
 import validator from "../../../middlewares/validators/index.validator.js";
 
 const userAddressRoute = Router();

@@ -1,4 +1,5 @@
 import Entity from "./index.serializer.service.js";
+import imageService from "../products/image.service.js";
 
 const VariantSerializer = new Entity({
     variantID: {
@@ -39,7 +40,7 @@ const VariantSerializer = new Entity({
             type: "string",
         },
         function (obj) {
-            return obj.image.url;
+            return imageService.signImageURL(obj.image);
         },
     ],
 

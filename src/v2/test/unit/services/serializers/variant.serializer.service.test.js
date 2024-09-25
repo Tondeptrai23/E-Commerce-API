@@ -17,8 +17,7 @@ const variant = {
     extraField: "Extra Field",
     image: {
         imageID: "1",
-        thumbnail: "http://example.com/image.jpg",
-        url: "http://example.com/image.jpg",
+        contentType: "image/jpeg",
         displayOrder: 1,
         productID: "1",
         updatedAt: new Date(date),
@@ -67,7 +66,7 @@ describe("VariantSerializer", () => {
                 discountPrice: 90,
                 sku: "SKU",
                 imageID: "1",
-                image: "http://example.com/image.jpg",
+                image: expect.stringContaining("1.jpg"),
                 attributes: {
                     color: "Red",
                     size: "M",
@@ -91,7 +90,7 @@ describe("VariantSerializer", () => {
                 discountPrice: 90,
                 sku: "SKU",
                 imageID: "1",
-                image: "http://example.com/image.jpg",
+                image: expect.stringContaining("1.jpg"),
                 attributes: {
                     color: "Red",
                     size: "M",

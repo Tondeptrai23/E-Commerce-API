@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import multer from "multer";
 import path from "path";
 
 dotenv.config({
@@ -61,6 +62,40 @@ const serverConfig = {
     FRONT_END_URL: process.env.FRONT_END_URL,
 };
 
+const imageConfig = {
+    upload: multer({
+        storage: multer.memoryStorage(),
+        limits: {
+            fileSize: 5 * 1024 * 1024, // 5MB
+        },
+        fileFilter: (req, file, cb) => {
+            // Define the allowed MIME types
+            const allowedMimeTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/gif",
+                "image/bmp",
+            ];
+
+            if (allowedMimeTypes.includes(file.mimetype)) {
+                // Accept the file
+                cb(null, true);
+            } else {
+                // Reject the file
+                cb(
+                    new Error(
+                        "Invalid file type. Only JPEG, PNG, and PDF are allowed."
+                    ),
+                    false
+                );
+            }
+        },
+    }),
+
+    MAX_COUNT: 10,
+};
+
+process.env.AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE = "1"; // Suppress the warning message
 const awsConfig = {
     ACCESS_KEY: process.env.AWS_ACCESS_KEY,
     SECRET_KEY: process.env.AWS_SECRET_KEY,
@@ -79,5 +114,6 @@ export {
     dbConfig,
     serverConfig,
     googleConfig,
+    imageConfig,
     awsConfig,
 };

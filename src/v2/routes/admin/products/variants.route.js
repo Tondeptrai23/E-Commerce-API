@@ -4,7 +4,7 @@ import validator from "../../../middlewares/validators/index.validator.js";
 import {
     verifyToken,
     isAdmin,
-} from "../../../middlewares/auth/authJwt.middlewares.js";
+} from "../../../middlewares/auth/authJwt.middleware.js";
 
 import variantController from "../../../controllers/products/variants.controller.js";
 

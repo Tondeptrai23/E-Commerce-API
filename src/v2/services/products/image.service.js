@@ -2,8 +2,11 @@ import { db } from "../../models/index.model.js";
 import Product from "../../models/products/product.model.js";
 import ProductImage from "../../models/products/productImage.model.js";
 import { BadRequestError, ResourceNotFoundError } from "../../utils/error.js";
+import { awsConfig } from "../../config/config.js";
+import { getExtensionByContentType } from "../../utils/utils.js";
+import { s3, cloudfront } from "../../config/aws.config.js";
 
-class ProductImageService {
+class ImageService {
     /**
      * Get a product image
      *
@@ -36,18 +39,33 @@ class ProductImageService {
     }
 
     /**
-     * Update the images of a product
+     * Update an image with the given productID and imageID
      *
      * @param {String} productID the product ID to be updated
      * @param {String} imageID the image ID to be updated
-     * @param {Object} imageData the image data to be updated
+     * @param {Object} image the image to be updated
      * @returns {Promise<ProductImage>} the updated image
-     * @throws {ResourceNotFoundError} if the product or image is not found
      */
-    async updateImage(productID, imageID, imageData) {
-        const image = await this.getProductImage(productID, imageID);
-        await image.update(imageData);
-        return image;
+    async updateImage(productID, imageID, image) {
+        let oldImage = await this.getProductImage(productID, imageID);
+
+        return await db
+            .transaction(async (t) => {
+                oldImage = await oldImage.update({
+                    contentType: image.mimetype,
+                });
+
+                await this.uploadImage(
+                    oldImage.imageID,
+                    image.buffer,
+                    image.mimetype
+                );
+
+                return oldImage;
+            })
+            .catch((error) => {
+                throw error;
+            });
     }
 
     /**
@@ -83,6 +101,13 @@ class ProductImageService {
 
         return await db
             .transaction(async (t) => {
+                await s3
+                    .deleteObject({
+                        Bucket: awsConfig.BUCKET_NAME,
+                        Key: images[imageIndex].fileName,
+                    })
+                    .promise();
+
                 await images[imageIndex].destroy();
 
                 // Update display order for remaining images
@@ -168,6 +193,51 @@ class ProductImageService {
                 throw error;
             });
     }
+
+    /**
+     * Sign a URL for a product image
+     *
+     * @param {ProductImage} image the image to be signed
+     * @returns {String} the signed URL
+     */
+    signImageURL(image) {
+        if (!image) {
+            return null;
+        }
+
+        const signedURL = cloudfront.getSignedUrl({
+            url: `${awsConfig.CLOUDFRONT_URL}/${
+                image.imageID
+            }.${getExtensionByContentType(image.contentType)}`,
+
+            expires: Math.floor(Date.now() / 1000) + 60 * 60,
+
+            headers: {
+                "Content-Type": image.contentType,
+            },
+        });
+
+        return signedURL;
+    }
+
+    /**
+     * Upload an image to S3
+     *
+     * @param {String} fileName the name of the file
+     * @param {Buffer} buffer the buffer of the image
+     * @param {String} contentType the content type of the image
+     * @returns {Promise<void>}
+     */
+    async uploadImage(fileName, buffer, contentType) {
+        await s3
+            .putObject({
+                Bucket: awsConfig.BUCKET_NAME,
+                Key: `${fileName}.${getExtensionByContentType(contentType)}`,
+                Body: buffer,
+                ContentType: contentType,
+            })
+            .promise();
+    }
 }
 
-export default new ProductImageService();
+export default new ImageService();

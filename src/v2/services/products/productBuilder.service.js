@@ -7,6 +7,7 @@ import variantService from "./variant.service.js";
 import { ResourceNotFoundError } from "../../utils/error.js";
 import { db } from "../../models/index.model.js";
 import ProductCategory from "../../models/products/productCategory.model.js";
+import imageService from "./image.service.js";
 
 class ProductBuilderService {
     /**
@@ -31,6 +32,7 @@ class ProductBuilderService {
             variants: null,
             categories: null,
             images: null,
+            imagesBuffer: null,
 
             /**
              * Set the product info for the product builder
@@ -111,17 +113,28 @@ class ProductBuilderService {
                     return this;
                 }
 
-                images = images.map((image) => {
-                    return {
-                        url: image.url,
-                        altText: image.altText,
-                        productID: this.product.productID,
-                    };
-                });
+                const { createdImages, imagesBuffer } = images.reduce(
+                    (acc, image) => {
+                        const createdImage = ProductImage.build({
+                            productID: this.product.productID,
+                            contentType: image.mimetype,
+                        });
 
-                images = await ProductImage.bulkCreate(images);
+                        acc.createdImages.push(createdImage.dataValues);
 
-                this.images = images;
+                        acc.imagesBuffer.push({
+                            buffer: image.buffer,
+                            contentType: image.mimetype,
+                            fileName: createdImage.imageID,
+                        });
+                        return acc;
+                    },
+                    { createdImages: [], imagesBuffer: [] }
+                );
+
+                this.images = await ProductImage.bulkCreate(createdImages);
+                this.imagesBuffer = imagesBuffer;
+
                 return this;
             },
 
@@ -185,6 +198,31 @@ class ProductBuilderService {
 
                 return result;
             },
+
+            /**
+             * Upload the images to the S3
+             * Should be called after setting the product info, variants, categories, and images
+             * to avoid rollback if an error occurs
+             *
+             * @returns {Promise<Object>} this product builder object
+             */
+            async uploadImages() {
+                if (!this.imagesBuffer) {
+                    return this;
+                }
+
+                await Promise.all(
+                    this.imagesBuffer.map(async (buffer, index) => {
+                        return await imageService.uploadImage(
+                            this.images[index].imageID,
+                            buffer.buffer,
+                            buffer.contentType
+                        );
+                    })
+                );
+
+                return this;
+            },
         };
     }
 
@@ -207,8 +245,10 @@ class ProductBuilderService {
                 builder = await builder.setImages(images);
                 builder = await builder.setVariants(variants);
                 builder = await builder.setCategories(categories);
+                await builder.uploadImages();
+                const product = await builder.build();
 
-                return await builder.build();
+                return product;
             })
             .catch(async (err) => {
                 throw err;
@@ -228,6 +268,7 @@ class ProductBuilderService {
             .transaction(async (t) => {
                 let builder = await this.productBuilder(productID);
                 builder = await builder.setImages(imagesData);
+                await builder.uploadImages();
                 const product = await builder.build();
 
                 return product;
@@ -242,30 +283,17 @@ class ProductBuilderService {
      *
      * @param {String} productID the product ID to be updated
      * @param {Object} variants the variants to be added
+     * @param {Array<Object>} images the images to be added to the variants
      * @returns {Promise<Product>} the product with the new variants added
      * @throws {ResourceNotFoundError} if the product is not found
      */
-    async addVariants(productID, variants) {
+    async addVariants(productID, variants, images) {
         return await db
             .transaction(async (t) => {
                 let builder = await this.productBuilder(productID);
-
-                // Preprocess
-                const { images, variants: newVariants } = variants.reduce(
-                    (acc, variant) => {
-                        if (variant.image) {
-                            acc.images.push(variant.image);
-                            variant.imageIndex = acc.images.length - 1;
-                            delete variant.image;
-                        }
-                        acc.variants.push(variant);
-                        return acc;
-                    },
-                    { images: [], variants: [] }
-                );
-
                 builder = await builder.setImages(images);
-                builder = await builder.setVariants(newVariants);
+                builder = await builder.setVariants(variants);
+                await builder.uploadImages();
                 const product = await builder.build();
 
                 return product;

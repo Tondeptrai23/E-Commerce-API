@@ -1,6 +1,5 @@
-import { body, query } from "express-validator";
+import { body, header, query } from "express-validator";
 import { validateCreateVariants } from "./variant.validator.js";
-import { validateCreateImages } from "./image.validator.js";
 import { validateAddCategoriesForProduct } from "./category.validator.js";
 import {
     validateQueryNumber,
@@ -13,6 +12,16 @@ import {
 } from "../utils.validator.js";
 
 const validateCreateProduct = [
+    body()
+        .if(
+            header("Content-Type").custom((value) => {
+                return value.includes("multipart/form-data");
+            })
+        )
+        .customSanitizer((value) => {
+            return JSON.parse(value.product);
+        }),
+
     body("name")
         .notEmpty()
         .withMessage("Name is required")
@@ -24,13 +33,7 @@ const validateCreateProduct = [
         .isString()
         .withMessage("Description should be a string"),
 
-    ...validateCreateVariants,
-
-    body("images")
-        .optional()
-        .isArray()
-        .withMessage("Images should be an array"),
-    ...validateCreateImages.slice(1),
+    ...validateCreateVariants.slice(1),
 
     body("categories")
         .optional()
@@ -43,7 +46,6 @@ const validateCreateProduct = [
             "name",
             "description",
             "variants",
-            "images",
             "categories",
         ])
     ),

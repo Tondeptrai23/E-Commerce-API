@@ -240,7 +240,6 @@ class VariantAttributeService {
                 {
                     model: ProductImage,
                     as: "image",
-                    attributes: ["url"],
                 },
             ],
             order: [...conditions.sortConditions],

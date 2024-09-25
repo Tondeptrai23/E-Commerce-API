@@ -4,6 +4,9 @@ import validator from "../../../../../middlewares/validators/index.validator.js"
 describe("validateCreateProduct", () => {
     test("should return empty error array if all fields are valid", async () => {
         const req = {
+            headers: {
+                "content-type": "application/json",
+            },
             body: {
                 name: "example",
                 description: "example",
@@ -26,28 +29,28 @@ describe("validateCreateProduct", () => {
 
         expect(errors.isEmpty()).toBe(true);
     });
-
     test("should return empty error array if all fields are valid 2", async () => {
         const req = {
+            headers: {
+                "content-type": "multipart/form-data",
+            },
             body: {
-                name: "example",
-                description: "example",
-                variants: [
-                    {
-                        price: 100,
-                        stock: 100,
-                        sku: "example",
-                        imageIndex: 0,
-                        discountPrice: 90,
-                    },
-                ],
-                images: [
-                    {
-                        url: "example.com",
-                        altText: "example",
-                    },
-                ],
-                categories: ["tops", "male"],
+                product: JSON.stringify({
+                    name: "example",
+                    description: "example",
+                    variants: [
+                        {
+                            price: 100,
+                            stock: 100,
+                            sku: "example",
+                            imageIndex: 0,
+                            discountPrice: 90,
+                        },
+                    ],
+                }),
+            },
+            file: {
+                mimetype: "image/jpeg",
             },
         };
 
@@ -91,13 +94,12 @@ describe("validateCreateProduct", () => {
         );
     });
 
-    test("should return an error if variants, images, or categories are not arrays", async () => {
+    test("should return an error if variants, or categories are not arrays", async () => {
         const req = {
             body: {
                 name: "example",
                 description: "example",
                 variants: "invalid",
-                images: "invalid",
                 categories: "invalid",
             },
         };
@@ -112,9 +114,6 @@ describe("validateCreateProduct", () => {
             expect.arrayContaining([
                 expect.objectContaining({
                     msg: "Variants should be an array",
-                }),
-                expect.objectContaining({
-                    msg: "Images should be an array",
                 }),
                 expect.objectContaining({
                     msg: "Categories should be an array",
@@ -200,12 +199,6 @@ describe("validateCreateProduct", () => {
                         discountPrice: "invalid",
                     },
                 ],
-                images: [
-                    {
-                        url: 123,
-                        altText: 123,
-                    },
-                ],
                 categories: [123],
             },
         };
@@ -233,12 +226,6 @@ describe("validateCreateProduct", () => {
                 }),
                 expect.objectContaining({
                     msg: "Discount price should be a number",
-                }),
-                expect.objectContaining({
-                    msg: "URL should be a string",
-                }),
-                expect.objectContaining({
-                    msg: "Alt text should be a string",
                 }),
                 expect.objectContaining({
                     msg: "Category should be a string",

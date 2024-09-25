@@ -115,11 +115,13 @@ class VariantController {
             // Get request body
             const { productID } = req.params;
             const { variants } = req.body;
+            const images = req.files ?? [];
 
             // Call services
             const product = await productBuilderService.addVariants(
                 productID,
-                variants
+                variants,
+                images
             );
 
             // Serialize data

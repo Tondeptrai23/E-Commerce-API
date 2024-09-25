@@ -63,6 +63,7 @@ describe("GET /api/v2/admin/orders/:orderID", () => {
             coupon: expect.any(String),
             couponID: expect.any(String),
             shippingAddress: expect.any(Object),
+            shippingAddressID: expect.any(String),
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
         });
@@ -80,7 +81,6 @@ describe("GET /api/v2/admin/orders/:orderID", () => {
             });
         }
         expect(res.body.order.shippingAddress).toEqual({
-            shippingAddressID: expect.any(String),
             recipientName: expect.any(String),
             phoneNumber: expect.any(String),
             address: expect.any(String),

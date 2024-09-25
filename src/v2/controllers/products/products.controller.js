@@ -97,7 +97,10 @@ class ProductController {
     async addProduct(req, res) {
         try {
             // Get request body
-            const { variants, categories, images, ...productInfo } = req.body;
+            const { variants, categories, ...productInfo } = req.body;
+
+            // Get images
+            const images = req.files;
 
             // Call services
             // Check if product name is taken

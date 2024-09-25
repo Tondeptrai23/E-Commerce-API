@@ -7,6 +7,9 @@ import {
     assertTokenNotProvided,
     assertTokenInvalid,
 } from "../../../utils.integration.js";
+import path from "path";
+import { jest } from "@jest/globals";
+import { s3 } from "../../../../../../config/aws.config.js";
 
 /**
  * Set up
@@ -29,13 +32,20 @@ beforeAll(async () => {
         password: "password1",
     });
     accessTokenUser = resUser.body.accessToken;
+
+    // Mock AWS SDK
+    jest.spyOn(s3, "putObject").mockImplementation(() => {
+        return {
+            promise: jest.fn().mockResolvedValue(),
+        };
+    });
 });
 
 /**
  * Tests
  */
 describe("POST /admin/products", () => {
-    it("should create a product", async () => {
+    it("should create a product without images", async () => {
         const res = await request(app)
             .post("/api/v2/admin/products")
             .set("Authorization", `Bearer ${accessToken}`)
@@ -48,7 +58,6 @@ describe("POST /admin/products", () => {
                         price: 100,
                         stock: 10,
                         sku: "SKU123",
-                        imageIndex: 1,
                         attributes: {
                             color: "red",
                             size: "M",
@@ -60,19 +69,10 @@ describe("POST /admin/products", () => {
                         discountPrice: 150,
                         stock: 20,
                         sku: "SKU234",
-                        imageIndex: 0,
                         attributes: {
                             color: "blue",
                             size: "L",
                         },
-                    },
-                ],
-                images: [
-                    {
-                        url: "https://example.com/image.jpg",
-                    },
-                    {
-                        url: "https://example.com/image2.jpg",
                     },
                 ],
                 categories: ["tshirt"],
@@ -90,7 +90,6 @@ describe("POST /admin/products", () => {
                     updatedAt: expect.any(String),
                     variants: expect.any(Array),
                     categories: expect.any(Array),
-                    images: expect.any(Array),
                 }),
             })
         );
@@ -102,7 +101,7 @@ describe("POST /admin/products", () => {
                 price: 100,
                 stock: 10,
                 sku: "SKU123",
-                imageID: expect.any(String),
+                imageID: null,
                 attributes: expect.objectContaining({
                     color: "red",
                     size: "M",
@@ -115,7 +114,7 @@ describe("POST /admin/products", () => {
                 discountPrice: 150,
                 stock: 20,
                 sku: "SKU234",
-                imageID: expect.any(String),
+                imageID: null,
                 attributes: expect.objectContaining({
                     color: "blue",
                     size: "L",
@@ -126,24 +125,9 @@ describe("POST /admin/products", () => {
         expect(res.body.product.categories).toEqual(
             expect.arrayContaining(["tshirt"])
         );
-
-        expect(res.body.product.images).toEqual(
-            expect.arrayContaining([
-                expect.objectContaining({
-                    imageID: expect.any(String),
-                    url: "https://example.com/image.jpg",
-                    displayOrder: 1,
-                }),
-                expect.objectContaining({
-                    imageID: expect.any(String),
-                    url: "https://example.com/image2.jpg",
-                    displayOrder: 2,
-                }),
-            ])
-        );
     });
 
-    it("should create a product 2", async () => {
+    it("should create a product without images 2", async () => {
         const res = await request(app)
             .post("/api/v2/admin/products")
             .set("Authorization", `Bearer ${accessToken}`)
@@ -193,32 +177,31 @@ describe("POST /admin/products", () => {
         );
     });
 
-    // Still create a new product if the variant.imageIndex is not pointing to an image
-    it("should create a product 3", async () => {
+    it("should create a product with images", async () => {
+        const productData = {
+            name: "New Product 3",
+            description: "New Product Description",
+            variants: [
+                {
+                    name: "New Variant",
+                    price: 100,
+                    stock: 10,
+                    sku: "SKU456",
+                    imageIndex: 0,
+                    attributes: {
+                        color: "red",
+                        size: "M",
+                    },
+                },
+            ],
+            categories: ["tshirt"],
+        };
+
         const res = await request(app)
             .post("/api/v2/admin/products")
             .set("Authorization", `Bearer ${accessToken}`)
-            .send({
-                name: "New Product 3",
-                description: "New Product Description",
-                variants: [
-                    {
-                        price: 100,
-                        stock: 10,
-                        sku: "SKU456",
-                        imageIndex: 1,
-                        attributes: {
-                            color: "red",
-                            size: "M",
-                        },
-                    },
-                ],
-                images: [
-                    {
-                        url: "https://example.com/image.jpg",
-                    },
-                ],
-            });
+            .field("product", JSON.stringify(productData))
+            .attach("images", path.resolve(process.cwd(), "db_diagram.png"));
 
         expect(res.statusCode).toEqual(StatusCodes.CREATED);
         expect(res.body).toEqual(
@@ -231,6 +214,8 @@ describe("POST /admin/products", () => {
                     createdAt: expect.any(String),
                     updatedAt: expect.any(String),
                     variants: expect.any(Array),
+                    categories: expect.any(Array),
+                    images: expect.any(Array),
                 }),
             })
         );
@@ -238,27 +223,109 @@ describe("POST /admin/products", () => {
         expect(res.body.product.variants[0]).toEqual(
             expect.objectContaining({
                 variantID: expect.any(String),
-                name: "New Product 3",
+                name: "New Variant",
                 price: 100,
                 stock: 10,
                 sku: "SKU456",
-                imageID: null,
                 attributes: expect.objectContaining({
                     color: "red",
                     size: "M",
                 }),
+                imageID: res.body.product.images[0].imageID,
             })
         );
 
-        expect(res.body.product.images).toEqual(
-            expect.arrayContaining([
+        expect(res.body.product.categories).toEqual(
+            expect.arrayContaining(["tshirt"])
+        );
+
+        for (let i = 0; i < res.body.product.images.length; i++) {
+            expect(res.body.product.images[i]).toEqual(
                 expect.objectContaining({
                     imageID: expect.any(String),
-                    url: "https://example.com/image.jpg",
-                    displayOrder: 1,
+                    url: expect.any(String),
+                    displayOrder: i + 1,
+                })
+            );
+        }
+    });
+
+    it("should create a product with images 2", async () => {
+        const productData = {
+            name: "New Product 4",
+            description: "New Product Description",
+            variants: [
+                {
+                    price: 100,
+                    stock: 10,
+                    sku: "SKU567",
+                    imageIndex: 2,
+                    attributes: {
+                        color: "red",
+                        size: "M",
+                    },
+                },
+                {
+                    price: 100,
+                    stock: 10,
+                    sku: "SKU678",
+                    imageIndex: 1,
+                    attributes: {
+                        color: "red",
+                        size: "L",
+                    },
+                },
+            ],
+        };
+
+        const res = await request(app)
+            .post("/api/v2/admin/products")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .field("product", JSON.stringify(productData))
+            .attach("images", path.resolve(process.cwd(), "db_diagram.png"))
+            .attach("images", path.resolve(process.cwd(), "db_diagram.png"))
+            .attach("images", path.resolve(process.cwd(), "db_diagram.png"));
+
+        expect(res.statusCode).toEqual(StatusCodes.CREATED);
+        expect(res.body).toEqual(
+            expect.objectContaining({
+                success: true,
+                product: expect.objectContaining({
+                    productID: expect.any(String),
+                    name: "New Product 4",
+                    description: "New Product Description",
+                    createdAt: expect.any(String),
+                    updatedAt: expect.any(String),
+                    variants: expect.any(Array),
+                    images: expect.any(Array),
                 }),
-            ])
+            })
         );
+
+        expect(res.body.product.variants[0]).toEqual(
+            expect.objectContaining({
+                variantID: expect.any(String),
+                name: "New Product 4",
+                price: 100,
+                stock: 10,
+                sku: "SKU567",
+                attributes: expect.objectContaining({
+                    color: "red",
+                    size: "M",
+                }),
+                imageID: res.body.product.images[2].imageID,
+            })
+        );
+
+        for (let i = 0; i < res.body.product.images.length; i++) {
+            expect(res.body.product.images[i]).toEqual(
+                expect.objectContaining({
+                    imageID: expect.any(String),
+                    url: expect.any(String),
+                    displayOrder: i + 1,
+                })
+            );
+        }
     });
 
     it("should return 400 if request body is invalid", async () => {

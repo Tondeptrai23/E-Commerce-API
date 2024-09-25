@@ -4,7 +4,7 @@ import userController from "../../../controllers/users/user.controller.js";
 import {
     verifyToken,
     isAdmin,
-} from "../../../middlewares/auth/authJwt.middlewares.js";
+} from "../../../middlewares/auth/authJwt.middleware.js";
 
 const adminUserRoute = Router();
 

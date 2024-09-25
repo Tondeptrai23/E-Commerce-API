@@ -313,95 +313,31 @@ const seedProductCategory = async () => {
 
 const seedProductImage = async () => {
     await ProductImage.bulkCreate([
-        { imageID: 101, productID: 1, url: "tshirt1.jpg" },
-        {
-            imageID: 102,
-            productID: 1,
-            url: "tshirt1_black.jpg",
-        },
-        {
-            imageID: 103,
-            productID: 1,
-            url: "tshirt1_white.jpg",
-        },
-        {
-            imageID: 104,
-            productID: 1,
-            url: "tshirt1_blue.jpg",
-        },
+        { imageID: 101, productID: 1, contentType: "image/jpeg" },
+        { imageID: 102, productID: 1, contentType: "image/png" },
+        { imageID: 103, productID: 1, contentType: "image/gif" },
+        { imageID: 104, productID: 1, contentType: "image/bmp" },
 
-        { imageID: 201, productID: 2, url: "short2.jpg" },
-        {
-            imageID: 202,
-            productID: 2,
-            url: "short2_black.jpg",
-        },
+        { imageID: 201, productID: 2, contentType: "image/jpeg" },
+        { imageID: 202, productID: 2, contentType: "image/png" },
 
-        { imageID: 301, productID: 3, url: "skirt3.jpg" },
-        {
-            imageID: 302,
-            productID: 3,
-            url: "skirt3_black.jpg",
-        },
-        {
-            imageID: 303,
-            productID: 3,
-            url: "skirt3_white.jpg",
-        },
+        { imageID: 301, productID: 3, contentType: "image/gif" },
+        { imageID: 302, productID: 3, contentType: "image/bmp" },
+        { imageID: 303, productID: 3, contentType: "image/jpeg" },
 
-        { imageID: 401, productID: 4, url: "short4.jpg" },
-        {
-            imageID: 402,
-            productID: 4,
-            url: "short4_black.jpg",
-        },
+        { imageID: 401, productID: 4, contentType: "image/png" },
+        { imageID: 402, productID: 4, contentType: "image/gif" },
 
-        {
-            imageID: 501,
-            productID: 5,
-            url: "blouse5.jpg",
-        },
-        {
-            imageID: 502,
-            productID: 5,
-            url: "blouse5_black.jpg",
-        },
-        {
-            imageID: 503,
-            productID: 5,
-            url: "blouse5_white.jpg",
-        },
-        {
-            imageID: 504,
-            productID: 5,
-            url: "blouse5_red.jpg",
-        },
+        { imageID: 501, productID: 5, contentType: "image/bmp" },
+        { imageID: 502, productID: 5, contentType: "image/jpeg" },
+        { imageID: 503, productID: 5, contentType: "image/png" },
+        { imageID: 504, productID: 5, contentType: "image/gif" },
 
-        {
-            imageID: 601,
-            productID: 6,
-            url: "tshirt6.jpg",
-        },
-        {
-            imageID: 602,
-            productID: 6,
-            url: "tshirt6_black.jpg",
-        },
-        {
-            imageID: 603,
-            productID: 6,
-            url: "tshirt6_white.jpg",
-        },
-        {
-            imageID: 604,
-            productID: 6,
-            url: "tshirt6_blue.jpg",
-        },
-        {
-            imageID: 605,
-            productID: 6,
-            url: "tshirt6_red.jpg",
-        },
+        { imageID: 601, productID: 6, contentType: "image/bmp" },
+        { imageID: 602, productID: 6, contentType: "image/jpeg" },
+        { imageID: 603, productID: 6, contentType: "image/png" },
+        { imageID: 604, productID: 6, contentType: "image/gif" },
+        { imageID: 605, productID: 6, contentType: "image/bmp" },
     ]);
 };
 

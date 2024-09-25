@@ -1,5 +1,6 @@
 import Entity from "./index.serializer.service.js";
 import AddressSerializer from "./address.serializer.service.js";
+import imageService from "../products/image.service.js";
 
 const OrderSerializer = new Entity({
     orderID: {
@@ -42,7 +43,7 @@ const OrderSerializer = new Entity({
                     price: product.orderItem.priceAtPurchase,
                     discountPrice: product.orderItem.discountPriceAtPurchase,
                     quantity: product.orderItem.quantity,
-                    image: product.image ? product.image.url : null,
+                    image: imageService.signImageURL(product.image),
                     totalPrice:
                         (product.orderItem.discountPriceAtPurchase
                             ? product.orderItem.discountPriceAtPurchase

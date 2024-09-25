@@ -20,7 +20,8 @@ describe("OrderSerializer", () => {
                 name: "Product 1",
                 price: 11.0,
                 image: {
-                    url: "http://image.com",
+                    imageID: "123456",
+                    contentType: "image/png",
                     extraField: "extra",
                 },
                 discountPrice: 10.0,
@@ -90,7 +91,7 @@ describe("OrderSerializer", () => {
                         price: 10.0,
                         discountPrice: 9.0,
                         quantity: 1,
-                        image: "http://image.com",
+                        image: expect.stringContaining("123456"),
                         totalPrice: 9.0,
                     }),
                     expect.objectContaining({
@@ -135,7 +136,7 @@ describe("OrderSerializer", () => {
                         price: 10.0,
                         discountPrice: 9.0,
                         quantity: 1,
-                        image: "http://image.com",
+                        image: expect.stringContaining("123456"),
                         totalPrice: 9.0,
                     }),
                     expect.objectContaining({
@@ -182,7 +183,7 @@ describe("OrderSerializer", () => {
                         price: 10.0,
                         discountPrice: 9.0,
                         quantity: 1,
-                        image: "http://image.com",
+                        image: expect.stringContaining("123456"),
                         totalPrice: 9.0,
                     }),
                     expect.objectContaining({
@@ -234,7 +235,7 @@ describe("OrderSerializer", () => {
                         price: 10.0,
                         discountPrice: 9.0,
                         quantity: 1,
-                        image: "http://image.com",
+                        image: expect.stringContaining("123456"),
                         totalPrice: 9.0,
                     }),
                     expect.objectContaining({
@@ -270,7 +271,7 @@ describe("OrderSerializer", () => {
                         price: 10.0,
                         discountPrice: 9.0,
                         quantity: 1,
-                        image: "http://image.com",
+                        image: expect.stringContaining("123456"),
                         totalPrice: 9.0,
                     }),
                     expect.objectContaining({
@@ -317,7 +318,7 @@ describe("OrderSerializer", () => {
                         price: 10.0,
                         discountPrice: 9.0,
                         quantity: 1,
-                        image: "http://image.com",
+                        image: expect.stringContaining("123456"),
                         totalPrice: 9.0,
                     }),
                     expect.objectContaining({
@@ -366,7 +367,7 @@ describe("OrderSerializer", () => {
                         price: 10.0,
                         discountPrice: 9.0,
                         quantity: 1,
-                        image: "http://image.com",
+                        image: expect.stringContaining("123456"),
                         totalPrice: 9.0,
                     }),
                     expect.objectContaining({

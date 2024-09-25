@@ -10,26 +10,49 @@ import * as cartValidator from "./shopping/cart.validator.js";
 import * as couponValidator from "./shopping/coupon.validator.js";
 import * as attributeValidator from "./products/attribute.validator.js";
 import * as addressValidator from "./users/address.validator.js";
+import { MulterError } from "multer";
+import { imageConfig } from "../../config/config.js";
 
 const handleValidationErrors = (req, res, next) => {
-    const errors = validationResult(req);
+    let errors = validationResult(req);
 
     const errorsArray = errors.array().map((error) => {
         error.message = error.msg;
         delete error.msg;
         return error;
     });
+
     if (!errors.isEmpty()) {
         return res.status(StatusCodes.BAD_REQUEST).json({
             success: false,
             errors: errorsArray,
         });
     }
+
+    next();
+};
+
+const handleValidationFileUpload = (error, req, res, next) => {
+    if (error instanceof MulterError) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+            success: false,
+            errors: [
+                {
+                    type: "file",
+                    location: "files",
+                    path: error.field,
+                    message: error.message,
+                },
+            ],
+        });
+    }
+
     next();
 };
 
 const validator = {
     handleValidationErrors,
+    handleValidationFileUpload,
 
     // Auth
     validateRegisterUser: userValidator.validateRegisterUser,
@@ -65,7 +88,6 @@ const validator = {
 
     // Image
     validateCreateImages: imageValidator.validateCreateImages,
-    validatePatchImage: imageValidator.validatePatchImage,
     validateReorderImages: imageValidator.validateReorderImages,
 
     // Order

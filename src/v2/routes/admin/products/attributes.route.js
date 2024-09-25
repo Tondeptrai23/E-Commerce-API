@@ -5,7 +5,7 @@ import attributeController from "../../../controllers/products/attributes.contro
 import {
     verifyToken,
     isAdmin,
-} from "../../../middlewares/auth/authJwt.middlewares.js";
+} from "../../../middlewares/auth/authJwt.middleware.js";
 
 import validator from "../../../middlewares/validators/index.validator.js";
 

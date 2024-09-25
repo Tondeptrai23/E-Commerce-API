@@ -32,7 +32,6 @@ describe("GET /api/v2/products/:productID/images", () => {
                 expect.objectContaining({
                     imageID: expect.any(String),
                     url: expect.any(String),
-                    altText: expect.toBeOneOf([null, expect.any(String)]),
                     displayOrder: i + 1,
                     productID: "1",
                 })
