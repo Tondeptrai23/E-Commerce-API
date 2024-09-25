@@ -66,6 +66,8 @@ class AuthController {
                 name: req.user._json.name,
             };
 
+            console.log("-------------");
+
             const { user: existingUser, isExisted } =
                 await userService.isUserExisted(user.email);
 

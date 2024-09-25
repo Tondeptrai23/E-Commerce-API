@@ -68,6 +68,16 @@ paths:
 
   /auth/refreshToken/reset:
     $ref: ./paths/index.paths.yaml#/resetToken
+    
+  /auth/google:
+    get:
+      tags:
+        - Authentication
+      summary: Initiate Google OAuth 2.0 flow
+      description: Redirects the user to Google's authentication page
+      responses:
+        '302':
+          description: Redirect to Google's auth page
 
   # User Products
   /products:
@@ -230,6 +240,17 @@ paths:
   /admin/users/{userID}/cart:
     $ref: ./paths/index.paths.yaml#/adminUserCart
 
+  # Admin Address
+
+  /admin/users/{userID}/address:
+    $ref: ./paths/index.paths.yaml#/adminAddresses
+
+  /admin/users/{userID}/address/{addressID}:
+    $ref: ./paths/index.paths.yaml#/adminAddress
+
+  /admin/address/shipping/{shippingAddressID}:
+    $ref: ./paths/index.paths.yaml#/adminShippingAddress
+
   # Admin Orders
 
   /admin/orders:
@@ -244,7 +265,21 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      
+    oAuth2:
+      description: | 
+        OAuth 2.0.
+        Access the authorizationUrl below to initiate the OAuth 2.0 flow.
+        Or use the client ID and client secret to get the accessToken and refreshToken.
+        The accessToken and refreshToken will be returned in the query parameters.
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: http://localhost:3000/api/v2/auth/google
+          tokenUrl: http://localhost:3000/api/v2/auth/google/callback
+          scopes:
+            profile: View user's basic profile
+            email: View user's email address
+
   schemas:
     error400:
       $ref: ./schemas/error/error400.yaml

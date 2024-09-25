@@ -1,11 +1,11 @@
 # DELETE /address/{addressID}:
 tags:
   - User Address
-summary: Soft delete address by addressID
+summary: Delete an address
 description: |
-  Soft delete the address by setting `deletedAt` to current datetime. <br>
-  If the pending order is associated with the address, the order will be permanently deleted. <br>
-  Deleted addresses cannot be recovered.
+  Deletes the address with the specified ID. <br>
+  The address must belong to the authenticated user. <br>
+  If the address is the default address, the user's default address will be set to another address. <br>
 security:
   - bearerAuth: []
 parameters:

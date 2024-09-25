@@ -266,6 +266,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
+  /auth/google:
+    get:
+      tags:
+        - Authentication
+      summary: Initiate Google OAuth 2.0 flow
+      description: Redirects the user to Google's authentication page
+      responses:
+        '302':
+          description: Redirect to Google's auth page
+  /auth/google/callback:
+    get:
+      tags:
+        - Authentication
+      summary: Google OAuth 2.0 callback
+      description: Handles the callback from Google and issues access and refresh tokens
+      responses:
+        '302':
+          description: Redirect to client with tokens in query parameters
   /products:
     get:
       tags:
@@ -1835,11 +1853,11 @@ paths:
     delete:
       tags:
         - User Address
-      summary: Soft delete address by addressID
+      summary: Delete an address
       description: |
-        Soft delete the address by setting `deletedAt` to current datetime. <br>
-        If the pending order is associated with the address, the order will be permanently deleted. <br>
-        Deleted addresses cannot be recovered.
+        Deletes the address with the specified ID. <br>
+        The address must belong to the authenticated user. <br>
+        If the address is the default address, the user's default address will be set to another address. <br>
       security:
         - bearerAuth: []
       parameters:
@@ -6360,6 +6378,176 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
+  '/admin/users/{userID}/address':
+    get:
+      tags:
+        - Admin Address
+      summary: Get address by userID
+      description: |
+        Get address by userID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userID
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Address found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  addresses:
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - $ref: '#/components/schemas/address'
+                        - $ref: '#/components/schemas/timestamps'
+                allOf:
+                  - $ref: '#/components/schemas/pagination'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/admin/users/{userID}/address/{addressID}':
+    get:
+      tags:
+        - Admin Address
+      summary: Get address by addressID
+      description: |
+        Get address by addressID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: addressID
+          in: path
+          description: Address ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+        - name: userID
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Address found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  address:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/address'
+                      - $ref: '#/components/schemas/timestamps'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/admin/address/shipping/{shippingAddressID}':
+    get:
+      tags:
+        - Admin Address
+      summary: Get shipping address
+      description: |
+        Get shipping address by shippingAddressID
+        Only admin can get the shipping address
+        User can only get shipping address through order (GET /order/{orderID})
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Shipping address found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  shippingAddress:
+                    type: object
+                    allOf:
+                      - $ref: '#/paths/~1orders~1pending/get/responses/200/content/application~1json/schema/properties/order/properties/shippingAddress'
+                      - $ref: '#/components/schemas/timestamps'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: Shipping address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
   /admin/orders:
     get:
       tags:
@@ -6645,6 +6833,15 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+    oAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: 'http://localhost:3000/api/v2/auth/google'
+          tokenUrl: 'http://localhost:3000/api/v2/auth/google/callback'
+          scopes:
+            profile: View user's basic profile
+            email: View user's email address
   schemas:
     error400:
       type: object

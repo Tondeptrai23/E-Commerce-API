@@ -201,6 +201,10 @@ class AddressService {
                 },
             });
 
+            if (!otherAddress) {
+                return;
+            }
+
             otherAddress.update({ isDefault: true });
         }
 

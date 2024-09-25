@@ -20,40 +20,13 @@ class UserService {
             throw new ConflictError("Email already exists");
         }
 
-        if (await this.isUsernameTaken(userInfo.name)) {
-            throw new ConflictError("Name is already taken");
-        }
-
         const newUser = User.build(userInfo);
 
-        bcrypt.genSalt(10).then((salt) => {
-            bcrypt.hash(newUser.password, salt).then(async (hash) => {
-                newUser.password = hash;
-                await newUser.save();
-            });
-        });
+        const salt = await bcrypt.genSalt(10);
+        newUser.password = await bcrypt.hash(newUser.password, salt);
+        await newUser.save();
 
         return newUser;
-    }
-
-    /**
-     * Check if name is taken
-     *
-     * @param {String} name the user's name
-     * @returns {Promise<Boolean>} whether the username is taken
-     */
-    async isUsernameTaken(name) {
-        if (!name) {
-            return false;
-        }
-
-        const user = await User.findOne({
-            where: {
-                name: name,
-            },
-        });
-
-        return user ? true : false;
     }
 
     /**
