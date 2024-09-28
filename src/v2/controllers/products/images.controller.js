@@ -18,7 +18,7 @@ class ImageController {
 
             // Serialize data
             const serializedImages = ImageSerializer.parse(images, {
-                includeTimestamps: true,
+                includeTimestamps: isAdmin,
             });
 
             // Response

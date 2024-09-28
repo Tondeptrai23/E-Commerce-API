@@ -214,7 +214,7 @@ class TokenService {
             throw new BadRequestError("Invalid reset password code");
         }
 
-        if (request.expiredAt < Date.now()) {
+        if (request.expiredAt < new Date()) {
             throw new BadRequestError("Reset password code expired");
         }
 

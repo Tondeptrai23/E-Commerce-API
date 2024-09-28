@@ -10,8 +10,8 @@ import * as cartValidator from "./shopping/cart.validator.js";
 import * as couponValidator from "./shopping/coupon.validator.js";
 import * as attributeValidator from "./products/attribute.validator.js";
 import * as addressValidator from "./users/address.validator.js";
+import * as resetPasswordValidator from "./users/resetPassword.validator.js";
 import { MulterError } from "multer";
-import { imageConfig } from "../../config/config.js";
 
 const handleValidationErrors = (req, res, next) => {
     let errors = validationResult(req);
@@ -57,6 +57,12 @@ const validator = {
     // Auth
     validateRegisterUser: userValidator.validateRegisterUser,
     validateSignInUser: userValidator.validateSignInUser,
+
+    // Reset Password
+    validateSendResetPassword: resetPasswordValidator.validateSendResetPassword,
+    validateResetPassword: resetPasswordValidator.validateResetPassword,
+    validateVerifyResetPasswordCode:
+        resetPasswordValidator.validateVerifyResetPasswordCode,
 
     // Address
     validateCreateAddress: addressValidator.validateCreateAddress,

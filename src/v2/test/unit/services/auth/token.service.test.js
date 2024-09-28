@@ -3,13 +3,15 @@ import { jwt } from "../../../../config/auth.config.js";
 import User from "../../../../models/user/user.model.js";
 import { createHash } from "crypto";
 import seedData from "../../../../seedData.js";
+import VerifyRequest from "../../../../models/user/verifyRequest.model.js";
+import { BadRequestError } from "../../../../utils/error.js";
 
 beforeAll(async () => {
     await seedData();
 }, 15000);
 
 describe("Token Service", () => {
-    describe("tokenService.signToken + tokenService.decodeToken", () => {
+    describe("signToken + decodeToken", () => {
         test("should return a valid token", async () => {
             const payload = { id: "1" };
             const token = await tokenService.signToken(payload);
@@ -31,7 +33,7 @@ describe("Token Service", () => {
         });
     });
 
-    describe("tokenService.createRefreshToken", () => {
+    describe("createRefreshToken", () => {
         test("should create a new refresh token", async () => {
             const user = await User.findByPk("1");
             const token = await tokenService.createRefreshToken(user);
@@ -55,7 +57,7 @@ describe("Token Service", () => {
         });
     });
 
-    describe("tokenService.decodeToken", () => {
+    describe("decodeToken", () => {
         test("should return a valid decoded token", async () => {
             const userID = "1";
             const token = await tokenService.signToken({ id: userID });
@@ -96,7 +98,7 @@ describe("Token Service", () => {
         });
     });
 
-    describe("tokenService.decodeRefreshToken", () => {
+    describe("decodeRefreshToken", () => {
         test("should return a valid decoded token", async () => {
             const userID = "1";
             const user = await User.findByPk(userID);
@@ -135,6 +137,156 @@ describe("Token Service", () => {
                 await tokenService.decodeRefreshToken(expiredToken);
             } catch (err) {
                 expect(err).toBeInstanceOf(jwt.TokenExpiredError);
+            }
+        });
+    });
+
+    describe("createResetPasswordCode", () => {
+        beforeAll(async () => {
+            await VerifyRequest.destroy({
+                where: {
+                    type: "resetPassword",
+                },
+            });
+        });
+
+        test("should create a new reset password code", async () => {
+            const user = await User.findByPk("1");
+            const code = await tokenService.createResetPasswordCode(
+                user.userID
+            );
+
+            expect(code).not.toBeNull();
+            const request = await VerifyRequest.findOne({
+                where: {
+                    userID: user.userID,
+                    code: code,
+                },
+            });
+
+            expect(request).not.toBeNull();
+            expect(request.type).toEqual("resetPassword");
+        });
+
+        test("should update the reset password code if it already exists", async () => {
+            const user = await User.findByPk("1");
+            const code = await tokenService.createResetPasswordCode(
+                user.userID
+            );
+
+            setTimeout(async () => {
+                const newCode = await tokenService.createResetPasswordCode(
+                    user.userID
+                );
+                expect(code).not.toEqual(newCode);
+            }, 200);
+        });
+    });
+
+    describe("createResetPasswordSessionToken", () => {
+        beforeAll(async () => {
+            await VerifyRequest.destroy({
+                where: {
+                    type: "resetPassword",
+                },
+            });
+        });
+
+        test("should do nothing if the reset password code is not found", async () => {
+            const user = await User.findByPk("1");
+            await tokenService.createResetPasswordSessionToken(user.userID);
+
+            const request = await VerifyRequest.findOne({
+                where: {
+                    userID: user.userID,
+                    type: "resetPassword",
+                },
+            });
+
+            expect(request).toBeNull();
+        });
+
+        test("should create a new reset password session token", async () => {
+            const user = await User.findByPk("1");
+            const code = await tokenService.createResetPasswordCode(
+                user.userID
+            );
+
+            const sessionToken =
+                await tokenService.createResetPasswordSessionToken(user.userID);
+
+            expect(sessionToken).not.toBeNull();
+            const request = await VerifyRequest.findOne({
+                where: {
+                    userID: user.userID,
+                    type: "resetPassword",
+                },
+            });
+
+            expect(request.code).not.toEqual(code);
+        });
+    });
+
+    describe("verifyResetPasswordCode", () => {
+        beforeAll(async () => {
+            await VerifyRequest.destroy({
+                where: {
+                    type: "resetPassword",
+                },
+            });
+        });
+
+        test("should verify the reset password code", async () => {
+            const user = await User.findByPk("1");
+            await VerifyRequest.create({
+                userID: user.userID,
+                code: "123456",
+                type: "resetPassword",
+                expiredAt: new Date().getTime() + 10000,
+            });
+
+            const result = await tokenService.verifyResetPasswordCode(
+                user.userID,
+                "123456"
+            );
+
+            expect(result).toBe(true);
+        });
+
+        test("should throw an error if the code is invalid", async () => {
+            const user = await User.findByPk("1");
+            const code = "invalid";
+
+            try {
+                await tokenService.verifyResetPasswordCode(user.userID, code);
+            } catch (err) {
+                expect(err).toBeInstanceOf(BadRequestError);
+            }
+        });
+
+        test("should throw an error if the code is expired", async () => {
+            const user = await User.findByPk("1");
+            await VerifyRequest.destroy({
+                where: {
+                    userID: user.userID,
+                    type: "resetPassword",
+                },
+            });
+
+            await VerifyRequest.create({
+                userID: user.userID,
+                code: "123456",
+                type: "resetPassword",
+                expiredAt: new Date() - 10000,
+            });
+
+            try {
+                await tokenService.verifyResetPasswordCode(
+                    user.userID,
+                    "123456"
+                );
+            } catch (err) {
+                expect(err).toBeInstanceOf(BadRequestError);
             }
         });
     });

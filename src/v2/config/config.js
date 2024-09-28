@@ -57,6 +57,7 @@ const dbConfig = {
 };
 
 const serverConfig = {
+    NODE_ENV: process.env.NODE_ENV || "development",
     PORT: process.env.PORT || 3000,
     SERVER_URL: process.env.SERVER_URL,
     FRONT_END_URL: process.env.FRONT_END_URL,
@@ -97,12 +98,12 @@ const imageConfig = {
 
 process.env.AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE = "1"; // Suppress the warning message
 const awsConfig = {
-    ACCESS_KEY: process.env.AWS_ACCESS_KEY,
-    SECRET_KEY: process.env.AWS_SECRET_KEY,
+    ACCESS_KEY: process.env.AWS_ACCESS_KEY ?? "temp",
+    SECRET_KEY: process.env.AWS_SECRET_KEY ?? "temp",
     REGION: process.env.AWS_REGION,
     BUCKET_NAME: process.env.AWS_BUCKET_NAME,
     CLOUDFRONT_URL: process.env.AWS_CLOUDFRONT_URL,
-    CLOUDFRONT_KEY_PAIR_ID: process.env.AWS_CLOUDFRONT_KEY_PAIR_ID,
+    CLOUDFRONT_KEY_PAIR_ID: process.env.AWS_CLOUDFRONT_KEY_PAIR_ID ?? "temp",
     CLOUDFRONT_PRIVATE_KEY: (
         process.env.AWS_CLOUDFRONT_PRIVATE_KEY ?? ""
     ).replace(/\\n/g, "\n"),

@@ -38,6 +38,16 @@ class PasswordResetController {
                         },
                     ],
                 });
+            } else if (err instanceof BadRequestError) {
+                res.status(StatusCodes.BAD_REQUEST).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "BadRequest",
+                            message: err.message,
+                        },
+                    ],
+                });
             } else {
                 console.log(err);
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -81,6 +91,16 @@ class PasswordResetController {
                     errors: [
                         {
                             error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
+                });
+            } else if (err instanceof BadRequestError) {
+                res.status(StatusCodes.BAD_REQUEST).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "BadRequest",
                             message: err.message,
                         },
                     ],
@@ -131,6 +151,16 @@ class PasswordResetController {
                     errors: [
                         {
                             error: "NotFound",
+                            message: err.message,
+                        },
+                    ],
+                });
+            } else if (err instanceof BadRequestError) {
+                res.status(StatusCodes.BAD_REQUEST).json({
+                    success: false,
+                    errors: [
+                        {
+                            error: "BadRequest",
                             message: err.message,
                         },
                     ],

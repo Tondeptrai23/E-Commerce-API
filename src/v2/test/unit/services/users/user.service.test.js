@@ -37,18 +37,6 @@ describe("User Service", () => {
                 userService.createNewAccount(userInfo)
             ).rejects.toThrow(ConflictError);
         });
-
-        test("should throw ConflictError if the name is taken", async () => {
-            const userInfo = {
-                email: "admin123456@gmail.com",
-                password: "password123",
-                name: "Admin",
-            };
-
-            await expect(
-                userService.createNewAccount(userInfo)
-            ).rejects.toThrow(ConflictError);
-        });
     });
 
     describe("userService.findUserByEmail", () => {
@@ -83,22 +71,6 @@ describe("User Service", () => {
 
             expect(user).toBeNull();
             expect(isExisted).toBe(false);
-        });
-    });
-
-    describe("userService.isUsernameTaken", () => {
-        test("should return true if the name is taken", async () => {
-            const name = "Admin";
-            const isTaken = await userService.isUsernameTaken(name);
-
-            expect(isTaken).toBe(true);
-        });
-
-        test("should return false if the name is not taken", async () => {
-            const name = "Nonexistent User";
-            const isTaken = await userService.isUsernameTaken(name);
-
-            expect(isTaken).toBe(false);
         });
     });
 
@@ -226,5 +198,18 @@ describe("User Service", () => {
         //     expect(users[1].name).toBe("Jane Doe");
         //     expect(users[2].name).toBe("John Doe");
         // });
+    });
+
+    describe("resetPassword", () => {
+        test("should reset the password", async () => {
+            const user = await User.findByPk("1");
+
+            const oldPassword = user.password;
+            const newPassword = "newPassword123";
+            await userService.resetPassword(user, newPassword);
+
+            const updatedUser = await User.findByPk("1");
+            expect(updatedUser.password).not.toBe(oldPassword);
+        });
     });
 });

@@ -7,10 +7,12 @@ AWS.config.update({
     secretAccessKey: awsConfig.SECRET_KEY,
 });
 
-const s3 = new AWS.S3();
-const cloudfront = new AWS.CloudFront.Signer(
+let s3;
+let cloudfront;
+
+s3 = new AWS.S3();
+cloudfront = new AWS.CloudFront.Signer(
     awsConfig.CLOUDFRONT_KEY_PAIR_ID,
     awsConfig.CLOUDFRONT_PRIVATE_KEY
 );
-
 export { s3, cloudfront };

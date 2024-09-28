@@ -5,15 +5,35 @@ import {
 } from "../utils.validator.js";
 
 const validateCreateAddress = [
-    body("address").notEmpty().withMessage("Address is required"),
+    body("address")
+        .notEmpty()
+        .withMessage("Address is required")
+        .isString()
+        .withMessage("Address should be a string"),
 
-    body("city").notEmpty().withMessage("City is required"),
+    body("city")
+        .notEmpty()
+        .withMessage("City is required")
+        .isString()
+        .withMessage("City should be a string"),
 
-    body("district").notEmpty().withMessage("District is required"),
+    body("district")
+        .notEmpty()
+        .withMessage("District is required")
+        .isString()
+        .withMessage("District should be a string"),
 
-    body("recipientName").notEmpty().withMessage("Recipient Name is required"),
+    body("recipientName")
+        .notEmpty()
+        .withMessage("Recipient Name is required")
+        .isString()
+        .withMessage("RecipientName should be a string"),
 
-    body("phoneNumber").notEmpty().withMessage("Phone Number is required"),
+    body("phoneNumber")
+        .notEmpty()
+        .withMessage("PhoneNumber is required")
+        .isString()
+        .withMessage("PhoneNumber should be a string"),
 
     body().custom(
         validateUnexpectedFields([
@@ -27,20 +47,40 @@ const validateCreateAddress = [
 ];
 
 const validatePutAddress = [
-    body("address").notEmpty().withMessage("Address is required"),
+    body("address")
+        .notEmpty()
+        .withMessage("Address is required")
+        .isString()
+        .withMessage("Address should be a string"),
 
-    body("city").notEmpty().withMessage("City is required"),
+    body("city")
+        .notEmpty()
+        .withMessage("City is required")
+        .isString()
+        .withMessage("City should be a string"),
 
-    body("district").notEmpty().withMessage("District is required"),
+    body("district")
+        .notEmpty()
+        .withMessage("District is required")
+        .isString()
+        .withMessage("District should be a string"),
 
-    body("recipientName").notEmpty().withMessage("Recipient Name is required"),
+    body("recipientName")
+        .notEmpty()
+        .withMessage("Recipient Name is required")
+        .isString()
+        .withMessage("RecipientName should be a string"),
 
-    body("phoneNumber").notEmpty().withMessage("Phone Number is required"),
+    body("phoneNumber")
+        .notEmpty()
+        .withMessage("PhoneNumber is required")
+        .isString()
+        .withMessage("PhoneNumber should be a string"),
 
     body("isDefault")
         .optional()
         .isBoolean()
-        .withMessage("isDefault should be a boolean"),
+        .withMessage("IsDefault should be a boolean"),
 
     body().custom(
         validateUnexpectedFields([

@@ -6,7 +6,6 @@ import { ConflictError, UnauthorizedError } from "../../utils/error.js";
 import UserSerializer from "../../services/serializers/user.serializer.service.js";
 import { googleConfig } from "../../config/config.js";
 import { randomBytes } from "crypto";
-import MailService from "../../services/users/mail.service.js";
 
 class AuthController {
     async signin(req, res) {
