@@ -12,6 +12,9 @@ tags:
   - name: Authentication
     description: Endpoints related to user authentication and authorization.
 
+  - name: Reset Password  
+    description: Endpoints related to resetting user passwords.
+
   - name: User Products
     description: Endpoints for managing user-specific product interactions.
 
@@ -78,6 +81,16 @@ paths:
       responses:
         '302':
           description: Redirect to Google's auth page
+
+  # Reset Password
+  /auth/resetPassword:
+    $ref: ./paths/index.paths.yaml#/sendResetPassword
+
+  /auth/resetPassword/verify:
+    $ref: ./paths/index.paths.yaml#/verifyPasswordCode
+
+  /auth/resetPassword/reset:
+    $ref: ./paths/index.paths.yaml#/resetPassword
 
   # User Products
   /products:

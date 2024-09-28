@@ -19,6 +19,7 @@ import ProductCoupon from "./shopping/productCoupon.model.js";
 import CategoryCoupon from "./shopping/categoryCoupon.model.js";
 import ShippingAddress from "./shopping/shippingAddress.model.js";
 import Address from "./user/address.model.js";
+import VerifyRequest from "./user/verifyRequest.model.js";
 
 // Product - <1, n> - ProductImage
 Product.hasMany(ProductImage, {
@@ -303,6 +304,26 @@ User.hasMany(Address, {
     as: "addresses",
 });
 Address.belongsTo(User, {
+    foreignKey: {
+        name: "userID",
+        allowNull: false,
+    },
+    onDelete: "CASCADE",
+    constraints: true,
+    as: "user",
+});
+
+// User - <1, n> - VerifyRequest
+User.hasMany(VerifyRequest, {
+    foreignKey: {
+        name: "userID",
+        allowNull: false,
+    },
+    onDelete: "CASCADE",
+    constraints: true,
+    as: "verifyRequests",
+});
+VerifyRequest.belongsTo(User, {
     foreignKey: {
         name: "userID",
         allowNull: false,

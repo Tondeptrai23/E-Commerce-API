@@ -6,6 +6,7 @@ import { ConflictError, UnauthorizedError } from "../../utils/error.js";
 import UserSerializer from "../../services/serializers/user.serializer.service.js";
 import { googleConfig } from "../../config/config.js";
 import { randomBytes } from "crypto";
+import MailService from "../../services/users/mail.service.js";
 
 class AuthController {
     async signin(req, res) {
@@ -65,8 +66,6 @@ class AuthController {
                 email: req.user._json.email,
                 name: req.user._json.name,
             };
-
-            console.log("-------------");
 
             const { user: existingUser, isExisted } =
                 await userService.isUserExisted(user.email);
@@ -194,10 +193,6 @@ class AuthController {
                 ],
             });
         }
-    }
-
-    async forgotPassword(req, res) {
-        res.json({ message: "Not implemented" });
     }
 }
 

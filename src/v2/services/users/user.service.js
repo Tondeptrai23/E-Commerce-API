@@ -99,6 +99,21 @@ class UserService {
         const quantity = count;
         return { users, quantity };
     }
+
+    /**
+     * Reset password
+     *
+     * @param {User} user The user
+     * @param {String} newPassword The new password
+     * @returns {Promise<User>} The updated user
+     */
+    async resetPassword(user, newPassword) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+        await user.save();
+
+        return user;
+    }
 }
 
 export default new UserService();

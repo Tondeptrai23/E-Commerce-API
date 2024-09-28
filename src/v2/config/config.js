@@ -108,6 +108,14 @@ const awsConfig = {
     ).replace(/\\n/g, "\n"),
 };
 
+const mailConfig = {
+    API_KEY: process.env.MAILGUN_API_KEY ?? "temp",
+    DOMAIN: process.env.MAILGUN_DOMAIN,
+    USERNAME: process.env.MAILGUN_USERNAME,
+    NAME: process.env.MAILGUN_NAME,
+    TO_TEST: process.env.MAILGUN_TO_TEST,
+};
+
 export {
     paymentConfig,
     jwtConfig,
@@ -116,4 +124,5 @@ export {
     googleConfig,
     imageConfig,
     awsConfig,
+    mailConfig,
 };

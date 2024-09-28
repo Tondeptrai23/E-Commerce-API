@@ -1,6 +1,7 @@
 import { Router } from "express";
 
-import authRoute from "./auth.route.js";
+import authRoute from "./auth/auth.route.js";
+import resetPasswordRoute from "./auth/resetPassword.route.js";
 import adminCartRoute from "./admin/shopping/cart.route.js";
 import adminOrderRoute from "./admin/shopping/orders.route.js";
 import adminProductRoute from "./admin/products/products.route.js";
@@ -23,7 +24,7 @@ import userInfoRoute from "./user/info/info.route.js";
 const router = Router();
 
 router.use("/auth", authRoute);
-
+router.use("/auth/resetPassword", resetPasswordRoute);
 router.use("/cart", userCartRoute);
 router.use("/orders", userOrderRoute);
 router.use("/products", userProductRoute);
