@@ -29,6 +29,10 @@ User.init(
             type: DataTypes.ENUM("user", "admin"),
             defaultValue: "user",
         },
+        isVerified: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
     },
     {
         sequelize,

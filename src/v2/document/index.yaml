@@ -66,6 +66,12 @@ paths:
   /auth/signup:
     $ref: ./paths/index.paths.yaml#/signup
 
+  /auth/verify:
+    $ref: ./paths/index.paths.yaml#/verifyAccount
+
+  /auth/verify/resend:
+    $ref: ./paths/index.paths.yaml#/resendVerifyAccount
+
   /auth/refreshToken:
     $ref: ./paths/index.paths.yaml#/refresh
 

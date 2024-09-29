@@ -8,6 +8,8 @@ servers:
 tags:
   - name: Authentication
     description: Endpoints related to user authentication and authorization.
+  - name: Reset Password
+    description: Endpoints related to resetting user passwords.
   - name: User Products
     description: Endpoints for managing user-specific product interactions.
   - name: User Categories
@@ -143,6 +145,9 @@ paths:
                   success:
                     type: boolean
                     example: true
+                  message:
+                    type: string
+                    example: Account created! Please check your email to verify your account
         '400':
           description: Validation Error
           content:
@@ -170,6 +175,105 @@ paths:
                         message:
                           type: string
                           example: Something already exists
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  /auth/verify:
+    post:
+      tags:
+        - Authentication
+      summary: Verify user account
+      description: |
+        Verify user account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: Verification code
+                email:
+                  type: string
+                  format: email
+                  description: Email address
+      responses:
+        '201':
+          description: Verification successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    example: Account verified successfully
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '404':
+          description: Account Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  /auth/verify/resend:
+    post:
+      tags:
+        - Authentication
+      summary: Send verification email to user
+      description: |
+        Send verification email to user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: Email address
+      responses:
+        '200':
+          description: Verification email sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    example: Verification email sent
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '404':
+          description: Account Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
         '500':
           description: Internal Server Error
           content:
@@ -275,15 +379,152 @@ paths:
       responses:
         '302':
           description: Redirect to Google's auth page
-  /auth/google/callback:
-    get:
+  /auth/resetPassword:
+    post:
       tags:
-        - Authentication
-      summary: Google OAuth 2.0 callback
-      description: Handles the callback from Google and issues access and refresh tokens
+        - Reset Password
+      summary: Send reset password email
+      description: Send an email to the user with a code to reset their password.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: example@gmail.com
       responses:
-        '302':
-          description: Redirect to client with tokens in query parameters
+        '200':
+          description: Email sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  /auth/resetPassword/verify:
+    post:
+      tags:
+        - Reset Password
+      summary: Verify password reset code
+      description: Verify the code sent to the user's email to reset their password. <br> Client should call this endpoint after receiving the code from the email.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: example@gmail.com
+                code:
+                  type: string
+                  example: '123456'
+      responses:
+        '200':
+          description: Code verified
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  sessionToken:
+                    type: string
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  /auth/resetPassword/reset:
+    post:
+      tags:
+        - Reset Password
+      summary: Reset password
+      description: 'Reset the user''s password after verifying the code sent to their email. <br> Client should call this endpoint after verifying the code, and use the sessionToken from the verification response.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: example@gmail.com
+                password:
+                  type: string
+                  example: newPassword
+                sessionToken:
+                  type: string
+                  example: sessionToken
+      responses:
+        '200':
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
   /products:
     get:
       tags:
@@ -6834,6 +7075,11 @@ components:
       scheme: bearer
       bearerFormat: JWT
     oAuth2:
+      description: |
+        OAuth 2.0.
+        Access the authorizationUrl below to initiate the OAuth 2.0 flow.
+        Or use the client ID and client secret to get the accessToken and refreshToken.
+        The accessToken and refreshToken will be returned in the query parameters.
       type: oauth2
       flows:
         authorizationCode:

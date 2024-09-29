@@ -150,7 +150,7 @@ class TokenService {
             },
         });
 
-        const EXPIRES_IN = 15; // 15 minutes
+        const EXPIRES_IN = 60; // 60 minutes
         if (request) {
             request.code = generate6DigitCode();
             request.expiredAt = generateExpiresTime(EXPIRES_IN);
@@ -217,6 +217,45 @@ class TokenService {
         if (request.expiredAt < new Date()) {
             throw new BadRequestError("Reset password code expired");
         }
+
+        return true;
+    }
+
+    /**
+     * Verify the account verification code
+     *
+     * @param {String} userID The userID
+     * @param {String} code The verification code
+     * @returns {Promise<Boolean>} The result
+     */
+    async verifyAccountVerificationCode(userID, code) {
+        const request = await VerifyRequest.findOne({
+            where: {
+                userID: userID,
+                code: code,
+                type: "verifyEmail",
+            },
+        });
+
+        if (!request) {
+            throw new BadRequestError("Invalid verification code");
+        }
+
+        if (request.expiredAt < new Date()) {
+            throw new BadRequestError("Verification code expired");
+        }
+
+        await User.update(
+            {
+                isVerified: true,
+            },
+            {
+                where: {
+                    userID: userID,
+                },
+            }
+        );
+        await request.destroy();
 
         return true;
     }

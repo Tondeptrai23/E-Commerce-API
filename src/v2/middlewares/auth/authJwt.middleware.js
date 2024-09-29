@@ -26,6 +26,11 @@ const verifyToken = async (req, res, next) => {
         if (req.user === null) {
             throw new UnauthorizedError("User not found");
         }
+
+        if (req.user.isVerified === false) {
+            throw new UnauthorizedError("User not verified");
+        }
+
         next();
     } catch (err) {
         if (err instanceof jwt.TokenExpiredError) {
@@ -179,6 +184,10 @@ const checkEmailExistsForSignIn = async (req, res, next) => {
             throw new ResourceNotFoundError("Email not found");
         }
 
+        if (user.isVerified === false) {
+            throw new UnauthorizedError("User not verified");
+        }
+
         req.user = user;
         next();
     } catch (err) {
@@ -188,6 +197,16 @@ const checkEmailExistsForSignIn = async (req, res, next) => {
                 errors: [
                     {
                         error: "NotFound",
+                        message: err.message,
+                    },
+                ],
+            });
+        } else if (err instanceof UnauthorizedError) {
+            res.status(StatusCodes.UNAUTHORIZED).json({
+                success: false,
+                errors: [
+                    {
+                        error: "Unauthorized",
                         message: err.message,
                     },
                 ],

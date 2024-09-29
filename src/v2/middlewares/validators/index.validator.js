@@ -11,6 +11,7 @@ import * as couponValidator from "./shopping/coupon.validator.js";
 import * as attributeValidator from "./products/attribute.validator.js";
 import * as addressValidator from "./users/address.validator.js";
 import * as resetPasswordValidator from "./users/resetPassword.validator.js";
+import * as verifyAccountValidator from "./users/verifyAccount.validator.js";
 import { MulterError } from "multer";
 
 const handleValidationErrors = (req, res, next) => {
@@ -63,6 +64,11 @@ const validator = {
     validateResetPassword: resetPasswordValidator.validateResetPassword,
     validateVerifyResetPasswordCode:
         resetPasswordValidator.validateVerifyResetPasswordCode,
+
+    // Verify Account
+    validateVerifyAccount: verifyAccountValidator.validateSendVerifyAccount,
+    validateResendVerificationEmail:
+        verifyAccountValidator.validateVerifyVerifyAccountCode,
 
     // Address
     validateCreateAddress: addressValidator.validateCreateAddress,

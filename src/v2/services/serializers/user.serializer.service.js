@@ -17,6 +17,9 @@ const UserSerializer = new Entity({
     role: {
         type: "string",
     },
+    isVerified: {
+        type: "boolean",
+    },
     createdAt: [
         {
             type: "date",

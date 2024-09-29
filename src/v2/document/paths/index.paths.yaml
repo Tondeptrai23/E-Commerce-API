@@ -15,6 +15,14 @@ resetToken:
   post:
     $ref: "./auth/reset.yaml"
 
+verifyAccount:
+  post:
+    $ref: "./auth/verifyAccount.yaml"
+
+resendVerifyAccount:
+  post:
+    $ref: "./auth/sendVerifyAccount.yaml"
+
 # RESET PASSWORD
 resetPassword:
   post:

@@ -54,4 +54,18 @@ authRoute.post(
     authController.resetRefreshToken
 );
 
+authRoute.post(
+    "/verify",
+    validator.validateVerifyAccount,
+    validator.handleValidationErrors,
+    authController.verifyAccount
+);
+
+authRoute.post(
+    "/verify/resend",
+    validator.validateResendVerificationEmail,
+    validator.handleValidationErrors,
+    authController.resendVerificationEmail
+);
+
 export default authRoute;

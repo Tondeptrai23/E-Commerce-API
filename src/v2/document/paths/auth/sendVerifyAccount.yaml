@@ -1,0 +1,50 @@
+# POST /auth/verify/send:
+tags:
+  - Authentication
+summary: Send verification email to user
+description: |
+  Send verification email to user
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          email:
+            type: string
+            format: email
+            description: Email address
+responses:
+  200:
+    description: Verification email sent
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            message:
+              example: "Verification email sent"
+
+  400:
+    description: Validation Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error400.yaml"
+
+  404:
+    description: Account Not Found
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error404.yaml"
+
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error500.yaml"

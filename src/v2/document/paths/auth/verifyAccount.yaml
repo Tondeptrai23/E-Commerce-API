@@ -1,28 +1,25 @@
-# POST /auth/signup:
+# POST /auth/verify:
 tags:
   - Authentication
-summary: Sign up
-description: Sign up with the given credentials.
+summary: Verify user account
+description: |
+  Verify user account
 requestBody:
-  required: true
   content:
     application/json:
       schema:
         type: object
         properties:
+          code:
+            type: string
+            description: Verification code
           email:
             type: string
-            example: "example@gmail.com"
-          password:
-            type: string
-            example: "password"
-          name:
-            type: string
-            example: "User Name"
-
+            format: email
+            description: Email address
 responses:
   201:
-    description: Sign up successful
+    description: Verification successful
     content:
       application/json:
         schema:
@@ -32,15 +29,7 @@ responses:
               type: boolean
               example: true
             message:
-              type: string
-              example: "Account created! Please check your email to verify your account"
-
-  409:
-    description: Email or name already exists
-    content:
-      application/json:
-        schema:
-          $ref: "../../schemas/error/error409.yaml"
+              example: "Account verified successfully"
 
   400:
     description: Validation Error
@@ -48,6 +37,13 @@ responses:
       application/json:
         schema:
           $ref: "../../schemas/error/error400.yaml"
+
+  404:
+    description: Account Not Found
+    content:
+      application/json:
+        schema:
+          $ref: "../../schemas/error/error404.yaml"
 
   500:
     description: Internal Server Error

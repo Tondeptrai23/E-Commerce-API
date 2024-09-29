@@ -108,18 +108,21 @@ const seedUser = async () => {
             email: "user1@gmail.com",
             password: "password1",
             role: "user",
+            isVerified: true,
         },
         {
             userID: 2,
             email: "user2@gmail.com",
             password: "password2",
             role: "user",
+            isVerified: true,
         },
         {
             userID: 3,
             email: "user3@gmail.com",
             password: "password3",
             role: "user",
+            isVerified: true,
         },
         {
             userID: 4,
@@ -127,6 +130,7 @@ const seedUser = async () => {
             password: "adminpassword",
             name: "Admin",
             role: "admin",
+            isVerified: true,
         },
     ];
 
