@@ -54,7 +54,8 @@
       "/src/v1/"
     ],
     "setupFilesAfterEnv": [
-      "jest-extended/all"
+      "jest-extended/all",
+      "./src/v2/test/setup.js"
     ]
   }
 }

@@ -7,8 +7,6 @@ import {
     assertTokenInvalid,
     assertTokenNotProvided,
 } from "../../../utils.integration.js";
-import { jest } from "@jest/globals";
-import { s3 } from "../../../../../../config/aws.config.js";
 
 /**
  * Set up
@@ -31,13 +29,6 @@ beforeAll(async () => {
         password: "password1",
     });
     accessTokenUser = resUser.body.accessToken;
-
-    // Mock AWS SDK
-    jest.spyOn(s3, "deleteObject").mockImplementation(() => {
-        return {
-            promise: jest.fn().mockResolvedValue(),
-        };
-    });
 });
 
 /**

@@ -104,7 +104,7 @@ class ImageService {
                 await s3
                     .deleteObject({
                         Bucket: awsConfig.BUCKET_NAME,
-                        Key: images[imageIndex].fileName,
+                        Key: images[imageIndex].imageID,
                     })
                     .promise();
 

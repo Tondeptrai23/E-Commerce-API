@@ -16,6 +16,7 @@ import AttributeVariantFilterBuilder from "../condition/filter/attributeVariantF
 import ProductSortBuilder from "../condition/sort/productSortBuilder.service.js";
 import PaginationBuilder from "../condition/paginationBuilder.service.js";
 import { flattenArray, toArray } from "../../utils/utils.js";
+import imageService from "./image.service.js";
 
 class ProductService {
     /**
@@ -174,11 +175,34 @@ class ProductService {
      * @throws {ResourceNotFoundError} if the product is not found
      */
     async deleteProduct(productID) {
-        const product = await Product.findByPk(productID);
+        const product = await Product.findByPk(productID, {
+            include: {
+                model: ProductImage,
+                as: "images",
+            },
+        });
         if (!product) {
             throw new ResourceNotFoundError("Product not found");
         }
+
         await product.destroy();
+    }
+
+    /**
+     * Restore a deleted product
+     *
+     * @param {String} productID the product ID to be restored
+     * @throws {ResourceNotFoundError} if the product is not found
+     */
+    async restoreProduct(productID) {
+        const product = await Product.findByPk(productID, {
+            paranoid: false,
+        });
+        if (!product) {
+            throw new ResourceNotFoundError("Product not found");
+        }
+
+        await product.restore();
     }
 
     /**

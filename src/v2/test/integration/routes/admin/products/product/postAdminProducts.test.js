@@ -8,8 +8,6 @@ import {
     assertTokenInvalid,
 } from "../../../utils.integration.js";
 import path from "path";
-import { jest } from "@jest/globals";
-import { s3 } from "../../../../../../config/aws.config.js";
 
 /**
  * Set up
@@ -32,13 +30,6 @@ beforeAll(async () => {
         password: "password1",
     });
     accessTokenUser = resUser.body.accessToken;
-
-    // Mock AWS SDK
-    jest.spyOn(s3, "putObject").mockImplementation(() => {
-        return {
-            promise: jest.fn().mockResolvedValue(),
-        };
-    });
 });
 
 /**

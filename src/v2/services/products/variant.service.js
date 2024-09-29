@@ -15,6 +15,8 @@ import VariantSortBuilder from "../condition/sort/variantSortBuilder.service.js"
 import variantFilterBuilder from "../condition/filter/variantFilterBuilder.service.js";
 import variantAttributeService from "./variantAttribute.service.js";
 import { db } from "../../models/index.model.js";
+import imageService from "./image.service.js";
+import { Op } from "sequelize";
 
 class VariantService {
     /**
@@ -155,7 +157,12 @@ class VariantService {
      * @throws {ResourceNotFoundError} if the product or variant is not found
      */
     async deleteVariant(variantID) {
-        const variant = await Variant.findByPk(variantID);
+        const variant = await Variant.findByPk(variantID, {
+            include: {
+                model: ProductImage,
+                as: "image",
+            },
+        });
 
         if (!variant) {
             throw new ResourceNotFoundError("Variant not found");
@@ -312,6 +319,24 @@ class VariantService {
         }
 
         return variant;
+    }
+
+    /**
+     * Restore a deleted variant
+     *
+     * @param {String} variantID the variant ID to be restored
+     * @throws {ResourceNotFoundError} if the variant is not found
+     */
+    async restoreVariant(variantID) {
+        const variant = await Variant.findByPk(variantID, {
+            paranoid: false,
+        });
+
+        if (!variant) {
+            throw new ResourceNotFoundError("Variant not found");
+        }
+
+        await variant.restore();
     }
 
     /**
