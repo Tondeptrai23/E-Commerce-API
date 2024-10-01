@@ -120,14 +120,14 @@ class TokenService {
 
         const EXPIRES_IN = 15; // 15 minutes
         if (request) {
-            request.code = generate6DigitCode();
-            request.expiredAt = generateExpiresTime(EXPIRES_IN);
+            request.code = this.generate6DigitCode();
+            request.expiredAt = this.generateExpiresTime(EXPIRES_IN);
             await request.save();
             return request.code;
         } else {
             const newRequest = await VerifyRequest.create({
-                code: generate6DigitCode(),
-                expiredAt: generateExpiresTime(EXPIRES_IN),
+                code: this.generate6DigitCode(),
+                expiredAt: this.generateExpiresTime(EXPIRES_IN),
                 userID: userID,
                 type: "resetPassword",
             });
@@ -152,14 +152,14 @@ class TokenService {
 
         const EXPIRES_IN = 60; // 60 minutes
         if (request) {
-            request.code = generate6DigitCode();
-            request.expiredAt = generateExpiresTime(EXPIRES_IN);
+            request.code = this.generate6DigitCode();
+            request.expiredAt = this.generateExpiresTime(EXPIRES_IN);
             await request.save();
             return request.code;
         } else {
             const newRequest = await VerifyRequest.create({
-                code: generate6DigitCode(),
-                expiredAt: generateExpiresTime(EXPIRES_IN),
+                code: this.generate6DigitCode(),
+                expiredAt: this.generateExpiresTime(EXPIRES_IN),
                 userID: userID,
                 type: "verifyEmail",
             });
@@ -186,9 +186,9 @@ class TokenService {
             return;
         }
 
-        const token = generateCode();
+        const token = this.generateCode();
         request.code = token;
-        request.expiredAt = generateExpiresTime(10);
+        request.expiredAt = this.generateExpiresTime(10);
         await request.save();
 
         return token;
@@ -259,18 +259,18 @@ class TokenService {
 
         return true;
     }
+
+    generate6DigitCode = () => {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+    };
+
+    generateCode = () => {
+        return randomBytes(20).toString("hex");
+    };
+
+    generateExpiresTime = (minutes) => {
+        return Date.now() + minutes * 60 * 1000;
+    };
 }
-
-const generate6DigitCode = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-};
-
-const generateCode = () => {
-    return randomBytes(20).toString("hex");
-};
-
-const generateExpiresTime = (minutes) => {
-    return Date.now() + minutes * 60 * 1000;
-};
 
 export default new TokenService();

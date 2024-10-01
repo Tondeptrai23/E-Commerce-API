@@ -59,6 +59,10 @@ externalDocs:
   url: "https://github.com/Tondeptrai23/E-Commerce-API/blob/main/src/v2/document/docs/query.md" 
 
 paths:
+  # Customer Journey
+
+
+
   # Authentication
   /auth/signin:
     $ref: ./paths/index.paths.yaml#/signin

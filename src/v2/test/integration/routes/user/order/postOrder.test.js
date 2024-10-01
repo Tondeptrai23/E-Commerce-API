@@ -38,6 +38,7 @@ beforeAll(async () => {
         userID: "123",
         email: "test@gmail.com",
         password: "testpassword",
+        isVerified: true,
     });
 
     //Delay 1s

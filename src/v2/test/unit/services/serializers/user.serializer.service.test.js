@@ -10,6 +10,7 @@ const user = {
     name: "Random User",
     avatar: "http://example.com/avatar.jpg",
     role: "user",
+    isVerified: true,
     extraField: "Extra Field",
     updatedAt: new Date(date),
     createdAt: new Date(date),
@@ -25,6 +26,7 @@ describe("UserSerializer", () => {
             name: "Random User",
             avatar: "http://example.com/avatar.jpg",
             role: "user",
+            isVerified: true,
         });
 
         expect(serializedData.createdAt).toBeUndefined();
@@ -44,6 +46,7 @@ describe("UserSerializer", () => {
             role: "user",
             createdAt: new Date(date).toISOString(),
             updatedAt: new Date(date).toISOString(),
+            isVerified: true,
         });
     });
 
@@ -62,6 +65,7 @@ describe("UserSerializer", () => {
             name: null,
             avatar: null,
             role: null,
+            isVerified: false,
         });
     });
 });

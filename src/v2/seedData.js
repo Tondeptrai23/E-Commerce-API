@@ -132,14 +132,6 @@ const seedUser = async () => {
             role: "admin",
             isVerified: true,
         },
-        {
-            userID: 5,
-            email: "luutoan231104@gmail.com",
-            password: "password",
-            role: "user",
-            isVerified: true,
-            name: "Luu Toan",
-        },
     ];
 
     for (const user of users) {
