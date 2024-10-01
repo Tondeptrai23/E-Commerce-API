@@ -1,4 +1,6 @@
 import orderService from "../../services/shopping/order.service.js";
+import userService from "../../services/users/user.service.js";
+import MailService from "../../services/users/mail.service.js";
 import { StatusCodes } from "http-status-codes";
 import { paymentConfig } from "../../config/config.js";
 import StripePayment from "../../services/payment/stripePayment.service.js";
@@ -16,11 +18,9 @@ class PaymentController {
             }
 
             const orderID = req.body.orderId;
-            if (req.body.resultCodes == 0) {
-                await orderService.updateOrderStatus(orderID, "processing");
-            } else {
-                await orderService.handleFailedPayment(orderID);
-            }
+            const isSuccess = req.body.resultCode == 0;
+
+            await this.#processPaymentResult(orderID, isSuccess);
         } catch (err) {
             console.log(err);
         }
@@ -35,11 +35,8 @@ class PaymentController {
                 event.data.object.payment_intent
             );
 
-            if (event.type === "charge.succeeded") {
-                await orderService.updateOrderStatus(orderID, "processing");
-            } else {
-                await orderService.handleFailedPayment(orderID);
-            }
+            const isSuccess = event.type === "charge.succeeded";
+            await this.#processPaymentResult(orderID, isSuccess);
         } catch (err) {
             console.log(err);
         }
@@ -47,6 +44,31 @@ class PaymentController {
         res.status(StatusCodes.OK).send({
             recieved: true,
         });
+    }
+
+    async #processPaymentResult(orderID, isSuccess) {
+        let updatedOrder;
+
+        if (isSuccess) {
+            updatedOrder = await orderService.updateOrderStatus(
+                orderID,
+                "processing"
+            );
+        } else {
+            updatedOrder = await orderService.handleFailedPayment(orderID);
+        }
+
+        const user = await userService.getUser(updatedOrder.userID);
+
+        await this.#sendEmail(user.email, updatedOrder, isSuccess);
+    }
+
+    async #sendEmail(email, order, isSuccess) {
+        if (isSuccess) {
+            await MailService.sendOrderConfirmationEmail(email, order);
+        } else {
+            await MailService.sendOrderFailedEmail(email, order);
+        }
     }
 }
 

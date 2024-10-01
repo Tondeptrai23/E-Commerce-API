@@ -213,18 +213,17 @@ class OrderController {
 
     async postOrder(req, res) {
         try {
-            // POST /api/v2/orders/pending/checkout
+            // POST /api/v2/orders/pending
             // Get param
             const { payment } = req.body;
 
             const order = await orderService.checkOutOrder(req.user, payment);
+            // Serialize data
+            const serializedOrder = OrderSerializer.parse(order, {
+                includeAddress: true,
+            });
             // If payment is COD, checkout order immediately
             if (payment === "COD") {
-                // Serialize data
-                const serializedOrder = OrderSerializer.parse(order, {
-                    includeAddress: true,
-                });
-
                 // Response
                 return res.status(StatusCodes.OK).json({
                     success: true,
@@ -249,7 +248,7 @@ class OrderController {
             // Call payment service
             res.status(StatusCodes.OK).json({
                 success: true,
-                order: order,
+                order: serializedOrder,
                 paymentUrl: paymentInfo.paymentUrl,
             });
         } catch (err) {

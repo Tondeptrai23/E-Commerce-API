@@ -132,6 +132,14 @@ const seedUser = async () => {
             role: "admin",
             isVerified: true,
         },
+        {
+            userID: 5,
+            email: "luutoan231104@gmail.com",
+            password: "password",
+            role: "user",
+            isVerified: true,
+            name: "Luu Toan",
+        },
     ];
 
     for (const user of users) {
@@ -927,7 +935,7 @@ const seedCoupon = async () => {
             timesUsed: 0,
             maxUsage: 10,
             startDate: new Date("2024-06-01"),
-            endDate: new Date("2024-09-31"),
+            endDate: new Date("2024-10-31"),
         },
         {
             couponID: 2,
@@ -938,7 +946,7 @@ const seedCoupon = async () => {
             timesUsed: 3,
             maxUsage: 5,
             startDate: new Date("2024-06-01"),
-            endDate: new Date("2024-09-31"),
+            endDate: new Date("2024-10-31"),
         },
         {
             couponID: 3,
@@ -959,7 +967,7 @@ const seedCoupon = async () => {
             target: "all",
             minimumOrderAmount: 50,
             startDate: new Date("2024-06-01"),
-            endDate: new Date("2024-09-31"),
+            endDate: new Date("2024-10-31"),
         },
         {
             couponID: 5,
@@ -968,7 +976,7 @@ const seedCoupon = async () => {
             discountValue: 0,
             target: "single",
             startDate: new Date("2024-06-01"),
-            endDate: new Date("2024-09-31"),
+            endDate: new Date("2024-10-31"),
         },
         {
             couponID: 6,
@@ -979,7 +987,7 @@ const seedCoupon = async () => {
             timesUsed: 0,
             maxUsage: 20,
             startDate: new Date("2024-06-01"),
-            endDate: new Date("2024-09-31"),
+            endDate: new Date("2024-10-31"),
         },
         {
             couponID: 7,
@@ -1010,7 +1018,7 @@ const seedCoupon = async () => {
             timesUsed: 0,
             maxUsage: 10,
             startDate: new Date("2024-06-01"),
-            endDate: new Date("2024-09-31"),
+            endDate: new Date("2024-10-31"),
         },
         {
             couponID: 10,
@@ -1021,7 +1029,7 @@ const seedCoupon = async () => {
             timesUsed: 0,
             maxUsage: 50,
             startDate: new Date("2024-06-01"),
-            endDate: new Date("2024-09-31"),
+            endDate: new Date("2024-10-31"),
         },
         {
             couponID: 11,

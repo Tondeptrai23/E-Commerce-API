@@ -1,8 +1,5 @@
 type: object
 properties:
-  shippingAddressID:
-    type: string
-    example: "1"
   phoneNumber:
     type: string
     example: "0123456789"

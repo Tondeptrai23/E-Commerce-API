@@ -21,6 +21,10 @@ responses:
               example: true
             shippingAddress:
               type: object
+              properties:
+                shippingAddressID:
+                  type: string
+                  example: "1"
               allOf:
                 - $ref: "../../../schemas/shopping/shippingAddress.yaml"
                 - $ref: "../../../schemas/timestamps.yaml"

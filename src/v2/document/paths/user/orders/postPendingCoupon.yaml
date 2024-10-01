@@ -29,10 +29,6 @@ responses:
               example: true
             order:
               type: object
-              properties:
-                shippingAddressID:
-                  type: string
-                  example: "1"
               allOf:
                 - $ref: "../../../schemas/shopping/associatedOrder.yaml"
   400:

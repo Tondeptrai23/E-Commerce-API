@@ -281,11 +281,10 @@ userCart:
   delete:
     $ref: "./user/cart/deleteCart.yaml"
 
-userCartItems:
-  post:
-    $ref: "./user/cart/postCartItems.yaml"
 
 userCartItemsVariant:
+  post:
+    $ref: "./user/cart/postCartItems.yaml"
   patch:
     $ref: "./user/cart/patchCartItemsVariant.yaml"
   delete:

@@ -1053,7 +1053,7 @@ paths:
                   cart:
                     type: array
                     items:
-                      $ref: '#/paths/~1cart~1items/post/responses/200/content/application~1json/schema/properties/cartItem'
+                      $ref: '#/paths/~1cart~1%7BvariantID%7D/post/responses/201/content/application~1json/schema/properties/cartItem'
         '401':
           description: 'Token invalid, not authenticated'
           content:
@@ -1196,7 +1196,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
-  /cart/items:
+  '/cart/{variantID}':
     post:
       tags:
         - User Cart
@@ -1205,22 +1205,26 @@ paths:
         Add item to cart
       security:
         - bearerAuth: []
+      parameters:
+        - name: variantID
+          in: path
+          description: Variant ID
+          required: true
+          schema:
+            type: string
+            example: '1'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              description: VariantID in cart that the user wants to add.
               type: object
               properties:
-                variantID:
-                  type: string
-                  example: '1'
                 quantity:
-                  type: number
+                  type: integer
                   example: 1
       responses:
-        '200':
+        '201':
           description: Item added to cart
           content:
             application/json:
@@ -1266,7 +1270,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error400'
-  '/cart/items/{variantID}':
     patch:
       tags:
         - User Cart
@@ -1306,7 +1309,7 @@ paths:
                     type: boolean
                     example: true
                   cartItem:
-                    $ref: '#/paths/~1cart~1items/post/responses/200/content/application~1json/schema/properties/cartItem'
+                    $ref: '#/paths/~1cart~1%7BvariantID%7D/post/responses/201/content/application~1json/schema/properties/cartItem'
         '400':
           description: Invalid request parameters
           content:
@@ -1621,26 +1624,7 @@ paths:
                     type: object
                     properties:
                       shippingAddress:
-                        type: object
-                        properties:
-                          shippingAddressID:
-                            type: string
-                            example: '1'
-                          phoneNumber:
-                            type: string
-                            example: 0123456789
-                          recipientName:
-                            type: string
-                            example: John Doe
-                          address:
-                            type: string
-                            example: 123 Bui Huu Nghia
-                          city:
-                            type: string
-                            example: Bien Hoa City
-                          district:
-                            type: string
-                            example: Dong Nai
+                        $ref: '#/paths/~1orders~1pending/patch/requestBody/content/application~1json/schema/properties/address'
                     allOf:
                       - $ref: '#/paths/~1cart/post/responses/200/content/application~1json/schema/properties/order'
         '401':
@@ -1664,12 +1648,92 @@ paths:
     post:
       tags:
         - User Orders
-      summary: Check out pending order (Will be added later)
+      summary: Check out pending order
+      description: |
+        Check out pending order
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment:
+                  type: string
+                  enum:
+                    - cod
+                    - creditcard
+                    - momo
+                  example: cod
+      responses:
+        '200':
+          description: Apply coupon successfully (See the schema for more details)
+          content:
+            application/json:
+              schema:
+                description: 'If payment is Momo or Credit Card, the response will include paymentUrl'
+                oneOf:
+                  CODResposne:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      order:
+                        type: object
+                        properties:
+                          shippingAddress:
+                            $ref: '#/paths/~1orders~1pending/patch/requestBody/content/application~1json/schema/properties/address'
+                        allOf:
+                          - $ref: '#/paths/~1cart/post/responses/200/content/application~1json/schema/properties/order'
+                  CreditCardOrMomoResponse:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      order:
+                        type: object
+                        properties:
+                          shippingAddress:
+                            $ref: '#/paths/~1orders~1pending/patch/requestBody/content/application~1json/schema/properties/address'
+                        allOf:
+                          - $ref: '#/paths/~1cart/post/responses/200/content/application~1json/schema/properties/order'
+                      paymentUrl:
+                        type: string
+                        format: uri
+                        example: 'https://payment.com'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '404':
+          description: Pending order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
     patch:
       tags:
         - User Orders
       summary: Update a pending order
-      description: Update message or shipping address for a pending order.
+      description: 'Update message or shipping address for a pending order. <br> If `addressID` is provided, the `address` field will be ignored. <br> If you want to update the shipping address for only this order, provide the `address` field. <br>'
       security:
         - bearerAuth: []
       requestBody:
@@ -1682,9 +1746,27 @@ paths:
                 message:
                   type: string
                   example: Please deliver before 5pm
-                shippingAddressID:
+                addressID:
                   type: string
                   example: '1'
+                address:
+                  type: object
+                  properties:
+                    phoneNumber:
+                      type: string
+                      example: 0123456789
+                    recipientName:
+                      type: string
+                      example: John Doe
+                    address:
+                      type: string
+                      example: 123 Bui Huu Nghia
+                    city:
+                      type: string
+                      example: Bien Hoa City
+                    district:
+                      type: string
+                      example: Dong Nai
       responses:
         '200':
           description: Pending order found
@@ -1700,7 +1782,7 @@ paths:
                     type: object
                     properties:
                       shippingAddress:
-                        $ref: '#/paths/~1orders~1pending/get/responses/200/content/application~1json/schema/properties/order/properties/shippingAddress'
+                        $ref: '#/paths/~1orders~1pending/patch/requestBody/content/application~1json/schema/properties/address'
                     allOf:
                       - $ref: '#/paths/~1cart/post/responses/200/content/application~1json/schema/properties/order'
         '400':
@@ -1808,10 +1890,6 @@ paths:
                     example: true
                   order:
                     type: object
-                    properties:
-                      shippingAddressID:
-                        type: string
-                        example: '1'
                     allOf:
                       - $ref: '#/paths/~1cart/post/responses/200/content/application~1json/schema/properties/order'
         '400':
@@ -6762,8 +6840,12 @@ paths:
                     example: true
                   shippingAddress:
                     type: object
+                    properties:
+                      shippingAddressID:
+                        type: string
+                        example: '1'
                     allOf:
-                      - $ref: '#/paths/~1orders~1pending/get/responses/200/content/application~1json/schema/properties/order/properties/shippingAddress'
+                      - $ref: '#/paths/~1orders~1pending/patch/requestBody/content/application~1json/schema/properties/address'
                       - $ref: '#/components/schemas/timestamps'
         '401':
           description: 'Token invalid, not authenticated'

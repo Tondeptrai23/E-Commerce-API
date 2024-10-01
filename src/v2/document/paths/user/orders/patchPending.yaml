@@ -2,7 +2,9 @@
 tags:
   - User Orders
 summary: Update a pending order
-description: Update message or shipping address for a pending order.
+description: Update message or shipping address for a pending order. <br>
+  If `addressID` is provided, the `address` field will be ignored. <br>
+  If you want to update the shipping address for only this order, provide the `address` field. <br>
 security:
   - bearerAuth: []
 requestBody:
@@ -15,9 +17,11 @@ requestBody:
           message:
             type: string
             example: "Please deliver before 5pm"
-          shippingAddressID:
+          addressID:
             type: string
             example: "1"
+          address:
+            $ref: "../../../schemas/shopping/shippingAddress.yaml"
 responses:
   200:
     description: Pending order found

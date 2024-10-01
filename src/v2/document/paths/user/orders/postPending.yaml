@@ -1,4 +1,83 @@
 # POST /orders/pending
 tags:
   - User Orders
-summary: Check out pending order (Will be added later)
+summary: Check out pending order
+description: |
+  Check out pending order
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          payment:
+            type: string
+            enum: [cod, creditcard, momo]
+            example: cod
+
+responses:
+  200:
+    description: Apply coupon successfully (See the schema for more details)
+    content:
+      application/json:
+        schema:
+          description: If payment is Momo or Credit Card, the response will include paymentUrl
+          oneOf:
+            CODResposne:
+              type: object
+              properties:
+                success: 
+                  type: boolean
+                  example: true
+                order:
+                  type: object
+                  properties:
+                    shippingAddress:
+                      $ref: "../../../schemas/shopping/shippingAddress.yaml"
+                  allOf:
+                    - $ref: "../../../schemas/shopping/associatedOrder.yaml"
+            CreditCardOrMomoResponse:
+              type: object
+              properties:
+                success: 
+                  type: boolean
+                  example: true
+                order:
+                  type: object
+                  properties:
+                    shippingAddress:
+                      $ref: "../../../schemas/shopping/shippingAddress.yaml"
+                  allOf:
+                    - $ref: "../../../schemas/shopping/associatedOrder.yaml"
+                paymentUrl:
+                  type: string
+                  format: uri
+                  example: "https://payment.com"
+
+  400:
+    description: Invalid query parameters
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error400.yaml"
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  404:
+    description: Pending order not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

@@ -130,11 +130,8 @@ paths:
   # User Cart
   /cart:
     $ref: ./paths/index.paths.yaml#/userCart
-
-  /cart/items:
-    $ref: ./paths/index.paths.yaml#/userCartItems
-
-  /cart/items/{variantID}:
+    
+  /cart/{variantID}:
     $ref: ./paths/index.paths.yaml#/userCartItemsVariant
 
   # User Order
