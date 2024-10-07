@@ -164,17 +164,12 @@ paths:
                   success:
                     type: boolean
                     example: false
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        code:
-                          type: string
-                          example: Conflict
-                        message:
-                          type: string
-                          example: Something already exists
+                  error:
+                    type: string
+                    example: Conflict
+                  message:
+                    type: string
+                    example: Something already exists
         '500':
           description: Internal Server Error
           content:
@@ -226,6 +221,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error404'
+        '410':
+          description: Reset password expired
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: Gone
+                  message:
+                    type: string
+                    example: Something expired
         '500':
           description: Internal Server Error
           content:
@@ -468,6 +479,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error404'
+        '410':
+          description: Reset password expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1verify/post/responses/410/content/application~1json/schema'
         '500':
           description: Server error
           content:
@@ -4793,7 +4810,7 @@ paths:
       tags:
         - Admin Coupons
       summary: Update coupon details
-      description: 'Updates specific fields of an existing coupon identified by its coupon ID. Only `description`, `minimumOrderAmount`, `maxUsage`, and `endDate` can be modified to maintain financial integrity.'
+      description: 'Updates specific fields of an existing coupon identified by its coupon ID. Only `description`, `minimumOrderAmount`, `maxUsage`, `startDate` and `endDate` can be modified to maintain financial integrity.'
       security:
         - bearerAuth: []
       parameters:
@@ -7177,6 +7194,12 @@ components:
         success:
           type: boolean
           example: false
+        error:
+          type: string
+          example: BadRequest
+        message:
+          type: string
+          example: Invalid request
         errors:
           type: array
           items:
@@ -7203,68 +7226,48 @@ components:
         success:
           type: boolean
           example: false
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              error:
-                type: string
-                example: Unauthorized
-              message:
-                type: string
-                example: Token invalid
+        error:
+          type: string
+          example: Unauthorized
+        message:
+          type: string
+          example: Token invalid
     error403:
       type: object
       properties:
         success:
           type: boolean
           example: false
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              error:
-                type: string
-                example: Forbidden
-              message:
-                type: string
-                example: Not an admin. Cannot retrieve administrative data
+        error:
+          type: string
+          example: Forbidden
+        message:
+          type: string
+          example: Not an admin. Cannot retrieve administrative data
     error404:
       type: object
       properties:
         success:
           type: boolean
           example: false
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              error:
-                type: string
-                example: NotFound
-              message:
-                type: string
-                example: Something not found
+        error:
+          type: string
+          example: NotFound
+        message:
+          type: string
+          example: Something not found
     error500:
       type: object
       properties:
         success:
           type: boolean
           example: false
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              code:
-                type: string
-                example: InternalServerError
-              message:
-                type: string
-                example: Something went wrong
+        error:
+          type: string
+          example: ServerError
+        message:
+          type: string
+          example: Something went wrong
     product:
       type: object
       properties:

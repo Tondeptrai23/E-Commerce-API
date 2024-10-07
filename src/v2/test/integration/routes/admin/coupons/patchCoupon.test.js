@@ -110,6 +110,11 @@ describe("PATCH /admin/coupons/:couponID", () => {
             });
 
         expect(res.status).toBe(StatusCodes.BAD_REQUEST);
+        expect(res.body).toEqual(
+            expect.objectContaining({
+                success: false,
+            })
+        );
     });
 
     it("should return 400 if startDate is after endDate", async () => {
@@ -124,25 +129,10 @@ describe("PATCH /admin/coupons/:couponID", () => {
             });
 
         expect(res.status).toBe(StatusCodes.BAD_REQUEST);
-        expect(res.body.errors[0].message).toBe(
-            "Start date should be before end date"
-        );
-    });
-
-    it("should return 400 if minimumOrderAmount is greater than 100 when discountType is 'percentage'", async () => {
-        const res = await request(app)
-            .patch("/api/v2/admin/coupons/1")
-            .set("Authorization", `Bearer ${accessToken}`)
-            .send({
-                description: "Updated description",
-                endDate: "2024-12-31",
-                maxUsage: 100,
-                minimumOrderAmount: 101,
-            });
-
-        expect(res.status).toBe(StatusCodes.BAD_REQUEST);
-        expect(res.body.errors[0].message).toBe(
-            "Minimum order amount should be less than 100 for percentage discount"
+        expect(res.body).toEqual(
+            expect.objectContaining({
+                success: false,
+            })
         );
     });
 

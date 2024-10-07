@@ -1,11 +1,7 @@
 import User from "../../models/user/user.model.js";
 
 import bcrypt from "bcryptjs";
-import {
-    BadRequestError,
-    ConflictError,
-    ResourceNotFoundError,
-} from "../../utils/error.js";
+import { ConflictError, ResourceNotFoundError } from "../../utils/error.js";
 
 class UserService {
     /**

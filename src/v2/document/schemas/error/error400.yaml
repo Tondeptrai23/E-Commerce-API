@@ -3,6 +3,12 @@ properties:
   success:
     type: boolean
     example: false
+  error:
+    type: string
+    example: "BadRequest"
+  message:
+    type: string
+    example: "Invalid request"
   errors:
     type: array
     items:

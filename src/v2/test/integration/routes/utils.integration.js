@@ -5,12 +5,6 @@ const assertTokenNotProvided = (res) => {
     expect(res.body).toEqual(
         expect.objectContaining({
             success: false,
-            errors: expect.any(Array),
-        })
-    );
-
-    expect(res.body.errors[0]).toEqual(
-        expect.objectContaining({
             error: "Unauthorized",
             message: "Token not found",
         })
@@ -22,12 +16,6 @@ const assertTokenInvalid = (res) => {
     expect(res.body).toEqual(
         expect.objectContaining({
             success: false,
-            errors: expect.any(Array),
-        })
-    );
-
-    expect(res.body.errors[0]).toEqual(
-        expect.objectContaining({
             error: "TokenInvalid",
             message: "Token invalid",
         })
@@ -39,12 +27,6 @@ const assertNotAnAdmin = (res) => {
     expect(res.body).toEqual(
         expect.objectContaining({
             success: false,
-            errors: expect.any(Array),
-        })
-    );
-
-    expect(res.body.errors[0]).toEqual(
-        expect.objectContaining({
             error: "Forbidden",
             message: "Not an admin. Cannot retrieve administrative data",
         })

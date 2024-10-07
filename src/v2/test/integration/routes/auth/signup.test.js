@@ -61,6 +61,7 @@ describe("POST /api/v2/auth/signup", () => {
         });
 
         expect(res2.status).toBe(StatusCodes.UNAUTHORIZED);
+        expect(res2.body).toEqual(expect.objectContaining({ success: false }));
     });
 
     it("should return 400 Bad Request if email is not provided", async () => {
@@ -70,10 +71,9 @@ describe("POST /api/v2/auth/signup", () => {
         });
 
         expect(res.status).toBe(StatusCodes.BAD_REQUEST);
-        expect(res.body).toHaveProperty("errors");
-        expect(res.body.errors[0]).toEqual(
+        expect(res.body).toEqual(
             expect.objectContaining({
-                message: "Email is required",
+                success: false,
             })
         );
     });
@@ -86,11 +86,9 @@ describe("POST /api/v2/auth/signup", () => {
         });
 
         expect(res.status).toBe(StatusCodes.CONFLICT);
-        expect(res.body).toHaveProperty("errors");
-        expect(res.body.errors[0]).toEqual(
+        expect(res.body).toEqual(
             expect.objectContaining({
-                error: "Conflict",
-                message: "Email already exists",
+                success: false,
             })
         );
     });

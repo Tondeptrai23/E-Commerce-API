@@ -477,30 +477,6 @@ describe("CouponService", () => {
                 couponService.updateCoupon(couponID, updatedCouponData)
             ).rejects.toThrow(ResourceNotFoundError);
         });
-
-        test("Update a coupon throws error if invalid data", async () => {
-            const couponID = "1";
-            const updatedCouponData = {
-                discountType: "percentage",
-                minimumOrderAmount: 101,
-            };
-
-            await expect(
-                couponService.updateCoupon(couponID, updatedCouponData)
-            ).rejects.toThrow(BadRequestError);
-        });
-
-        test("Update a coupon throws error if invalid data 2", async () => {
-            const couponID = "1";
-            const updatedCouponData = {
-                startDate: new Date("2024/8/1"),
-                endDate: new Date("2024/7/12"),
-            };
-
-            await expect(
-                couponService.updateCoupon(couponID, updatedCouponData)
-            ).rejects.toThrow(BadRequestError);
-        });
     });
 
     describe("disableCoupon", () => {

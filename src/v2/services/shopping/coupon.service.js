@@ -166,19 +166,6 @@ class CouponService {
 
         coupon = coupon.set(couponData);
 
-        if (coupon.startDate > coupon.endDate) {
-            throw new BadRequestError("Start date should be before end date");
-        }
-
-        if (
-            coupon.discountType === "percentage" &&
-            coupon.minimumOrderAmount > 100
-        ) {
-            throw new BadRequestError(
-                "Minimum order amount should be less than 100 for percentage discount"
-            );
-        }
-
         return await coupon.save();
     }
 

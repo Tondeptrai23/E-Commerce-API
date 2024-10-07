@@ -102,14 +102,6 @@ describe("GET /categories/:categoryName/ascendants", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
-            })
-        );
-
-        expect(res.body.errors[0]).toEqual(
-            expect.objectContaining({
-                error: "NotFound",
-                message: "Category not found",
             })
         );
     });

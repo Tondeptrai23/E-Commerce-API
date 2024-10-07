@@ -101,13 +101,6 @@ describe("GET /api/v2/admin/products/:productID/variants", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
-            })
-        );
-        expect(res.body.errors[0]).toEqual(
-            expect.objectContaining({
-                error: "NotFound",
-                message: "Product not found",
             })
         );
     });

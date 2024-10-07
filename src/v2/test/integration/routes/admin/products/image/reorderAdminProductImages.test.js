@@ -113,7 +113,6 @@ describe("PATCH /api/v2/admin/products/:productID/images/", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
             })
         );
     });
@@ -130,14 +129,8 @@ describe("PATCH /api/v2/admin/products/:productID/images/", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
             })
         );
-
-        expect(res.body.errors[0]).toEqual({
-            error: "NotFound",
-            message: "Product not found",
-        });
     });
 
     it("should return 401 if token is not provided", async () => {

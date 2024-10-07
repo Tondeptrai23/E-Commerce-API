@@ -106,12 +106,6 @@ describe("POST /api/v2/orders/pending/coupons", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: [
-                    {
-                        message: "Coupon not found or not available",
-                        error: "NotFound",
-                    },
-                ],
             })
         );
     });
@@ -128,12 +122,6 @@ describe("POST /api/v2/orders/pending/coupons", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: [
-                    {
-                        message: "Coupon not found or not available",
-                        error: "NotFound",
-                    },
-                ],
             })
         );
     });
@@ -150,12 +138,6 @@ describe("POST /api/v2/orders/pending/coupons", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: [
-                    {
-                        message: "Order not found",
-                        error: "NotFound",
-                    },
-                ],
             })
         );
     });

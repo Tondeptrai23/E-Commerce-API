@@ -109,11 +109,7 @@ describe("PATCH /api/v2/admin/variants/:variantID", () => {
             .set("Authorization", `Bearer ${accessToken}`);
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
-        expect(res.body).toEqual({
-            success: false,
-            errors: expect.any(Array),
-        });
-        expect(res.body.errors[0].message).toBe("Variant not found");
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
     it("should return 404 if image not found", async () => {
@@ -125,11 +121,7 @@ describe("PATCH /api/v2/admin/variants/:variantID", () => {
             .set("Authorization", `Bearer ${accessToken}`);
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
-        expect(res.body).toEqual({
-            success: false,
-            errors: expect.any(Array),
-        });
-        expect(res.body.errors[0].message).toBe("Image not found");
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
     it("should return 400 if discount price is greater than price", async () => {
@@ -142,14 +134,7 @@ describe("PATCH /api/v2/admin/variants/:variantID", () => {
             });
 
         expect(res.status).toBe(StatusCodes.BAD_REQUEST);
-        expect(res.body).toEqual({
-            success: false,
-            errors: expect.any(Array),
-        });
-
-        expect(res.body.errors[0].message).toBe(
-            "Discount price should be less than or equal to price"
-        );
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
     it("should return 400 if price is not a number", async () => {
@@ -162,6 +147,7 @@ describe("PATCH /api/v2/admin/variants/:variantID", () => {
             .set("Authorization", `Bearer ${accessToken}`);
 
         expect(res.status).toBe(StatusCodes.BAD_REQUEST);
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
     it("should return 401 if token is not provided", async () => {

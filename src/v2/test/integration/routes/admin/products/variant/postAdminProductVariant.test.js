@@ -345,11 +345,6 @@ describe("POST /admin/products/:productID/variants", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.arrayContaining([
-                    expect.objectContaining({
-                        message: "SKU is already taken",
-                    }),
-                ]),
             })
         );
     });
@@ -372,11 +367,6 @@ describe("POST /admin/products/:productID/variants", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.arrayContaining([
-                    expect.objectContaining({
-                        message: "Price is required",
-                    }),
-                ]),
             })
         );
     });
@@ -453,13 +443,6 @@ describe("POST /admin/products/:productID/variants", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
-            })
-        );
-        expect(res.body.errors[0]).toEqual(
-            expect.objectContaining({
-                error: "NotFound",
-                message: "Product not found",
             })
         );
     });

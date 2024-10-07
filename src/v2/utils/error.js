@@ -28,11 +28,26 @@ class ForbiddenError extends Error {
 }
 
 class BadRequestError extends Error {
-    constructor(message) {
+    constructor(
+        message,
+        metadata = { type: undefined, value: undefined, location: undefined }
+    ) {
         super(message);
         this.name = "BadRequest";
         this.isCustomError = true;
         this.code = StatusCodes.BAD_REQUEST;
+        this.type = metadata.type;
+        this.value = metadata.value;
+        this.location = metadata.location;
+    }
+}
+
+class GoneError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "Gone";
+        this.isCustomError = true;
+        this.code = StatusCodes.GONE;
     }
 }
 
@@ -51,4 +66,5 @@ export {
     ForbiddenError,
     BadRequestError,
     ConflictError,
+    GoneError,
 };

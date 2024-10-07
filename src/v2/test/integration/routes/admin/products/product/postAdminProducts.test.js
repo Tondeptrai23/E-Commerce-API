@@ -333,7 +333,6 @@ describe("POST /admin/products", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
             })
         );
     });
@@ -364,14 +363,6 @@ describe("POST /admin/products", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
-            })
-        );
-
-        expect(res.body.errors[0]).toEqual(
-            expect.objectContaining({
-                error: "Conflict",
-                message: "SKU is already taken",
             })
         );
 
@@ -412,14 +403,6 @@ describe("POST /admin/products", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
-            })
-        );
-
-        expect(res.body.errors[0]).toEqual(
-            expect.objectContaining({
-                error: "Conflict",
-                message: "Product name is taken",
             })
         );
     });

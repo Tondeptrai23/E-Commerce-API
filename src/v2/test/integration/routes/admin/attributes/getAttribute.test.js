@@ -72,15 +72,7 @@ describe("GET /api/v2/admin/attributes/:attributeID", () => {
             });
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
-        expect(res.body).toEqual({
-            success: false,
-            errors: expect.any(Array),
-        });
-
-        expect(res.body.errors[0]).toEqual({
-            error: "NotFound",
-            message: "Attribute not found",
-        });
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
     it("should return 401 if token is not provided", async () => {

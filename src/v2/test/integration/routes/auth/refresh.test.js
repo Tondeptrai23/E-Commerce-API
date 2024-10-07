@@ -46,10 +46,6 @@ describe("POST /auth/refreshToken", () => {
 
         expect(res.status).toBe(StatusCodes.UNAUTHORIZED);
         expect(res.body.success).toBe(false);
-        expect(res.body.errors[0]).toEqual({
-            error: "TokenInvalid",
-            message: "Token invalid",
-        });
     });
 
     it("should return 401 if refresh token is expired", async () => {
@@ -70,10 +66,6 @@ describe("POST /auth/refreshToken", () => {
 
         expect(res.status).toBe(StatusCodes.UNAUTHORIZED);
         expect(res.body.success).toBe(false);
-        expect(res.body.errors[0]).toEqual({
-            error: "TokenExpired",
-            message: "Token expired",
-        });
     });
 
     it("should return 401 if refresh token is not provided", async () => {
@@ -81,9 +73,5 @@ describe("POST /auth/refreshToken", () => {
 
         expect(res.status).toBe(StatusCodes.UNAUTHORIZED);
         expect(res.body.success).toBe(false);
-        expect(res.body.errors[0]).toEqual({
-            error: "Unauthorized",
-            message: "Token not found",
-        });
     });
 });

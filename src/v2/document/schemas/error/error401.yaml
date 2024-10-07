@@ -3,14 +3,9 @@
     success:
       type: boolean
       example: false
-    errors:
-      type: array
-      items:
-        type: object
-        properties:
-          error:
-            type: string
-            example: "Unauthorized"
-          message:
-            type: string
-            example: "Token invalid"
+    error:
+      type: string
+      example: "Unauthorized"
+    message:
+      type: string
+      example: "Token invalid"

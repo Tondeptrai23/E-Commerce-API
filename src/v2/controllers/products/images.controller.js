@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import imageService from "../../services/products/image.service.js";
 import productBuilderService from "../../services/products/productBuilder.service.js";
 import ImageSerializer from "../../services/serializers/image.serializer.service.js";
+import { BadRequestError } from "../../utils/error.js";
 
 class ImageController {
     async getProductImages(req, res, next) {
@@ -126,6 +127,16 @@ class ImageController {
                 success: true,
             });
         } catch (err) {
+            // Custom BadRequestError
+            if (err instanceof BadRequestError) {
+                err = new BadRequestError(err.message, {
+                    type: "field",
+                    location: "params",
+                    path: "imageID",
+                    value: req.params.imageID,
+                });
+            }
+
             next(err);
         }
     }

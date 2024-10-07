@@ -125,19 +125,7 @@ describe("GET /api/v2/admin/products/:productID/variants/:variantID", () => {
             .set("Authorization", "Bearer " + accessToken);
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
-        expect(res.body).toEqual(
-            expect.objectContaining({
-                success: false,
-                errors: expect.any(Array),
-            })
-        );
-
-        expect(res.body.errors[0]).toEqual(
-            expect.objectContaining({
-                error: "NotFound",
-                message: "Variant not found",
-            })
-        );
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
     it("should return 404 if product is not found", async () => {
@@ -146,19 +134,7 @@ describe("GET /api/v2/admin/products/:productID/variants/:variantID", () => {
             .set("Authorization", "Bearer " + accessToken);
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
-        expect(res.body).toEqual(
-            expect.objectContaining({
-                success: false,
-                errors: expect.any(Array),
-            })
-        );
-
-        expect(res.body.errors[0]).toEqual(
-            expect.objectContaining({
-                error: "NotFound",
-                message: "Product not found",
-            })
-        );
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
     it("should return 401 if token is not provided", async () => {

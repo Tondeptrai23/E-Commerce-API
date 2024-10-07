@@ -455,7 +455,6 @@ describe("GET /admin/coupons", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
             })
         );
     });

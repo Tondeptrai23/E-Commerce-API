@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import couponService from "../../services/shopping/coupon.service.js";
 import CouponSerializer from "../../services/serializers/coupon.serializer.service.js";
 import { removeEmptyFields } from "../../utils/utils.js";
+import { validationResult } from "express-validator";
 
 class CouponController {
     async getCoupons(req, res, next) {

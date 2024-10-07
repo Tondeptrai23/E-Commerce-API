@@ -2,7 +2,11 @@ import { jwt } from "../../config/auth.config.js";
 import User from "../../models/user/user.model.js";
 import { createHash } from "crypto";
 import VerifyRequest from "../../models/user/verifyRequest.model.js";
-import { BadRequestError, UnauthorizedError } from "../../utils/error.js";
+import {
+    ResourceNotFoundError,
+    GoneError,
+    UnauthorizedError,
+} from "../../utils/error.js";
 import { randomBytes } from "crypto";
 
 /**
@@ -211,11 +215,11 @@ class TokenService {
         });
 
         if (!request) {
-            throw new BadRequestError("Invalid reset password code");
+            throw new ResourceNotFoundError("Reset password code not found");
         }
 
         if (request.expiredAt < new Date()) {
-            throw new BadRequestError("Reset password code expired");
+            throw new GoneError("Reset password code expired");
         }
 
         return true;
@@ -238,11 +242,11 @@ class TokenService {
         });
 
         if (!request) {
-            throw new BadRequestError("Invalid verification code");
+            throw new ResourceNotFoundError("Invalid verification code");
         }
 
         if (request.expiredAt < new Date()) {
-            throw new BadRequestError("Verification code expired");
+            throw new GoneError("Verification code expired");
         }
 
         await User.update(

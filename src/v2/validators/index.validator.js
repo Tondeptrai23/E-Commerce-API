@@ -37,6 +37,7 @@ const handleValidationFileUpload = (error, req, res, next) => {
     if (error instanceof MulterError) {
         return res.status(StatusCodes.BAD_REQUEST).json({
             success: false,
+            error: "FileUploadError",
             errors: [
                 {
                     type: "file",

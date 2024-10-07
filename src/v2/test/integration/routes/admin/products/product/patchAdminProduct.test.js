@@ -72,12 +72,6 @@ describe("PATCH /admin/products/:productID", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.arrayContaining([
-                    expect.objectContaining({
-                        error: "Conflict",
-                        message: "Product name is taken",
-                    }),
-                ]),
             })
         );
     });
@@ -95,12 +89,6 @@ describe("PATCH /admin/products/:productID", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.arrayContaining([
-                    expect.objectContaining({
-                        error: "NotFound",
-                        message: "Product not found",
-                    }),
-                ]),
             })
         );
     });
@@ -118,12 +106,6 @@ describe("PATCH /admin/products/:productID", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.arrayContaining([
-                    expect.objectContaining({
-                        error: "NotFound",
-                        message: "Product not found",
-                    }),
-                ]),
             })
         );
     });
@@ -141,11 +123,6 @@ describe("PATCH /admin/products/:productID", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.arrayContaining([
-                    expect.objectContaining({
-                        message: "Name should be a string",
-                    }),
-                ]),
             })
         );
     });

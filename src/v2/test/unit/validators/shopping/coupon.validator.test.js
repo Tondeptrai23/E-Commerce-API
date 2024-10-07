@@ -112,7 +112,7 @@ describe("validateCreateCoupon", () => {
             body: {
                 code: "CODE",
                 discountType: "percentage",
-                discountValue: -1,
+                discountValue: 120,
                 target: "single",
                 minimumOrderAmount: 120,
                 maxUsage: -1,
@@ -131,13 +131,10 @@ describe("validateCreateCoupon", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "DiscountValue should be greater than or equal to 0",
+                    msg: "DiscountValue should be less than 100 for percentage discount",
                 }),
                 expect.objectContaining({
                     msg: "MaxUsage should be greater than or equal to 0",
-                }),
-                expect.objectContaining({
-                    msg: "MinimumOrderAmount should be less than 100 for percentage discount",
                 }),
                 expect.objectContaining({
                     msg: "StartDate should be before endDate",

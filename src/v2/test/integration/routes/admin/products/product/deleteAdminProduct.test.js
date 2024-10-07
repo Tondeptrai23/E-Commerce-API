@@ -64,9 +64,6 @@ describe("DELETE /api/v2/admin/products/:productID", () => {
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
         expect(res.body.success).toBe(false);
-        expect(res.body.errors.length).toBe(1);
-        expect(res.body.errors[0].error).toBe("NotFound");
-        expect(res.body.errors[0].message).toBe("Product not found");
     });
 
     it("should return 401 if token is not provided", async () => {

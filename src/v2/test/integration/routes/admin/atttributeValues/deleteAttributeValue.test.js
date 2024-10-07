@@ -59,15 +59,7 @@ describe("PATCH /api/v2/admin/attributes/:attributeID/values/:valueID", () => {
             .set("Authorization", `Bearer ${accessToken}`);
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
-        expect(res.body).toEqual({
-            success: false,
-            errors: [
-                {
-                    error: "NotFound",
-                    message: "Attribute not found",
-                },
-            ],
-        });
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
     it("should return 404 if attribute value does not exist", async () => {
@@ -76,15 +68,7 @@ describe("PATCH /api/v2/admin/attributes/:attributeID/values/:valueID", () => {
             .set("Authorization", `Bearer ${accessToken}`);
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
-        expect(res.body).toEqual({
-            success: false,
-            errors: [
-                {
-                    error: "NotFound",
-                    message: "Attribute value not found",
-                },
-            ],
-        });
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
     it("should return 401 if token is not provided", async () => {

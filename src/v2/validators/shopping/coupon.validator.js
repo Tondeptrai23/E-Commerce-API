@@ -11,6 +11,7 @@ import {
     validateQueryString,
     validateQueryDate,
 } from "../utils.validator.js";
+import couponService from "../../services/shopping/coupon.service.js";
 
 const validateCreateCoupon = [
     body("code")
@@ -29,7 +30,16 @@ const validateCreateCoupon = [
         .notEmpty()
         .withMessage("DiscountValue is required")
         .custom(validateNumber("DiscountValue"))
-        .custom(validateMinValue("DiscountValue", 0)),
+        .custom(validateMinValue("DiscountValue", 0))
+        .custom((value, { req }) => {
+            if (req.body.discountType === "percentage" && value > 100) {
+                throw new Error(
+                    "DiscountValue should be less than 100 for percentage discount"
+                );
+            }
+
+            return true;
+        }),
 
     body("target")
         .notEmpty()
@@ -45,16 +55,7 @@ const validateCreateCoupon = [
     body("minimumOrderAmount")
         .optional()
         .custom(validateNumber("MinimumOrderAmount"))
-        .custom(validateMinValue("MinimumOrderAmount", 0))
-        .custom((value, { req }) => {
-            if (req.body.discountType === "percentage" && value > 100) {
-                throw new Error(
-                    "MinimumOrderAmount should be less than 100 for percentage discount"
-                );
-            }
-
-            return true;
-        }),
+        .custom(validateMinValue("MinimumOrderAmount", 0)),
 
     body("maxUsage")
         .optional()
@@ -165,11 +166,20 @@ const validatePatchCoupon = [
         .isISO8601()
         .withMessage("EndDate should be a valid date (ISO8601)"),
 
-    body().custom((value) => {
-        if (value.startDate && value.endDate) {
+    body().custom(async (value, { req }) => {
+        let coupon;
+        try {
+            coupon = await couponService.getCoupon(req.params.couponID);
+        } catch (err) {
+            // Ignore error
+            return true;
+        }
+
+        const udpatedCoupon = coupon.set(value);
+        if (udpatedCoupon.startDate && udpatedCoupon.endDate) {
             if (
-                new Date(value.startDate).getTime() >
-                new Date(value.endDate).getTime()
+                new Date(udpatedCoupon.startDate).getTime() >
+                new Date(udpatedCoupon.endDate).getTime()
             ) {
                 throw new Error("StartDate should be before endDate");
             }

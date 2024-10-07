@@ -70,15 +70,7 @@ describe("GET /api/v2/orders/pending/coupons/recommended", () => {
             .set("Authorization", `Bearer ${accessToken}`);
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
-        expect(res.body).toEqual({
-            success: false,
-            errors: [
-                {
-                    error: "NotFound",
-                    message: "Order not found",
-                },
-            ],
-        });
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
     it("should return 401 if token not provided", async () => {

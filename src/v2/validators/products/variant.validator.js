@@ -11,6 +11,7 @@ import {
     validateQueryString,
     validateQueryDate,
 } from "../utils.validator.js";
+import variantService from "../../services/products/variant.service.js";
 
 const validateDiscountPrice = (value) => {
     if (value.price && value.discountPrice > value.price) {
@@ -89,7 +90,28 @@ const validateCreateVariants = [
         .custom(validateMinValue("Image index", 0)),
 
     // Validate variant discount price compare to price
-    body("variants.*").custom(validateDiscountPrice),
+    body("variants.*")
+        .custom(validateDiscountPrice)
+        .custom(async (value, { req }) => {
+            if (value.discountPrice && !value.price) {
+                let variant;
+                try {
+                    variant = await variantService.getVariant(
+                        req.params.variantID
+                    );
+                } catch (err) {
+                    // If variant is not found, skip the validation
+                    return true;
+                }
+
+                if (value.discountPrice > variant.price) {
+                    throw new Error(
+                        "Discount price should be less than or equal to price"
+                    );
+                }
+            }
+            return true;
+        }),
 
     // Validate unexpected fields
     body("variants.*").custom(
@@ -127,7 +149,7 @@ const validatePatchVariant = [
         .custom(validateNumber("Discount price"))
         .custom(validateMinValue("Discount price", 0)),
 
-    body("").custom(validateDiscountPrice),
+    body().custom(validateDiscountPrice),
 
     body().custom(
         validateUnexpectedFields([

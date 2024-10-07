@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import variantService from "../../services/products/variant.service.js";
 import productBuilderService from "../../services/products/productBuilder.service.js";
 import VariantSerializer from "../../services/serializers/variant.serializer.service.js";
+import { BadRequestError } from "../../utils/error.js";
 
 class VariantController {
     async getProductVariants(req, res, next) {

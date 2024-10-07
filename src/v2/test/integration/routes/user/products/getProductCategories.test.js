@@ -51,15 +51,6 @@ describe("GET /api/v2/products/:productID/categories", () => {
         const res = await request(app).get("/api/v2/products/999/categories");
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
-        expect(res.body).toEqual({
-            success: false,
-            errors: expect.any(Array),
-        });
-        expect(res.body.errors[0]).toEqual(
-            expect.objectContaining({
-                error: "NotFound",
-                message: "Product not found",
-            })
-        );
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 });

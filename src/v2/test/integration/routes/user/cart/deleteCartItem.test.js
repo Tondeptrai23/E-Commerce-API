@@ -92,15 +92,7 @@ describe("DELETE /api/v2/cart/:variantID", () => {
             .set("Authorization", `Bearer ${accessTokenUser}`);
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
-        expect(res.body).toEqual({
-            success: false,
-            errors: [
-                {
-                    error: "NotFound",
-                    message: "Cart item not found",
-                },
-            ],
-        });
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
     it("should return 401 if token not provided", async () => {

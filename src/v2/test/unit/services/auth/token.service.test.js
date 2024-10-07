@@ -4,7 +4,11 @@ import User from "../../../../models/user/user.model.js";
 import { createHash } from "crypto";
 import seedData from "../../../../seedData.js";
 import VerifyRequest from "../../../../models/user/verifyRequest.model.js";
-import { BadRequestError } from "../../../../utils/error.js";
+import {
+    BadRequestError,
+    GoneError,
+    ResourceNotFoundError,
+} from "../../../../utils/error.js";
 
 beforeAll(async () => {
     await seedData();
@@ -260,7 +264,7 @@ describe("Token Service", () => {
             try {
                 await tokenService.verifyResetPasswordCode(user.userID, code);
             } catch (err) {
-                expect(err).toBeInstanceOf(BadRequestError);
+                expect(err).toBeInstanceOf(ResourceNotFoundError);
             }
         });
 
@@ -286,7 +290,7 @@ describe("Token Service", () => {
                     "123456"
                 );
             } catch (err) {
-                expect(err).toBeInstanceOf(BadRequestError);
+                expect(err).toBeInstanceOf(GoneError);
             }
         });
     });

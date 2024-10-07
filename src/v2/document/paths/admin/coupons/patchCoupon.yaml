@@ -3,7 +3,7 @@ tags:
   - Admin Coupons
 summary: Update coupon details
 description: Updates specific fields of an existing coupon identified by its coupon ID. 
-  Only `description`, `minimumOrderAmount`, `maxUsage`, and `endDate` can be modified to maintain financial integrity.
+  Only `description`, `minimumOrderAmount`, `maxUsage`, `startDate` and `endDate` can be modified to maintain financial integrity.
 security:
   - bearerAuth: []
 parameters:

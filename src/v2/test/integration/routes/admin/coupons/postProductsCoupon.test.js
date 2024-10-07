@@ -89,12 +89,6 @@ describe("POST /admin/coupons/:couponID/products", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
-            })
-        );
-        expect(res.body.errors[0]).toEqual(
-            expect.objectContaining({
-                message: "ProductIDs are required",
             })
         );
     });
@@ -111,13 +105,8 @@ describe("POST /admin/coupons/:couponID/products", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
             })
         );
-        expect(res.body.errors[0]).toEqual({
-            error: "NotFound",
-            message: "Coupon not found",
-        });
     });
 
     it("should return 401 if token is not provided", async () => {

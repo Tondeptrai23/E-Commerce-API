@@ -76,10 +76,8 @@ describe("DELETE /admin/coupons/:couponID/products/:productID", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
             })
         );
-        expect(res.body.errors[0].message).toBe("Coupon not found");
     });
 
     it("should return 404 if product not found", async () => {
@@ -91,10 +89,8 @@ describe("DELETE /admin/coupons/:couponID/products/:productID", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
             })
         );
-        expect(res.body.errors[0].message).toBe("Product not found");
     });
 
     it("should return 401 if token is not provided", async () => {

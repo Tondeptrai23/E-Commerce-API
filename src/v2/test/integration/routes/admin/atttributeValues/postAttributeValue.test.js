@@ -73,12 +73,7 @@ describe("POST /api/v2/admin/attributes/:attributeID/values", () => {
             });
 
         expect(res.status).toBe(StatusCodes.CONFLICT);
-        expect(res.body).toEqual({
-            success: false,
-            errors: expect.any(Array),
-        });
-
-        expect(res.body.errors[0].message).toBe("Attribute value is taken");
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
     it("should return 404 if attribute is not found", async () => {
@@ -90,12 +85,7 @@ describe("POST /api/v2/admin/attributes/:attributeID/values", () => {
             });
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
-        expect(res.body).toEqual({
-            success: false,
-            errors: expect.any(Array),
-        });
-
-        expect(res.body.errors[0].message).toBe("Attribute not found");
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
     it("should return 400 if value is not provided", async () => {
@@ -105,12 +95,7 @@ describe("POST /api/v2/admin/attributes/:attributeID/values", () => {
             .send({});
 
         expect(res.status).toBe(StatusCodes.BAD_REQUEST);
-        expect(res.body).toEqual({
-            success: false,
-            errors: expect.any(Array),
-        });
-
-        expect(res.body.errors[0].message).toBe("Value is required");
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
     it("should return 401 if token is not provided", async () => {

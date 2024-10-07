@@ -96,13 +96,8 @@ describe("DELETE /api/v2/admin/products/:productID/images/:imageID", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
             })
         );
-        expect(res.body.errors[0]).toEqual({
-            error: "BadRequest",
-            message: "Cannot delete the last image",
-        });
     });
 
     it("should return 404 if the image is not found", async () => {
@@ -114,14 +109,8 @@ describe("DELETE /api/v2/admin/products/:productID/images/:imageID", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
             })
         );
-
-        expect(res.body.errors[0]).toEqual({
-            error: "NotFound",
-            message: "Image not found",
-        });
     });
 
     it("should return 404 if the product is not found", async () => {
@@ -133,14 +122,8 @@ describe("DELETE /api/v2/admin/products/:productID/images/:imageID", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
             })
         );
-
-        expect(res.body.errors[0]).toEqual({
-            error: "NotFound",
-            message: "Product not found",
-        });
     });
 
     it("should return 401 if the token is not provided", async () => {

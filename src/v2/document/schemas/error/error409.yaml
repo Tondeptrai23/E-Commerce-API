@@ -3,14 +3,9 @@ properties:
   success:
     type: boolean
     example: false
-  errors:
-    type: array
-    items:
-      type: object
-      properties:
-        code:
-          type: string
-          example: "Conflict"
-        message:  
-          type: string
-          example: "Something already exists"
+  error:
+    type: string
+    example: "Conflict"
+  message:  
+    type: string
+    example: "Something already exists"

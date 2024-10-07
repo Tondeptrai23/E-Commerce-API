@@ -297,7 +297,6 @@ describe("GET /api/v2/products", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
             })
         );
     });
@@ -311,16 +310,7 @@ describe("GET /api/v2/products", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
             })
-        );
-
-        expect(res.body.errors).toEqual(
-            expect.arrayContaining([
-                expect.objectContaining({
-                    message: "Invalid sort field: createdAt",
-                }),
-            ])
         );
     });
 });

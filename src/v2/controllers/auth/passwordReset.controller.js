@@ -2,7 +2,7 @@ import MailService from "../../services/users/mail.service.js";
 import { StatusCodes } from "http-status-codes";
 import userService from "../../services/users/user.service.js";
 import tokenService from "../../services/auth/token.service.js";
-import { ResourceNotFoundError } from "../../utils/error.js";
+import { ResourceNotFoundError, UnauthorizedError } from "../../utils/error.js";
 
 class PasswordResetController {
     async sendResetPassword(req, res, next) {
@@ -14,6 +14,8 @@ class PasswordResetController {
             const { user, isExisted } = await userService.isUserExisted(email);
             if (!isExisted) {
                 throw new ResourceNotFoundError("Email does not exist");
+            } else if (!user.isverified) {
+                throw new UnauthorizedError("User is not verified");
             }
 
             // Call services
@@ -41,6 +43,8 @@ class PasswordResetController {
             const { user, isExisted } = await userService.isUserExisted(email);
             if (!isExisted) {
                 throw new ResourceNotFoundError("Email does not exist");
+            } else if (!user.isverified) {
+                throw new UnauthorizedError("User is not verified");
             }
 
             // Call services
@@ -67,6 +71,8 @@ class PasswordResetController {
             const { user, isExisted } = await userService.isUserExisted(email);
             if (!isExisted) {
                 throw new ResourceNotFoundError("Email does not exist");
+            } else if (!user.isverified) {
+                throw new UnauthorizedError("User is not verified");
             }
 
             // Call services

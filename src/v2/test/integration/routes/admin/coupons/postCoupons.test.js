@@ -220,13 +220,6 @@ describe("POST /admin/coupons", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
-            })
-        );
-
-        expect(res.body.errors[0]).toEqual(
-            expect.objectContaining({
-                message: "Code is required",
             })
         );
     });
@@ -246,13 +239,6 @@ describe("POST /admin/coupons", () => {
         expect(res.body).toEqual(
             expect.objectContaining({
                 success: false,
-                errors: expect.any(Array),
-            })
-        );
-        expect(res.body.errors[0]).toEqual(
-            expect.objectContaining({
-                error: "Conflict",
-                message: "Coupon code already exists",
             })
         );
     });

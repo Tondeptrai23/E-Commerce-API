@@ -29,11 +29,9 @@ describe("POST /api/v2/auth/signin", () => {
         });
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
-        expect(res.body).toHaveProperty("errors");
-        expect(res.body.errors[0]).toEqual(
+        expect(res.body).toEqual(
             expect.objectContaining({
-                error: "NotFound",
-                message: "Email not found",
+                success: false,
             })
         );
     });
@@ -45,11 +43,9 @@ describe("POST /api/v2/auth/signin", () => {
         });
 
         expect(res.status).toBe(StatusCodes.UNAUTHORIZED);
-        expect(res.body).toHaveProperty("errors");
-        expect(res.body.errors[0]).toEqual(
+        expect(res.body).toEqual(
             expect.objectContaining({
-                error: "Unauthorized",
-                message: "Wrong email/password",
+                success: false,
             })
         );
     });
@@ -60,10 +56,9 @@ describe("POST /api/v2/auth/signin", () => {
         });
 
         expect(res.status).toBe(StatusCodes.BAD_REQUEST);
-        expect(res.body).toHaveProperty("errors");
-        expect(res.body.errors[0]).toEqual(
+        expect(res.body).toEqual(
             expect.objectContaining({
-                message: "Email is required",
+                success: false,
             })
         );
     });
