@@ -3,8 +3,8 @@ import attributeValuesController from "../../../controllers/products/attributeVa
 import {
     verifyToken,
     isAdmin,
-} from "../../../middlewares/auth/authJwt.middleware.js";
-import validator from "../../../middlewares/validators/index.validator.js";
+} from "../../../middlewares/authJwt.middleware.js";
+import validator from "../../../validators/index.validator.js";
 
 const adminAttributeValuesRoute = Router();
 

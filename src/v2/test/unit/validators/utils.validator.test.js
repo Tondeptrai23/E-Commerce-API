@@ -1,4 +1,4 @@
-import * as utilsValidator from "../../../../middlewares/validators/utils.validator.js";
+import * as utilsValidator from "../../../validators/utils.validator.js";
 
 describe("validateMinValue", () => {
     const validateMinValue = utilsValidator.validateMinValue("fieldName", 5);

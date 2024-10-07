@@ -1,20 +1,15 @@
 import { StatusCodes } from "http-status-codes";
+import { randomBytes } from "crypto";
 
 import userService from "../../services/users/user.service.js";
 import tokenService from "../../services/auth/token.service.js";
-import {
-    ConflictError,
-    UnauthorizedError,
-    ResourceNotFoundError,
-    BadRequestError,
-} from "../../utils/error.js";
+import { UnauthorizedError, ResourceNotFoundError } from "../../utils/error.js";
 import UserSerializer from "../../services/serializers/user.serializer.service.js";
 import { googleConfig } from "../../config/config.js";
-import { randomBytes } from "crypto";
 import MailService from "../../services/users/mail.service.js";
 
 class AuthController {
-    async signin(req, res) {
+    async signin(req, res, next) {
         try {
             const isCorrectPassword = await userService.verifyUser(
                 req.body.password,
@@ -40,32 +35,11 @@ class AuthController {
                 user: UserSerializer.parse(req.user),
             });
         } catch (err) {
-            if (err instanceof UnauthorizedError) {
-                res.status(StatusCodes.UNAUTHORIZED).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "Unauthorized",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Error in signing in",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async googleCallback(req, res) {
+    async googleCallback(req, res, next) {
         try {
             const user = {
                 email: req.user._json.email,
@@ -96,20 +70,11 @@ class AuthController {
                 `${googleConfig.REDIRECT_URL}?accessToken=${accessToken}&refreshToken=${refreshToken}`
             );
         } catch (err) {
-            console.log(err);
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Error in signing in with Google",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async signup(req, res) {
+    async signup(req, res, next) {
         try {
             // Get params
             const userInfo = {
@@ -132,32 +97,11 @@ class AuthController {
                     "Account created! Please check your email to verify your account",
             });
         } catch (err) {
-            if (err instanceof ConflictError) {
-                res.status(StatusCodes.CONFLICT).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "Conflict",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Error in signing up",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async refreshToken(req, res) {
+    async refreshToken(req, res, next) {
         try {
             const accessToken = await tokenService.signToken({
                 id: req.user.userID,
@@ -168,20 +112,11 @@ class AuthController {
                 accessToken: accessToken,
             });
         } catch (err) {
-            console.log(err);
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Error in refreshing token",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async resetRefreshToken(req, res) {
+    async resetRefreshToken(req, res, next) {
         try {
             const refreshToken = await tokenService.createRefreshToken(
                 req.user
@@ -197,20 +132,11 @@ class AuthController {
                 refreshToken: refreshToken,
             });
         } catch (err) {
-            console.log(err);
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Error in resetting token",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async resendVerificationEmail(req, res) {
+    async resendVerificationEmail(req, res, next) {
         try {
             // Get params
             const { email } = req.body;
@@ -231,32 +157,11 @@ class AuthController {
                 message: "Verification email sent",
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Error in resending verification email",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async verifyAccount(req, res) {
+    async verifyAccount(req, res, next) {
         try {
             // Get params
             const { code, email } = req.body;
@@ -276,38 +181,7 @@ class AuthController {
                 message: "Account verified successfully",
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof BadRequestError) {
-                res.status(StatusCodes.BAD_REQUEST).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "BadRequest",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Error in verifying account",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 }

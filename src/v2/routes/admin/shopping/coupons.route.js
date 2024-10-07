@@ -4,8 +4,8 @@ import couponController from "../../../controllers/shopping/coupons.controller.j
 import {
     verifyToken,
     isAdmin,
-} from "../../../middlewares/auth/authJwt.middleware.js";
-import validator from "../../../middlewares/validators/index.validator.js";
+} from "../../../middlewares/authJwt.middleware.js";
+import validator from "../../../validators/index.validator.js";
 
 const adminCouponRoute = Router();
 

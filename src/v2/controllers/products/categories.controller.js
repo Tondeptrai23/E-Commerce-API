@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import { ConflictError, ResourceNotFoundError } from "../../utils/error.js";
 
 class CategoryController {
-    async getCategories(req, res) {
+    async getCategories(req, res, next) {
         try {
             // Get query params
             const { categories, currentPage, totalPages, totalItems } =
@@ -24,21 +24,11 @@ class CategoryController {
                 categories: serializedCategories,
             });
         } catch (err) {
-            console.log(err);
-
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Server error in getting categories",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async getAscendantCategories(req, res) {
+    async getAscendantCategories(req, res, next) {
         try {
             // Get category ID
             const categoryName = req.params.name;
@@ -60,33 +50,11 @@ class CategoryController {
                 categories: serializedCategories,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                return res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error in getting ascendant categories",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async getDescendantCategories(req, res) {
+    async getDescendantCategories(req, res, next) {
         try {
             // Get category ID
             const categoryName = req.params.name;
@@ -109,33 +77,11 @@ class CategoryController {
                 categories: serializedCategories,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error in getting descendant categories",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async getCategory(req, res) {
+    async getCategory(req, res, next) {
         try {
             // Get data
             const categoryName = req.params.name;
@@ -154,32 +100,11 @@ class CategoryController {
                 category: serializedCategory,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                return res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error in getting category",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async addCategory(req, res) {
+    async addCategory(req, res, next) {
         try {
             // Get category data
             const { name, description, parent } = req.body;
@@ -208,42 +133,11 @@ class CategoryController {
                 category: serializedCategory,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof ConflictError) {
-                res.status(StatusCodes.CONFLICT).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "Conflict",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error in creating category",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async updateCategory(req, res) {
+    async updateCategory(req, res, next) {
         try {
             // Get category ID
             const categoryName = req.params.name;
@@ -280,42 +174,11 @@ class CategoryController {
                 category: serializedCategory,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof ConflictError) {
-                res.status(StatusCodes.CONFLICT).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "Conflict",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error in updating category",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async deleteCategory(req, res) {
+    async deleteCategory(req, res, next) {
         try {
             // Get category ID
             const categoryName = req.params.name;
@@ -328,28 +191,7 @@ class CategoryController {
                 success: true,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error in deleting category",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 }

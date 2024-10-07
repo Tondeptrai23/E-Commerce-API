@@ -1,6 +1,5 @@
-import validator from "../../../../../middlewares/validators/index.validator.js";
+import validator from "../../../../validators/index.validator.js";
 import { validationResult } from "express-validator";
-import { stringRegex } from "../../../../../middlewares/validators/utils.validator.js";
 
 describe("validateCreateVariants", () => {
     test("should return empty error array if all fields are valid", async () => {

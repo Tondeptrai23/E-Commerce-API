@@ -1,15 +1,10 @@
-import {
-    BadRequestError,
-    ConflictError,
-    ResourceNotFoundError,
-} from "../../utils/error.js";
 import { StatusCodes } from "http-status-codes";
 import couponService from "../../services/shopping/coupon.service.js";
 import CouponSerializer from "../../services/serializers/coupon.serializer.service.js";
 import { removeEmptyFields } from "../../utils/utils.js";
 
 class CouponController {
-    async getCoupons(req, res) {
+    async getCoupons(req, res, next) {
         try {
             // Call service
             const { coupons, currentPage, totalPages, totalItems } =
@@ -27,21 +22,11 @@ class CouponController {
                 coupons: serializedCoupons,
             });
         } catch (err) {
-            console.log(err);
-
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Server error in getting coupons",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async getCoupon(req, res) {
+    async getCoupon(req, res, next) {
         try {
             // Get param
             const { couponID } = req.params;
@@ -58,32 +43,11 @@ class CouponController {
                 coupon: serializedCoupon,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error in getting coupon",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async addCoupon(req, res) {
+    async addCoupon(req, res, next) {
         try {
             // Get data
             const {
@@ -124,42 +88,11 @@ class CouponController {
                 coupon: serializedCoupon,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof ConflictError) {
-                res.status(StatusCodes.CONFLICT).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "Conflict",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error in creating coupon",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async patchCoupon(req, res) {
+    async patchCoupon(req, res, next) {
         try {
             // Get data
             const {
@@ -195,42 +128,11 @@ class CouponController {
                 coupon: serializedCoupon,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof BadRequestError) {
-                res.status(StatusCodes.BAD_REQUEST).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "BadRequest",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error in updating coupon",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async deleteCoupon(req, res) {
+    async deleteCoupon(req, res, next) {
         try {
             // Get param
             const { couponID } = req.params;
@@ -243,32 +145,11 @@ class CouponController {
                 success: true,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error in deleting coupon",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async addProductsCoupon(req, res) {
+    async addProductsCoupon(req, res, next) {
         try {
             // Get data
             const { productIDs = [] } = req.body;
@@ -291,33 +172,11 @@ class CouponController {
                 coupon: serializedCoupon,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error in adding products to coupon",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async deleteProductsCoupon(req, res) {
+    async deleteProductsCoupon(req, res, next) {
         try {
             // Get param
             const { couponID, productID } = req.params;
@@ -330,33 +189,11 @@ class CouponController {
                 success: true,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error in deleting products from coupon",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async addCategoriesCoupon(req, res) {
+    async addCategoriesCoupon(req, res, next) {
         try {
             // Get data
             const { categories = [] } = req.body;
@@ -379,33 +216,11 @@ class CouponController {
                 coupon: serializedCoupon,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error in adding categories to coupon",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async deleteCategoriesCoupon(req, res) {
+    async deleteCategoriesCoupon(req, res, next) {
         try {
             // Get param
             const { couponID, categoryName } = req.params;
@@ -421,29 +236,7 @@ class CouponController {
                 success: true,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error in deleting categories from coupon",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 }

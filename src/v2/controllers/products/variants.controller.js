@@ -1,15 +1,10 @@
 import { StatusCodes } from "http-status-codes";
-import {
-    ResourceNotFoundError,
-    BadRequestError,
-    ConflictError,
-} from "../../utils/error.js";
 import variantService from "../../services/products/variant.service.js";
 import productBuilderService from "../../services/products/productBuilder.service.js";
 import VariantSerializer from "../../services/serializers/variant.serializer.service.js";
 
 class VariantController {
-    async getProductVariants(req, res) {
+    async getProductVariants(req, res, next) {
         try {
             // Get request body
             const { productID } = req.params;
@@ -34,32 +29,11 @@ class VariantController {
                 variants: serializedVariants,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when get product variants",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async getProductVariant(req, res) {
+    async getProductVariant(req, res, next) {
         try {
             // Get request body
             const { productID, variantID } = req.params;
@@ -85,32 +59,11 @@ class VariantController {
                 variant: serializedVariant,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when get a product variant",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async addProductVariants(req, res) {
+    async addProductVariants(req, res, next) {
         try {
             // Get request body
             const { productID } = req.params;
@@ -138,42 +91,11 @@ class VariantController {
                 variants: serializedVariants,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof ConflictError) {
-                res.status(StatusCodes.CONFLICT).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "Conflict",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when add product variants",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async getVariants(req, res) {
+    async getVariants(req, res, next) {
         try {
             // Call services
             const { variants, totalPages, currentPage, totalItems } =
@@ -195,21 +117,11 @@ class VariantController {
                 variants: serializedVariants,
             });
         } catch (err) {
-            console.log(err);
-
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Server error when get variants",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async getVariant(req, res) {
+    async getVariant(req, res, next) {
         try {
             // Get request params
             const { variantID } = req.params;
@@ -230,32 +142,11 @@ class VariantController {
                 variant: serializedVariant,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when get a variant",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async putVariant(req, res) {
+    async putVariant(req, res, next) {
         try {
             // Get request body
             const { variantID } = req.params;
@@ -291,33 +182,11 @@ class VariantController {
                 variant: serializedVariant,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error when update a product variant",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async patchVariant(req, res) {
+    async patchVariant(req, res, next) {
         try {
             // Get request body
             const { variantID } = req.params;
@@ -345,43 +214,11 @@ class VariantController {
                 variant: serializedVariant,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof BadRequestError) {
-                res.status(StatusCodes.BAD_REQUEST).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "BadRequest",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error when update a product variant",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async deleteVariant(req, res) {
+    async deleteVariant(req, res, next) {
         try {
             // Get request body
             const { variantID } = req.params;
@@ -394,29 +231,7 @@ class VariantController {
                 success: true,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error when delete a product variant",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 }

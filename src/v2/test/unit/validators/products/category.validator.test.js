@@ -1,6 +1,6 @@
-import validator from "../../../../../middlewares/validators/index.validator.js";
+import validator from "../../../../validators/index.validator.js";
 import { validationResult } from "express-validator";
-import seedData from "../../../../../seedData.js";
+import seedData from "../../../../seedData.js";
 
 beforeAll(async () => {
     await seedData();

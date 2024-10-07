@@ -1,12 +1,12 @@
 import { StatusCodes } from "http-status-codes";
-import { ConflictError, ResourceNotFoundError } from "../../utils/error.js";
+import { ResourceNotFoundError } from "../../utils/error.js";
 import attributeService from "../../services/products/attribute.service.js";
 import variantAttributeService from "../../services/products/variantAttribute.service.js";
 import VariantSerializer from "../../services/serializers/variant.serializer.service.js";
 import AttributeSerializer from "../../services/serializers/attribute.serializer.service.js";
 
 class AttributeController {
-    async getAttributes(req, res) {
+    async getAttributes(req, res, next) {
         try {
             // Get attributes
             const { attributes, currentPage, totalPages, totalItems } =
@@ -24,21 +24,11 @@ class AttributeController {
                 attributes: serializedAttributes,
             });
         } catch (err) {
-            console.log(err);
-
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Server error when getting attributes",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async getAttribute(req, res) {
+    async getAttribute(req, res, next) {
         try {
             // Get attribute ID
             const attributeID = req.params.attributeID;
@@ -57,32 +47,11 @@ class AttributeController {
                 attribute: serializedAttribute,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when getting attribute",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async createAttribute(req, res) {
+    async createAttribute(req, res, next) {
         try {
             // Get params
             const { name, values } = req.body;
@@ -102,32 +71,11 @@ class AttributeController {
                 attribute: serializedAttribute,
             });
         } catch (err) {
-            if (err instanceof ConflictError) {
-                res.status(StatusCodes.CONFLICT).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "Conflict",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when creating attribute",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async renameAttribute(req, res) {
+    async renameAttribute(req, res, next) {
         try {
             // Get params
             const { attributeID } = req.params;
@@ -148,42 +96,11 @@ class AttributeController {
                 attribute: serializedAttribute,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof ConflictError) {
-                res.status(StatusCodes.CONFLICT).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "Conflict",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when renaming attribute",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async replaceAttribute(req, res) {
+    async replaceAttribute(req, res, next) {
         try {
             // Get params
             const { attributeID } = req.params;
@@ -205,42 +122,11 @@ class AttributeController {
                 attribute: serializedAttribute,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof ConflictError) {
-                res.status(StatusCodes.CONFLICT).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "Conflict",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when replacing attribute",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async deleteAttribute(req, res) {
+    async deleteAttribute(req, res, next) {
         try {
             // Get params
             const { attributeID } = req.params;
@@ -253,32 +139,11 @@ class AttributeController {
                 success: true,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                return res.status(StatusCodes.NOT_FOUND).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when deleting attribute",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async getAttributeVariants(req, res) {
+    async getAttributeVariants(req, res, next) {
         try {
             // Get attribute ID
             const { attributeID } = req.params;
@@ -310,29 +175,7 @@ class AttributeController {
                 variants: serializedVariants,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                return res.status(StatusCodes.NOT_FOUND).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error when getting attribute variants",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 }

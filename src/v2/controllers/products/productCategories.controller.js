@@ -1,12 +1,11 @@
 import { StatusCodes } from "http-status-codes";
-import { ResourceNotFoundError } from "../../utils/error.js";
 import productCategoryService from "../../services/products/productCategory.service.js";
 import productBuilderService from "../../services/products/productBuilder.service.js";
 import CategorySerializer from "../../services/serializers/category.serializer.service.js";
 import ProductSerializer from "../../services/serializers/product.serializer.service.js";
 
 class ProductCategory {
-    async getProductCategories(req, res) {
+    async getProductCategories(req, res, next) {
         try {
             // Get request body
             const { productID } = req.params;
@@ -26,32 +25,11 @@ class ProductCategory {
                 categories: serializedCategories,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when get product categories",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async addProductCategory(req, res) {
+    async addProductCategory(req, res, next) {
         try {
             // Get request body
             const { productID } = req.params;
@@ -74,32 +52,11 @@ class ProductCategory {
                 product: serializedProduct,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when add a product category",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async updateProductCategory(req, res) {
+    async updateProductCategory(req, res, next) {
         try {
             // Get request body
             const { productID } = req.params;
@@ -122,33 +79,11 @@ class ProductCategory {
                 product: serializedProduct,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error when update a product category",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async deleteProductCategory(req, res) {
+    async deleteProductCategory(req, res, next) {
         try {
             // Get request body
             const { productID } = req.params;
@@ -165,29 +100,7 @@ class ProductCategory {
                 success: true,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error when delete a product category",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 }

@@ -5,9 +5,9 @@ import attributeController from "../../../controllers/products/attributes.contro
 import {
     verifyToken,
     isAdmin,
-} from "../../../middlewares/auth/authJwt.middleware.js";
+} from "../../../middlewares/authJwt.middleware.js";
 
-import validator from "../../../middlewares/validators/index.validator.js";
+import validator from "../../../validators/index.validator.js";
 
 const adminAttributeRoute = Router();
 

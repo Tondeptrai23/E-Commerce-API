@@ -1,12 +1,11 @@
 import attributeValueService from "../../services/products/attributeValue.service.js";
 import { StatusCodes } from "http-status-codes";
-import { ResourceNotFoundError, ConflictError } from "../../utils/error.js";
 import variantAttributeService from "../../services/products/variantAttribute.service.js";
 import AttributeValueSerializer from "../../services/serializers/attributeValue.serializer.service.js";
 import VariantSerializer from "../../services/serializers/variant.serializer.service.js";
 
 class AttributeValuesController {
-    async getAttributeValues(req, res) {
+    async getAttributeValues(req, res, next) {
         try {
             // Get attribute values
             const { values, totalItems, totalPages, currentPage } =
@@ -24,21 +23,11 @@ class AttributeValuesController {
                 values: serializedValues,
             });
         } catch (err) {
-            console.log(err);
-
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Server error when getting attribute values",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async createAttributeValue(req, res) {
+    async createAttributeValue(req, res, next) {
         try {
             // Get params
             const { attributeID } = req.params;
@@ -61,43 +50,11 @@ class AttributeValuesController {
                 value: serializedValue,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (StatusCodes.CONFLICT) {
-                res.status(StatusCodes.CONFLICT).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "Conflict",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error when creating attribute value",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async renameAttributeValue(req, res) {
+    async renameAttributeValue(req, res, next) {
         try {
             // Get params
             const { valueID, attributeID } = req.params;
@@ -117,43 +74,11 @@ class AttributeValuesController {
                 value: attributeValue,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof ConflictError) {
-                res.status(StatusCodes.CONFLICT).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "Conflict",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error when renaming attribute value",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async replaceAttributeValue(req, res) {
+    async replaceAttributeValue(req, res, next) {
         try {
             // Get params
             const { valueID, attributeID } = req.params;
@@ -177,43 +102,11 @@ class AttributeValuesController {
                 value: serializedValue,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof ConflictError) {
-                res.status(StatusCodes.CONFLICT).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "Conflict",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error when replacing attribute value",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async deleteAttributeValue(req, res) {
+    async deleteAttributeValue(req, res, next) {
         try {
             // Get params
             const { valueID, attributeID } = req.params;
@@ -229,33 +122,11 @@ class AttributeValuesController {
                 success: true,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error when deleting attribute value",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async getAttributeValueVariants(req, res) {
+    async getAttributeValueVariants(req, res, next) {
         try {
             // Get attribute value ID
             const { attributeID, valueID } = req.params;
@@ -285,29 +156,7 @@ class AttributeValuesController {
                 variants: serializedVariants,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message:
-                                "Server error when getting attribute value variants",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 }

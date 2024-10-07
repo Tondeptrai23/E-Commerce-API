@@ -8,7 +8,7 @@ import StripePayment from "../../services/payment/stripePayment.service.js";
 class PaymentController {
     constructor() {}
 
-    async notifyMoMo(req, res) {
+    async notifyMoMo(req, res, next) {
         try {
             if (req.body.partnerCode !== paymentConfig.momo.PARTNER_CODE) {
                 res.status(StatusCodes.BAD_REQUEST).send(
@@ -28,7 +28,7 @@ class PaymentController {
         res.status(StatusCodes.NO_CONTENT).send();
     }
 
-    async notifyStripe(req, res) {
+    async notifyStripe(req, res, next) {
         try {
             const event = req.body;
             const orderID = await StripePayment.getOrderIDFromPaymentIntent(

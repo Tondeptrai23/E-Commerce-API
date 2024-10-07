@@ -7,6 +7,7 @@ import YAML from "yaml";
 
 import { router } from "./routes/index.route.js";
 import { serverConfig } from "./config/config.js";
+import errorHandler from "./middlewares/errorHandler.middleware.js";
 
 const app = express();
 app.use(bodyParser.json());
@@ -39,5 +40,7 @@ app.use(
     })
 );
 app.use("/api/v2", router);
+
+app.use(errorHandler);
 
 export default app;

@@ -4,8 +4,8 @@ import productsController from "../../../controllers/products/products.controlle
 import {
     verifyToken,
     isAdmin,
-} from "../../../middlewares/auth/authJwt.middleware.js";
-import validator from "../../../middlewares/validators/index.validator.js";
+} from "../../../middlewares/authJwt.middleware.js";
+import validator from "../../../validators/index.validator.js";
 
 import productCategoryRoute from "./productCategory.route.js";
 import productImageRoute from "./image.route.js";

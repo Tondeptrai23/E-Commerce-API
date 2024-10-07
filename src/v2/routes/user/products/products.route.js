@@ -5,7 +5,7 @@ import variantController from "../../../controllers/products/variants.controller
 import imageController from "../../../controllers/products/images.controller.js";
 import productCategoryController from "../../../controllers/products/productCategories.controller.js";
 
-import validator from "../../../middlewares/validators/index.validator.js";
+import validator from "../../../validators/index.validator.js";
 
 const userProductRoute = Router();
 

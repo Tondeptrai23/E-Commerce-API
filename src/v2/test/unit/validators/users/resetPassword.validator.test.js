@@ -1,5 +1,5 @@
 import { validationResult } from "express-validator";
-import validator from "../../../../../middlewares/validators/index.validator.js";
+import validator from "../../../../validators/index.validator.js";
 
 describe("validateSendResetPassword", () => {
     test("should return empty error array if all fields are valid", async () => {

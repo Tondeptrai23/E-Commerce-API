@@ -1,9 +1,9 @@
 class UserController {
-    async getUsers(req, res) {
+    async getUsers(req, res, next) {
         res.json({ message: "Get users" });
     }
 
-    async getUser(req, res) {
+    async getUser(req, res, next) {
         res.json({ message: "Get a user" });
     }
 }

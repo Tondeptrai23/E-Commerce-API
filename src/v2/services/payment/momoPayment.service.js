@@ -1,7 +1,6 @@
 import { default as axios } from "axios";
 import { createHmac } from "crypto";
 import { paymentConfig } from "../../config/config.js";
-import { PaymentInvalidError } from "../../utils/error.js";
 import IPayment from "./iPayment.service.js";
 
 export default class MomoPayment extends IPayment {
@@ -59,7 +58,9 @@ export default class MomoPayment extends IPayment {
         );
 
         if (response.data.resultCode !== 0) {
-            throw new PaymentInvalidError("Payment failed! Cancel order!");
+            throw new Error(
+                "Error when create payment url with momo! Please try again later or use another payment method."
+            );
         }
 
         return {

@@ -2,7 +2,7 @@ import { jwt } from "../../config/auth.config.js";
 import User from "../../models/user/user.model.js";
 import { createHash } from "crypto";
 import VerifyRequest from "../../models/user/verifyRequest.model.js";
-import { BadRequestError } from "../../utils/error.js";
+import { BadRequestError, UnauthorizedError } from "../../utils/error.js";
 import { randomBytes } from "crypto";
 
 /**
@@ -91,7 +91,7 @@ class TokenService {
         const userID = decoded.id;
         const user = await User.findByPk(userID);
         if (!user) {
-            throw new ResourceNotFoundError("User not found");
+            throw new UnauthorizedError("User not found");
         }
 
         // Verify token

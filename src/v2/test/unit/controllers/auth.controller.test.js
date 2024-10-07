@@ -110,7 +110,7 @@ describe("authController.signin", () => {
         };
 
         // Act
-        await authController.signin(req, res);
+        await authController.signin(req, res, jest.fn());
 
         // Assert
         expect(verifyUser).toHaveBeenCalledWith(

@@ -4,8 +4,8 @@ import authController from "../../controllers/auth/auth.controller.js";
 import {
     verifyRefreshToken,
     checkEmailExistsForSignIn,
-} from "../../middlewares/auth/authJwt.middleware.js";
-import validator from "../../middlewares/validators/index.validator.js";
+} from "../../middlewares/authJwt.middleware.js";
+import validator from "../../validators/index.validator.js";
 import passport, { REDIRECT_URL_FAILED } from "../../config/passport.config.js";
 
 const authRoute = Router();

@@ -3,8 +3,8 @@ import imageController from "../../../controllers/products/images.controller.js"
 import {
     verifyToken,
     isAdmin,
-} from "../../../middlewares/auth/authJwt.middleware.js";
-import validator from "../../../middlewares/validators/index.validator.js";
+} from "../../../middlewares/authJwt.middleware.js";
+import validator from "../../../validators/index.validator.js";
 import { imageConfig } from "../../../config/config.js";
 
 const productImageRoute = Router();

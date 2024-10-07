@@ -1,11 +1,10 @@
 import addressService from "../../services/users/address.service.js";
 import AddressSerializer from "../../services/serializers/address.serializer.service.js";
 import { StatusCodes } from "http-status-codes";
-import { ResourceNotFoundError } from "../../utils/error.js";
 import userService from "../../services/users/user.service.js";
 
 class AddressController {
-    async postAddress(req, res) {
+    async postAddress(req, res, next) {
         try {
             // Get params
             const user = req.user;
@@ -28,19 +27,11 @@ class AddressController {
                 address: serializedAddress,
             });
         } catch (err) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Server error in creating address",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async getUserAddresses(req, res) {
+    async getUserAddresses(req, res, next) {
         try {
             // Get params
             const user = req.user;
@@ -64,19 +55,11 @@ class AddressController {
                 addresses: serializedAddresses,
             });
         } catch (err) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Server error in getting addresses",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async getUserAddress(req, res) {
+    async getUserAddress(req, res, next) {
         try {
             // Get params
             const user = req.user;
@@ -99,31 +82,11 @@ class AddressController {
                 address: serializedAddress,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                return res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            }
-
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Server error in getting address",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async getUserAddressesAdmin(req, res) {
+    async getUserAddressesAdmin(req, res, next) {
         try {
             // Get params
             const { userID } = req.params;
@@ -148,31 +111,11 @@ class AddressController {
                 addresses: serializedAddresses,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                return res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            }
-
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Server error in getting addresses",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async getUserAddressAdmin(req, res) {
+    async getUserAddressAdmin(req, res, next) {
         try {
             // Get params
             const { userID, addressID } = req.params;
@@ -195,31 +138,11 @@ class AddressController {
                 address: serializedAddress,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                return res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            }
-
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Server error in getting address",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async getShippingAddress(req, res) {
+    async getShippingAddress(req, res, next) {
         try {
             // Get params
             const { shippingAddressID } = req.params;
@@ -243,31 +166,11 @@ class AddressController {
                 shippingAddress: serializedShippingAddress,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                return res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            }
-
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Server error in getting shipping address",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async putAddress(req, res) {
+    async putAddress(req, res, next) {
         try {
             // Get params
             const user = req.user;
@@ -292,31 +195,11 @@ class AddressController {
                 address: serializedAddress,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                return res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            }
-
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Server error in updating address",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async deleteAddress(req, res) {
+    async deleteAddress(req, res, next) {
         try {
             // Get params
             const user = req.user;
@@ -330,27 +213,7 @@ class AddressController {
                 success: true,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                return res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            }
-
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Server error in deleting address",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 }

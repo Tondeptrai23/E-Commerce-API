@@ -1,4 +1,4 @@
-import validator from "../../../../../middlewares/validators/index.validator.js";
+import validator from "../../../../validators/index.validator.js";
 import { validationResult } from "express-validator";
 
 describe("validatePostOrder", () => {

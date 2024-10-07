@@ -1,6 +1,6 @@
 import { Router } from "express";
 import passwordResetController from "../../controllers/auth/passwordReset.controller.js";
-import validator from "../../middlewares/validators/index.validator.js";
+import validator from "../../validators/index.validator.js";
 
 const resetPasswordRoute = Router();
 

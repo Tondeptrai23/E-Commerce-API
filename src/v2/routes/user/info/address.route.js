@@ -1,8 +1,8 @@
 import { Router } from "express";
 import addressController from "../../../controllers/users/address.controller.js";
 
-import { verifyToken } from "../../../middlewares/auth/authJwt.middleware.js";
-import validator from "../../../middlewares/validators/index.validator.js";
+import { verifyToken } from "../../../middlewares/authJwt.middleware.js";
+import validator from "../../../validators/index.validator.js";
 
 const userAddressRoute = Router();
 userAddressRoute.get("/", verifyToken, addressController.getUserAddresses);

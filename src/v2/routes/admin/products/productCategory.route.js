@@ -3,8 +3,8 @@ import productCategoryController from "../../../controllers/products/productCate
 import {
     verifyToken,
     isAdmin,
-} from "../../../middlewares/auth/authJwt.middleware.js";
-import validator from "../../../middlewares/validators/index.validator.js";
+} from "../../../middlewares/authJwt.middleware.js";
+import validator from "../../../validators/index.validator.js";
 
 const productCategoryRoute = Router();
 

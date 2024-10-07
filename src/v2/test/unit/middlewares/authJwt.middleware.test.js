@@ -1,8 +1,8 @@
-import seedData from "../../../../seedData.js";
-import * as authJwt from "../../../../middlewares/auth/authJwt.middleware.js";
-import { jwt } from "../../../../config/auth.config.js";
+import seedData from "../../../seedData.js";
+import * as authJwt from "../../../middlewares/authJwt.middleware.js";
+import { jwt } from "../../../config/auth.config.js";
 import { jest } from "@jest/globals";
-import tokenService from "../../../../services/auth/token.service.js";
+import tokenService from "../../../services/auth/token.service.js";
 
 beforeAll(async () => {
     await seedData();
@@ -50,7 +50,7 @@ describe("authJwt.verifyToken", () => {
 
         await authJwt.verifyToken(req, res, next);
 
-        expect(next).not.toHaveBeenCalled();
+        expect(next).toHaveBeenCalled();
         expect(req.header).toHaveBeenCalledWith("Authorization");
         expect(req.user).toBeUndefined();
     });
@@ -80,7 +80,7 @@ describe("authJwt.verifyToken", () => {
         await authJwt.verifyToken(req, res, next);
 
         expect(decodeToken).toHaveBeenCalledWith("token");
-        expect(next).not.toHaveBeenCalled();
+        expect(next).toHaveBeenCalled();
         expect(req.header).toHaveBeenCalledWith("Authorization");
         expect(req.user).toBeUndefined();
     });
@@ -110,7 +110,7 @@ describe("authJwt.verifyToken", () => {
         await authJwt.verifyToken(req, res, next);
 
         expect(decodeToken).toHaveBeenCalledWith("token");
-        expect(next).not.toHaveBeenCalled();
+        expect(next).toHaveBeenCalled();
         expect(req.header).toHaveBeenCalledWith("Authorization");
         expect(req.user).toBeUndefined();
     });
@@ -159,7 +159,7 @@ describe("authJwt.verifyRefreshToken", () => {
 
         await authJwt.verifyRefreshToken(req, res, next);
 
-        expect(next).not.toHaveBeenCalled();
+        expect(next).toHaveBeenCalled();
         expect(req.user).toBeUndefined();
     });
 
@@ -189,7 +189,7 @@ describe("authJwt.verifyRefreshToken", () => {
         await authJwt.verifyRefreshToken(req, res, next);
 
         expect(decodeRefreshToken).toHaveBeenCalledWith("refresh_token");
-        expect(next).not.toHaveBeenCalled();
+        expect(next).toHaveBeenCalled();
         expect(req.user).toBeUndefined();
     });
 });
@@ -236,7 +236,7 @@ describe("authJwt.isAdmin", () => {
 
         await authJwt.isAdmin(req, res, next);
 
-        expect(next).not.toHaveBeenCalled();
+        expect(next).toHaveBeenCalled();
     });
 });
 
@@ -270,6 +270,6 @@ describe("authJwt.checkEmailExistsForSignIn", () => {
 
         await authJwt.checkEmailExistsForSignIn(req, res, next);
 
-        expect(next).not.toHaveBeenCalled();
+        expect(next).toHaveBeenCalled();
     });
 });

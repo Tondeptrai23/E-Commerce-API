@@ -5,7 +5,7 @@ import productBuilderService from "../../services/products/productBuilder.servic
 import ProductSerializer from "../../services/serializers/product.serializer.service.js";
 
 class ProductController {
-    async getProducts(req, res) {
+    async getProducts(req, res, next) {
         try {
             const isAdmin = req.admin ? true : false;
 
@@ -30,20 +30,11 @@ class ProductController {
                 products: serializedProducts,
             });
         } catch (err) {
-            console.log(err);
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                errors: [
-                    {
-                        error: "ServerError",
-                        message: "Server error when get products",
-                    },
-                ],
-            });
+            next(err);
         }
     }
 
-    async getProduct(req, res) {
+    async getProduct(req, res, next) {
         try {
             // Get query parameters
             const { productID } = req.params;
@@ -70,31 +61,10 @@ class ProductController {
                 product: serializedProduct,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when get a product",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
-    async addProduct(req, res) {
+    async addProduct(req, res, next) {
         try {
             // Get request body
             const { variants, categories, ...productInfo } = req.body;
@@ -131,32 +101,11 @@ class ProductController {
                 product: serializedProduct,
             });
         } catch (err) {
-            if (err instanceof ConflictError) {
-                res.status(StatusCodes.CONFLICT).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "Conflict",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when add a product",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async updateProduct(req, res) {
+    async updateProduct(req, res, next) {
         try {
             // Get request body
             const { productID } = req.params;
@@ -186,42 +135,11 @@ class ProductController {
                 product: serializedProduct,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof ConflictError) {
-                res.status(StatusCodes.CONFLICT).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "Conflict",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when update a product",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async deleteProduct(req, res) {
+    async deleteProduct(req, res, next) {
         try {
             // Get request body
             const { productID } = req.params;
@@ -234,28 +152,7 @@ class ProductController {
                 success: true,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when delete a product",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 }

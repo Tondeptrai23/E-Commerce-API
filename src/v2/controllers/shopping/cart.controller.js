@@ -1,11 +1,10 @@
 import { StatusCodes } from "http-status-codes";
-import { ResourceNotFoundError } from "../../utils/error.js";
 import cartService from "../../services/shopping/cart.service.js";
 import CartSerializer from "../../services/serializers/cart.serializer.service.js";
 import OrderSerializer from "../../services/serializers/order.serializer.service.js";
 
 class CartController {
-    async getCart(req, res) {
+    async getCart(req, res, next) {
         try {
             // Get user
             const user = req.user;
@@ -26,32 +25,11 @@ class CartController {
                 cart: serializedCart,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when get cart",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async fetchCartToOrder(req, res) {
+    async fetchCartToOrder(req, res, next) {
         try {
             // Get user
             const user = req.user;
@@ -75,32 +53,11 @@ class CartController {
                 order: serializedOrder,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when fetch cart to order",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async addToCart(req, res) {
+    async addToCart(req, res, next) {
         try {
             // Get user
             const user = req.user;
@@ -123,32 +80,11 @@ class CartController {
                 cartItem: serializedCartItem,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when add to cart",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async updateCart(req, res) {
+    async updateCart(req, res, next) {
         try {
             // Get user
             const user = req.user;
@@ -171,32 +107,11 @@ class CartController {
                 cartItem: serializedCartItem,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when update cart",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async deleteItem(req, res) {
+    async deleteItem(req, res, next) {
         try {
             // Get user
             const user = req.user;
@@ -210,32 +125,11 @@ class CartController {
                 success: true,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when delete item",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async deleteCart(req, res) {
+    async deleteCart(req, res, next) {
         try {
             // Get user
             const user = req.user;
@@ -248,28 +142,7 @@ class CartController {
                 success: true,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when delete cart",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 }

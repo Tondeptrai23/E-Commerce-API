@@ -1,11 +1,10 @@
 import { StatusCodes } from "http-status-codes";
-import { ResourceNotFoundError, BadRequestError } from "../../utils/error.js";
 import imageService from "../../services/products/image.service.js";
 import productBuilderService from "../../services/products/productBuilder.service.js";
 import ImageSerializer from "../../services/serializers/image.serializer.service.js";
 
 class ImageController {
-    async getProductImages(req, res) {
+    async getProductImages(req, res, next) {
         try {
             // Get request body
             const { productID } = req.params;
@@ -27,32 +26,11 @@ class ImageController {
                 images: serializedImages,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when get product images",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async addProductImages(req, res) {
+    async addProductImages(req, res, next) {
         try {
             // Get request body
             const { productID } = req.params;
@@ -75,32 +53,11 @@ class ImageController {
                 images: serializedImages,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when add product images",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async replaceProductImage(req, res) {
+    async replaceProductImage(req, res, next) {
         try {
             // Get request body
             const { productID } = req.params;
@@ -124,32 +81,11 @@ class ImageController {
                 image: serializedImage,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when update a product image",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async setImagesOrder(req, res) {
+    async setImagesOrder(req, res, next) {
         try {
             // Get request body
             const { productID } = req.params;
@@ -172,32 +108,11 @@ class ImageController {
                 images: serializedImages,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when set images order",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async deleteProductImage(req, res) {
+    async deleteProductImage(req, res, next) {
         try {
             // Get request body
             const { productID } = req.params;
@@ -211,38 +126,7 @@ class ImageController {
                 success: true,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof BadRequestError) {
-                res.status(StatusCodes.BAD_REQUEST).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "BadRequest",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Server error when delete a product image",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 }

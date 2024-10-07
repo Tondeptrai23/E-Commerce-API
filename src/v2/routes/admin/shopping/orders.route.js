@@ -4,9 +4,9 @@ import orderController from "../../../controllers/shopping/orders.controller.js"
 import {
     verifyToken,
     isAdmin,
-} from "../../../middlewares/auth/authJwt.middleware.js";
+} from "../../../middlewares/authJwt.middleware.js";
 
-import validator from "../../../middlewares/validators/index.validator.js";
+import validator from "../../../validators/index.validator.js";
 
 const adminOrderRoute = Router();
 

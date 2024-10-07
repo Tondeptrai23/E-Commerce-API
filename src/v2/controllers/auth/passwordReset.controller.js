@@ -2,10 +2,10 @@ import MailService from "../../services/users/mail.service.js";
 import { StatusCodes } from "http-status-codes";
 import userService from "../../services/users/user.service.js";
 import tokenService from "../../services/auth/token.service.js";
-import { BadRequestError, ResourceNotFoundError } from "../../utils/error.js";
+import { ResourceNotFoundError } from "../../utils/error.js";
 
 class PasswordResetController {
-    async sendResetPassword(req, res) {
+    async sendResetPassword(req, res, next) {
         try {
             // Get params
             const { email } = req.body;
@@ -28,42 +28,11 @@ class PasswordResetController {
                 message: "Reset password code has been sent to your email",
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof BadRequestError) {
-                res.status(StatusCodes.BAD_REQUEST).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "BadRequest",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Error in resetting password",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async verifyResetPasswordCode(req, res) {
+    async verifyResetPasswordCode(req, res, next) {
         try {
             // Get params
             const { code, email } = req.body;
@@ -85,42 +54,11 @@ class PasswordResetController {
                 sessionToken: sessionToken,
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof BadRequestError) {
-                res.status(StatusCodes.BAD_REQUEST).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "BadRequest",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Error in verifying reset password code",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 
-    async resetPassword(req, res) {
+    async resetPassword(req, res, next) {
         try {
             // Get params
             const { sessionToken, email, password } = req.body;
@@ -145,38 +83,7 @@ class PasswordResetController {
                 message: "Password has been reset",
             });
         } catch (err) {
-            if (err instanceof ResourceNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "NotFound",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else if (err instanceof BadRequestError) {
-                res.status(StatusCodes.BAD_REQUEST).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "BadRequest",
-                            message: err.message,
-                        },
-                    ],
-                });
-            } else {
-                console.log(err);
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    success: false,
-                    errors: [
-                        {
-                            error: "ServerError",
-                            message: "Error in resetting password",
-                        },
-                    ],
-                });
-            }
+            next(err);
         }
     }
 }

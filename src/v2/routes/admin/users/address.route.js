@@ -1,11 +1,11 @@
 import { Router } from "express";
 
-import validator from "../../../middlewares/validators/index.validator.js";
+import validator from "../../../validators/index.validator.js";
 import addressController from "../../../controllers/users/address.controller.js";
 import {
     verifyToken,
     isAdmin,
-} from "../../../middlewares/auth/authJwt.middleware.js";
+} from "../../../middlewares/authJwt.middleware.js";
 
 const adminAddressRoute = Router();
 
