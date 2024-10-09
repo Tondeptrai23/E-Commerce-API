@@ -10,206 +10,353 @@ beforeAll(async () => {
     await seedData();
 }, 15000);
 
-describe("User Service", () => {
-    describe("userService.createNewAccount", () => {
-        test("should create a new account", async () => {
-            const userInfo = {
-                email: "test@example.com",
-                password: "password123",
-                name: "John Doe",
-            };
+describe("createNewAccount", () => {
+    test("should create a new account", async () => {
+        const userInfo = {
+            email: "test@example.com",
+            password: "password123",
+            name: "John Doe",
+        };
 
-            const createdUser = await userService.createNewAccount(userInfo);
+        const createdUser = await userService.createNewAccount(userInfo);
 
-            expect(createdUser).toBeDefined();
-            expect(createdUser.email).toBe(userInfo.email);
-            expect(createdUser.name).toBe(userInfo.name);
-        });
-
-        test("should throw ConflictError if the email is existed", async () => {
-            const userInfo = {
-                email: "user1@gmail.com",
-                password: "password123",
-                name: "Existing User",
-            };
-
-            await expect(
-                userService.createNewAccount(userInfo)
-            ).rejects.toThrow(ConflictError);
-        });
+        expect(createdUser).toBeDefined();
+        expect(createdUser.email).toBe(userInfo.email);
+        expect(createdUser.name).toBe(userInfo.name);
     });
 
-    describe("userService.findUserByEmail", () => {
-        test("should return user if the email exists", async () => {
-            const email = "user1@gmail.com";
-            const user = await userService.findUserByEmail(email);
+    test("should throw ConflictError if the email is existed", async () => {
+        const userInfo = {
+            email: "user1@gmail.com",
+            password: "password123",
+            name: "Existing User",
+        };
 
-            expect(user).toBeDefined();
-            expect(user.email).toBe(email);
-        });
+        await expect(userService.createNewAccount(userInfo)).rejects.toThrow(
+            ConflictError
+        );
+    });
+});
 
-        test("should return null if the email does not exist", async () => {
-            const email = "nonexistent@example.com";
-            const user = await userService.findUserByEmail(email);
+describe("findUserByEmail", () => {
+    test("should return user if the email exists", async () => {
+        const email = "user1@gmail.com";
+        const user = await userService.findUserByEmail(email);
 
-            expect(user).toBeNull();
-        });
+        expect(user).toBeDefined();
+        expect(user.email).toBe(email);
     });
 
-    describe("userService.isUserExisted", () => {
-        test("should return true if the user exists", async () => {
-            const email = "user1@gmail.com";
-            const { user, isExisted } = await userService.isUserExisted(email);
+    test("should return null if the email does not exist", async () => {
+        const email = "nonexistent@example.com";
+        const user = await userService.findUserByEmail(email);
 
-            expect(user.email).toBe(email);
-            expect(isExisted).toBe(true);
-        });
+        expect(user).toBeNull();
+    });
+});
 
-        test("should return false if the user does not exist", async () => {
-            const email = "nonexistent@example.com";
-            const { user, isExisted } = await userService.isUserExisted(email);
+describe("isUserExisted", () => {
+    test("should return true if the user exists", async () => {
+        const email = "user1@gmail.com";
+        const { user, isExisted } = await userService.isUserExisted(email);
 
-            expect(user).toBeNull();
-            expect(isExisted).toBe(false);
-        });
+        expect(user.email).toBe(email);
+        expect(isExisted).toBe(true);
     });
 
-    describe("userService.verifyUser", () => {
-        test("should return true if the signed password matches the user password", async () => {
-            const userInfo = {
-                email: "user1@gmail.com",
-                password: "password1",
-                name: "John Doe",
-            };
-            const user = await User.findOne({
-                where: {
-                    email: userInfo.email,
-                },
-            });
+    test("should return false if the user does not exist", async () => {
+        const email = "nonexistent@example.com";
+        const { user, isExisted } = await userService.isUserExisted(email);
 
-            const signedPassword = "password1";
-            const userPassword = user.password;
-            const isCorrectPassword = await userService.verifyUser(
-                signedPassword,
-                userPassword
-            );
+        expect(user).toBeNull();
+        expect(isExisted).toBe(false);
+    });
+});
 
-            expect(isCorrectPassword).toBe(true);
+describe("verifyUser", () => {
+    test("should return true if the signed password matches the user password", async () => {
+        const userInfo = {
+            email: "user1@gmail.com",
+            password: "password1",
+            name: "John Doe",
+        };
+        const user = await User.findOne({
+            where: {
+                email: userInfo.email,
+            },
         });
 
-        test("should return false if the signed password does not match the user password", async () => {
-            const userInfo = {
-                email: "user1@gmail.com",
-                password: "password1",
-                name: "John Doe",
-            };
-            const user = await User.findOne({
-                where: {
-                    email: userInfo.email,
-                },
-            });
+        const signedPassword = "password1";
+        const userPassword = user.password;
+        const isCorrectPassword = await userService.verifyUser(
+            signedPassword,
+            userPassword
+        );
 
-            const signedPassword = "incorrectPassword";
-            const userPassword = user.password;
-            const isCorrectPassword = await userService.verifyUser(
-                signedPassword,
-                userPassword
-            );
-
-            expect(isCorrectPassword).toBe(false);
-        });
+        expect(isCorrectPassword).toBe(true);
     });
 
-    describe("userService.getUser", () => {
-        test("should return user if the id exists", async () => {
-            const id = "1";
-            const user = await userService.getUser(id);
-
-            expect(user).toBeDefined();
-            expect(user.userID).toBe(id);
+    test("should return false if the signed password does not match the user password", async () => {
+        const userInfo = {
+            email: "user1@gmail.com",
+            password: "password1",
+            name: "John Doe",
+        };
+        const user = await User.findOne({
+            where: {
+                email: userInfo.email,
+            },
         });
 
-        test("should throw ResourceNotFoundError if the id does not exist", async () => {
-            const id = "999";
-            await expect(userService.getUser(id)).rejects.toThrow(
-                ResourceNotFoundError
-            );
-        });
+        const signedPassword = "incorrectPassword";
+        const userPassword = user.password;
+        const isCorrectPassword = await userService.verifyUser(
+            signedPassword,
+            userPassword
+        );
+
+        expect(isCorrectPassword).toBe(false);
+    });
+});
+
+describe("getUser", () => {
+    test("should return user if the id exists", async () => {
+        const id = "1";
+        const user = await userService.getUser(id);
+
+        expect(user).toBeDefined();
+        expect(user.userID).toBe(id);
     });
 
-    describe("userService.getAllUsers", () => {
-        test("should return all users", async () => {
-            const query = {};
-            const { users, quantity } = await userService.getAllUsers(query);
+    test("should return user with the includeDeleted option", async () => {
+        const id = "100";
+        const user = await userService.getUser(id, { includeDeleted: true });
 
-            expect(users).toBeDefined();
-            expect(users).toBeInstanceOf(Array);
-            expect(users[0]).toBeInstanceOf(User);
-            expect(users.length).toBeGreaterThan(0);
-            expect(quantity).toBeGreaterThan(0);
-        });
-
-        // test("should return users sed on the query", async () => {
-        //     const query = {
-        //         name: "John Doe",
-        //     };
-        //     const { users, quantity } = await userService.getAllUsers(query);
-
-        //     expect(users).toBeDefined();
-        //     expect(users).toHaveLength(1);
-        //     expect(quantity).toBe(1);
-        //     expect(users[0].name).toBe("John Doe");
-        // });
-
-        // test("should return an empty array if no user matches the query", async () => {
-        //     const query = {
-        //         name: "Nonexistent User",
-        //     };
-        //     const { users, quantity } = await userService.getAllUsers(query);
-
-        //     expect(users).toBeDefined();
-        //     expect(users).toHaveLength(0);
-        //     expect(quantity).toBe(0);
-        // });
-
-        // test("should return all users with the ROLE_ADMIN role", async () => {
-        //     const query = {
-        //         role: "admin",
-        //     };
-        //     const { users, quantity } = await userService.getAllUsers(query);
-
-        //     expect(users).toBeDefined();
-        //     expect(users).toHaveLength(1);
-        //     expect(quantity).toBe(1);
-        //     expect(users[0].role).toBe("ROLE_ADMIN");
-        // });
-
-        // test("should return all users in order", async () => {
-        //     const query = {
-        //         sort: "name,ASC",
-        //     };
-        //     const { users, quantity } = await userService.getAllUsers(query);
-
-        //     expect(users).toBeDefined();
-        //     expect(users).toHaveLength(3);
-        //     expect(quantity).toBe(3);
-
-        //     expect(users[0].name).toBe("James Doe");
-        //     expect(users[1].name).toBe("Jane Doe");
-        //     expect(users[2].name).toBe("John Doe");
-        // });
+        expect(user).toBeDefined();
+        expect(user.userID).toBe(id);
     });
 
-    describe("resetPassword", () => {
-        test("should reset the password", async () => {
-            const user = await User.findByPk("1");
+    test("should throw ResourceNotFoundError if the id does not exist", async () => {
+        const id = "999";
+        await expect(userService.getUser(id)).rejects.toThrow(
+            ResourceNotFoundError
+        );
+    });
+});
 
-            const oldPassword = user.password;
-            const newPassword = "newPassword123";
-            await userService.resetPassword(user, newPassword);
+describe("getAllUsers", () => {
+    test("should return all users", async () => {
+        const query = {
+            page: 1,
+            size: 2,
+        };
+        const { users, totalItems, currentPage, totalPages } =
+            await userService.getAllUsers(query);
 
-            const updatedUser = await User.findByPk("1");
-            expect(updatedUser.password).not.toBe(oldPassword);
+        expect(users).toBeDefined();
+        expect(users[0]).toBeInstanceOf(User);
+        expect(users.length).toBeGreaterThan(0);
+        expect(totalItems).toBeGreaterThan(0);
+        expect(currentPage).toBe(query.page);
+        expect(totalPages).toBeGreaterThan(0);
+
+        const {
+            users: users2,
+            totalItems: totalItems2,
+            currentPage: currentPage2,
+            totalPages: totalPages2,
+        } = await userService.getAllUsers({
+            page: 2,
+            size: 2,
         });
+
+        expect(users2).toBeDefined();
+        expect(users2[0]).toBeInstanceOf(User);
+        expect(users2.length).toBeGreaterThan(0);
+        expect(totalItems2).toBeGreaterThan(0);
+        expect(currentPage2).toBe(2);
+        expect(totalPages2).toBeGreaterThan(0);
+    });
+
+    test("should return all with includeDeleted options", async () => {
+        const { users } = await userService.getAllUsers(
+            {
+                size: 20,
+            },
+            {
+                includeDeleted: true,
+            }
+        );
+
+        expect(users).toBeDefined();
+        for (const user of users) {
+            expect(user).toBeInstanceOf(User);
+            expect(user.deletedAt).toBeDefined();
+        }
+    });
+
+    test("should return all with filtering 1", async () => {
+        const query = {
+            email: "[like]facebook",
+        };
+
+        const { users } = await userService.getAllUsers(query);
+
+        for (const user of users) {
+            expect(user.email).toContain("facebook");
+        }
+    });
+
+    test("should return all with filtering 2", async () => {
+        const query = {
+            email: ["[like]gmail", "[like]bing"],
+            name: "[ne]Admin",
+        };
+
+        const { users } = await userService.getAllUsers(query);
+
+        for (const user of users) {
+            expect(
+                user.email.includes("gmail") || user.email.includes("bing")
+            ).toBe(true);
+            expect(user.name).not.toBe("Admin");
+        }
+    });
+
+    test("should return all with sorting", async () => {
+        const query = {
+            size: 2,
+            sort: ["email"],
+        };
+
+        const { users } = await userService.getAllUsers(query);
+
+        for (let i = 0; i < users.length - 1; i++) {
+            expect(
+                users[i].email.localeCompare(users[i + 1].email)
+            ).toBeLessThan(1);
+        }
+
+        const query2 = {
+            page: 2,
+            size: 2,
+            sort: ["email"],
+        };
+
+        const { users: users2 } = await userService.getAllUsers(query2);
+
+        expect(users2[0].email.localeCompare(users2[1].email)).toBeLessThan(1);
+        for (let i = 0; i < users2.length - 1; i++) {
+            expect(
+                users2[i].email.localeCompare(users2[i + 1].email)
+            ).toBeLessThan(1);
+        }
+    });
+});
+
+describe("updateUser", () => {
+    test("should reset the password", async () => {
+        const user = await User.findByPk("1");
+
+        const oldPassword = user.password;
+        const newPassword = "newPassword123";
+        await userService.updateUser(user.userID, {
+            password: newPassword,
+        });
+
+        const updatedUser = await User.findByPk("1");
+        expect(updatedUser.password).not.toBe(oldPassword);
+    });
+
+    test("should update the user information", async () => {
+        const user = await User.findByPk("1");
+
+        const updatedInfo = {
+            name: "Updated Name",
+            email: "updatedEmail@gmail.com",
+        };
+
+        await userService.updateUser(user.userID, updatedInfo);
+    });
+
+    test("should throw ConflictError if the email already exists", async () => {
+        const user = await User.findByPk("1");
+
+        const updatedInfo = {
+            email: "admin@gmail.com",
+        };
+
+        await expect(
+            userService.updateUser(user.userID, updatedInfo)
+        ).rejects.toThrow(ConflictError);
+    });
+
+    test("should throw ResourceNotFoundError if the user does not exist", async () => {
+        const updatedInfo = {
+            name: "Updated Name",
+        };
+
+        await expect(
+            userService.updateUser("999", updatedInfo)
+        ).rejects.toThrow(ResourceNotFoundError);
+    });
+});
+
+describe("verifyUserAccount", () => {
+    test("should verify the user", async () => {
+        // Create a new user
+        const userInfo = {
+            email: "new@gmail.com",
+            password: "password123",
+            name: "New User",
+        };
+
+        const createdUser = await userService.createNewAccount(userInfo);
+
+        // Verify the user
+        const user = await userService.verifyUserAccount(createdUser.userID);
+
+        expect(user).toBeDefined();
+        expect(user.isVerified).toBe(true);
+    });
+
+    test("should throw ResourceNotFoundError if the user does not exist", async () => {
+        await expect(userService.verifyUserAccount("999")).rejects.toThrow(
+            ResourceNotFoundError
+        );
+    });
+});
+
+describe("deleteUser", () => {
+    test("should delete the user", async () => {
+        // Create a new user
+        await User.create({
+            userID: "1000",
+            email: "new2@gmail.com",
+            password: "password123",
+            name: "New User",
+        });
+
+        // Delete the user
+        const deletedUser = await userService.deleteUser("1000");
+
+        expect(deletedUser).toBeDefined();
+        expect(deletedUser.userID).toBe("1000");
+
+        // Check if the user is deleted
+        const user = await User.findByPk("1000");
+        expect(user).toBeNull();
+
+        // Check if the user is soft deleted
+        const softDeletedUser = await User.findByPk("1000", {
+            paranoid: false,
+        });
+        expect(softDeletedUser).toBeDefined();
+    });
+
+    test("should throw ResourceNotFoundError if the user does not exist", async () => {
+        await expect(userService.deleteUser("999")).rejects.toThrow(
+            ResourceNotFoundError
+        );
     });
 });

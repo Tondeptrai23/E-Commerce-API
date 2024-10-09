@@ -132,6 +132,29 @@ const seedUser = async () => {
             role: "admin",
             isVerified: true,
         },
+        {
+            userID: 5,
+            email: "user5@facebook.com",
+            password: "password5",
+            role: "user",
+            createdAt: new Date("2024-06-01"),
+            deletedAt: new Date("2024-06-02"),
+        },
+        {
+            userID: 6,
+            email: "user6@facebook.com",
+            password: "password6",
+            role: "user",
+            createdAt: new Date("2024-06-01"),
+            deletedAt: new Date("2024-06-02"),
+        },
+        {
+            userID: 100,
+            email: "deleted@bing.com",
+            password: "deletedpassword",
+            role: "user",
+            isVerified: true,
+        },
     ];
 
     for (const user of users) {

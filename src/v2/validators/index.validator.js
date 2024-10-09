@@ -59,6 +59,9 @@ const validator = {
     // Auth
     validateRegisterUser: userValidator.validateRegisterUser,
     validateSignInUser: userValidator.validateSignInUser,
+    validateCreateUser: userValidator.validateCreateUser,
+    validateUpdateUser: userValidator.validateUpdateUser,
+    validateQueryGetUser: userValidator.validateQueryUser,
 
     // Reset Password
     validateSendResetPassword: resetPasswordValidator.validateSendResetPassword,

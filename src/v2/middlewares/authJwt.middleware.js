@@ -79,6 +79,10 @@ const checkEmailExistsForSignIn = async (req, res, next) => {
             throw new ResourceNotFoundError("Email not found");
         }
 
+        if (user.isSoftDeleted()) {
+            throw new UnauthorizedError("User is deleted");
+        }
+
         if (user.isVerified === false) {
             throw new UnauthorizedError("User not verified");
         }

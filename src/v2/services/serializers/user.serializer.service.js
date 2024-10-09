@@ -11,9 +11,6 @@ const UserSerializer = new Entity({
     name: {
         type: "string",
     },
-    avatar: {
-        type: "string",
-    },
     role: {
         type: "string",
     },

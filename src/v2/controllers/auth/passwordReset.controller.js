@@ -80,7 +80,9 @@ class PasswordResetController {
                 user.userID,
                 sessionToken
             );
-            await userService.resetPassword(user, password);
+            await userService.updateUser(user.userID, {
+                password: password,
+            });
             await MailService.sendPasswordIsChangedEmail(user);
 
             // Send response

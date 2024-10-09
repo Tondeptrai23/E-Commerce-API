@@ -1,4 +1,7 @@
 import User from "../../models/user/user.model.js";
+import PaginationBuilder from "../condition/paginationBuilder.service.js";
+import UserFilterBuilder from "../condition/filter/userFitlerBuilder.service.js";
+import UserSortBuilder from "../condition/sort/userSortBuilder.service.js";
 
 import bcrypt from "bcryptjs";
 import { ConflictError, ResourceNotFoundError } from "../../utils/error.js";
@@ -42,13 +45,18 @@ class UserService {
     }
 
     /**
-     * Check if the user is existed
+     * Check if the user is existed (even if the user is deleted)
      *
      * @param {String} email The email of the user
      * @returns {Promise<{user: User, isExisted: Boolean}>} The user and whether the user is existed
      */
     async isUserExisted(email) {
-        const user = await this.findUserByEmail(email);
+        const user = await User.findOne({
+            where: {
+                email: email,
+            },
+            paranoid: false,
+        });
 
         return { user: user, isExisted: user === null ? false : true };
     }
@@ -72,11 +80,14 @@ class UserService {
      * Get user by ID
      *
      * @param {String} userID The ID of the user
+     * @param {Object} options The options for getting the user
      * @returns {Promise<User>} The user
      * @throws {ResourceNotFoundError} If the user is not found
      */
-    async getUser(userID) {
-        const user = await User.findByPk(userID);
+    async getUser(userID, options = { includeDeleted: false }) {
+        const user = await User.findByPk(userID, {
+            paranoid: !options.includeDeleted,
+        });
 
         if (!user) {
             throw new ResourceNotFoundError("User not found");
@@ -86,29 +97,113 @@ class UserService {
     }
 
     /**
-     * Get all users
+     *
      */
-    async getAllUsers() {
-        const { rows, count } = await User.findAndCountAll();
+    async getAllUsers(query, options = { includeDeleted: false }) {
+        const conditions = this.#buildConditions(query);
 
-        const users = rows;
-        const quantity = count;
-        return { users, quantity };
+        const { count, rows: users } = await User.findAndCountAll({
+            where: conditions.userFilter,
+            order: conditions.sortingCondition,
+            ...conditions.paginationConditions,
+            paranoid: !options.includeDeleted,
+        });
+
+        return {
+            currentPage:
+                conditions.paginationConditions.offset /
+                    conditions.paginationConditions.limit +
+                1,
+            totalPages: Math.ceil(
+                count / conditions.paginationConditions.limit
+            ),
+            totalItems: count,
+            users: users,
+        };
     }
 
     /**
-     * Reset password
+     * Update user information
      *
-     * @param {User} user The user
-     * @param {String} newPassword The new password
+     * @param {String} userID The ID of the user
+     * @param {Object} updatedInfo The updated information
      * @returns {Promise<User>} The updated user
+     * @throws {ConflictError} If the email already exists
      */
-    async resetPassword(user, newPassword) {
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(newPassword, salt);
+    async updateUser(userID, updatedInfo) {
+        if (updatedInfo.email) {
+            const { isExisted } = await this.isUserExisted(updatedInfo.email);
+            if (isExisted) {
+                throw new ConflictError("Email already exists");
+            }
+        }
+
+        if (updatedInfo.password) {
+            const salt = await bcrypt.genSalt(10);
+            updatedInfo.password = await bcrypt.hash(
+                updatedInfo.password,
+                salt
+            );
+        }
+
+        let user = await this.getUser(userID);
+
+        user = await user.update(updatedInfo);
+
+        return user;
+    }
+
+    /**
+     * Verify user
+     *
+     * @param {String} userID The ID of the user
+     * @returns {Promise<User>} The verified user
+     */
+    async verifyUserAccount(userID) {
+        let user = await this.getUser(userID);
+
+        user.isVerified = true;
         user = await user.save();
 
         return user;
+    }
+
+    /**
+     * Delete user
+     *
+     * @param {String} userID The ID of the user
+     * @returns {Promise<User>} The deleted user
+     */
+    async deleteUser(userID) {
+        let user = await this.getUser(userID);
+
+        user = await user.destroy();
+
+        return user;
+    }
+
+    /*
+     *
+     *
+     *
+     */
+
+    /**
+     * Build conditions for getting all users
+     *
+     * @param {Object} query The query object
+     * @returns {Object} The conditions
+     */
+    #buildConditions(query) {
+        const paginationConditions = new PaginationBuilder(query).build();
+        const userFilter = new UserFilterBuilder(query).build();
+        const sortingCondition = new UserSortBuilder(query).build();
+
+        return {
+            userFilter,
+            sortingCondition,
+            paginationConditions,
+        };
     }
 }
 

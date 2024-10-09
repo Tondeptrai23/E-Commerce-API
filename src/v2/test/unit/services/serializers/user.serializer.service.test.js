@@ -8,7 +8,6 @@ const user = {
     password: "password",
     refreshToken: "refreshToken",
     name: "Random User",
-    avatar: "http://example.com/avatar.jpg",
     role: "user",
     isVerified: true,
     extraField: "Extra Field",
@@ -24,7 +23,6 @@ describe("UserSerializer", () => {
             userID: "1",
             email: "random@gmail.com",
             name: "Random User",
-            avatar: "http://example.com/avatar.jpg",
             role: "user",
             isVerified: true,
         });
@@ -42,7 +40,6 @@ describe("UserSerializer", () => {
             userID: "1",
             email: "random@gmail.com",
             name: "Random User",
-            avatar: "http://example.com/avatar.jpg",
             role: "user",
             createdAt: new Date(date).toISOString(),
             updatedAt: new Date(date).toISOString(),
@@ -63,7 +60,6 @@ describe("UserSerializer", () => {
             userID: "1",
             email: "random@gmail.com",
             name: null,
-            avatar: null,
             role: null,
             isVerified: false,
         });
