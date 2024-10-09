@@ -198,12 +198,20 @@ adminAttributeValueVariants:
 adminUsers:
   get:
     $ref: "./admin/users/getUsers.yaml"
+  post:
+    $ref: "./admin/users/postUsers.yaml"
 
 adminUser:
   get:
     $ref: "./admin/users/getUser.yaml"
+  patch:
+    $ref: "./admin/users/patchUser.yaml"
   delete:
     $ref: "./admin/users/deleteUser.yaml"
+
+adminUserVerify:
+  post:
+    $ref: "./admin/users/postUserVerify.yaml" 
   
 adminUserCart:
   get:

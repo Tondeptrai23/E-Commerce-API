@@ -12,3 +12,6 @@ properties:
   role:
     type: string
     example: "user" 
+  isVerified:
+    type: boolean
+    example: true

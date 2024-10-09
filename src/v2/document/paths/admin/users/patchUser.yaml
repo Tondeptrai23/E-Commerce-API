@@ -1,0 +1,71 @@
+# PATCH /admin/users/{userID}
+tags:
+  - Admin Users
+summary: Update user by ID
+description: Updates a user by their ID. <br> 
+  Only allows to update `name` and `role` fields. <br>
+security:
+  - bearerAuth: []
+parameters:
+  - name: userID
+    in: path
+    description: User ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+            example: "John Doe"
+          role:
+            type: string
+            enum: ["user", "admin"]
+            example: "user"
+responses:
+  200:
+    description: Update user by ID successful
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+  400:
+    description: Bad Request
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error400.yaml"
+  401:
+    description: Unauthorized
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
+  404:
+    description: User not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

@@ -257,6 +257,9 @@ paths:
   /admin/users/{userID}:
     $ref: ./paths/index.paths.yaml#/adminUser
 
+  /admin/users/{userID}/verify:
+    $ref: ./paths/index.paths.yaml#/adminUserVerify
+
   /admin/users/{userID}/cart:
     $ref: ./paths/index.paths.yaml#/adminUserCart
 

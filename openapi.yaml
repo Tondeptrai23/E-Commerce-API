@@ -6551,6 +6551,78 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
+    post:
+      tags:
+        - Admin Users
+      summary: Create a new user
+      description: Creates a new user. <br> The user will be able to log in without verification. <br>
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: example@gmail.com
+                password:
+                  type: string
+                  example: password
+                name:
+                  type: string
+                  example: John Doe
+                role:
+                  type: string
+                  enum:
+                    - user
+                    - admin
+                  example: user
+      responses:
+        '201':
+          description: Create user successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  user:
+                    $ref: '#/components/schemas/user'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/paths/~1auth~1signup/post/responses/409/content/application~1json/schema'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
   '/admin/users/{userID}':
     get:
       tags:
@@ -6612,6 +6684,78 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error500'
+    patch:
+      tags:
+        - Admin Users
+      summary: Update user by ID
+      description: Updates a user by their ID. <br> Only allows to update `name` and `role` fields. <br>
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userID
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                role:
+                  type: string
+                  enum:
+                    - user
+                    - admin
+                  example: user
+      responses:
+        '200':
+          description: Update user by ID successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
     delete:
       tags:
         - Admin Users
@@ -6638,6 +6782,59 @@ paths:
                   success:
                     type: boolean
                     example: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error403'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error500'
+  '/admin/users/{userID}/verify':
+    post:
+      tags:
+        - Admin Users
+      summary: Verify user by ID
+      description: 'Verifies a user by their ID manually, allowing them to log in without email verification.'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userID
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: Verify user by ID successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  user:
+                    $ref: '#/components/schemas/user'
         '401':
           description: Unauthorized
           content:
@@ -7468,6 +7665,9 @@ components:
         role:
           type: string
           example: user
+        isVerified:
+          type: boolean
+          example: true
     address:
       type: object
       properties:

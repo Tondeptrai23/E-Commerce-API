@@ -1,0 +1,71 @@
+# POST /admin/users
+tags:
+  - Admin Users
+summary: Create a new user
+description: Creates a new user. <br> 
+  The user will be able to log in without verification. <br>
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          email:
+            type: string
+            example: "example@gmail.com"
+          password:
+            type: string
+            example: "password"
+          name:
+            type: string
+            example: "John Doe"
+          role:
+            type: string
+            enum: ["user", "admin"]
+            example: "user"
+responses:
+  201:
+    description: Create user successful
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            user:
+              $ref: "../../../schemas/users/user.yaml"
+  400:
+    description: Bad Request
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error400.yaml"
+  401:
+    description: Unauthorized
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
+  409:
+    description: User already exists
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error409.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

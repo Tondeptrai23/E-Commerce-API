@@ -1,0 +1,53 @@
+# POST /admin/users/{userID}/verify
+tags:
+  - Admin Users
+summary: Verify user by ID
+description: Verifies a user by their ID manually, allowing them to log in without email verification.
+security:
+  - bearerAuth: []
+parameters:
+  - name: userID
+    in: path
+    description: User ID
+    required: true
+    schema:
+      type: string
+      example: "1"
+responses:
+  200:
+    description: Verify user by ID successful
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            user:
+              $ref: "../../../schemas/users/user.yaml"
+  401:
+    description: Unauthorized
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"
+  404:
+    description: User not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"  
+
