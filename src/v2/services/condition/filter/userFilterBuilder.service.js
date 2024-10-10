@@ -15,7 +15,6 @@ export default class UserFilterBuilder extends FilterBuilder {
             "name",
             "email",
             "role",
-            "isVerified",
             "createdAt",
             "updatedAt",
             "deletedAt",

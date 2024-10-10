@@ -1,10 +1,13 @@
 import User from "../../models/user/user.model.js";
 import PaginationBuilder from "../condition/paginationBuilder.service.js";
-import UserFilterBuilder from "../condition/filter/userFitlerBuilder.service.js";
+import UserFilterBuilder from "../condition/filter/userFilterBuilder.service.js";
 import UserSortBuilder from "../condition/sort/userSortBuilder.service.js";
 
 import bcrypt from "bcryptjs";
 import { ConflictError, ResourceNotFoundError } from "../../utils/error.js";
+import CartItem from "../../models/shopping/cartItem.model.js";
+import Order from "../../models/shopping/order.model.js";
+import { db } from "../../models/index.model.js";
 
 class UserService {
     /**
@@ -175,11 +178,25 @@ class UserService {
      * @returns {Promise<User>} The deleted user
      */
     async deleteUser(userID) {
-        let user = await this.getUser(userID);
+        return await db
+            .transaction(async (t) => {
+                let user = await this.getUser(userID);
 
-        user = await user.destroy();
+                await CartItem.destroy({
+                    where: { userID: userID },
+                });
 
-        return user;
+                await Order.destroy({
+                    where: { userID: userID, status: "pending" },
+                });
+
+                user = await user.destroy();
+
+                return user;
+            })
+            .catch((error) => {
+                throw error;
+            });
     }
 
     /*
@@ -198,6 +215,10 @@ class UserService {
         const paginationConditions = new PaginationBuilder(query).build();
         const userFilter = new UserFilterBuilder(query).build();
         const sortingCondition = new UserSortBuilder(query).build();
+
+        if (query.isVerified !== null && query.isVerified !== undefined) {
+            userFilter.push({ isVerified: query.isVerified });
+        }
 
         return {
             userFilter,

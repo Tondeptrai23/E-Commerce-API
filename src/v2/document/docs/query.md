@@ -45,6 +45,8 @@ Supports `[ne]` for not equal.
 
 Accepts either a single string or an array of strings.
 
+The Regex for this filter is `/^(\[(like|ne)\])?(([\w-@.]|\s)+)$/`.
+
 Example:
 
 -   `?name=T-shirt`: Filter results where the name exactly equals to `T-shirt`.
@@ -62,6 +64,8 @@ Used to filter results based on integer or float fields. The filter can be appli
 Supports operators: `[ne]`, `[gt]`, `[gte]`, `[lt]`, `[lte]`, and `[between]`.
 
 Accepts either a single value or an array of values.
+
+The Regex for this filter is `/^(?:\[(lte|gte|lt|gt|ne)\]\d+|\[between]\d+,\d+|\d+)$/`.
 
 Examples:
 
@@ -82,6 +86,8 @@ Used to filter results based on date fields. The filter can be applied to a sing
 Supports operators: `[ne]`, `[gt]`, `[gte]`, `[lt]`, `[lte]`, and `[between]`.
 
 Accepts either a single date or an array of dates.
+
+The Regex for this filter is `/^(?:\[(lte|gte|lt|gt|ne)\]\d{4}-\d{2}-\d{2}|\[between]\d{4}-\d{2}-\d{2},\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2})$/`.
 
 Example:
 

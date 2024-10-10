@@ -5,6 +5,8 @@ import {
     ConflictError,
     ResourceNotFoundError,
 } from "../../../../utils/error.js";
+import { jest } from "@jest/globals";
+import Order from "../../../../models/shopping/order.model.js";
 
 beforeAll(async () => {
     await seedData();
@@ -223,6 +225,19 @@ describe("getAllUsers", () => {
         }
     });
 
+    test("should return all with filtering 3", async () => {
+        const query = {
+            size: 20,
+            isVerified: true,
+        };
+
+        const { users } = await userService.getAllUsers(query);
+
+        for (const user of users) {
+            expect(user.isVerified).toBe(true);
+        }
+    });
+
     test("should return all with sorting", async () => {
         const query = {
             size: 2,
@@ -329,29 +344,50 @@ describe("verifyUserAccount", () => {
 
 describe("deleteUser", () => {
     test("should delete the user", async () => {
-        // Create a new user
-        await User.create({
-            userID: "1000",
-            email: "new2@gmail.com",
-            password: "password123",
-            name: "New User",
-        });
-
         // Delete the user
-        const deletedUser = await userService.deleteUser("1000");
+        const deletedUser = await userService.deleteUser("1");
 
         expect(deletedUser).toBeDefined();
-        expect(deletedUser.userID).toBe("1000");
+        expect(deletedUser.userID).toBe("1");
 
         // Check if the user is deleted
-        const user = await User.findByPk("1000");
+        const user = await User.findByPk("1");
         expect(user).toBeNull();
 
         // Check if the user is soft deleted
-        const softDeletedUser = await User.findByPk("1000", {
+        const softDeletedUser = await User.findByPk("1", {
             paranoid: false,
         });
         expect(softDeletedUser).toBeDefined();
+
+        // Check if cart is deleted
+        const cart = await softDeletedUser.getCartItems();
+        expect(cart.length).toBe(0);
+
+        // Check if pending orders are deleted
+        const pendingOrders = await softDeletedUser.getOrders({
+            where: {
+                status: "pending",
+            },
+        });
+        expect(pendingOrders.length).toBe(0);
+
+        // Check if other orders are not deleted
+        const orders = await softDeletedUser.getOrders();
+        expect(orders.length).toBeGreaterThan(0);
+    });
+
+    test("should not delete the user if something goes wrong", async () => {
+        jest.spyOn(Order, "destroy").mockImplementation(() => {
+            throw new Error("Error");
+        });
+
+        await expect(userService.deleteUser("2")).rejects.toThrow(Error);
+
+        jest.spyOn(Order, "destroy").mockRestore();
+
+        const user = await User.findByPk("2");
+        expect(user).toBeDefined();
     });
 
     test("should throw ResourceNotFoundError if the user does not exist", async () => {

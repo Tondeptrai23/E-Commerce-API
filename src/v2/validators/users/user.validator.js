@@ -106,6 +106,8 @@ const validateQueryUser = [
             ])
         ),
 
+    query("userID").optional().custom(validateQueryString("UserID")),
+
     query("name").optional().custom(validateQueryString("Name")),
 
     query("role")
@@ -136,7 +138,12 @@ const validateQueryUser = [
             if (value === "true") {
                 return true;
             }
-            return false;
+
+            if (value === "false") {
+                return false;
+            }
+
+            return null;
         }),
 
     query("createdAt").optional().custom(validateQueryDate("CreatedAt")),
