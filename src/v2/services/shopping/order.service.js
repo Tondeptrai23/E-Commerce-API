@@ -230,24 +230,14 @@ class OrderService {
      *
      * @param {Object} variants - The variants
      * @param {String} couponCode - The coupon code
-     * @param {Object} shippingAddress - The shipping address
      * @returns {Promise<Order>} - The order
      */
-    async createAdminOrder(variants, couponCode, shippingAddress) {
+    async createAdminOrder(variants, couponCode) {
         return await db.transaction(async (t) => {
             const order = await Order.create({
                 status: "pending",
                 paymentMethod: "AtStore",
             });
-
-            if (shippingAddress) {
-                const shippingAddressInstance = await ShippingAddress.create(
-                    shippingAddress
-                );
-
-                order.shippingAddressID =
-                    shippingAddressInstance.shippingAddressID;
-            }
 
             let totalAmount = 0;
             const orderItems = [];

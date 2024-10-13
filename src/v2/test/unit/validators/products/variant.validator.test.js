@@ -663,3 +663,64 @@ describe("validateQueryGetVariant", () => {
         );
     });
 });
+
+describe("validatePostVariantQuantity", () => {
+    test("should return empty error array if all fields are valid", async () => {
+        const req = {
+            body: {
+                quantity: 100,
+            },
+        };
+
+        for (const validationChain of validator.validatePostVariantQuantity) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(true);
+    });
+
+    test("should return errors if fields are invalid", async () => {
+        const req = {
+            body: {
+                quantity: "invalid",
+            },
+        };
+
+        for (const validationChain of validator.validatePostVariantQuantity) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Quantity should be an integer",
+                }),
+            ])
+        );
+    });
+
+    test("should return errors if fields are invalid values", async () => {
+        const req = {
+            body: {
+                quantity: -100,
+            },
+        };
+
+        for (const validationChain of validator.validatePostVariantQuantity) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Quantity should be greater than or equal to 1",
+                }),
+            ])
+        );
+    });
+});

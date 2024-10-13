@@ -288,11 +288,6 @@ const validateCreateOrderAdmin = [
         .optional()
         .isString()
         .withMessage("CouponCode should be a string"),
-
-    body("shippingAddress")
-        .notEmpty()
-        .withMessage("ShippingAddress is required")
-        .custom(validateCreateAddress),
 ];
 
 export {

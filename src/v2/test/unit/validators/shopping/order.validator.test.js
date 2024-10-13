@@ -584,3 +584,179 @@ describe("validateQueryGetOrderAdmin", () => {
         );
     });
 });
+
+describe("validateUpdateOrderStatus", () => {
+    test("should return empty error array if all fields are valid", async () => {
+        const req = {
+            body: {
+                status: "processing",
+            },
+        };
+
+        for (const validationChain of validator.validateUpdateOrderStatus) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(true);
+    });
+
+    test("should return error if status is missing", async () => {
+        const req = {
+            body: {},
+        };
+
+        for (const validationChain of validator.validateUpdateOrderStatus) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Status is required",
+                }),
+            ])
+        );
+    });
+
+    test("should return error if status is invalid", async () => {
+        const req = {
+            body: {
+                status: "InvalidStatus",
+            },
+        };
+
+        for (const validationChain of validator.validateUpdateOrderStatus) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Invalid status",
+                }),
+            ])
+        );
+    });
+});
+
+describe("validateCreateOrderAdmin", () => {
+    test("should return empty error array if all fields are valid", async () => {
+        const req = {
+            body: {
+                variants: [
+                    {
+                        variantID: "VariantID",
+                        quantity: 10,
+                    },
+                    {
+                        variantID: "VariantID2",
+                        quantity: 20,
+                    },
+                ],
+                couponCode: "CouponCode",
+            },
+        };
+
+        for (const validationChain of validator.validateCreateOrderAdmin) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(true);
+    });
+
+    test("should return error if variants is missing", async () => {
+        const req = {
+            body: {},
+        };
+
+        for (const validationChain of validator.validateCreateOrderAdmin) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Variants is required",
+                }),
+            ])
+        );
+    });
+
+    test("should return error if variants is not an array", async () => {
+        const req = {
+            body: {
+                variants: {},
+            },
+        };
+
+        for (const validationChain of validator.validateCreateOrderAdmin) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Variants should be an array",
+                }),
+            ])
+        );
+    });
+
+    test("should return error if variants is empty", async () => {
+        const req = {
+            body: {
+                variants: [],
+            },
+        };
+
+        for (const validationChain of validator.validateCreateOrderAdmin) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "Variants should not be empty",
+                }),
+            ])
+        );
+    });
+
+    test("should return error if variantID is missing", async () => {
+        const req = {
+            body: {
+                variants: [
+                    {
+                        quantity: 10,
+                    },
+                ],
+            },
+        };
+
+        for (const validationChain of validator.validateCreateOrderAdmin) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(false);
+        expect(errors.array()).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: "VariantID is required",
+                }),
+            ])
+        );
+    });
+});

@@ -378,13 +378,6 @@ describe("OrderService", () => {
                 { variantID: "102", quantity: 1 },
             ];
             const couponCode = "WINTER5";
-            const shippingAddress = {
-                city: "New York",
-                district: "Manhattan",
-                recipientName: "Jane Doe",
-                phoneNumber: "987654321",
-                address: "456 Avenue",
-            };
 
             let existingStocks = await Promise.all(
                 variants.map(
@@ -394,8 +387,7 @@ describe("OrderService", () => {
 
             const order = await orderService.createAdminOrder(
                 variants,
-                couponCode,
-                shippingAddress
+                couponCode
             );
 
             expect(order).toBeDefined();
@@ -404,11 +396,6 @@ describe("OrderService", () => {
             expect(order.subTotal).toBeGreaterThan(0);
             expect(order.finalTotal).toBeGreaterThan(0);
             expect(order.coupon.code).toBe(couponCode);
-            expect(order.shippingAddress.city).toBe("New York");
-            expect(order.shippingAddress.district).toBe("Manhattan");
-            expect(order.shippingAddress.recipientName).toBe("Jane Doe");
-            expect(order.shippingAddress.phoneNumber).toBe("987654321");
-            expect(order.shippingAddress.address).toBe("456 Avenue");
 
             // Verify that the stock is updated
             for (const variant of variants) {
@@ -427,20 +414,8 @@ describe("OrderService", () => {
                 { variantID: "102", quantity: 1 },
             ];
             const couponCode = "DISCOUNT10";
-            const shippingAddress = {
-                city: "New York",
-                district: "Manhattan",
-                recipientName: "Jane Doe",
-                phoneNumber: "987654321",
-                address: "456 Avenue",
-            };
-
             await expect(
-                orderService.createAdminOrder(
-                    variants,
-                    couponCode,
-                    shippingAddress
-                )
+                orderService.createAdminOrder(variants, couponCode)
             ).rejects.toThrow(ResourceNotFoundError);
         });
 
@@ -450,20 +425,9 @@ describe("OrderService", () => {
                 { variantID: "102", quantity: 1 },
             ];
             const couponCode = "DISCOUNT10";
-            const shippingAddress = {
-                city: "New York",
-                district: "Manhattan",
-                recipientName: "Jane Doe",
-                phoneNumber: "987654321",
-                address: "456 Avenue",
-            };
 
             await expect(
-                orderService.createAdminOrder(
-                    variants,
-                    couponCode,
-                    shippingAddress
-                )
+                orderService.createAdminOrder(variants, couponCode)
             ).rejects.toThrow(ConflictError);
         });
     });
