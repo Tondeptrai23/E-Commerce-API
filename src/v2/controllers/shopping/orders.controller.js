@@ -123,6 +123,34 @@ class OrderController {
         }
     }
 
+    async createOrderAdmin(req, res, next) {
+        try {
+            // Get param
+            const { variants, couponCode, shippingAddress } = req.body;
+
+            // Call service
+            const order = await orderService.createAdminOrder(
+                variants,
+                couponCode,
+                shippingAddress
+            );
+
+            // Serialize data
+            const serializedOrder = OrderSerializer.parse(order, {
+                isAdmin: true,
+                includeAddress: true,
+            });
+
+            // Response
+            res.status(StatusCodes.CREATED).json({
+                success: true,
+                order: serializedOrder,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
     async postOrder(req, res, next) {
         try {
             // POST /api/v2/orders/pending
@@ -180,6 +208,30 @@ class OrderController {
                 addressID: addressID,
                 address: address,
             });
+
+            // Serialize data
+            const serializedOrder = OrderSerializer.parse(order, {
+                includeAddress: true,
+            });
+
+            // Response
+            res.status(StatusCodes.OK).json({
+                success: true,
+                order: serializedOrder,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async updateOrderStatus(req, res, next) {
+        try {
+            // Get params
+            const { orderID } = req.params;
+            const { status } = req.body;
+
+            // Call service
+            const order = await orderService.updateOrderStatus(orderID, status);
 
             // Serialize data
             const serializedOrder = OrderSerializer.parse(order, {

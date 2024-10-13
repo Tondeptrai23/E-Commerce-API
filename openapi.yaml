@@ -6876,6 +6876,20 @@ paths:
           schema:
             type: string
             example: '1'
+        - name: page
+          in: query
+          description: Page to retrieve
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: size
+          in: query
+          description: Size each page
+          required: false
+          schema:
+            type: integer
+            example: 10
       responses:
         '200':
           description: Get user's cart successful
@@ -6887,6 +6901,12 @@ paths:
                   success:
                     type: boolean
                     example: true
+                  cart:
+                    type: array
+                    items:
+                      $ref: '#/paths/~1cart~1%7BvariantID%7D/post/responses/201/content/application~1json/schema/properties/cartItem'
+                allOf:
+                  - $ref: '#/components/schemas/pagination'
         '401':
           description: Unauthorized
           content:

@@ -26,4 +26,22 @@ adminOrderRoute.get(
     orderController.getOrderAdmin
 );
 
+adminOrderRoute.put(
+    "/orders/:orderID/status",
+    validator.validateUpdateOrderStatus,
+    validator.handleValidationErrors,
+    verifyToken,
+    isAdmin,
+    orderController.updateOrderStatus
+);
+
+adminOrderRoute.post(
+    "/orders",
+    validator.validateCreateOrderAdmin,
+    validator.handleValidationErrors,
+    verifyToken,
+    isAdmin,
+    orderController.createOrderAdmin
+);
+
 export default adminOrderRoute;

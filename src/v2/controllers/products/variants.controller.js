@@ -235,6 +235,33 @@ class VariantController {
             next(err);
         }
     }
+
+    async postVariantQuantity(req, res, next) {
+        try {
+            // Get request body
+            const { variantID } = req.params;
+            const { quantity } = req.body;
+
+            // Call services
+            const variant = await variantService.updateVariantQuantity(
+                variantID,
+                quantity
+            );
+
+            // Serialize data
+            const serializedVariant = VariantSerializer.parse(variant, {
+                includeTimestamps: true,
+            });
+
+            // Response
+            res.status(StatusCodes.OK).json({
+                success: true,
+                variant: serializedVariant,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
 }
 
 export default new VariantController();

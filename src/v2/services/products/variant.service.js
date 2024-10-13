@@ -151,6 +151,38 @@ class VariantService {
     }
 
     /**
+     * Update variant quantity
+     *
+     * @param {String} variantID the variant ID to be updated
+     * @param {Number} quantity the quantity to be updated
+     * @returns {Promise<Variant>} the updated variant
+     */
+    async updateVariantQuantity(variantID, quantity) {
+        return await db
+            .transaction(async (t) => {
+                let variant = await Variant.findByPk(variantID);
+
+                if (!variant) {
+                    throw new ResourceNotFoundError("Variant not found");
+                }
+
+                variant = await variant.update(
+                    {
+                        stock: variant.stock + quantity,
+                    },
+                    {
+                        lock: t.LOCK.UPDATE,
+                    }
+                );
+
+                return variant;
+            })
+            .catch((error) => {
+                throw error;
+            });
+    }
+
+    /**
      * Delete a variant with the given productID and variantID
      *
      * @param {String} variantID the variant ID to be updated

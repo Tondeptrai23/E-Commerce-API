@@ -101,6 +101,7 @@ const validator = {
     validatePutVariant: variantValidator.validatePutVariant,
     validatePatchVariant: variantValidator.validatePatchVariant,
     validateQueryGetVariant: variantValidator.validateQueryGetVariant,
+    validatePostVariantQuantity: variantValidator.validatePostVariantQuantity,
 
     // Image
     validateCreateImages: imageValidator.validateCreateImages,
@@ -112,6 +113,8 @@ const validator = {
     validateApplyCoupon: orderValidator.validateApplyCoupon,
     validateQueryGetOrderUser: orderValidator.validateQueryGetOrderUser,
     validateQueryGetOrderAdmin: orderValidator.validateQueryGetOrderAdmin,
+    validateUpdateOrderStatus: orderValidator.validateUpdateOrderStatus,
+    validateCreateOrderAdmin: orderValidator.validateCreateOrderAdmin,
 
     // Cart
     validateAddToCart: cartValidator.validateAddToCart,

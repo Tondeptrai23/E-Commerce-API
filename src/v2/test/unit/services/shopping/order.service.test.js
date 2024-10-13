@@ -9,7 +9,7 @@ import {
 import ShippingAddress from "../../../../models/shopping/shippingAddress.model.js";
 import OrderItem from "../../../../models/shopping/orderItem.model.js";
 import Variant from "../../../../models/products/variant.model.js";
-import { jest } from "@jest/globals";
+import { expect, jest } from "@jest/globals";
 import CartItem from "../../../../models/shopping/cartItem.model.js";
 
 let user;
@@ -368,6 +368,103 @@ describe("OrderService", () => {
                     }
                 )
             ).rejects.toThrow(ResourceNotFoundError);
+        });
+    });
+
+    describe("createAdminOrder", () => {
+        test("should create an order for admin with valid data", async () => {
+            const variants = [
+                { variantID: "101", quantity: 2 },
+                { variantID: "102", quantity: 1 },
+            ];
+            const couponCode = "WINTER5";
+            const shippingAddress = {
+                city: "New York",
+                district: "Manhattan",
+                recipientName: "Jane Doe",
+                phoneNumber: "987654321",
+                address: "456 Avenue",
+            };
+
+            let existingStocks = await Promise.all(
+                variants.map(
+                    async (variant) => await Variant.findByPk(variant.variantID)
+                )
+            );
+
+            const order = await orderService.createAdminOrder(
+                variants,
+                couponCode,
+                shippingAddress
+            );
+
+            expect(order).toBeDefined();
+            expect(order).toBeInstanceOf(Order);
+            expect(order.status).toBe("pending");
+            expect(order.subTotal).toBeGreaterThan(0);
+            expect(order.finalTotal).toBeGreaterThan(0);
+            expect(order.coupon.code).toBe(couponCode);
+            expect(order.shippingAddress.city).toBe("New York");
+            expect(order.shippingAddress.district).toBe("Manhattan");
+            expect(order.shippingAddress.recipientName).toBe("Jane Doe");
+            expect(order.shippingAddress.phoneNumber).toBe("987654321");
+            expect(order.shippingAddress.address).toBe("456 Avenue");
+
+            // Verify that the stock is updated
+            for (const variant of variants) {
+                const expectedStock =
+                    existingStocks.find(
+                        (stock) => stock.variantID === variant.variantID
+                    ).stock - variant.quantity;
+                const updatedStock = await Variant.findByPk(variant.variantID);
+                expect(updatedStock.stock).toBe(expectedStock);
+            }
+        });
+
+        test("should throw ResourceNotFoundError if a variant is not found", async () => {
+            const variants = [
+                { variantID: "999", quantity: 2 },
+                { variantID: "102", quantity: 1 },
+            ];
+            const couponCode = "DISCOUNT10";
+            const shippingAddress = {
+                city: "New York",
+                district: "Manhattan",
+                recipientName: "Jane Doe",
+                phoneNumber: "987654321",
+                address: "456 Avenue",
+            };
+
+            await expect(
+                orderService.createAdminOrder(
+                    variants,
+                    couponCode,
+                    shippingAddress
+                )
+            ).rejects.toThrow(ResourceNotFoundError);
+        });
+
+        test("should throw ConflictError if a variant is out of stock", async () => {
+            const variants = [
+                { variantID: "101", quantity: 1000 },
+                { variantID: "102", quantity: 1 },
+            ];
+            const couponCode = "DISCOUNT10";
+            const shippingAddress = {
+                city: "New York",
+                district: "Manhattan",
+                recipientName: "Jane Doe",
+                phoneNumber: "987654321",
+                address: "456 Avenue",
+            };
+
+            await expect(
+                orderService.createAdminOrder(
+                    variants,
+                    couponCode,
+                    shippingAddress
+                )
+            ).rejects.toThrow(ConflictError);
         });
     });
 

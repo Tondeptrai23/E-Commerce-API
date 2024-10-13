@@ -235,10 +235,72 @@ const validateQueryGetOrderAdmin = [
         .custom(validateQueryString("Address")),
 ];
 
+const validateUpdateOrderStatus = [
+    body("status")
+        .notEmpty()
+        .withMessage("Status is required")
+        .isString()
+        .withMessage("Status should be a string")
+        .custom((value) => {
+            if (
+                ![
+                    "pending",
+                    "processing",
+                    "shipping",
+                    "completed",
+                    "cancelled",
+                ].includes(value.toLowerCase())
+            ) {
+                throw new Error("Invalid status");
+            }
+
+            return true;
+        }),
+];
+
+const validateCreateOrderAdmin = [
+    body("variants")
+        .notEmpty()
+        .withMessage("Variants is required")
+        .isArray()
+        .withMessage("Variants should be an array")
+        .custom((value) => {
+            if (value.length === 0) {
+                throw new Error("Variants should not be empty");
+            }
+
+            return true;
+        }),
+
+    body("variants.*.variantID")
+        .notEmpty()
+        .withMessage("VariantID is required")
+        .isString()
+        .withMessage("VariantID should be a string"),
+
+    body("variants.*.quantity")
+        .notEmpty()
+        .withMessage("Quantity is required")
+        .isInt({ min: 1 })
+        .withMessage("Quantity should be an integer greater than 0"),
+
+    body("couponCode")
+        .optional()
+        .isString()
+        .withMessage("CouponCode should be a string"),
+
+    body("shippingAddress")
+        .notEmpty()
+        .withMessage("ShippingAddress is required")
+        .custom(validateCreateAddress),
+];
+
 export {
     validatePostOrder,
     validatePatchOrder,
     validateApplyCoupon,
     validateQueryGetOrderUser,
     validateQueryGetOrderAdmin,
+    validateUpdateOrderStatus,
+    validateCreateOrderAdmin,
 };

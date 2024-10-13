@@ -264,9 +264,18 @@ const validateQueryGetVariant = [
         .withMessage("Attributes should be an object"),
 ];
 
+const validatePostVariantQuantity = [
+    body("quantity")
+        .notEmpty()
+        .withMessage("Quantity is required")
+        .custom(validateInteger("Quantity"))
+        .custom(validateMinValue("Quantity", 1)),
+];
+
 export {
     validateCreateVariants,
     validatePutVariant,
     validatePatchVariant,
     validateQueryGetVariant,
+    validatePostVariantQuantity,
 };

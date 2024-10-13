@@ -153,7 +153,7 @@ Coupon.belongsToMany(Category, {
 User.hasMany(Order, {
     foreignKey: {
         name: "userID",
-        allowNull: false,
+        allowNull: true,
     },
     onDelete: "CASCADE",
     constraints: true,
@@ -162,7 +162,7 @@ User.hasMany(Order, {
 Order.belongsTo(User, {
     foreignKey: {
         name: "userID",
-        allowNull: false,
+        allowNull: true,
     },
     onDelete: "CASCADE",
     constraints: true,

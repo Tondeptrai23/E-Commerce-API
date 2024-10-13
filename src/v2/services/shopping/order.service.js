@@ -14,6 +14,8 @@ import VariantFilterBuilder from "../condition/filter/variantFilterBuilder.servi
 import { db } from "../../models/index.model.js";
 import Address from "../../models/user/address.model.js";
 import addressService from "../users/address.service.js";
+import OrderItem from "../../models/shopping/orderItem.model.js";
+import couponService from "./coupon.service.js";
 
 class OrderService {
     /**
@@ -221,6 +223,122 @@ class OrderService {
             totalItems: count,
             orders: orders,
         };
+    }
+
+    /**
+     * Create an order for admin
+     *
+     * @param {Object} variants - The variants
+     * @param {String} couponCode - The coupon code
+     * @param {Object} shippingAddress - The shipping address
+     * @returns {Promise<Order>} - The order
+     */
+    async createAdminOrder(variants, couponCode, shippingAddress) {
+        return await db.transaction(async (t) => {
+            const order = await Order.create({
+                status: "pending",
+                paymentMethod: "AtStore",
+            });
+
+            if (shippingAddress) {
+                const shippingAddressInstance = await ShippingAddress.create(
+                    shippingAddress
+                );
+
+                order.shippingAddressID =
+                    shippingAddressInstance.shippingAddressID;
+            }
+
+            let totalAmount = 0;
+            const orderItems = [];
+            for (let i = 0; i < variants.length; i++) {
+                const variant = await Variant.findByPk(variants[i].variantID, {
+                    attributes: [
+                        "variantID",
+                        "stock",
+                        "price",
+                        "discountPrice",
+                    ],
+                    lock: t.LOCK.UPDATE,
+                });
+
+                if (!variant) {
+                    throw new ResourceNotFoundError("Variant not found");
+                }
+
+                if (variant.stock < variants[i].quantity) {
+                    throw new ConflictError("Variant out of stock");
+                }
+
+                totalAmount += variant.price * variants[i].quantity;
+                orderItems.push(
+                    await OrderItem.create({
+                        orderID: order.orderID,
+                        variantID: variant.variantID,
+                        quantity: variants[i].quantity,
+                        priceAtPurchase: variant.price,
+                        discountPriceAtPurchase: variant.discountPrice,
+                    })
+                );
+
+                const affectedCount = (
+                    await Variant.update(
+                        {
+                            stock: db.literal(
+                                `stock - ${variants[i].quantity}`
+                            ),
+                        },
+                        {
+                            where: {
+                                variantID: variants[i].variantID,
+                                stock: {
+                                    [db.Sequelize.Op.gte]: variants[i].quantity,
+                                },
+                            },
+                            lock: t.LOCK.UPDATE,
+                        }
+                    )
+                )[0];
+
+                if (affectedCount === 0) {
+                    throw new ConflictError("Variant out of stock");
+                }
+            }
+            order.set({
+                subTotal: totalAmount,
+                finalTotal: totalAmount,
+            });
+
+            const coupon = await Coupon.findOne({
+                where: {
+                    code: couponCode,
+                },
+            });
+
+            if (coupon) {
+                order.set({
+                    couponID: coupon.couponID,
+                });
+
+                const finalTotal = await couponService.calcFinalTotal(
+                    {
+                        ...order.toJSON(),
+                        orderItems: orderItems,
+                    },
+                    coupon
+                );
+
+                order.set({
+                    finalTotal: finalTotal,
+                });
+            }
+
+            await order.save();
+
+            return await Order.findByPk(order.orderID, {
+                include: getIncludeOptions(),
+            });
+        });
     }
 
     /**

@@ -26,6 +26,15 @@ adminVariantRoute.get(
     variantController.getVariant
 );
 
+adminVariantRoute.post(
+    "/variants/:variantID/quantity",
+    validator.validatePostVariantQuantity,
+    validator.handleValidationErrors,
+    verifyToken,
+    isAdmin,
+    variantController.postVariantQuantity
+);
+
 adminVariantRoute.put(
     "/variants/:variantID",
     validator.validatePutVariant,

@@ -374,6 +374,31 @@ describe("updateVariant", () => {
     });
 });
 
+describe("updateVariantQuantity", () => {
+    test("should update the stock of a variant", async () => {
+        const variantID = "102";
+        const quantity = 5;
+
+        const updatedVariant = await variantService.updateVariantQuantity(
+            variantID,
+            quantity
+        );
+
+        expect(updatedVariant).toBeInstanceOf(Variant);
+        expect(updatedVariant.variantID).toBe(variantID);
+        expect(updatedVariant.stock).toBeGreaterThanOrEqual(quantity);
+    });
+
+    test("should throw ResourceNotFoundError if the variant is not found", async () => {
+        const variantID = "999";
+        const quantity = 5;
+
+        await expect(
+            variantService.updateVariantQuantity(variantID, quantity)
+        ).rejects.toThrow(ResourceNotFoundError);
+    });
+});
+
 describe("deleteVariant", () => {
     test("should delete a variant with the given variantID", async () => {
         const variantID = "603";

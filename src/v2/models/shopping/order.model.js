@@ -39,7 +39,7 @@ Order.init(
             defaultValue: 0,
         },
         paymentMethod: {
-            type: DataTypes.ENUM("COD", "Momo", "CreditCard"),
+            type: DataTypes.ENUM("COD", "Momo", "CreditCard", "AtStore"),
             defaultValue: "COD",
             allowNull: false,
         },
