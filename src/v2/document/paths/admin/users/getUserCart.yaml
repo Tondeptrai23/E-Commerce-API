@@ -14,6 +14,22 @@ parameters:
     schema:
       type: string
       example: "1"
+
+  - name: page
+    in: query
+    description: Page to retrieve
+    required: false
+    schema:
+      type: integer
+      example: 1
+      
+  - name: size
+    in: query
+    description: Size each page
+    required: false
+    schema:
+      type: integer
+      example: 10
 responses:
   200:
     description: Get user's cart successful
@@ -25,7 +41,12 @@ responses:
             success:
               type: boolean
               example: true
-            ## Add properties here
+            cart:
+              type: array
+              items:
+                $ref: '../../../schemas/shopping/cartItem.yaml'
+          allOf:
+            - $ref: "../../../schemas/pagination.yaml"
   401:
     description: Unauthorized
     content:

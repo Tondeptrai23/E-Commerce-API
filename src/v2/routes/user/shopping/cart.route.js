@@ -6,7 +6,13 @@ import validator from "../../../validators/index.validator.js";
 
 const userCartRoute = Router();
 
-userCartRoute.get("/", verifyToken, cartController.getCart);
+userCartRoute.get(
+    "/",
+    validator.validateQueryCart,
+    validator.handleValidationErrors,
+    verifyToken,
+    cartController.getCart
+);
 
 userCartRoute.post(
     "/",

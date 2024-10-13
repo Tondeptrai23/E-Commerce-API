@@ -41,6 +41,18 @@ const UserSerializer = new Entity({
             return undefined;
         },
     ],
+    deletedAt: [
+        {
+            type: "date",
+            format: "iso",
+        },
+        function (obj, options) {
+            if (options.includeTimestamps) {
+                return obj.deletedAt;
+            }
+            return undefined;
+        },
+    ],
 });
 
 export default UserSerializer;

@@ -2,7 +2,6 @@ import { Router } from "express";
 
 import authRoute from "./auth/auth.route.js";
 import resetPasswordRoute from "./auth/resetPassword.route.js";
-import adminCartRoute from "./admin/shopping/cart.route.js";
 import adminOrderRoute from "./admin/shopping/orders.route.js";
 import adminProductRoute from "./admin/products/products.route.js";
 import adminUserRoute from "./admin/users/users.route.js";
@@ -33,7 +32,6 @@ router.use("/payment", userPaymentRoute);
 router.use("/address", userAddressRoute);
 router.use("/me", userInfoRoute);
 
-router.use("/admin", adminCartRoute);
 router.use("/admin", adminProductRoute);
 router.use("/admin", adminOrderRoute);
 router.use("/admin", adminUserRoute);

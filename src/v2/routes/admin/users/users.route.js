@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import userController from "../../../controllers/users/user.controller.js";
+import cartController from "../../../controllers/shopping/cart.controller.js";
 import {
     verifyToken,
     isAdmin,
@@ -18,6 +19,15 @@ adminUserRoute.get(
     verifyToken,
     isAdmin,
     userController.getUser
+);
+
+adminUserRoute.get(
+    "/users/:userID/cart",
+    validator.validateQueryCart,
+    validator.handleValidationErrors,
+    verifyToken,
+    isAdmin,
+    cartController.getCartForAdmin
 );
 
 adminUserRoute.post(

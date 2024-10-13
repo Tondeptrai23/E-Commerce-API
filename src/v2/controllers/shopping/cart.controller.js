@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import cartService from "../../services/shopping/cart.service.js";
 import CartSerializer from "../../services/serializers/cart.serializer.service.js";
 import OrderSerializer from "../../services/serializers/order.serializer.service.js";
+import userService from "../../services/users/user.service.js";
 
 class CartController {
     async getCart(req, res, next) {
@@ -11,7 +12,34 @@ class CartController {
 
             // Call services
             const { cart, currentPage, totalPages, totalItems } =
-                await cartService.getCart(user);
+                await cartService.getCart(user, req.query);
+
+            // Serialize data
+            const serializedCart = CartSerializer.parse(cart);
+
+            // Response
+            res.status(StatusCodes.OK).json({
+                success: true,
+                currentPage: currentPage,
+                totalPages: totalPages,
+                totalItems: totalItems,
+                cart: serializedCart,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async getCartForAdmin(req, res, next) {
+        try {
+            // Get params
+            const { userID } = req.params;
+
+            // Call services
+            const user = await userService.getUser(userID);
+
+            const { cart, currentPage, totalPages, totalItems } =
+                await cartService.getCart(user, req.query);
 
             // Serialize data
             const serializedCart = CartSerializer.parse(cart);

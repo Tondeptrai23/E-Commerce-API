@@ -6,10 +6,22 @@ import { StatusCodes } from "http-status-codes";
 class UserController {
     async getUsers(req, res, next) {
         try {
-            const users = await userService.getAllUsers();
+            const { users, totalPages, totalItems, currentPage } =
+                await userService.getAllUsers(req.query, {
+                    includeDeleted: true,
+                });
+
+            // Serialize data
+            const serializedUsers = UserSerializer.parse(users, {
+                includeTimestamps: true,
+            });
+
             res.status(StatusCodes.OK).json({
                 success: true,
-                users: users,
+                currentPage: currentPage,
+                totalPages: totalPages,
+                totalItems: totalItems,
+                users: serializedUsers,
             });
         } catch (err) {
             next(err);
@@ -22,7 +34,9 @@ class UserController {
             const { userID } = req.params;
 
             // Call services
-            const user = await userService.getUser(userID);
+            const user = await userService.getUser(userID, {
+                includeDeleted: true,
+            });
 
             // Serialize data
             const serializedUser = UserSerializer.parse(user, {
