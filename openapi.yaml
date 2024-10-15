@@ -99,19 +99,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /auth/signup:
     post:
       tags:
@@ -153,7 +153,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '409':
           description: Email or name already exists
           content:
@@ -175,7 +175,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /auth/verify:
     post:
       tags:
@@ -214,13 +214,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '404':
           description: Account Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '410':
           description: Reset password expired
           content:
@@ -242,7 +242,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /auth/verify/resend:
     post:
       tags:
@@ -278,19 +278,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '404':
           description: Account Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /auth/refreshToken:
     post:
       tags:
@@ -325,19 +325,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /auth/refreshToken/reset:
     post:
       tags:
@@ -374,13 +374,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /auth/google:
     get:
       tags:
@@ -422,19 +422,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /auth/resetPassword/verify:
     post:
       tags:
@@ -472,13 +472,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '410':
           description: Reset password expired
           content:
@@ -490,7 +490,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /auth/resetPassword/reset:
     post:
       tags:
@@ -529,19 +529,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /products:
     get:
       tags:
@@ -593,7 +593,7 @@ paths:
           description: Filter by category
           required: false
           schema:
-            $ref: '#/components/schemas/categoryNames'
+            $ref: '#/components/schemas/CategoryNames'
         - name: sort
           in: query
           description: |
@@ -647,23 +647,23 @@ paths:
                         variants:
                           type: array
                           items:
-                            $ref: '#/components/schemas/variant'
+                            $ref: '#/components/schemas/Variant'
                         categories:
-                          $ref: '#/components/schemas/categoryNames'
+                          $ref: '#/components/schemas/CategoryNames'
                       allOf:
-                        - $ref: '#/components/schemas/product'
+                        - $ref: '#/components/schemas/Product'
         '400':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '500':
           description: Server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/products/{productID}':
     get:
       tags:
@@ -695,28 +695,28 @@ paths:
                         type: array
                         items:
                           allOf:
-                            - $ref: '#/components/schemas/variant'
-                            - $ref: '#/components/schemas/variantAttribute'
+                            - $ref: '#/components/schemas/Variant'
+                            - $ref: '#/components/schemas/VariantAttribute'
                       categories:
-                        $ref: '#/components/schemas/categoryNames'
+                        $ref: '#/components/schemas/CategoryNames'
                       images:
                         type: array
                         items:
-                          $ref: '#/components/schemas/image'
+                          $ref: '#/components/schemas/Image'
                     allOf:
-                      - $ref: '#/components/schemas/product'
+                      - $ref: '#/components/schemas/Product'
         '404':
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/products/{productID}/variants':
     get:
       tags:
@@ -747,22 +747,22 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/variant'
+                        - $ref: '#/components/schemas/Variant'
                       properties:
                         attributes:
-                          $ref: '#/components/schemas/variantAttribute'
+                          $ref: '#/components/schemas/VariantAttribute'
         '404':
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/products/{productID}/images':
     get:
       tags:
@@ -793,19 +793,19 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/image'
+                        - $ref: '#/components/schemas/Image'
         '404':
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/products/{productID}/categories':
     get:
       tags:
@@ -836,19 +836,19 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/category'
+                        - $ref: '#/components/schemas/Category'
         '404':
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /categories:
     get:
       tags:
@@ -877,7 +877,7 @@ paths:
               schema:
                 type: object
                 allOf:
-                  - $ref: '#/components/schemas/pagination'
+                  - $ref: '#/paths/~1cart/get/responses/200/content/application~1json/schema/allOf/0'
                 properties:
                   success:
                     type: boolean
@@ -885,19 +885,19 @@ paths:
                   categories:
                     type: array
                     items:
-                      $ref: '#/components/schemas/category'
+                      $ref: '#/components/schemas/Category'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/categories/{categoryName}':
     get:
       tags:
@@ -931,21 +931,21 @@ paths:
                         parent:
                           type: object
                           allOf:
-                            - $ref: '#/components/schemas/category'
+                            - $ref: '#/components/schemas/Category'
                       allOf:
-                        - $ref: '#/components/schemas/category'
+                        - $ref: '#/components/schemas/Category'
         '404':
           description: Category not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/categories/{categoryName}/ascendants':
     get:
       tags:
@@ -974,19 +974,19 @@ paths:
                   categories:
                     type: array
                     items:
-                      $ref: '#/components/schemas/category'
+                      $ref: '#/components/schemas/Category'
         '404':
           description: Category not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/categories/{categoryName}/descendants':
     get:
       tags:
@@ -1015,19 +1015,19 @@ paths:
                   categories:
                     type: array
                     items:
-                      $ref: '#/components/schemas/category'
+                      $ref: '#/components/schemas/Category'
         '404':
           description: Category not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /cart:
     get:
       tags:
@@ -1062,7 +1062,17 @@ paths:
               schema:
                 type: object
                 allOf:
-                  - $ref: '#/components/schemas/pagination'
+                  - type: object
+                    properties:
+                      currentPage:
+                        type: integer
+                        example: 1
+                      totalPages:
+                        type: integer
+                        example: 10
+                      totalItems:
+                        type: integer
+                        example: 20
                 properties:
                   success:
                     type: boolean
@@ -1076,19 +1086,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Cart not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     post:
       tags:
         - User Cart
@@ -1162,26 +1172,26 @@ paths:
                               type: string
                               example: image.jpg
                     allOf:
-                      - $ref: '#/components/schemas/order'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Order'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     delete:
       tags:
         - User Cart
@@ -1206,13 +1216,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/cart/{variantID}':
     post:
       tags:
@@ -1286,7 +1296,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
     patch:
       tags:
         - User Cart
@@ -1332,25 +1342,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Cart item not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     delete:
       tags:
         - User Cart
@@ -1383,19 +1393,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Cart item not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /orders:
     get:
       tags:
@@ -1486,7 +1496,7 @@ paths:
               schema:
                 type: object
                 allOf:
-                  - $ref: '#/components/schemas/pagination'
+                  - $ref: '#/paths/~1cart/get/responses/200/content/application~1json/schema/allOf/0'
                 properties:
                   success:
                     type: boolean
@@ -1495,26 +1505,26 @@ paths:
                     type: array
                     items:
                       allOf:
-                        - $ref: '#/components/schemas/order'
-                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/Order'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Invalid query parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/orders/{orderID}':
     get:
       tags:
@@ -1549,19 +1559,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Order not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     delete:
       tags:
         - User Orders
@@ -1593,19 +1603,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not authorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Order not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '409':
           description: Order cannot be deleted
           content:
@@ -1617,7 +1627,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /orders/pending:
     get:
       tags:
@@ -1649,19 +1659,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Pending order not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     post:
       tags:
         - User Orders
@@ -1727,25 +1737,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Pending order not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     patch:
       tags:
         - User Orders
@@ -1807,25 +1817,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Pending order not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /orders/pending/coupons:
     get:
       tags:
@@ -1864,19 +1874,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Pending order not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     post:
       tags:
         - User Orders
@@ -1914,25 +1924,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Pending order not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /address:
     get:
       tags:
@@ -1971,22 +1981,22 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/address'
-                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/Address'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
                 allOf:
-                  - $ref: '#/components/schemas/pagination'
+                  - $ref: '#/paths/~1cart/get/responses/200/content/application~1json/schema/allOf/0'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     post:
       tags:
         - User Address
@@ -2031,26 +2041,35 @@ paths:
                   address:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/address'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Address'
+                      - type: object
+                        properties:
+                          createdAt:
+                            type: string
+                            format: date-time
+                            example: '2024-01-01T00:00:00.000Z'
+                          updatedAt:
+                            type: string
+                            format: date-time
+                            example: '2024-01-01T00:00:00.000Z'
         '400':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/address/{addressID}':
     get:
       tags:
@@ -2083,26 +2102,26 @@ paths:
                   address:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/address'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Address'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Address not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     patch:
       tags:
         - User Address
@@ -2160,32 +2179,32 @@ paths:
                   address:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/address'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Address'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Address not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     delete:
       tags:
         - User Address
@@ -2220,19 +2239,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Address not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /admin/products:
     get:
       tags:
@@ -2318,7 +2337,7 @@ paths:
           description: Filter by category
           required: false
           schema:
-            $ref: '#/components/schemas/categoryNames'
+            $ref: '#/components/schemas/CategoryNames'
         - name: sort
           in: query
           description: |
@@ -2354,7 +2373,7 @@ paths:
               schema:
                 type: object
                 allOf:
-                  - $ref: '#/components/schemas/pagination'
+                  - $ref: '#/paths/~1cart/get/responses/200/content/application~1json/schema/allOf/0'
                 properties:
                   success:
                     type: boolean
@@ -2368,39 +2387,39 @@ paths:
                           type: array
                           items:
                             allOf:
-                              - $ref: '#/components/schemas/variant'
-                              - $ref: '#/components/schemas/timestamps'
+                              - $ref: '#/components/schemas/Variant'
+                              - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
                               - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
                         categories:
-                          $ref: '#/components/schemas/categoryNames'
+                          $ref: '#/components/schemas/CategoryNames'
                       allOf:
-                        - $ref: '#/components/schemas/product'
-                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/Product'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
                         - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
         '400':
           description: Invalid query parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     post:
       tags:
         - Admin Products
@@ -2455,7 +2474,7 @@ paths:
                               color: red
                               size: M
                     categories:
-                      $ref: '#/components/schemas/categoryNames'
+                      $ref: '#/components/schemas/CategoryNames'
           multipart/form-data:
             description: Add a product with images
             schema:
@@ -2500,7 +2519,7 @@ paths:
                               color: red
                               size: M
                     categories:
-                      $ref: '#/components/schemas/categoryNames'
+                      $ref: '#/components/schemas/CategoryNames'
                 images:
                   type: array
                   items:
@@ -2524,37 +2543,37 @@ paths:
                         type: array
                         items:
                           allOf:
-                            - $ref: '#/components/schemas/variant'
-                            - $ref: '#/components/schemas/variantAttribute'
+                            - $ref: '#/components/schemas/Variant'
+                            - $ref: '#/components/schemas/VariantAttribute'
                       images:
                         type: array
                         items:
                           type: object
                           allOf:
-                            - $ref: '#/components/schemas/image'
+                            - $ref: '#/components/schemas/Image'
                       categories:
-                        $ref: '#/components/schemas/categoryNames'
+                        $ref: '#/components/schemas/CategoryNames'
                     allOf:
-                      - $ref: '#/components/schemas/product'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Product'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '409':
           description: Product name already exists
           content:
@@ -2566,7 +2585,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/products/{productID}':
     get:
       tags:
@@ -2602,42 +2621,42 @@ paths:
                         items:
                           type: object
                           allOf:
-                            - $ref: '#/components/schemas/variant'
-                            - $ref: '#/components/schemas/timestamps'
+                            - $ref: '#/components/schemas/Variant'
+                            - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
                             - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
                           properties:
                             attributes:
-                              $ref: '#/components/schemas/variantAttribute'
+                              $ref: '#/components/schemas/VariantAttribute'
                       categories:
-                        $ref: '#/components/schemas/categoryNames'
+                        $ref: '#/components/schemas/CategoryNames'
                     allOf:
-                      - $ref: '#/components/schemas/product'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Product'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
                       - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     patch:
       tags:
         - Admin Products
@@ -2692,31 +2711,31 @@ paths:
                         type: string
                         example: Product Description
                     allOf:
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '409':
           description: Product name already exists
           content:
@@ -2728,7 +2747,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     delete:
       tags:
         - Admin Products
@@ -2760,25 +2779,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/products/{productID}/variants':
     get:
       tags:
@@ -2811,34 +2830,34 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/variant'
-                        - $ref: '#/components/schemas/timestamps'
-                        - $ref: '#/components/schemas/variantAttribute'
+                        - $ref: '#/components/schemas/Variant'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
+                        - $ref: '#/components/schemas/VariantAttribute'
                         - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     post:
       tags:
         - Admin Products
@@ -2884,7 +2903,7 @@ paths:
                       sku:
                         type: string
                     allOf:
-                      - $ref: '#/components/schemas/variantAttribute'
+                      - $ref: '#/components/schemas/VariantAttribute'
           multipart/form-data:
             description: 'Add variants with images <br> ImageIndex is the index of image in the images array. <br> If an image is not associated with any variant, it will be ignored.'
             schema:
@@ -2915,7 +2934,7 @@ paths:
                       sku:
                         type: string
                     allOf:
-                      - $ref: '#/components/schemas/variantAttribute'
+                      - $ref: '#/components/schemas/VariantAttribute'
                 images:
                   type: array
                   items:
@@ -2935,33 +2954,33 @@ paths:
                   variant:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/variant'
-                      - $ref: '#/components/schemas/timestamps'
-                      - $ref: '#/components/schemas/variantAttribute'
+                      - $ref: '#/components/schemas/Variant'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
+                      - $ref: '#/components/schemas/VariantAttribute'
         '400':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Product or variant or image not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '409':
           description: SKU already exists
           content:
@@ -2973,7 +2992,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/products/{productID}/variants/{variantID}':
     get:
       tags:
@@ -3011,34 +3030,34 @@ paths:
                   variant:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/variant'
-                      - $ref: '#/components/schemas/timestamps'
-                      - $ref: '#/components/schemas/variantAttribute'
+                      - $ref: '#/components/schemas/Variant'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
+                      - $ref: '#/components/schemas/VariantAttribute'
                       - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Product or variant not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/products/{productID}/images':
     get:
       tags:
@@ -3071,20 +3090,20 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/image'
-                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/Image'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '404':
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     post:
       tags:
         - Admin Products
@@ -3129,32 +3148,32 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/image'
-                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/Image'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     patch:
       tags:
         - Admin Products
@@ -3202,32 +3221,32 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/image'
-                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/Image'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/products/{productID}/images/{imageID}':
     put:
       tags:
@@ -3276,32 +3295,32 @@ paths:
                   image:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/image'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Image'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Product or image not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     delete:
       tags:
         - Admin Products
@@ -3340,25 +3359,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Product or image not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/products/{productID}/categories':
     get:
       tags:
@@ -3391,32 +3410,32 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/category'
-                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/Category'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     post:
       tags:
         - Admin Products
@@ -3441,7 +3460,7 @@ paths:
               type: object
               properties:
                 categories:
-                  $ref: '#/components/schemas/categoryNames'
+                  $ref: '#/components/schemas/CategoryNames'
       responses:
         '200':
           description: Category added
@@ -3457,34 +3476,34 @@ paths:
                     type: object
                     properties:
                       categories:
-                        $ref: '#/components/schemas/categoryNames'
+                        $ref: '#/components/schemas/CategoryNames'
                     allOf:
-                      - $ref: '#/components/schemas/product'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Product'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Product or category not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     put:
       tags:
         - Admin Products
@@ -3509,7 +3528,7 @@ paths:
               type: object
               properties:
                 categories:
-                  $ref: '#/components/schemas/categoryNames'
+                  $ref: '#/components/schemas/CategoryNames'
       responses:
         '200':
           description: Categories updated
@@ -3525,34 +3544,34 @@ paths:
                     type: object
                     properties:
                       categories:
-                        $ref: '#/components/schemas/categoryNames'
+                        $ref: '#/components/schemas/CategoryNames'
                     allOf:
-                      - $ref: '#/components/schemas/product'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Product'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/products/{productID}/categories/{categoryName}':
     delete:
       tags:
@@ -3592,25 +3611,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Product or category not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /admin/variants:
     get:
       tags:
@@ -3714,7 +3733,7 @@ paths:
               schema:
                 type: object
                 allOf:
-                  - $ref: '#/components/schemas/pagination'
+                  - $ref: '#/paths/~1cart/get/responses/200/content/application~1json/schema/allOf/0'
                 properties:
                   success:
                     type: boolean
@@ -3724,34 +3743,34 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/variant'
-                        - $ref: '#/components/schemas/timestamps'
-                        - $ref: '#/components/schemas/variantAttribute'
+                        - $ref: '#/components/schemas/Variant'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
+                        - $ref: '#/components/schemas/VariantAttribute'
                         - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
         '400':
           description: Invalid query parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/variants/{variantID}':
     get:
       tags:
@@ -3782,34 +3801,34 @@ paths:
                   variant:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/variant'
-                      - $ref: '#/components/schemas/timestamps'
-                      - $ref: '#/components/schemas/variantAttribute'
+                      - $ref: '#/components/schemas/Variant'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
+                      - $ref: '#/components/schemas/VariantAttribute'
                       - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Variant not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     patch:
       tags:
         - Admin Variants
@@ -3869,38 +3888,38 @@ paths:
                   variant:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/variant'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Variant'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Variant not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     put:
       tags:
         - Admin Variants
@@ -3963,39 +3982,39 @@ paths:
                   variant:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/variant'
-                      - $ref: '#/components/schemas/timestamps'
-                      - $ref: '#/components/schemas/variantAttribute'
+                      - $ref: '#/components/schemas/Variant'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
+                      - $ref: '#/components/schemas/VariantAttribute'
         '400':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token error, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Product or variant not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     delete:
       tags:
         - Admin Variants
@@ -4027,25 +4046,101 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Variant not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
+  '/admin/variants/{variantID}/quantity':
+    post:
+      tags:
+        - Admin Variants
+      summary: Add quantity to a variant
+      description: |
+        Add quantity to a variant.
+        The quantity must be a positive integer.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: variantID
+          in: path
+          description: ID of the variant to update
+          required: true
+          schema:
+            type: string
+            example: '101'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  example: 10
+                  description: The quantity of the variant
+                  nullable: true
+      responses:
+        '200':
+          description: Variant updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  variant:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/Variant'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: 'Token error, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Variant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /admin/categories:
     get:
       tags:
@@ -4119,7 +4214,7 @@ paths:
               schema:
                 type: object
                 allOf:
-                  - $ref: '#/components/schemas/pagination'
+                  - $ref: '#/paths/~1cart/get/responses/200/content/application~1json/schema/allOf/0'
                 properties:
                   success:
                     type: boolean
@@ -4129,26 +4224,26 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/category'
-                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/Category'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     post:
       tags:
         - Admin Categories
@@ -4197,26 +4292,26 @@ paths:
                   category:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/category'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Category'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Parent category not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '409':
           description: Category already exists
           content:
@@ -4228,7 +4323,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/categories/{categoryName}':
     get:
       tags:
@@ -4262,35 +4357,35 @@ paths:
                       parent:
                         type: object
                         allOf:
-                          - $ref: '#/components/schemas/category'
-                          - $ref: '#/components/schemas/timestamps'
+                          - $ref: '#/components/schemas/Category'
+                          - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
                     allOf:
-                      - $ref: '#/components/schemas/category'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Category'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Category not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     put:
       tags:
         - Admin Categories
@@ -4339,26 +4434,26 @@ paths:
                   category:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/category'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Category'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Category not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '409':
           description: Category already exists
           content:
@@ -4370,7 +4465,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     delete:
       tags:
         - Admin Categories
@@ -4401,25 +4496,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Category not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /admin/coupons:
     get:
       tags:
@@ -4477,6 +4572,12 @@ paths:
         - name: minimumOrderAmount
           in: query
           description: 'Filter by minimumOrderAmount. <br> - For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).'
+          required: false
+          schema:
+            example: '[gte]100'
+        - name: maximumDiscountAmount
+          in: query
+          description: 'Filter by maximumDiscountAmount. <br> - For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).'
           required: false
           schema:
             example: '[gte]100'
@@ -4539,7 +4640,7 @@ paths:
           description: Filter by category
           required: false
           schema:
-            $ref: '#/components/schemas/categoryNames'
+            $ref: '#/components/schemas/CategoryNames'
         - name: sort
           in: query
           description: |
@@ -4578,36 +4679,36 @@ paths:
                                 type: string
                                 example: Product 1
                         categories:
-                          $ref: '#/components/schemas/categoryNames'
+                          $ref: '#/components/schemas/CategoryNames'
                       allOf:
-                        - $ref: '#/components/schemas/coupon'
-                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/Coupon'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
                 allOf:
-                  - $ref: '#/components/schemas/pagination'
+                  - $ref: '#/paths/~1cart/get/responses/200/content/application~1json/schema/allOf/0'
         '400':
           description: Invalid query parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     post:
       tags:
         - Admin Coupons
@@ -4643,6 +4744,10 @@ paths:
                 minimumOrderAmount:
                   type: number
                   example: 100
+                maximumDiscountAmount:
+                  type: number
+                  example: 10
+                  nullable: true
                 maxUsage:
                   type: number
                   example: 100
@@ -4702,28 +4807,28 @@ paths:
                               type: string
                               example: Product 1
                       categories:
-                        $ref: '#/components/schemas/categoryNames'
+                        $ref: '#/components/schemas/CategoryNames'
                     allOf:
-                      - $ref: '#/components/schemas/coupon'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Coupon'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '409':
           description: Coupon code already exists
           content:
@@ -4735,7 +4840,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/coupons/{couponID}':
     get:
       tags:
@@ -4778,39 +4883,39 @@ paths:
                               type: string
                               example: Product 1
                       categories:
-                        $ref: '#/components/schemas/categoryNames'
+                        $ref: '#/components/schemas/CategoryNames'
                     allOf:
-                      - $ref: '#/components/schemas/coupon'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Coupon'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Coupon not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     patch:
       tags:
         - Admin Coupons
       summary: Update coupon details
-      description: 'Updates specific fields of an existing coupon identified by its coupon ID. Only `description`, `minimumOrderAmount`, `maxUsage`, `startDate` and `endDate` can be modified to maintain financial integrity.'
+      description: 'Updates specific fields of an existing coupon identified by its coupon ID. Only `description`, `minimumOrderAmount`, `maximumDiscountAmount`, `maxUsage`, `startDate` and `endDate` can be modified to maintain financial integrity.'
       security:
         - bearerAuth: []
       parameters:
@@ -4834,6 +4939,9 @@ paths:
                 minimumOrderAmount:
                   type: number
                   example: 100
+                maximumDiscountAmount:
+                  type: number
+                  example: 10
                 maxUsage:
                   type: number
                   example: 100
@@ -4856,38 +4964,38 @@ paths:
                   coupon:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/coupon'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Coupon'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Coupon not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     delete:
       tags:
         - Admin Coupons
@@ -4919,25 +5027,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Coupon not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/coupons/{couponID}/categories':
     post:
       tags:
@@ -4962,7 +5070,7 @@ paths:
               type: object
               properties:
                 categories:
-                  $ref: '#/components/schemas/categoryNames'
+                  $ref: '#/components/schemas/CategoryNames'
       responses:
         '201':
           description: Categories added to coupon
@@ -4978,34 +5086,34 @@ paths:
                     type: object
                     properties:
                       categories:
-                        $ref: '#/components/schemas/categoryNames'
+                        $ref: '#/components/schemas/CategoryNames'
                     allOf:
-                      - $ref: '#/components/schemas/coupon'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Coupon'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/coupons/{couponID}/categories/{categoryName}':
     delete:
       tags:
@@ -5045,25 +5153,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Category not found in coupon
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/coupons/{couponID}/products':
     post:
       tags:
@@ -5120,38 +5228,38 @@ paths:
                               type: string
                               example: Product 1
                     allOf:
-                      - $ref: '#/components/schemas/coupon'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Coupon'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Coupon not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/coupons/{couponID}/products/{productID}':
     delete:
       tags:
@@ -5191,25 +5299,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Category not found in coupon
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /admin/attributes:
     get:
       tags:
@@ -5278,7 +5386,7 @@ paths:
               schema:
                 type: object
                 allOf:
-                  - $ref: '#/components/schemas/pagination'
+                  - $ref: '#/paths/~1cart/get/responses/200/content/application~1json/schema/allOf/0'
                 properties:
                   success:
                     type: boolean
@@ -5296,32 +5404,32 @@ paths:
                             - red
                             - blue
                       allOf:
-                        - $ref: '#/components/schemas/attribute'
-                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/Attribute'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     post:
       tags:
         - Admin Attributes
@@ -5372,26 +5480,26 @@ paths:
                           - red
                           - blue
                     allOf:
-                      - $ref: '#/components/schemas/attribute'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Attribute'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '409':
           description: Attribute name already exists
           content:
@@ -5403,7 +5511,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/attributes/{attributeID}':
     get:
       tags:
@@ -5445,34 +5553,34 @@ paths:
                         items:
                           type: object
                           allOf:
-                            - $ref: '#/components/schemas/value'
-                            - $ref: '#/components/schemas/timestamps'
+                            - $ref: '#/components/schemas/AttributeValue'
+                            - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
                     allOf:
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Attribute Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     patch:
       tags:
         - Admin Attributes
@@ -5514,38 +5622,38 @@ paths:
                   attribute:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/attribute'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Attribute'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Attribute Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     put:
       tags:
         - Admin Attributes
@@ -5597,41 +5705,41 @@ paths:
                         items:
                           type: object
                           allOf:
-                            - $ref: '#/components/schemas/value'
-                            - $ref: '#/components/schemas/timestamps'
+                            - $ref: '#/components/schemas/AttributeValue'
+                            - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
                     allOf:
-                      - $ref: '#/components/schemas/attribute'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Attribute'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Attribute Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     delete:
       tags:
         - Admin Attributes
@@ -5663,19 +5771,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Attribute Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '409':
           description: Attribute in Use
           content:
@@ -5687,7 +5795,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/attributes/{attributeID}/variants':
     get:
       tags:
@@ -5774,41 +5882,41 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/variant'
-                        - $ref: '#/components/schemas/timestamps'
-                        - $ref: '#/components/schemas/variantAttribute'
+                        - $ref: '#/components/schemas/Variant'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
+                        - $ref: '#/components/schemas/VariantAttribute'
                 allOf:
-                  - $ref: '#/components/schemas/pagination'
+                  - $ref: '#/paths/~1cart/get/responses/200/content/application~1json/schema/allOf/0'
         '400':
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Attribute Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /admin/attributesValues:
     get:
       tags:
@@ -5891,34 +5999,34 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/value'
-                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/AttributeValue'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
                 allOf:
-                  - $ref: '#/components/schemas/pagination'
+                  - $ref: '#/paths/~1cart/get/responses/200/content/application~1json/schema/allOf/0'
         '400':
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/attributes/{attributeID}/values':
     post:
       tags:
@@ -5967,32 +6075,32 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/value'
-                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/AttributeValue'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Attribute not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '409':
           description: Attribute value already exists
           content:
@@ -6004,7 +6112,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/attributes/{attributeID}/values/{valueID}':
     get:
       tags:
@@ -6042,32 +6150,32 @@ paths:
                   value:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/value'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/AttributeValue'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Value Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     patch:
       tags:
         - Admin Attribute Values
@@ -6116,32 +6224,32 @@ paths:
                   value:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/value'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/AttributeValue'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Attribute or value not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '409':
           description: Value already exists
           content:
@@ -6153,7 +6261,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     put:
       tags:
         - Admin Attribute Values
@@ -6204,32 +6312,32 @@ paths:
                   value:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/value'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/AttributeValue'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Attribute or value not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '409':
           description: Value already exists
           content:
@@ -6241,7 +6349,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     delete:
       tags:
         - Admin Attribute Values
@@ -6280,19 +6388,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Attribute Value Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '409':
           description: Attribute Value in Use
           content:
@@ -6304,7 +6412,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/attributes/{attributeID}/values/{valueID}/variants':
     get:
       tags:
@@ -6393,41 +6501,41 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/variant'
-                        - $ref: '#/components/schemas/timestamps'
-                        - $ref: '#/components/schemas/variantAttribute'
+                        - $ref: '#/components/schemas/Variant'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
+                        - $ref: '#/components/schemas/VariantAttribute'
                 allOf:
-                  - $ref: '#/components/schemas/pagination'
+                  - $ref: '#/paths/~1cart/get/responses/200/content/application~1json/schema/allOf/0'
         '400':
           description: Invalid request parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Attribute Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /admin/users:
     get:
       tags:
@@ -6514,7 +6622,7 @@ paths:
               schema:
                 type: object
                 allOf:
-                  - $ref: '#/components/schemas/pagination'
+                  - $ref: '#/paths/~1cart/get/responses/200/content/application~1json/schema/allOf/0'
                 properties:
                   success:
                     type: boolean
@@ -6524,33 +6632,33 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/user'
-                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/User'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
                         - $ref: '#/paths/~1admin~1orders~1%7BorderID%7D/get/responses/200/content/application~1json/schema/properties/order/allOf/2'
         '400':
           description: Invalid query parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     post:
       tags:
         - Admin Users
@@ -6592,25 +6700,25 @@ paths:
                     type: boolean
                     example: true
                   user:
-                    $ref: '#/components/schemas/user'
+                    $ref: '#/components/schemas/User'
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '409':
           description: User already exists
           content:
@@ -6622,7 +6730,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/users/{userID}':
     get:
       tags:
@@ -6653,37 +6761,37 @@ paths:
                   user:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/user'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/User'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
                     properties:
                       addresses:
                         type: array
                         items:
-                          $ref: '#/components/schemas/address'
+                          $ref: '#/components/schemas/Address'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     patch:
       tags:
         - Admin Users
@@ -6731,31 +6839,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
     delete:
       tags:
         - Admin Users
@@ -6787,25 +6895,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/users/{userID}/verify':
     post:
       tags:
@@ -6834,31 +6942,31 @@ paths:
                     type: boolean
                     example: true
                   user:
-                    $ref: '#/components/schemas/user'
+                    $ref: '#/components/schemas/User'
         '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/users/{userID}/cart':
     get:
       tags:
@@ -6906,31 +7014,31 @@ paths:
                     items:
                       $ref: '#/paths/~1cart~1%7BvariantID%7D/post/responses/201/content/application~1json/schema/properties/cartItem'
                 allOf:
-                  - $ref: '#/components/schemas/pagination'
+                  - $ref: '#/paths/~1cart/get/responses/200/content/application~1json/schema/allOf/0'
         '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/users/{userID}/address':
     get:
       tags:
@@ -6964,28 +7072,28 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/address'
-                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/Address'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
                 allOf:
-                  - $ref: '#/components/schemas/pagination'
+                  - $ref: '#/paths/~1cart/get/responses/200/content/application~1json/schema/allOf/0'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/users/{userID}/address/{addressID}':
     get:
       tags:
@@ -7024,32 +7132,32 @@ paths:
                   address:
                     type: object
                     allOf:
-                      - $ref: '#/components/schemas/address'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/components/schemas/Address'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Address not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   '/admin/address/shipping/{shippingAddressID}':
     get:
       tags:
@@ -7080,31 +7188,31 @@ paths:
                         example: '1'
                     allOf:
                       - $ref: '#/paths/~1orders~1pending/patch/requestBody/content/application~1json/schema/properties/address'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Shipping address not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
   /admin/orders:
     get:
       tags:
@@ -7295,32 +7403,122 @@ paths:
                     items:
                       type: object
                       allOf:
-                        - $ref: '#/components/schemas/order'
-                        - $ref: '#/components/schemas/timestamps'
+                        - $ref: '#/components/schemas/Order'
+                        - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
         '400':
           description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error400'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: 'Token invalid, not authenticated'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
+    post:
+      tags:
+        - Admin Orders
+      summary: Create an order
+      description: Create an order.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  description: The status of the order
+                  example: pending
+                  enum:
+                    - pending
+                    - processing
+                    - shipped
+                    - delivered
+                message:
+                  type: string
+                  description: A message for the order
+                  example: Order message
+                  nullable: true
+                couponCode:
+                  type: string
+                  description: The coupon code for the order
+                  example: COUPON
+                  nullable: true
+                shippingAddress:
+                  type: object
+                  properties:
+                    $ref: '#/paths/~1orders~1pending/patch/requestBody/content/application~1json/schema/properties/address'
+                variants:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      variantID:
+                        type: string
+                        description: The id of the variant
+                        example: 1
+                      quantity:
+                        type: integer
+                        description: The quantity of the variant
+                        example: 2
+      responses:
+        '201':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  order:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/Order'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Variant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   '/admin/orders/{orderID}':
     get:
       tags:
@@ -7353,7 +7551,7 @@ paths:
                     type: object
                     allOf:
                       - $ref: '#/paths/~1cart/post/responses/200/content/application~1json/schema/properties/order'
-                      - $ref: '#/components/schemas/timestamps'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
                       - type: object
                         properties:
                           deletedAt:
@@ -7365,25 +7563,107 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error401'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Not an admin
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error403'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Order not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error404'
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error500'
+                $ref: '#/components/schemas/Error500'
+  '/admin/orders/{orderID}/status':
+    put:
+      tags:
+        - Admin Orders
+      summary: Update the status of an order
+      description: |
+        Update the status of an order.
+
+        The status can be one of the following:
+        - pending
+        - processing
+        - shipped
+        - delivered
+        - cancelled
+
+        Cannot update cancelled and delivered orders.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orderID
+          in: path
+          required: true
+          description: The ID of the order
+          schema:
+            type: string
+            example: '1'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  description: The status of the order
+                  example: pending
+                  enum:
+                    - pending
+                    - processing
+                    - shipped
+                    - delivered
+      responses:
+        '200':
+          description: Order status updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  order:
+                    type: object
+                    allOf:
+                      - $ref: '#/components/schemas/Order'
+                      - $ref: '#/paths/~1address/post/responses/200/content/application~1json/schema/properties/address/allOf/1'
+        '401':
+          description: 'Token invalid, not authenticated'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
 components:
   securitySchemes:
     bearerAuth:
@@ -7405,7 +7685,7 @@ components:
             profile: View user's basic profile
             email: View user's email address
   schemas:
-    error400:
+    Error400:
       type: object
       properties:
         success:
@@ -7437,7 +7717,7 @@ components:
               location:
                 type: string
                 example: body
-    error401:
+    Error401:
       type: object
       properties:
         success:
@@ -7449,7 +7729,7 @@ components:
         message:
           type: string
           example: Token invalid
-    error403:
+    Error403:
       type: object
       properties:
         success:
@@ -7461,7 +7741,7 @@ components:
         message:
           type: string
           example: Not an admin. Cannot retrieve administrative data
-    error404:
+    Error404:
       type: object
       properties:
         success:
@@ -7473,7 +7753,7 @@ components:
         message:
           type: string
           example: Something not found
-    error500:
+    Error500:
       type: object
       properties:
         success:
@@ -7485,7 +7765,7 @@ components:
         message:
           type: string
           example: Something went wrong
-    product:
+    Product:
       type: object
       properties:
         productID:
@@ -7497,7 +7777,7 @@ components:
         description:
           type: string
           nullable: true
-    variant:
+    Variant:
       type: object
       properties:
         variantID:
@@ -7529,7 +7809,7 @@ components:
           type: string
           example: image.com/image.jpg
           nullable: true
-    variantAttribute:
+    VariantAttribute:
       type: object
       properties:
         attributes:
@@ -7538,7 +7818,7 @@ components:
           example:
             color: red
             size: M
-    image:
+    Image:
       type: object
       properties:
         imageID:
@@ -7553,14 +7833,14 @@ components:
         productID:
           type: string
           example: '1'
-    categoryNames:
+    CategoryNames:
       type: array
       example:
         - tops
         - male
       items:
         type: string
-    category:
+    Category:
       type: object
       properties:
         categoryID:
@@ -7575,7 +7855,7 @@ components:
         parentID:
           type: string
           example: '6'
-    attribute:
+    Attribute:
       type: object
       properties:
         attributeID:
@@ -7584,7 +7864,7 @@ components:
         name:
           type: string
           example: color
-    value:
+    AttributeValue:
       type: object
       properties:
         valueID:
@@ -7596,7 +7876,7 @@ components:
         attributeID:
           type: string
           example: '1'
-    coupon:
+    Coupon:
       type: object
       properties:
         couponID:
@@ -7626,6 +7906,9 @@ components:
         minimumOrderAmount:
           type: number
           example: 100
+        maximumDiscountAmount:
+          type: number
+          example: 10
         timesUsed:
           type: number
           example: 1
@@ -7643,7 +7926,7 @@ components:
           format: date-time
           example: '2024-01-01T00:00:00Z'
           nullable: true
-    order:
+    Order:
       type: object
       properties:
         orderID:
@@ -7670,7 +7953,7 @@ components:
         couponID:
           type: string
           example: '1'
-    user:
+    User:
       type: object
       properties:
         userID:
@@ -7688,7 +7971,7 @@ components:
         isVerified:
           type: boolean
           example: true
-    address:
+    Address:
       type: object
       properties:
         addressID:
@@ -7712,26 +7995,3 @@ components:
         district:
           type: string
           example: Dong Nai
-    timestamps:
-      type: object
-      properties:
-        createdAt:
-          type: string
-          format: date-time
-          example: '2024-01-01T00:00:00.000Z'
-        updatedAt:
-          type: string
-          format: date-time
-          example: '2024-01-01T00:00:00.000Z'
-    pagination:
-      type: object
-      properties:
-        currentPage:
-          type: integer
-          example: 1
-        totalPages:
-          type: integer
-          example: 10
-        totalItems:
-          type: integer
-          example: 20

@@ -196,6 +196,9 @@ paths:
   /admin/variants/{variantID}:
     $ref: ./paths/index.paths.yaml#/adminVariant
 
+  /admin/variants/{variantID}/quantity:
+    $ref: ./paths/index.paths.yaml#/adminVariantQuantity
+
   # Admin Categories
 
   /admin/categories:
@@ -282,6 +285,9 @@ paths:
   /admin/orders/{orderID}:
     $ref: ./paths/index.paths.yaml#/adminOrder
 
+  /admin/orders/{orderID}/status:
+    $ref: ./paths/index.paths.yaml#/adminOrderStatus
+
 components:
   securitySchemes:
     bearerAuth:
@@ -304,42 +310,38 @@ components:
             email: View user's email address
 
   schemas:
-    error400:
+    Error400:
       $ref: ./schemas/error/error400.yaml
-    error401:
+    Error401:
       $ref: ./schemas/error/error401.yaml
-    error403:
+    Error403:
       $ref: ./schemas/error/error403.yaml
-    error404:
+    Error404:
       $ref: ./schemas/error/error404.yaml
-    error500:
+    Error500:
       $ref: ./schemas/error/error500.yaml
       
-    product:
+    Product:
       $ref: ./schemas/products/product.yaml
-    variant:
+    Variant:
       $ref: ./schemas/products/variant.yaml
-    variantAttribute: 
+    VariantAttribute: 
       $ref: ./schemas/products/variantAttribute.yaml
-    image:
+    Image:
       $ref: ./schemas/products/image.yaml
-    categoryNames:
+    CategoryNames:
       $ref: ./schemas/products/categoryNames.yaml
-    category:
+    Category:
       $ref: ./schemas/products/category.yaml
-    attribute:
+    Attribute:
       $ref: ./schemas/products/attribute.yaml
-    value:
+    AttributeValue:
       $ref: ./schemas/products/value.yaml
-    coupon:
+    Coupon:
       $ref: ./schemas/shopping/coupon.yaml
-    order:
+    Order:
       $ref: ./schemas/shopping/order.yaml
-    user:
+    User:
       $ref: ./schemas/users/user.yaml
-    address:
+    Address:
       $ref: ./schemas/users/address.yaml
-    timestamps:
-      $ref: ./schemas/timestamps.yaml
-    pagination:
-      $ref: ./schemas/pagination.yaml

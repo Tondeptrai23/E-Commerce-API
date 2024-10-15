@@ -1,0 +1,91 @@
+# POST /admin/orders
+tags:
+  - Admin Orders
+summary: Create an order
+description:
+  Create an order.
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            type: string
+            description: The status of the order
+            example: pending
+            enum:
+              - pending
+              - processing
+              - shipped
+              - delivered
+          message:
+            type: string
+            description: A message for the order
+            example: Order message
+            nullable: true
+          couponCode:
+            type: string
+            description: The coupon code for the order
+            example: COUPON
+            nullable: true
+          shippingAddress:
+            type: object
+            properties:
+              $ref: '../../../schemas/shopping/shippingAddress.yaml'
+          variants:
+            type: array
+            items:
+              type: object
+              properties:
+                variantID:
+                  type: string
+                  description: The id of the variant
+                  example: 1
+                quantity:
+                  type: integer
+                  description: The quantity of the variant
+                  example: 2
+responses:
+  201:
+    description: Order created
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success: 
+              type: boolean
+              example: true
+            order:
+              type: object
+              allOf:
+                - $ref: '../../../schemas/shopping/order.yaml'
+                - $ref: '../../../schemas/timestamps.yaml'
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: '../../../schemas/error/error401.yaml'
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: '../../../schemas/error/error403.yaml'
+  404:
+    description: Variant not found
+    content:
+      application/json:
+        schema:
+          $ref: '../../../schemas/error/error404.yaml'
+  500:
+    description: Internal server error
+    content:
+      application/json:
+        schema:
+          $ref: '../../../schemas/error/error500.yaml'

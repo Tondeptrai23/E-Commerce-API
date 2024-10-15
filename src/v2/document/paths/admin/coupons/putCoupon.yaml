@@ -39,6 +39,10 @@ content:
           minimumOrderAmount:
             type: number
             example: 100
+          maximumDiscountAmount:
+            type: number
+            example: 10
+            nullable: true
           maxUsage:
             type: number
             example: 100

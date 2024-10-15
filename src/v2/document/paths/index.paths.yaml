@@ -103,6 +103,10 @@ adminVariant:
   delete:
     $ref: "./admin/variants/deleteVariant.yaml"
 
+adminVariantQuantity:
+  post:
+    $ref: "./admin/variants/postVariantQuantity.yaml"
+
 # ADMIN CATEGORIES
 adminCategories:
   get:
@@ -223,9 +227,16 @@ adminOrders:
   get:
     $ref: "./admin/orders/getOrders.yaml"
 
+  post:
+    $ref: "./admin/orders/postOrders.yaml"
+
 adminOrder:
   get:
     $ref: "./admin/orders/getOrder.yaml"
+
+adminOrderStatus:
+  put:
+    $ref: "./admin/orders/putOrderStatus.yaml"
 
 # ADMIN ADDRESS
 adminAddress:

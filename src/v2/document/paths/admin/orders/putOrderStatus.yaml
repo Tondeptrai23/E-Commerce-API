@@ -1,0 +1,81 @@
+# PUT /admin/orders/{orderID}/status  
+tags:
+  - Admin Orders  
+summary: Update the status of an order
+description: |
+  Update the status of an order.
+  
+  The status can be one of the following:
+  - pending
+  - processing
+  - shipped
+  - delivered
+  - cancelled
+
+  Cannot update cancelled and delivered orders.
+security:
+  - bearerAuth: []
+parameters:
+  - name: orderID
+    in: path
+    required: true
+    description: The ID of the order
+    schema:
+      type: string
+      example: "1"
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            type: string
+            description: The status of the order
+            example: pending
+            enum:
+              - pending
+              - processing
+              - shipped
+              - delivered
+responses:
+  200:
+    description: Order status updated
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success: 
+              type: boolean
+              example: true
+            order:
+              type: object
+              allOf:
+                - $ref: '../../../schemas/shopping/order.yaml'
+                - $ref: '../../../schemas/timestamps.yaml'
+  401:
+    description: Token invalid, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: '../../../schemas/error/error401.yaml'
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: '../../../schemas/error/error403.yaml'
+  404:
+    description: Order not found
+    content:
+      application/json:
+        schema:
+          $ref: '../../../schemas/error/error404.yaml'
+  500:
+    description: Internal server error
+    content:
+      application/json:
+        schema:
+          $ref: '../../../schemas/error/error500.yaml'

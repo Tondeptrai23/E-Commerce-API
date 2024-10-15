@@ -1,20 +1,20 @@
-# PATCH /admin/coupons/{couponID}
+# POST /admin/variants/{variantID}/quantity
 tags:
-  - Admin Coupons
-summary: Update coupon details
-description: Updates specific fields of an existing coupon identified by its coupon ID. 
-  Only `description`, `minimumOrderAmount`, `maximumDiscountAmount`, `maxUsage`, `startDate` and `endDate` can be modified to maintain financial integrity.
+  - Admin Variants
+summary: Add quantity to a variant
+description: |
+  Add quantity to a variant.
+  The quantity must be a positive integer.
 security:
   - bearerAuth: []
 parameters:
-  - name: couponID
+  - name: variantID
     in: path
-    description: Coupon ID
+    description: ID of the variant to update
     required: true
     schema:
       type: string
-      example: "1"
-      
+      example: "101"
 requestBody:
   required: true
   content:
@@ -22,26 +22,14 @@ requestBody:
       schema:
         type: object
         properties:
-          description:
-            type: string
-            example: "10% off"
-          minimumOrderAmount:
-            type: number
-            example: 100
-          maximumDiscountAmount:
-            type: number
+          quantity:
+            type: integer
             example: 10
-          maxUsage:
-            type: number
-            example: 100
-            nullable: true
-          endDate:
-            type: string
-            format: date-time
-            example: "2022-01-01T00:00:00Z"
+            description: The quantity of the variant
+            nullable: true  
 responses:
   200:
-    description: Coupon updated
+    description: Variant updated
     content:
       application/json:
         schema:
@@ -50,35 +38,40 @@ responses:
             success:
               type: boolean
               example: true
-            coupon:
+            variant:
               type: object
               allOf:
-                - $ref: "../../../schemas/shopping/coupon.yaml"
+                - $ref: "../../../schemas/products/variant.yaml"
                 - $ref: "../../../schemas/timestamps.yaml"
+
   400:
-    description: Invalid request parameters
+    description: Validation Error
     content:
       application/json:
         schema:
           $ref: "../../../schemas/error/error400.yaml"
+
   401:
-    description: Token invalid, not authenticated
+    description: Token error, not authenticated
     content:
       application/json:
         schema:
           $ref: "../../../schemas/error/error401.yaml"
+
   403:
     description: Not an admin
     content:
       application/json:
         schema:
           $ref: "../../../schemas/error/error403.yaml"
+
   404:
-    description: Coupon not found
+    description: Variant not found
     content:
       application/json:
         schema:
           $ref: "../../../schemas/error/error404.yaml"
+
   500:
     description: Internal Server Error
     content:

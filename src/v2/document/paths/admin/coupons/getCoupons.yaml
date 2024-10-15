@@ -65,6 +65,14 @@ parameters:
     schema:
       example: "[gte]100"
 
+  - name: maximumDiscountAmount
+    in: query
+    description: Filter by maximumDiscountAmount. <br> 
+      - For more information, see the [Query Number](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/query.md#number-filtering).
+    required: false
+    schema:
+      example: "[gte]100" 
+
   - name: timesUsed
     in: query
     description: Filter by timesUsed. <br> 

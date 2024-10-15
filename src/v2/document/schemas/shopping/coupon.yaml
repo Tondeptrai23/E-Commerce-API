@@ -23,6 +23,9 @@ properties:
   minimumOrderAmount:
     type: number
     example: 100
+  maximumDiscountAmount:
+    type: number
+    example: 10
   timesUsed:
     type: number
     example: 1
