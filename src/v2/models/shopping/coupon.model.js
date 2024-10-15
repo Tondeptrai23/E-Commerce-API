@@ -34,6 +34,9 @@ Coupon.init(
             type: DataTypes.INTEGER,
             defaultValue: 0,
         },
+        maximumDiscountAmount: {
+            type: DataTypes.INTEGER,
+        },
         timesUsed: {
             type: DataTypes.INTEGER,
             defaultValue: 0,

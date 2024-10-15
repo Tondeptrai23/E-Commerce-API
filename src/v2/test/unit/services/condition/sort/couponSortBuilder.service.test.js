@@ -38,7 +38,16 @@ describe("CouponSortBuilder", () => {
 
     test("should return an array of order conditions compatible for Sequelize sorting with multiple fields and directions", () => {
         const query = {
-            sort: ["-discountValue", "-timesUsed", "createdAt", "-endDate"],
+            sort: [
+                "-discountValue",
+                "-timesUsed",
+                "createdAt",
+                "-endDate",
+                "updatedAt",
+                "maxUsage",
+                "-minimumOrderAmount",
+                "maximumDiscountAmount",
+            ],
         };
         const sortBuilder = new CouponSortBuilder(query);
         const result = sortBuilder.build();
@@ -47,6 +56,10 @@ describe("CouponSortBuilder", () => {
             ["timesUsed", "DESC"],
             ["createdAt", "ASC"],
             ["endDate", "DESC"],
+            ["updatedAt", "ASC"],
+            ["maxUsage", "ASC"],
+            ["minimumOrderAmount", "DESC"],
+            ["maximumDiscountAmount", "ASC"],
             ["createdAt", "DESC"],
         ]);
     });

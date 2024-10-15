@@ -21,6 +21,7 @@ export default class CouponSortBuilder extends SortBuilder {
             timesUsed: ["timesUsed"],
             maxUsage: ["maxUsage"],
             minimumOrderAmount: ["minimumOrderAmount"],
+            maximumDiscountAmount: ["maximumDiscountAmount"],
         };
         this._defaultSort = [["createdAt", "DESC"]];
     }

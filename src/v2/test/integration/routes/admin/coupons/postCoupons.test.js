@@ -56,6 +56,7 @@ describe("POST /admin/coupons", () => {
                 endDate: "2024-12-31",
                 maxUsage: 100,
                 minimumOrderAmount: 100,
+                maximumDiscountAmount: 100,
             });
 
         expect(res.status).toBe(StatusCodes.CREATED);
@@ -74,6 +75,7 @@ describe("POST /admin/coupons", () => {
                     timesUsed: 0,
                     maxUsage: 100,
                     minimumOrderAmount: 100,
+                    maximumDiscountAmount: 100,
                     createdAt: expect.any(String),
                     updatedAt: expect.any(String),
                 }),
@@ -108,6 +110,7 @@ describe("POST /admin/coupons", () => {
                     timesUsed: 0,
                     maxUsage: null,
                     minimumOrderAmount: 0,
+                    maximumDiscountAmount: null,
                     createdAt: expect.any(String),
                     updatedAt: expect.any(String),
                 }),
@@ -143,6 +146,7 @@ describe("POST /admin/coupons", () => {
                     endDate: null,
                     maxUsage: null,
                     timesUsed: 0,
+                    maximumDiscountAmount: null,
                     products: expect.arrayContaining([
                         expect.objectContaining({
                             productID: "1",
@@ -190,6 +194,7 @@ describe("POST /admin/coupons", () => {
                     discountValue: 10,
                     target: "all",
                     minimumOrderAmount: 0,
+                    maximumDiscountAmount: null,
                     timesUsed: 0,
                     products: expect.arrayContaining([
                         expect.objectContaining({

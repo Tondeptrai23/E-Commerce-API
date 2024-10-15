@@ -27,6 +27,9 @@ const CouponSerializer = new Entity({
     minimumOrderAmount: {
         type: "number",
     },
+    maximumDiscountAmount: {
+        type: "number",
+    },
     timesUsed: {
         type: "number",
     },

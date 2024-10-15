@@ -17,6 +17,7 @@ export default class CouponFilterBuilder extends FilterBuilder {
             "discountValue",
             "target",
             "minimumOrderAmount",
+            "maximumDiscountAmount",
             "timesUsed",
             "maxUsage",
             "startDate",

@@ -270,6 +270,13 @@ class CouponService {
             }
         }
 
+        if (
+            coupon.maximumDiscountAmount &&
+            order.subTotal - totalAmount > coupon.maximumDiscountAmount
+        ) {
+            totalAmount = order.subTotal - coupon.maximumDiscountAmount;
+        }
+
         return totalAmount;
     }
 

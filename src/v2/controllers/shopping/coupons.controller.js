@@ -56,6 +56,7 @@ class CouponController {
                 discountType,
                 discountValue,
                 minimumOrderAmount,
+                maximumDiscountAmount = null,
                 description = null,
                 target,
                 maxUsage = null,
@@ -73,6 +74,7 @@ class CouponController {
                 description,
                 target,
                 minimumOrderAmount,
+                maximumDiscountAmount,
                 maxUsage,
                 startDate,
                 endDate,
@@ -99,6 +101,7 @@ class CouponController {
             const {
                 description,
                 minimumOrderAmount,
+                maximumDiscountAmount,
                 endDate,
                 startDate,
                 maxUsage,
@@ -106,6 +109,7 @@ class CouponController {
             const couponData = removeEmptyFields({
                 description,
                 minimumOrderAmount,
+                maximumDiscountAmount,
                 endDate,
                 startDate,
                 maxUsage,

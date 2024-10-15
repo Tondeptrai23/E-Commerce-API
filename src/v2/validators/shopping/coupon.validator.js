@@ -57,6 +57,11 @@ const validateCreateCoupon = [
         .custom(validateNumber("MinimumOrderAmount"))
         .custom(validateMinValue("MinimumOrderAmount", 0)),
 
+    body("maximumDiscountAmount")
+        .optional()
+        .custom(validateNumber("MaximumDiscountAmount"))
+        .custom(validateMinValue("MaximumDiscountAmount", 0)),
+
     body("maxUsage")
         .optional()
         .custom(validateInteger("MaxUsage"))
@@ -131,6 +136,7 @@ const validateCreateCoupon = [
             "target",
             "description",
             "minimumOrderAmount",
+            "maximumDiscountAmount",
             "maxUsage",
             "startDate",
             "endDate",
@@ -150,6 +156,11 @@ const validatePatchCoupon = [
         .optional()
         .custom(validateNumber("MinimumOrderAmount"))
         .custom(validateMinValue("MinimumOrderAmount", 0)),
+
+    body("maximumDiscountAmount")
+        .optional()
+        .custom(validateNumber("MaximumDiscountAmount"))
+        .custom(validateMinValue("MaximumDiscountAmount", 0)),
 
     body("maxUsage")
         .optional()
@@ -192,6 +203,7 @@ const validatePatchCoupon = [
         validateUnexpectedFields([
             "description",
             "minimumOrderAmount",
+            "maximumDiscountAmount",
             "maxUsage",
             "startDate",
             "endDate",
@@ -247,6 +259,7 @@ const validateQueryGetCoupon = [
                 "discountValue",
                 "target",
                 "minimumOrderAmount",
+                "maximumDiscountAmount",
                 "maxUsage",
                 "startDate",
                 "endDate",
@@ -276,6 +289,10 @@ const validateQueryGetCoupon = [
     query("minimumOrderAmount")
         .optional()
         .custom(validateQueryNumber("MinimumOrderAmount")),
+
+    query("maximumDiscountAmount")
+        .optional()
+        .custom(validateQueryNumber("MaximumDiscountAmount")),
 
     query("maxUsage").optional().custom(validateQueryNumber("MaxUsage")),
 

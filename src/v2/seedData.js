@@ -1054,6 +1054,7 @@ const seedCoupon = async () => {
             target: "all",
             timesUsed: 0,
             maxUsage: 30,
+            maximumDiscountAmount: 5,
             startDate: new Date("2024-06-01"),
             endDate: new Date("2024-06-30"),
         },
