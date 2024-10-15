@@ -8,24 +8,26 @@ dotenv.config({
 
 const paymentConfig = {
     momo: {
+        ACTIVE: true,
         PAYMENT_URL: process.env.MOMO_PAYMENT_URL,
         PARTNER_CODE: process.env.MOMO_PARTNER_CODE,
         ACCESS_KEY: process.env.MOMO_ACCESS_KEY,
         SECRET_KEY: process.env.MOMO_SECRET_KEY,
         REDIRECT_URL: process.env.FRONT_END_URL,
         NOTIFY_URL: `${process.env.SERVER_URL}/api/v2/payment/momo/notify`,
-        REQUEST_TYPE: "payWithMethod",
-        ORDER_INFO: "Thanh toán đơn hàng",
-        LANGUAGE: "vi",
+        REQUEST_TYPE: "payWithMethod", // Specifies the type of payment request to be made to MoMo
+        ORDER_INFO: "Thanh toán đơn hàng", // Order description in Vietnamese: "Pay for the order"
+        LANGUAGE: "vi", // Language code for Vietnamese
     },
     stripe: {
+        ACTIVE: true,
         SECRET_KEY: process.env.STRIPE_SECRET_KEY,
         PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
         NOTIFY_URL: `${process.env.SERVER_URL}/api/v2/payment/stripe/notify`,
         REDIRECT_URL_SUCCESS: `${process.env.FRONT_END_URL}/success`,
         REDIRECT_URL_FAILED: `${process.env.FRONT_END_URL}/failed`,
-        CURRENCY: "vnd",
-        EXPIRED_TIME: 100 * 60, // 100 minutes, equal to Momo expired time
+        CURRENCY: "vnd", // Currency code for Vietnamese Dong
+        EXPIRED_TIME: 100 * 60, // 100 minutes, equal to Momo expired time (in seconds)
     },
 };
 

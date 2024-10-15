@@ -8,6 +8,8 @@ info:
     [Query Parameters Documentation](https://github.com/Tondeptrai23/E-Commerce-API/blob/main/src/v2/document/docs/query.md)
   
     [Authentication Documentation](https://github.com/Tondeptrai23/E-Commerce-API/blob/main/src/v2/document/docs/auth.md)
+  
+    [Payment Integration Documentation](http://github.com/Tondeptrai23/e-commerce-api/blob/main/src/v2/document/docs/payment.md)
   version: 2.0.0
 
 servers:

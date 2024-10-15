@@ -1,0 +1,28 @@
+# GET /payments
+tags:
+  - User Orders
+summary: Get valid payment methods
+description: |
+  Get valid payment methods for the user
+responses:
+  200:
+    description: Payment methods found
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+            paymentMethods:
+              type: array
+              items:
+                $ref: "../../../schemas/payment/paymentMethod.yaml"
+          
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

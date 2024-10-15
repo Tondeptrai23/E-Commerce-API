@@ -8,6 +8,26 @@ import StripePayment from "../../services/payment/stripePayment.service.js";
 class PaymentController {
     constructor() {}
 
+    async getPaymentMethods(req, res, next) {
+        try {
+            const validPayments = ["Cod"];
+
+            if (paymentConfig.momo.ACTIVE) {
+                validPayments.push("Momo");
+            }
+            if (paymentConfig.stripe.ACTIVE) {
+                validPayments.push("CreditCard");
+            }
+
+            res.status(StatusCodes.OK).json({
+                success: true,
+                paymentMethods: validPayments,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
     async notifyMoMo(req, res, next) {
         try {
             if (req.body.partnerCode !== paymentConfig.momo.PARTNER_CODE) {

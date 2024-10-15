@@ -4,6 +4,8 @@ import paymentController from "../../../controllers/shopping/payments.controller
 
 const paymentRoute = Router();
 
+paymentRoute.get("/", paymentController.getPaymentMethods);
+
 paymentRoute.post(
     "/momo/notify",
     paymentController.notifyMoMo.bind(paymentController)
