@@ -1,5 +1,6 @@
 import VariantFilterBuilder from "../../../../../services/condition/filter/variantFilterBuilder.service.js";
 import { Op } from "sequelize";
+import { jest } from "@jest/globals";
 
 describe("VariantFilterBuilder", () => {
     test("should return an empty array if the query is empty", () => {

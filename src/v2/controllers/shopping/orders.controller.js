@@ -126,10 +126,13 @@ class OrderController {
     async createOrderAdmin(req, res, next) {
         try {
             // Get param
-            const { variants, couponCode, shippingAddress } = req.body;
+            const { variants, couponCode, shippingAddress, status, message } =
+                req.body;
 
             // Call service
             const order = await orderService.createAdminOrder(
+                status,
+                message,
                 variants,
                 couponCode,
                 shippingAddress

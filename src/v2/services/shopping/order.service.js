@@ -232,13 +232,21 @@ class OrderService {
      * @param {String} couponCode - The coupon code
      * @returns {Promise<Order>} - The order
      */
-    async createAdminOrder(variants, couponCode) {
+    async createAdminOrder(
+        status,
+        message,
+        variants,
+        couponCode,
+        shippingAddress
+    ) {
         return await db.transaction(async (t) => {
             const order = await Order.create({
-                status: "pending",
+                status: status,
+                message: message,
                 paymentMethod: "AtStore",
             });
 
+            // Create order items
             let totalAmount = 0;
             const orderItems = [];
             for (let i = 0; i < variants.length; i++) {
@@ -299,6 +307,7 @@ class OrderService {
                 finalTotal: totalAmount,
             });
 
+            // Set coupon if available
             const coupon = await Coupon.findOne({
                 where: {
                     code: couponCode,
@@ -320,6 +329,17 @@ class OrderService {
 
                 order.set({
                     finalTotal: finalTotal,
+                });
+            }
+
+            // Set shipping address
+            if (shippingAddress) {
+                const shippingAddressInstance =
+                    await addressService.createShippingAddress(shippingAddress);
+
+                order.set({
+                    shippingAddressID:
+                        shippingAddressInstance.shippingAddressID,
                 });
             }
 

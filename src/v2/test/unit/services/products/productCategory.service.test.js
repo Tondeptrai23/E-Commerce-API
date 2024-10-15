@@ -3,10 +3,15 @@ import seedData from "../../../../seedData.js";
 import Category from "../../../../models/products/category.model.js";
 import { ResourceNotFoundError } from "../../../../utils/error.js";
 import Product from "../../../../models/products/product.model.js";
+import { db } from "../../../../models/index.model.js";
 
 beforeAll(async () => {
     await seedData();
-}, 15000);
+});
+
+afterAll(async () => {
+    await db.close();
+});
 
 describe("Product Category Service", () => {
     describe("updateCategory", () => {

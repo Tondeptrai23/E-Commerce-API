@@ -8,6 +8,7 @@ import {
     assertTokenNotProvided,
 } from "../../../utils.integration.js";
 import ProductImage from "../../../../../../models/products/productImage.model.js";
+import { db } from "../../../../../../models/index.model.js";
 
 /**
  * Set up
@@ -30,6 +31,12 @@ beforeAll(async () => {
         password: "password1",
     });
     accessTokenUser = resUser.body.accessToken;
+});
+
+afterAll(async () => {
+    await db.close();
+    accessToken = null;
+    accessTokenUser = null;
 });
 
 describe("GET /api/v2/admin/products/:productID/variants", () => {

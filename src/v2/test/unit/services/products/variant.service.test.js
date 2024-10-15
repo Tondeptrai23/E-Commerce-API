@@ -10,11 +10,15 @@ import AttributeValue from "../../../../models/products/attributeValue.model.js"
 import ProductImage from "../../../../models/products/productImage.model.js";
 import { jest } from "@jest/globals";
 import VariantAttributeValue from "../../../../models/products/variantAttributeValue.model.js";
+import { db } from "../../../../models/index.model.js";
 
 beforeAll(async () => {
     await seedData();
-}, 15000);
+});
 
+afterAll(async () => {
+    await db.close();
+});
 describe("getVariants", () => {
     test("should return all variants", async () => {
         const { variants } = await variantService.getVariants(

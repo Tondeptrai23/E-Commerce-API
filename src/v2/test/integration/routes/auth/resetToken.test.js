@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import app from "../../../../app.js";
 import seedData from "../../../../seedData.js";
 import { jwt } from "../../../../config/auth.config.js";
-import tokenService from "../../../../services/auth/token.service.js";
+import { db } from "../../../../models/index.model.js";
 
 /**
  * Set up
@@ -21,7 +21,11 @@ beforeAll(async () => {
     });
     accessToken = res.body.accessToken;
     refreshToken = res.body.refreshToken;
-}, 15000);
+});
+
+afterAll(async () => {
+    db.close();
+});
 
 /**
  * Tests

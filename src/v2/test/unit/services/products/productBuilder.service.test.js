@@ -2,9 +2,14 @@ import Product from "../../../../models/products/product.model.js";
 import productBuilderService from "../../../../services/products/productBuilder.service.js";
 import seedData from "../../../../seedData.js";
 import Variant from "../../../../models/products/variant.model.js";
+import { db } from "../../../../models/index.model.js";
 
 beforeAll(async () => {
     await seedData();
+});
+
+afterAll(async () => {
+    await db.close();
 });
 
 describe("ProductBuilderService", () => {

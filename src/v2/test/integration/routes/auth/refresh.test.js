@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import app from "../../../../app.js";
 import seedData from "../../../../seedData.js";
 import { jwt } from "../../../../config/auth.config.js";
+import { db } from "../../../../models/index.model.js";
 
 let accessToken = "";
 let refreshToken = "";
@@ -17,7 +18,13 @@ beforeAll(async () => {
     });
     accessToken = res.body.accessToken;
     refreshToken = res.body.refreshToken;
-}, 15000);
+});
+
+afterAll(async () => {
+    await db.close();
+    accessToken = null;
+    refreshToken = null;
+});
 
 /**
  * Tests

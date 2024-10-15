@@ -41,54 +41,70 @@ afterAll(async () => {
 /**
  * Tests
  */
-describe("GET /api/v2/admin/attributes/:attributeID", () => {
-    it("should delete an attribute", async () => {
+describe("post /api/v2/admin/variants/:variantID", () => {
+    it("should update a variant quantity", async () => {
         const res = await request(app)
-            .delete("/api/v2/admin/attributes/1")
+            .post("/api/v2/admin/variants/101/quantity")
+            .send({
+                quantity: 10,
+            })
             .set("Authorization", `Bearer ${accessToken}`);
 
         expect(res.status).toBe(StatusCodes.OK);
-        expect(res.body).toEqual({
-            success: true,
-        });
-
-        const resGet = await request(app)
-            .get("/api/v2/admin/attributes/1")
-            .set("Authorization", `Bearer ${accessToken}`);
-
-        expect(resGet.status).toBe(StatusCodes.NOT_FOUND);
+        expect(res.body).toEqual(expect.objectContaining({ success: true }));
+        expect(res.body.variant.stock).toBeGreaterThanOrEqual(10);
     });
 
-    it("should return 404 if attribute is not found", async () => {
+    it("should return 404 if variant not found", async () => {
         const res = await request(app)
-            .delete("/api/v2/admin/attributes/999")
-            .set("Authorization", `Bearer ${accessToken}`)
+            .post("/api/v2/admin/variants/999/quantity")
             .send({
-                name: "New name",
-            });
+                quantity: 10,
+            })
+            .set("Authorization", `Bearer ${accessToken}`);
 
         expect(res.status).toBe(StatusCodes.NOT_FOUND);
         expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
+    it("should return 400 if quantity not found", async () => {
+        const res = await request(app)
+            .post("/api/v2/admin/variants/101/quantity")
+            .send({})
+            .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(res.status).toBe(StatusCodes.BAD_REQUEST);
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
+    });
+
     it("should return 401 if token is not provided", async () => {
-        const res = await request(app).delete("/api/v2/admin/attributes/1");
+        const res = await request(app)
+            .post("/api/v2/admin/variants/101/quantity")
+            .send({
+                quantity: 10,
+            });
 
         assertTokenNotProvided(res);
     });
 
     it("should return 401 if token is invalid", async () => {
         const res = await request(app)
-            .delete("/api/v2/admin/attributes/1")
-            .set("Authorization", `Bearer invalid`);
+            .post("/api/v2/admin/variants/101/quantity")
+            .set("Authorization", "Bearer invalidtoken")
+            .send({
+                quantity: 10,
+            });
 
         assertTokenInvalid(res);
     });
 
-    it("should return 401 if user is not an admin", async () => {
+    it("should return 403 if user is not an admin", async () => {
         const res = await request(app)
-            .delete("/api/v2/admin/attributes/1")
-            .set("Authorization", `Bearer ${accessTokenUser}`);
+            .post("/api/v2/admin/variants/101/quantity")
+            .set("Authorization", `Bearer ${accessTokenUser}`)
+            .send({
+                quantity: 10,
+            });
 
         assertNotAnAdmin(res);
     });

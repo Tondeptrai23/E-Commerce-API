@@ -4,11 +4,15 @@ import seedData from "../../../seedData.js";
 import User from "../../../models/user/user.model.js";
 import userService from "../../../services/users/user.service.js";
 import tokenService from "../../../services/auth/token.service.js";
+import { db } from "../../../models/index.model.js";
 
 beforeAll(async () => {
     await seedData();
-}, 15000);
+});
 
+afterAll(async () => {
+    await db.close();
+});
 describe("authController.signup", () => {
     test("should create a new user and return a success response", async () => {
         // Arrange

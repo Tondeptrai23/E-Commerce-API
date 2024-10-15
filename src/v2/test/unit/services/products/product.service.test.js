@@ -6,10 +6,15 @@ import Attribute from "../../../../models/products/attribute.model.js";
 import AttributeValue from "../../../../models/products/attributeValue.model.js";
 import productCategoryService from "../../../../services/products/productCategory.service.js";
 import ProductImage from "../../../../models/products/productImage.model.js";
+import { db } from "../../../../models/index.model.js";
 
 beforeAll(async () => {
     await seedData();
-}, 15000);
+});
+
+afterAll(async () => {
+    await db.close();
+});
 
 describe("getProducts", () => {
     test("should return all products", async () => {

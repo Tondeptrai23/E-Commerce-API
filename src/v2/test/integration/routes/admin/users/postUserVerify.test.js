@@ -8,6 +8,7 @@ import {
     assertTokenNotProvided,
 } from "../../utils.integration.js";
 import User from "../../../../../models/user/user.model.js";
+import { db } from "../../../../../models/index.model.js";
 
 /**
  * Set up
@@ -39,6 +40,12 @@ beforeAll(async () => {
         name: "example",
         isVerified: false,
     });
+});
+
+afterAll(async () => {
+    await db.close();
+    accessToken = null;
+    accessTokenUser = null;
 });
 
 /**

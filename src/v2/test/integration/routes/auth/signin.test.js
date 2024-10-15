@@ -2,11 +2,16 @@ import request from "supertest";
 import { StatusCodes } from "http-status-codes";
 import app from "../../../../app.js";
 import seedData from "../../../../seedData.js";
+import { db } from "../../../../models/index.model.js";
 
 beforeAll(async () => {
     // Seed data
     await seedData();
-}, 15000);
+});
+
+afterAll(async () => {
+    await db.close();
+});
 
 describe("POST /api/v2/auth/signin", () => {
     it("should return 200 OK", async () => {

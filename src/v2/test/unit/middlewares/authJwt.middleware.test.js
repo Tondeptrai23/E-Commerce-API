@@ -3,9 +3,14 @@ import * as authJwt from "../../../middlewares/authJwt.middleware.js";
 import { jwt } from "../../../config/auth.config.js";
 import { jest } from "@jest/globals";
 import tokenService from "../../../services/auth/token.service.js";
+import { db } from "../../../models/index.model.js";
 
 beforeAll(async () => {
     await seedData();
+});
+
+afterAll(async () => {
+    await db.close();
 });
 
 describe("authJwt.verifyToken", () => {

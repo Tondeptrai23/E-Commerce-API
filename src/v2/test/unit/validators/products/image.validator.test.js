@@ -61,11 +61,9 @@ describe("validateCreateImages", () => {
 });
 
 describe("validateReorderImages", () => {
-    test("should return errors if imageID field is missing in validateReorderImages", async () => {
+    test("should return errors if images is missing", async () => {
         const req = {
-            body: {
-                images: [{}],
-            },
+            body: {},
         };
 
         for (const validationChain of validator.validateReorderImages) {
@@ -77,20 +75,16 @@ describe("validateReorderImages", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Image ID is required",
+                    msg: "Images is required",
                 }),
             ])
         );
     });
 
-    test("should return errors if displayOrder field is missing in validateReorderImages", async () => {
+    test("should return errors if images is not an array", async () => {
         const req = {
             body: {
-                images: [
-                    {
-                        imageID: "12345",
-                    },
-                ],
+                images: "not-an-array",
             },
         };
 
@@ -103,21 +97,16 @@ describe("validateReorderImages", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Display order is required",
+                    msg: "Images should be an array",
                 }),
             ])
         );
     });
 
-    test("should return errors if displayOrder field is invalid in validateReorderImages", async () => {
+    test("should return errors if images array is empty", async () => {
         const req = {
             body: {
-                images: [
-                    {
-                        imageID: "12345",
-                        displayOrder: "invalid",
-                    },
-                ],
+                images: [],
             },
         };
 
@@ -130,21 +119,16 @@ describe("validateReorderImages", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Display order should be an integer",
+                    msg: "Images should have at least one item",
                 }),
             ])
         );
     });
 
-    test("should return errors if displayOrder field is less than 1 in validateReorderImages", async () => {
+    test("should return errors if images array contains non-string items", async () => {
         const req = {
             body: {
-                images: [
-                    {
-                        imageID: "12345",
-                        displayOrder: 0,
-                    },
-                ],
+                images: [123, "valid-string"],
             },
         };
 
@@ -157,9 +141,24 @@ describe("validateReorderImages", () => {
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "Display order should be greater than or equal to 1",
+                    msg: "Image should be a string",
                 }),
             ])
         );
+    });
+
+    test("should return empty errors if images array is valid", async () => {
+        const req = {
+            body: {
+                images: ["image1", "image2"],
+            },
+        };
+
+        for (const validationChain of validator.validateReorderImages) {
+            await validationChain.run(req);
+        }
+        const errors = validationResult(req);
+
+        expect(errors.isEmpty()).toBe(true);
     });
 });

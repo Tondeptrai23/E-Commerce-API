@@ -7,6 +7,7 @@ import {
     assertTokenInvalid,
 } from "../../utils.integration.js";
 import Address from "../../../../../models/user/address.model.js";
+import { db } from "../../../../../models/index.model.js";
 
 /**
  * Set up
@@ -41,6 +42,12 @@ beforeAll(async () => {
         city: "City",
         district: "District",
     });
+});
+
+afterAll(async () => {
+    await db.close();
+    accessToken = null;
+    accessTokenUser = null;
 });
 
 /**

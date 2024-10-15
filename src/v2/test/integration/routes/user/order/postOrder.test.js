@@ -15,6 +15,7 @@ import Variant from "../../../../../models/products/variant.model.js";
 import { paymentConfig } from "../../../../../config/config.js";
 import StripePayment from "../../../../../services/payment/stripePayment.service.js";
 import Address from "../../../../../models/user/address.model.js";
+import { db } from "../../../../../models/index.model.js";
 
 /**
  * Set up
@@ -100,7 +101,8 @@ afterEach(async () => {
     }
 });
 
-afterAll(() => {
+afterAll(async () => {
+    await db.close();
     jest.restoreAllMocks();
 });
 

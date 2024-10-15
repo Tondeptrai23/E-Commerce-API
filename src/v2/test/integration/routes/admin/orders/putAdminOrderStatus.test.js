@@ -3,9 +3,9 @@ import { StatusCodes } from "http-status-codes";
 import app from "../../../../../app.js";
 import seedData from "../../../../../seedData.js";
 import {
-    assertNotAnAdmin,
-    assertTokenInvalid,
     assertTokenNotProvided,
+    assertTokenInvalid,
+    assertNotAnAdmin,
 } from "../../utils.integration.js";
 import { db } from "../../../../../models/index.model.js";
 
@@ -41,76 +41,66 @@ afterAll(async () => {
 /**
  * Tests
  */
-describe("PATCH /api/v2/admin/attributes/:attributeID", () => {
-    it("should update an attribute", async () => {
+describe("put /api/v2/admin/orders/:orderID", () => {
+    it("should update an order status", async () => {
         const res = await request(app)
-            .patch("/api/v2/admin/attributes/1")
+            .put("/api/v2/admin/orders/1/status")
             .set("Authorization", `Bearer ${accessToken}`)
             .send({
-                name: "New name",
+                status: "processing",
             });
 
         expect(res.status).toBe(StatusCodes.OK);
         expect(res.body).toEqual({
             success: true,
-            attribute: expect.objectContaining({
-                attributeID: "1",
-                name: "New name",
-                createdAt: expect.any(String),
-                updatedAt: expect.any(String),
-            }),
+            order: expect.any(Object),
         });
+        expect(res.body.order).toEqual(
+            expect.objectContaining({
+                orderID: "1",
+                status: "processing",
+            })
+        );
     });
 
-    it("should still update name if it is the same", async () => {
-        const res = await request(app)
-            .patch("/api/v2/admin/attributes/1")
+    it("should return 409 if order is already cancelled", async () => {
+        await request(app)
+            .put("/api/v2/admin/orders/2/status")
             .set("Authorization", `Bearer ${accessToken}`)
             .send({
-                name: "New name",
+                status: "cancelled",
             });
 
-        expect(res.status).toBe(StatusCodes.OK);
-        expect(res.body).toEqual({
-            success: true,
-            attribute: expect.objectContaining({
-                attributeID: "1",
-                name: "New name",
-                createdAt: expect.any(String),
-                updatedAt: expect.any(String),
-            }),
-        });
-    });
-
-    it("should return 404 if attribute is not found", async () => {
         const res = await request(app)
-            .patch("/api/v2/admin/attributes/999")
+            .put("/api/v2/admin/orders/2/status")
             .set("Authorization", `Bearer ${accessToken}`)
             .send({
-                name: "New name",
-            });
-
-        expect(res.status).toBe(StatusCodes.NOT_FOUND);
-        expect(res.body).toEqual(expect.objectContaining({ success: false }));
-    });
-
-    it("should return 409 if name is taken", async () => {
-        const res = await request(app)
-            .patch("/api/v2/admin/attributes/1")
-            .set("Authorization", `Bearer ${accessToken}`)
-            .send({
-                name: "color",
+                status: "processing",
             });
 
         expect(res.status).toBe(StatusCodes.CONFLICT);
         expect(res.body).toEqual(expect.objectContaining({ success: false }));
     });
 
-    it("should return 400 if name is not provided", async () => {
+    it("should return 404 if order is not found", async () => {
         const res = await request(app)
-            .patch("/api/v2/admin/attributes/1")
+            .put("/api/v2/admin/orders/999/status")
             .set("Authorization", `Bearer ${accessToken}`)
-            .send({});
+            .send({
+                status: "processing",
+            });
+
+        expect(res.status).toBe(StatusCodes.NOT_FOUND);
+        expect(res.body).toEqual(expect.objectContaining({ success: false }));
+    });
+
+    it("should return 400 if status is invalid", async () => {
+        const res = await request(app)
+            .put("/api/v2/admin/orders/1/status")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                status: "invalid",
+            });
 
         expect(res.status).toBe(StatusCodes.BAD_REQUEST);
         expect(res.body).toEqual(expect.objectContaining({ success: false }));
@@ -118,9 +108,9 @@ describe("PATCH /api/v2/admin/attributes/:attributeID", () => {
 
     it("should return 401 if token is not provided", async () => {
         const res = await request(app)
-            .patch("/api/v2/admin/attributes/1")
+            .put("/api/v2/admin/orders/1/status")
             .send({
-                name: "New name",
+                status: "processing",
             });
 
         assertTokenNotProvided(res);
@@ -128,10 +118,10 @@ describe("PATCH /api/v2/admin/attributes/:attributeID", () => {
 
     it("should return 401 if token is invalid", async () => {
         const res = await request(app)
-            .patch("/api/v2/admin/attributes/1")
+            .put("/api/v2/admin/orders/1/status")
             .set("Authorization", `Bearer invalid`)
             .send({
-                name: "New name",
+                status: "processing",
             });
 
         assertTokenInvalid(res);
@@ -139,10 +129,10 @@ describe("PATCH /api/v2/admin/attributes/:attributeID", () => {
 
     it("should return 401 if user is not an admin", async () => {
         const res = await request(app)
-            .patch("/api/v2/admin/attributes/1")
+            .put("/api/v2/admin/orders/1/status")
             .set("Authorization", `Bearer ${accessTokenUser}`)
             .send({
-                name: "New name",
+                status: "processing",
             });
 
         assertNotAnAdmin(res);

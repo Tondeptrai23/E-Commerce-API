@@ -6,6 +6,8 @@ import {
     validateQueryInteger,
     validateQueryNumber,
     validateQueryString,
+    validateNumber,
+    validateMinValue,
 } from "../utils.validator.js";
 import { validateCreateAddress } from "../users/address.validator.js";
 
@@ -259,6 +261,32 @@ const validateUpdateOrderStatus = [
 ];
 
 const validateCreateOrderAdmin = [
+    body("status")
+        .notEmpty()
+        .withMessage("Status is required")
+        .isString()
+        .withMessage("Status should be a string")
+        .custom((value) => {
+            if (
+                ![
+                    "pending",
+                    "processing",
+                    "shipping",
+                    "completed",
+                    "cancelled",
+                ].includes(value.toLowerCase())
+            ) {
+                throw new Error("Invalid status");
+            }
+
+            return true;
+        }),
+
+    body("message")
+        .optional()
+        .isString()
+        .withMessage("Message should be a string"),
+
     body("variants")
         .notEmpty()
         .withMessage("Variants is required")
@@ -281,13 +309,15 @@ const validateCreateOrderAdmin = [
     body("variants.*.quantity")
         .notEmpty()
         .withMessage("Quantity is required")
-        .isInt({ min: 1 })
-        .withMessage("Quantity should be an integer greater than 0"),
+        .custom(validateNumber("Quantity"))
+        .custom(validateMinValue("Quantity", 0)),
 
     body("couponCode")
         .optional()
         .isString()
         .withMessage("CouponCode should be a string"),
+
+    body("shippingAddress").optional().custom(validateCreateAddress),
 ];
 
 export {

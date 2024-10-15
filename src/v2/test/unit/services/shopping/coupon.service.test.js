@@ -10,10 +10,15 @@ import Coupon from "../../../../models/shopping/coupon.model.js";
 import Product from "../../../../models/products/product.model.js";
 import { jest } from "@jest/globals";
 import { OptimisticLockError } from "sequelize";
+import { db } from "../../../../models/index.model.js";
 
 beforeAll(async () => {
     await seedData();
-}, 15000);
+});
+
+afterAll(async () => {
+    await db.close();
+});
 
 describe("CouponService", () => {
     describe("getCoupons", () => {

@@ -3,9 +3,10 @@ import { StatusCodes } from "http-status-codes";
 import app from "../../../../../app.js";
 import seedData from "../../../../../seedData.js";
 import {
-    assertTokenNotProvided,
     assertTokenInvalid,
+    assertTokenNotProvided,
 } from "../../utils.integration.js";
+import { db } from "../../../../../models/index.model.js";
 
 /**
  * Set up
@@ -28,6 +29,12 @@ beforeAll(async () => {
         password: "password1",
     });
     accessTokenUser = resUser.body.accessToken;
+});
+
+afterAll(async () => {
+    await db.close();
+    accessToken = null;
+    accessTokenUser = null;
 });
 
 /**

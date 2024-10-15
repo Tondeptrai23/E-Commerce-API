@@ -11,12 +11,17 @@ import OrderItem from "../../../../models/shopping/orderItem.model.js";
 import Variant from "../../../../models/products/variant.model.js";
 import { expect, jest } from "@jest/globals";
 import CartItem from "../../../../models/shopping/cartItem.model.js";
+import { db } from "../../../../models/index.model.js";
 
 let user;
 beforeAll(async () => {
     await seedData();
     user = await User.findByPk(1);
-}, 15000);
+});
+
+afterAll(async () => {
+    await db.close();
+});
 
 describe("OrderService", () => {
     describe("getPendingOrder", () => {
@@ -379,6 +384,14 @@ describe("OrderService", () => {
             ];
             const couponCode = "WINTER5";
 
+            const shippingAddress = {
+                city: "Ho Chi Minh",
+                district: "District 1",
+                recipientName: "John Doe",
+                phoneNumber: "123456789",
+                address: "123 Street",
+            };
+
             let existingStocks = await Promise.all(
                 variants.map(
                     async (variant) => await Variant.findByPk(variant.variantID)
@@ -386,13 +399,59 @@ describe("OrderService", () => {
             );
 
             const order = await orderService.createAdminOrder(
+                "processing",
+                "message",
+                variants,
+                couponCode,
+                shippingAddress
+            );
+
+            expect(order).toBeDefined();
+            expect(order).toBeInstanceOf(Order);
+            expect(order.status).toBe("processing");
+            expect(order.message).toBe("message");
+            expect(order.subTotal).toBeGreaterThan(0);
+            expect(order.finalTotal).toBeGreaterThan(0);
+            expect(order.coupon.code).toBe(couponCode);
+            expect(order.shippingAddress).toEqual(
+                expect.objectContaining(shippingAddress)
+            );
+
+            // Verify that the stock is updated
+            for (const variant of variants) {
+                const expectedStock =
+                    existingStocks.find(
+                        (stock) => stock.variantID === variant.variantID
+                    ).stock - variant.quantity;
+                const updatedStock = await Variant.findByPk(variant.variantID);
+                expect(updatedStock.stock).toBe(expectedStock);
+            }
+        });
+
+        test("should create an order for admin with valid data 2", async () => {
+            const variants = [
+                { variantID: "101", quantity: 2 },
+                { variantID: "102", quantity: 1 },
+            ];
+            const couponCode = "WINTER5";
+
+            let existingStocks = await Promise.all(
+                variants.map(
+                    async (variant) => await Variant.findByPk(variant.variantID)
+                )
+            );
+
+            const order = await orderService.createAdminOrder(
+                "processing",
+                null,
                 variants,
                 couponCode
             );
 
             expect(order).toBeDefined();
             expect(order).toBeInstanceOf(Order);
-            expect(order.status).toBe("pending");
+            expect(order.status).toBe("processing");
+            expect(order.message).toBe(null);
             expect(order.subTotal).toBeGreaterThan(0);
             expect(order.finalTotal).toBeGreaterThan(0);
             expect(order.coupon.code).toBe(couponCode);
@@ -415,7 +474,12 @@ describe("OrderService", () => {
             ];
             const couponCode = "DISCOUNT10";
             await expect(
-                orderService.createAdminOrder(variants, couponCode)
+                orderService.createAdminOrder(
+                    "processing",
+                    null,
+                    variants,
+                    couponCode
+                )
             ).rejects.toThrow(ResourceNotFoundError);
         });
 
@@ -427,7 +491,12 @@ describe("OrderService", () => {
             const couponCode = "DISCOUNT10";
 
             await expect(
-                orderService.createAdminOrder(variants, couponCode)
+                orderService.createAdminOrder(
+                    "cancelled",
+                    null,
+                    variants,
+                    couponCode
+                )
             ).rejects.toThrow(ConflictError);
         });
     });
@@ -745,6 +814,40 @@ describe("OrderService", () => {
             expect(newOrder).toBeDefined();
             expect(newOrder).toBeInstanceOf(Order);
             expect(newOrder.status).toBe("awaiting payment");
+        });
+    });
+
+    describe("updateOrderStatus", () => {
+        test("should update the order status", async () => {
+            const orderID = "5";
+            const newStatus = "delivered";
+
+            const order = await orderService.updateOrderStatus(
+                orderID,
+                newStatus
+            );
+
+            expect(order).toBeDefined();
+            expect(order).toBeInstanceOf(Order);
+            expect(order.status).toBe(newStatus);
+        });
+
+        test("should throw ResourceNotFoundError if the order is not found", async () => {
+            const orderID = "999";
+            const newStatus = "delivered";
+
+            await expect(
+                orderService.updateOrderStatus(orderID, newStatus)
+            ).rejects.toThrow(ResourceNotFoundError);
+        });
+
+        test("should throw ConflictError if the order is cancelled or delivered", async () => {
+            const orderID = "1";
+            const newStatus = "delivered";
+
+            await expect(
+                orderService.updateOrderStatus(orderID, newStatus)
+            ).rejects.toThrow(ConflictError);
         });
     });
 

@@ -5,11 +5,15 @@ import Order from "../../../../models/shopping/order.model.js";
 import Variant from "../../../../models/products/variant.model.js";
 import { jest } from "@jest/globals";
 import OrderItem from "../../../../models/shopping/orderItem.model.js";
+import { db } from "../../../../models/index.model.js";
 
 beforeAll(async () => {
     await seedData();
-}, 15000);
+});
 
+afterAll(async () => {
+    await db.close();
+});
 describe("CartService", () => {
     describe("getCart", () => {
         test("should retrieve the user's cart items", async () => {

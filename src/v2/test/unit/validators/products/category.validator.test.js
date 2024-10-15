@@ -1,10 +1,15 @@
 import validator from "../../../../validators/index.validator.js";
 import { validationResult } from "express-validator";
 import seedData from "../../../../seedData.js";
+import { db } from "../../../../models/index.model.js";
 
 beforeAll(async () => {
     await seedData();
-}, 15000);
+});
+
+afterAll(async () => {
+    await db.close();
+});
 
 describe("validateAddCategoriesForProduct", () => {
     test("should return empty error array if all fields are valid", async () => {

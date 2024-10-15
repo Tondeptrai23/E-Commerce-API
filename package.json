@@ -50,12 +50,13 @@
   "jest": {
     "transform": {},
     "testPathIgnorePatterns": [
-      "/node_modules/",
-      "/src/v1/"
+      "./node_modules/",
+      "./src/v1/"
     ],
     "setupFilesAfterEnv": [
       "jest-extended/all",
       "./src/v2/test/setup.js"
-    ]
+    ],
+    "workerIdleMemoryLimit": "512MB"
   }
 }

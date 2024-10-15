@@ -8,6 +8,7 @@ import {
     assertTokenNotProvided,
 } from "../../utils.integration.js";
 import ShippingAddress from "../../../../../models/shopping/shippingAddress.model.js";
+import { db } from "../../../../../models/index.model.js";
 
 /**
  * Set up
@@ -39,6 +40,12 @@ beforeAll(async () => {
         city: "City",
         district: "District",
     });
+});
+
+afterAll(async () => {
+    await db.close();
+    accessToken = null;
+    accessTokenUser = null;
 });
 
 /**

@@ -6,6 +6,7 @@ import {
     assertTokenNotProvided,
     assertTokenInvalid,
 } from "../../utils.integration.js";
+import { db } from "../../../../../models/index.model.js";
 
 /**
  * Set up
@@ -28,6 +29,12 @@ beforeAll(async () => {
         password: "password1",
     });
     accessTokenUser = resUser.body.accessToken;
+});
+
+afterAll(async () => {
+    await db.close();
+    accessToken = null;
+    accessTokenUser = null;
 });
 
 /**

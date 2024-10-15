@@ -7,10 +7,15 @@ import {
 } from "../../../../utils/error.js";
 import { jest } from "@jest/globals";
 import Order from "../../../../models/shopping/order.model.js";
+import { db } from "../../../../models/index.model.js";
 
 beforeAll(async () => {
     await seedData();
-}, 15000);
+});
+
+afterAll(async () => {
+    await db.close();
+});
 
 describe("createNewAccount", () => {
     test("should create a new account", async () => {

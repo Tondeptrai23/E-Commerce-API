@@ -2,9 +2,14 @@ import attributeValueService from "../../../../services/products/attributeValue.
 import seedData from "../../../../seedData.js";
 import { jest } from "@jest/globals";
 import VariantAttributeValue from "../../../../models/products/variantAttributeValue.model.js";
+import { db } from "../../../../models/index.model.js";
 
 beforeAll(async () => {
     await seedData();
+});
+
+afterAll(async () => {
+    await db.close();
 });
 
 describe("Attribute Value Service", () => {

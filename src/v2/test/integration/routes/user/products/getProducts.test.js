@@ -4,6 +4,7 @@ import app from "../../../../../app.js";
 import seedData from "../../../../../seedData.js";
 import variantService from "../../../../../services/products/variant.service.js";
 import VariantSerializer from "../../../../../services/serializers/variant.serializer.service.js";
+import { db } from "../../../../../models/index.model.js";
 
 /**
  * Set up
@@ -11,6 +12,10 @@ import VariantSerializer from "../../../../../services/serializers/variant.seria
 beforeAll(async () => {
     // Seed data
     await seedData();
+});
+
+afterAll(async () => {
+    await db.close();
 });
 
 /**

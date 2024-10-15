@@ -4,10 +4,15 @@ import ProductImage from "../../../../models/products/productImage.model.js";
 import { ResourceNotFoundError } from "../../../../utils/error.js";
 import { BadRequestError } from "../../../../utils/error.js";
 import { jest } from "@jest/globals";
+import { db } from "../../../../models/index.model.js";
 
 beforeAll(async () => {
     await seedData();
-}, 15000);
+});
+
+afterAll(async () => {
+    await db.close();
+});
 
 describe("getProductImage", () => {
     test("should throw ResourceNotFoundError if the product is not found", async () => {

@@ -7,6 +7,10 @@ beforeAll(async () => {
     await seedData();
 });
 
+afterAll(async () => {
+    await db.close();
+});
+
 describe("Variant Attribute Service", () => {
     describe("getVariantsByAttribute", () => {
         test("should return variants by attribute", async () => {

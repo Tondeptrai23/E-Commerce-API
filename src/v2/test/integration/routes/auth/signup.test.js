@@ -4,6 +4,7 @@ import app from "../../../../app.js";
 import seedData from "../../../../seedData.js";
 import tokenService from "../../../../services/auth/token.service.js";
 import { jest } from "@jest/globals";
+import { db } from "../../../../models/index.model.js";
 
 beforeAll(async () => {
     // Seed data
@@ -12,6 +13,10 @@ beforeAll(async () => {
     // Mock tokenService.generateCode
     jest.spyOn(tokenService, "generate6DigitCode").mockReturnValue("123456");
 }, 15000);
+
+afterAll(async () => {
+    await db.close();
+});
 
 describe("POST /api/v2/auth/signup", () => {
     it("should create user", async () => {

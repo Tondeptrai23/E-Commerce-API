@@ -6,10 +6,15 @@ import {
     ResourceNotFoundError,
 } from "../../../../utils/error.js";
 import Address from "../../../../models/user/address.model.js";
+import { db } from "../../../../models/index.model.js";
 
 beforeAll(async () => {
     await seedData();
-}, 15000);
+});
+
+afterAll(async () => {
+    await db.close();
+});
 
 describe("AddressService", () => {
     let user;

@@ -2,6 +2,7 @@ import request from "supertest";
 import { StatusCodes } from "http-status-codes";
 import app from "../../../../../app.js";
 import seedData from "../../../../../seedData.js";
+import { db } from "../../../../../models/index.model.js";
 
 /**
  * Set up
@@ -9,6 +10,10 @@ import seedData from "../../../../../seedData.js";
 beforeAll(async () => {
     // Seed data
     await seedData();
+});
+
+afterAll(async () => {
+    await db.close();
 });
 
 /**

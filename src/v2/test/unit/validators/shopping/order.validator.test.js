@@ -659,6 +659,8 @@ describe("validateCreateOrderAdmin", () => {
                     },
                 ],
                 couponCode: "CouponCode",
+                status: "pending",
+                message: "Message",
             },
         };
 
@@ -670,7 +672,7 @@ describe("validateCreateOrderAdmin", () => {
         expect(errors.isEmpty()).toBe(true);
     });
 
-    test("should return error if variants is missing", async () => {
+    test("should return error if fields are missing", async () => {
         const req = {
             body: {},
         };
@@ -685,6 +687,9 @@ describe("validateCreateOrderAdmin", () => {
             expect.arrayContaining([
                 expect.objectContaining({
                     msg: "Variants is required",
+                }),
+                expect.objectContaining({
+                    msg: "Status is required",
                 }),
             ])
         );
@@ -712,49 +717,49 @@ describe("validateCreateOrderAdmin", () => {
         );
     });
 
-    test("should return error if variants is empty", async () => {
-        const req = {
-            body: {
-                variants: [],
-            },
-        };
-
-        for (const validationChain of validator.validateCreateOrderAdmin) {
-            await validationChain.run(req);
-        }
-        const errors = validationResult(req);
-
-        expect(errors.isEmpty()).toBe(false);
-        expect(errors.array()).toEqual(
-            expect.arrayContaining([
-                expect.objectContaining({
-                    msg: "Variants should not be empty",
-                }),
-            ])
-        );
-    });
-
-    test("should return error if variantID is missing", async () => {
+    test("should return errors if fields are invalid", async () => {
         const req = {
             body: {
                 variants: [
                     {
-                        quantity: 10,
+                        variantID: 123,
+                        quantity: "invalid",
+                    },
+                    {
+                        variantID: "VariantID",
+                        quantity: 20,
                     },
                 ],
+                couponCode: 123,
+                status: "InvalidStatus",
+                message: 123,
             },
         };
 
         for (const validationChain of validator.validateCreateOrderAdmin) {
             await validationChain.run(req);
         }
+
         const errors = validationResult(req);
 
         expect(errors.isEmpty()).toBe(false);
+
         expect(errors.array()).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    msg: "VariantID is required",
+                    msg: "VariantID should be a string",
+                }),
+                expect.objectContaining({
+                    msg: "Quantity should be a number",
+                }),
+                expect.objectContaining({
+                    msg: "CouponCode should be a string",
+                }),
+                expect.objectContaining({
+                    msg: "Invalid status",
+                }),
+                expect.objectContaining({
+                    msg: "Message should be a string",
                 }),
             ])
         );
