@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=thaitoan2311
+      - DB_NAME=ecommerce
+      - DB_PORT=3306
+    depends_on:
+      - db
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: thaitoan2311
+      MYSQL_DATABASE: ecommerce
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - ~/mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
