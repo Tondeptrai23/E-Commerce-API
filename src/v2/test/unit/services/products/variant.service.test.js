@@ -430,6 +430,26 @@ describe("deleteVariant", () => {
     });
 });
 
+describe("restoreVariant", () => {
+    test("should restore a variant with the given variantID", async () => {
+        const variantID = "603";
+
+        await variantService.restoreVariant(variantID);
+
+        // Verify that the variant is restored
+        const variant = await variantService.getVariant(variantID);
+        expect(variant.deletedAt).toBeNull();
+    });
+
+    test("should throw ResourceNotFoundError if the variant is not found", async () => {
+        const variantID = "2001";
+
+        await expect(variantService.restoreVariant(variantID)).rejects.toThrow(
+            ResourceNotFoundError
+        );
+    });
+});
+
 describe("getProductVariants", () => {
     test("should return all variants of a product", async () => {
         const productID = "1";

@@ -262,6 +262,23 @@ class VariantController {
             next(err);
         }
     }
+
+    async recoverVariant(req, res, next) {
+        try {
+            // Get request body
+            const { variantID } = req.params;
+
+            // Call services
+            await variantService.restoreVariant(variantID);
+
+            // Response
+            res.status(StatusCodes.OK).json({
+                success: true,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
 }
 
 export default new VariantController();

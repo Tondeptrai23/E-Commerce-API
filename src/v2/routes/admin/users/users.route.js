@@ -62,4 +62,11 @@ adminUserRoute.delete(
     userController.deleteUser
 );
 
+adminUserRoute.post(
+    "/users/:userID/recover",
+    verifyToken,
+    isAdmin,
+    userController.recoverUser
+);
+
 export default adminUserRoute;

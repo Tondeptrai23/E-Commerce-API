@@ -51,6 +51,10 @@ adminProduct:
   delete:
     $ref: "./admin/products/product/deleteProduct.yaml"
 
+adminProductRecover:
+  post:
+    $ref: "./admin/products/product/restoreProduct.yaml"
+
 adminProductVariants:
   get:
     $ref: "./admin/products/variant/getVariants.yaml"
@@ -102,6 +106,10 @@ adminVariant:
     $ref: "./admin/variants/putVariant.yaml"
   delete:
     $ref: "./admin/variants/deleteVariant.yaml"
+
+adminVariantRecover:
+  post:
+    $ref: "./admin/variants/restoreVariant.yaml"  
 
 adminVariantQuantity:
   post:
@@ -216,6 +224,10 @@ adminUser:
 adminUserVerify:
   post:
     $ref: "./admin/users/postUserVerify.yaml" 
+
+adminUserRecover:
+  post:
+    $ref: "./admin/users/restoreUser.yaml"
   
 adminUserCart:
   get:

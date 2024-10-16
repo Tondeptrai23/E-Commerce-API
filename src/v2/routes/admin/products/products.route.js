@@ -61,4 +61,11 @@ adminProductRoute.delete(
     productsController.deleteProduct
 );
 
+adminProductRoute.post(
+    "/products/:productID/recover",
+    verifyToken,
+    isAdmin,
+    productsController.recoverProduct
+);
+
 export default adminProductRoute;

@@ -199,6 +199,18 @@ class UserService {
             });
     }
 
+    /**
+     * Restore user
+     *
+     * @param {String} userID The ID of the user
+     * @returns {Promise<User>} The restored user
+     */
+    async restoreUser(userID) {
+        let user = await this.getUser(userID, { includeDeleted: true });
+
+        await user.restore();
+    }
+
     /*
      *
      *

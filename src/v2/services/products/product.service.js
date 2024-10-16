@@ -175,17 +175,24 @@ class ProductService {
      * @throws {ResourceNotFoundError} if the product is not found
      */
     async deleteProduct(productID) {
-        const product = await Product.findByPk(productID, {
-            include: {
-                model: ProductImage,
-                as: "images",
-            },
-        });
-        if (!product) {
-            throw new ResourceNotFoundError("Product not found");
-        }
+        return await db
+            .transaction(async (t) => {
+                const product = await Product.findByPk(productID);
+                if (!product) {
+                    throw new ResourceNotFoundError("Product not found");
+                }
 
-        await product.destroy();
+                await product.destroy();
+
+                await Variant.destroy({
+                    where: {
+                        productID: productID,
+                    },
+                });
+            })
+            .catch((err) => {
+                throw err;
+            });
     }
 
     /**
@@ -195,14 +202,26 @@ class ProductService {
      * @throws {ResourceNotFoundError} if the product is not found
      */
     async restoreProduct(productID) {
-        const product = await Product.findByPk(productID, {
-            paranoid: false,
-        });
-        if (!product) {
-            throw new ResourceNotFoundError("Product not found");
-        }
+        return await db
+            .transaction(async (t) => {
+                const product = await Product.findByPk(productID, {
+                    paranoid: false,
+                });
+                if (!product) {
+                    throw new ResourceNotFoundError("Product not found");
+                }
 
-        await product.restore();
+                await product.restore();
+
+                await Variant.restore({
+                    where: {
+                        productID: productID,
+                    },
+                });
+            })
+            .catch((err) => {
+                throw err;
+            });
     }
 
     /**

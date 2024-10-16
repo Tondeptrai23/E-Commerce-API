@@ -148,6 +148,23 @@ class UserController {
             next(err);
         }
     }
+
+    async recoverUser(req, res, next) {
+        try {
+            // Get request body
+            const { userID } = req.params;
+
+            // Call services
+            await userService.restoreUser(userID);
+
+            // Response
+            res.status(StatusCodes.OK).json({
+                success: true,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
 }
 
 export default new UserController();

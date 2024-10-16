@@ -60,4 +60,11 @@ adminVariantRoute.delete(
     variantController.deleteVariant
 );
 
+adminVariantRoute.post(
+    "/variants/:variantID/recover",
+    verifyToken,
+    isAdmin,
+    variantController.recoverVariant
+);
+
 export default adminVariantRoute;

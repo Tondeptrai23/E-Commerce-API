@@ -581,11 +581,52 @@ describe("deleteProduct", () => {
                 deletedAt: expect.any(Date),
             })
         );
+
+        const variants = await Variant.findAll({
+            where: {
+                productID,
+            },
+        });
+
+        expect(variants).toHaveLength(0);
     });
 
     test("should throw ResourceNotFoundError when the product is not found", async () => {
         const productID = "999";
         await expect(productService.deleteProduct(productID)).rejects.toThrow(
+            ResourceNotFoundError
+        );
+    });
+});
+
+describe("restoreProduct", () => {
+    test("should restore a product with the given productID", async () => {
+        const productID = "1";
+        await productService.restoreProduct(productID);
+
+        const product = await productService.getProduct(productID, {
+            includeDeleted: false,
+        });
+        expect(product).toEqual(
+            expect.objectContaining({
+                productID: "1",
+                name: expect.any(String),
+                description: expect.any(String),
+            })
+        );
+
+        const variants = await Variant.findAll({
+            where: {
+                productID,
+            },
+        });
+
+        expect(variants.length).toBeGreaterThan(0);
+    });
+
+    test("should throw ResourceNotFoundError when the product is not found", async () => {
+        const productID = "999";
+        await expect(productService.restoreProduct(productID)).rejects.toThrow(
             ResourceNotFoundError
         );
     });

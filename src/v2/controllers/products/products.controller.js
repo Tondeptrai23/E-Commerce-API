@@ -155,6 +155,23 @@ class ProductController {
             next(err);
         }
     }
+
+    async recoverProduct(req, res, next) {
+        try {
+            // Get request body
+            const { productID } = req.params;
+
+            // Call services
+            await productService.restoreProduct(productID);
+
+            // Response
+            res.status(StatusCodes.OK).json({
+                success: true,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
 }
 
 export default new ProductController();

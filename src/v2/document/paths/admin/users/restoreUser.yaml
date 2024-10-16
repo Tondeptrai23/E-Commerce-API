@@ -1,0 +1,51 @@
+# POST /admin/users/{userID}/recover:
+tags:
+  - Admin Users
+summary: Restore a user
+description: Restore a user with the given ID. <br>
+  Set the `deletedAt` field to `null`. <br>
+security:
+  - bearerAuth: []
+parameters:
+  - name: userID
+    in: path
+    description: ID of the user to restore
+    required: true
+    schema:
+      type: string
+      example: "1"
+responses:
+  200:
+    description: User restored
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            success:
+              type: boolean
+              example: true
+  401:
+    description: Token error, not authenticated
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error401.yaml"
+  403:
+    description: Not an admin
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error403.yaml"  
+  404:
+    description: User not found
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error404.yaml"
+  500:
+    description: Internal Server Error
+    content:
+      application/json:
+        schema:
+          $ref: "../../../schemas/error/error500.yaml"

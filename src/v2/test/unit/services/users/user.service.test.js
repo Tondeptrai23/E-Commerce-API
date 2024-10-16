@@ -401,3 +401,20 @@ describe("deleteUser", () => {
         );
     });
 });
+
+describe("restoreUser", () => {
+    test("should restore the user", async () => {
+        // Restore the user
+        await userService.restoreUser("1");
+
+        // Check if the user is restored
+        const user = await User.findByPk("1");
+        expect(user).toBeDefined();
+    });
+
+    test("should throw ResourceNotFoundError if the user does not exist", async () => {
+        await expect(userService.restoreUser("999")).rejects.toThrow(
+            ResourceNotFoundError
+        );
+    });
+});

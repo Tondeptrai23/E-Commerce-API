@@ -168,6 +168,9 @@ paths:
   /admin/products/{productID}:
     $ref: ./paths/index.paths.yaml#/adminProduct
 
+  /admin/products/{productID}/recover:
+    $ref: ./paths/index.paths.yaml#/adminProductRecover
+
   # Admin Products Variants
 
   /admin/products/{productID}/variants:
@@ -198,6 +201,9 @@ paths:
 
   /admin/variants/{variantID}:
     $ref: ./paths/index.paths.yaml#/adminVariant
+
+  /admin/variants/{variantID}/recover:
+    $ref: ./paths/index.paths.yaml#/adminVariantRecover
 
   /admin/variants/{variantID}/quantity:
     $ref: ./paths/index.paths.yaml#/adminVariantQuantity
@@ -262,6 +268,9 @@ paths:
 
   /admin/users/{userID}:
     $ref: ./paths/index.paths.yaml#/adminUser
+
+  /admin/users/{userID}/recover:
+    $ref: ./paths/index.paths.yaml#/adminUserRecover
 
   /admin/users/{userID}/verify:
     $ref: ./paths/index.paths.yaml#/adminUserVerify
