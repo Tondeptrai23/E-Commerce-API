@@ -3,6 +3,7 @@ FROM node:18-bullseye-slim
 
 # Install MySQL client
 RUN apt-get update && apt-get install -y default-mysql-client && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
@@ -15,10 +16,6 @@ RUN npm ci
 
 # Copy the rest of the application code
 COPY . .
-
-# Copy wait-for-db script
-COPY wait-for-db.sh /usr/local/bin/wait-for-db.sh
-RUN chmod +x /usr/local/bin/wait-for-db.sh
 
 # Expose the port the app runs on
 EXPOSE 3000
